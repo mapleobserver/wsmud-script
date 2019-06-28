@@ -1,0 +1,1 @@
+# wsmud-script
