@@ -35,19 +35,23 @@ stopstate
         @tidyBag
 
 // 副本
-    jh fb 13 start1;cr wuyue/qingcheng/shanlu
+    jh fb 13 start1
+    cr wuyue/qingcheng/shanlu
     go westup
-    @kill 青城派
-    go north;go northup;go eastup
-    @kill 青城派
-    go northup
-    @kill 青城派
-    go north;go north;go north
-    @kill 青城派
+    @kill 青城派弟子,青城派弟子
     go north
-    @kill 青城派
-    go south;go east
-    @kill 青城派
+    go northup
+    go eastup
+    @kill 青城派弟子,青城派弟子
+    go northup
+    @kill 洪人雄
+    go north[3]
+    @kill 于人豪
+    go north
+    @kill 侯人英,罗人杰
+    go south
+    go east
+    @kill 余人彦
     [if] (_DungeonWaitSkillCD) == 打开
         @cd
     go north
