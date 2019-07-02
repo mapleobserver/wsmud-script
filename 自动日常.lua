@@ -16,8 +16,12 @@
 #input ($WudaoManualMaxLevel)=从此层开始扫荡符扫荡,(WudaoManualMaxLevel)
 #config
 
-// 停止当前状态，清理背包
+// 停止当前状态，退出组队，清理背包
 stopstate
+$wait 500
+stopstate
+$wait 500
+team out (:id)
 $wait 1000
 @tidyBag
 $wait 10000
