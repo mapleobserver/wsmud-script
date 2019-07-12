@@ -1,0 +1,51 @@
+@-moz-document url-prefix("http://game.wsmud.com/"), url-prefix("http://www.wsmud.com/") {
+html, body {
+	font-family: "SourceHanSansSC";
+}
+.container, .login-content, .left, .right{
+	color: rgb(0,178,0);
+    background-color: #212121;
+}
+pre{
+    font-size:1.1em;
+    font-family: "SourceHanSansSC";
+}
+.hp > .progress-bar {
+	background-color: #c0392b;
+}
+.mp > .progress-bar {
+	background-color: #2980b9;
+}
+HIG {
+    color: #2ecc71;
+}
+HIC {
+    color: #2980b9;
+}
+HIY {
+    color: #f1c40f;
+}
+HIZ {
+	color: #8e44ad;
+}
+HIO {
+    color: #e67e22;
+}
+HIR {
+    color: #c0392b;
+}
+HIM {
+    color: #e84393;
+}
+
+/* left right */
+.left, .right {
+	width: 350px;
+}
+.left-content {
+	font-size: 13px;
+}
+.span-btn {
+	font-size: 13px;
+}
+}
