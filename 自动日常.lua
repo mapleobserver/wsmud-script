@@ -1,7 +1,4 @@
 // raid.flow
-// 停止自动喜宴和boss，记录获取物品
-<-stopSSAuto
-<-recordGains
 // 武道自定义参数
 [if] (WudaoWaitCDLevel) == null
     ($WudaoWaitCDLevel) = 30
@@ -50,6 +47,9 @@
 // 日常结束后动作
 #input ($AZB_action) = 日常结束后行为,(AZB_action)
 #config
+// 停止自动喜宴和boss，记录获取物品
+<-stopSSAuto
+<-recordGains
 // 停止当前状态，退出组队，清理背包
 stopstate
 $wait 500
@@ -126,6 +126,9 @@ select {r守门人};ask2 {r守门人}
     shop 0 (num)
 select {r守门人};ask2 {r守门人};ask3 {r守门人}
 @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
+$wait 3000
+@tidyBag
+$wait 10000
 // 追捕具体流程
 stopstate
 //追捕前准备
@@ -334,9 +337,6 @@ stopstate
 $wait 10000
 @cd
 // 副本
-//#select ($FbName) = 副本,温府|恒山|衡山|嵩山|桃花岛|冰火岛|星宿海|移花宫|燕子坞|黑木崖|缥缈峰|光明顶|天龙寺|血刀门|古墓派|,(FbName)
-//#select ($FbDiff) = 副本难度,普通|困难,(FbDiff)
-//#select ($FbWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡,(FbWay)
 [if] (FbName) == 温府
     ($FbCr) = cd/wen/damen
 [else if] (FbName) == 恒山
