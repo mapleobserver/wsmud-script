@@ -1,5 +1,8 @@
 // raid.flow
-// 一键学习，选择对应师傅之前，先手动拜师
+// 一键学习
+// 武馆需要先交学费，其他门派自动拜师
+// 基于@andyfos的版本修改
+// author:四区白三三
 [if] (Sf) == null
    ($Sf) = 逍遥子
 
@@ -107,6 +110,8 @@ select {r(Sf)}?
         @wait 300
     [if] {r(Sf)}? != null && (:state) != 学习
         stopstate
+        bai {r(Sf)}?
+        @wait 300
         select {r(Sf)}?
         @wait 300
         xue (Lastcmd) from {r(Sf)}?
