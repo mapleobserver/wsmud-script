@@ -1,4 +1,10 @@
 // raid.flow
+[if] (RCeq) == null
+   ($RCeq) = 1
+[if] (ARCeq) == null
+   ($ARCeq) = 2
+#input ($RCeq) = 日常开始换套装数字,(RCeq)
+#input ($AZBeq) = 日常结束换套装数字,(ARCeq)
 // 武道自定义参数
 [if] (WudaoWaitCDLevel) == null
     ($WudaoWaitCDLevel) = 30
@@ -37,6 +43,9 @@ stopstate
 $wait 500
 stopstate
 $wait 500
+[if](RCeq) != 0
+   $eq (RCeq)
+   $wait 5000
 team out (:id)
 $wait 1000
 @tidyBag
@@ -354,7 +363,9 @@ $wait 10000
 //日常结束，根据需要调用流程或者挖矿、修炼
 recordGains->
 stopSSAuto->
-$eq 2
-@await 6000
+[if](ARCeq) != 0
+   $eq (ARCeq)
+   $wait 5000
+@print 日常结束！
 // 执行日常结束后动作
 (ARC_action)
