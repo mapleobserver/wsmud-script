@@ -30,11 +30,11 @@
         $stoppfm
         pty 洪七公已满，我先撤
         [while] (:room) == 丐帮-林间小屋
-            go south
+            go down
             @await 500
         @until (:room) == 丐帮-暗道
-        @await 1000
-        go north
+        @await 500
+        go up
     @until (:combating) == false
     $startpfm
 [else if] (:room) == 武当派-后山小院 && (:combating) == true
