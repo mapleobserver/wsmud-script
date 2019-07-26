@@ -1,0 +1,464 @@
+<-stopSSAuto
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {银龙鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {黑龙鱼}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {罗汉鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {黑龙鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {银龙鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {黑龙鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {虹鳟}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {孔雀鱼}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {罗汉鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {反天刀}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {罗汉鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {反天刀}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {黑龙鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {孔雀鱼}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {罗汉鱼}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {反天刀}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {孔雀鱼}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {络石藤}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+lianyao2 start 4
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {凌霄花}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {冬虫夏草}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {何首乌}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {九香虫}
+@tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
+lianyao2 add {人参}
+@tip 看上去快要成型了
+lianyao2 stop
+@tip 恭喜你研制成功|恭喜你炼制出
+@wait 1000
+stopSSAuto->

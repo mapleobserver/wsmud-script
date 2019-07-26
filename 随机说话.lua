@@ -1,9 +1,8 @@
 //raid.flow
 //四区：白三三
 //随机夸损人
-//多一句就对应改一次第一句命令后面的数字
-@js ($len_con) = '(contnet)'.length
-[if] (len_con) == 2 && (name) != 丫鬟 && (name) != 小流氓 && (name) != 助理
+@js ($onlyss) = '(content)'.match('^33')
+[if] (onlyss) != null
     @js ($num) = Math.floor(Math.random()*40+1)
     @js ($yesno) = Math.floor(Math.random()*10+1)
     [if] (yesno) = 1 || (yesno) = 4 || (yesno) = 7 || (yesno) = 10
@@ -18,7 +17,7 @@
         [else if] (num) = 5
             chat (name) 不是一般人，就连跪地求饶的姿势，都比一般人威武。
         [else if] (num) = 6
-            chat (name) 大声道：稿来！
+            chat (name) 大声道：剑……不是，稿来！
         [else if] (num) = 7
             chat (name) 最近生活有困难吗？有困难要说，没困难制造困难也要说，挖矿传说就是你的家，任何困难都可以靠挖矿解决。
         [else if] (num) = 8
@@ -34,13 +33,13 @@
         [else if] (num) = 13
             chat (name) 的头上顶着一个非酋buff。
         [else if] (num) = 14
-            chat 天不生 (name)，万古矿道如长夜。
+            chat 天不生(name)，万古矿道如长夜。
         [else if] (num) = 15
             chat (name) 决定请大家到擂台吃他豆腐。
         [else if] (num) = 16
             chat (name) 长得挺好看，就是有点黑，200连都没血刀残页那种黑。
         [else if] (num) = 17
-            chat 别人有别人的长处，(name) 有自己的短处 →_→
+            chat 别人有别人的长处，(name)有自己的短处 →_→
         [else if] (num) = 18
             chat (name) 是武神的身子，挖矿的命。
         [else if] (num) = 19
