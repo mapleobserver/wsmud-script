@@ -1,8 +1,7 @@
 //raid.flow
-[if] (playerName) == null
-    ($playerName) = null
-#input ($playerName)=请输入参与分配的玩家名字,(playerName)
+#input ($PlayerName)=请输入参与分配的玩家名字,(PlayerName)
 #config
+$to 帮会-仓库
 @cmdDelay 300
 [while] true
     alloc
@@ -14,10 +13,10 @@
     //检查是否存在指定玩家
     $wait 500
     @js ($playerList) = $(".content-message").find(".item-commands").last().children().text()
-    @js ($playerYes) = "(playerList)".indexOf('(playerName)')
+    @js ($playerYes) = "(playerList)".indexOf('(PlayerName)')
     //分配或扩充
     [if] (playerYes) != -1
-        @js ($playlist) = $(".content-message").find(".item-commands").last().children("span:contains('(playerName)')").click()
+        @js ($playlist) = $(".content-message").find(".item-commands").last().children("span:contains('(PlayerName)')").click()
     [else]
         alloc
         @js $(".content-message").find(".item-commands").last().children(":first").click()
