@@ -1,7 +1,6 @@
 // auto_zhuibu v2.1
 <-stopSSAuto
 <-recordGains
-@off 死亡回庙
 [if] (ZBWaitCD) == null
     ($ZBWaitCD) = 15
 [if] (ZBMax) == null
@@ -201,7 +200,6 @@ stopstate
 recordGains->
 stopSSAuto->
 @renew
-@on 死亡回庙
 //追捕后复原
 @cmdDelay 1000
 @cd
