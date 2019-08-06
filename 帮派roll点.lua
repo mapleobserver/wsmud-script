@@ -5,3 +5,4 @@
 [if] (onlyroll) != null
     @js ($rollNum) = Math.floor(Math.random()*100+1)
     @print (name)点数：(rollNum)
+    pty (name)点数：(rollNum)

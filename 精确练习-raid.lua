@@ -6,6 +6,7 @@
 @js ($Skill_num) = [(skill)].length
 
 //级别上限
+@toolbar skills
 @js ($level) = /\d+/.exec($(".obj-money").text())['0']
 
 //弹出配置窗
@@ -39,9 +40,9 @@ $to (lianxi_map)
     @toolbar skills
     @js ($skill_name) = [(skill)][(num)]
     //获取技能id
-    @js ($skill_id) = $(".skill-item:contains((skill_name))").eq('1').attr("skid")
+    @js ($skill_id) = $(".skill-item:contains((skill_name))").eq('0').attr("skid")
     [if] (skill_id) == null
-        @js ($skill_id) = $(".skill-item:contains((skill_name))").eq('0').attr("skid")
+        @js ($skill_id) = $(".skill-item:contains((skill_name))").eq('1').attr("skid")
     //获取技能目前等级
     @js ($skill_level) = /\d+/.exec($("[skid=(skill_id)]").children(".skill-level").text())['0']
     @print <hig>目前技能等级:</hig><hiy>(skill_level)</hiy><hig>，预计目标等级:</hig><hiy>(target_level)</hiy>

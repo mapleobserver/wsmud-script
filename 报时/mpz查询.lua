@@ -26,5 +26,11 @@
 [if] (msg1) == null && (msg2) == null && (msg3) == null
     chat 没有门派战记录
 [else]
-    @js ($msg) = var ma=new Array();if('(msg1)'!='null'){ma.push('(msg1)')};if('(msg2)'!='null'){ma.push('(msg2)')};if('(msg3)'!='null'){ma.push('(msg3)')};ma.join('|')
-    chat (msg)
+    //@js ($msg) = var ma=new Array();if('(msg1)'!='null'){ma.push('(msg1)')};if('(msg2)'!='null'){ma.push('(msg2)')};if('(msg3)'!='null'){ma.push('(msg3)')};ma.join('|')
+    [if] (msg1) != null
+        ($msg) = 【开战】(msg1)
+    [if] (msg2) != null
+        ($msg) = (msg)\n【开战】(msg2)
+    [if] (msg3) != null
+        ($msg) = (msg)\n【开战】(msg3)
+    @js WG.Send("chat \n(msg)")
