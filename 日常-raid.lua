@@ -31,7 +31,7 @@
 #select ($DieToReset) = 死亡自动重置,已开启|已关闭,已关闭
 
 // 副本方式
-#select ($FBName) = 副本,温府|恒山|青城山(只扫荡)|衡山|嵩山|桃花岛(简单)|桃花岛(困难)|白驼山(组队)|星宿海|冰火岛(简单扫荡)|冰火岛(困难扫荡)|移花宫(简单)|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单扫荡)|黑木崖(困难扫荡)|缥缈峰(简单扫荡)|缥缈峰(困难扫荡)|光明顶|光明顶(组队)|天龙寺(简单扫荡)|天龙寺(困难扫荡)|血刀门(只扫荡)|古墓派(简单扫荡)|古墓派(困难扫荡)|华山论剑|侠客岛(只扫荡)|净念禅宗(简单扫荡)|净念禅宗(困难扫荡),(FBName)
+#select ($FBName) = 副本,温府|恒山|青城山(只扫荡)|衡山|嵩山|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单扫荡)|冰火岛(困难扫荡)|移花宫(简单)|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单扫荡)|黑木崖(困难扫荡)|缥缈峰(简单扫荡)|缥缈峰(困难扫荡)|光明顶|光明顶(组队)|天龙寺(简单扫荡)|天龙寺(困难扫荡)|血刀门(只扫荡)|古墓派(简单扫荡)|古墓派(困难扫荡)|华山论剑|侠客岛(只扫荡)|净念禅宗(简单扫荡)|净念禅宗(困难扫荡),(FBName)
 //#select ($FBDiff) = 副本难度,普通|困难|组队,普通
 #select ($FBWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡,(FBWay)
 
@@ -97,7 +97,7 @@ stopstate
 $wait 10000
 (WudaoBefore)
 $wait 5000
-@call 自动武道塔
+@call 自动武道
 stopstate
 $wait 5000
 
@@ -117,6 +117,8 @@ stopstate
     ($FBCr) = cr taohua/haitan 0 10
 [else if] (FBName) == 桃花岛(困难)
     ($FBCr) = cr taohua/haitan 1 10
+[else if] (FBName) == 白驼山
+    ($FBCr) = cr baituo/damen 0 10
 [else if] (FBName) == 星宿海
     ($FBCr) = cr xingxiu/xxh6 0 10
 [else if] (FBName) == 冰火岛(简单扫荡)
@@ -179,7 +181,7 @@ stopstate
 [else if] (FBWay) == 自动
     //脚本自动模式
     [if] (FBName) == 温府 || (FBName) == 恒山 || (FBName) == 衡山 || (FBName) == 嵩山 || (FBName) == 桃花岛(简单) || (FBName) == 桃花岛(困难) || (FBName) == 白驼山(组队) || (FBName) == 星宿海 || (FBName) == 移花宫(简单) || (FBName) == 移花宫(困难) || (FBName) == 燕子坞(简单) || (FBName) == 燕子坞(困难) || (FBName) == 燕子坞(偷书) || (FBName) == 光明顶 || (FBName) == 光明顶(组队)
-        @js ManagedPerformerCenter.start(`自动副本-(FbName)`, GetDungeonSource("(FbName)").replace(/#.*\n/g,'($_repeat) = 20'))
+        @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_repeat) = 20'))
         @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 扬州城-大门
     [else]
         @print <hiy>(FBName)</hiy><ord>没有自动脚本！</ord>
@@ -194,3 +196,4 @@ $wait 10000
 
 //日常结束后
 (RCAfter_action)
+@print 自动日常结束！
