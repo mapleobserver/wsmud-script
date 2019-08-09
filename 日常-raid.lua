@@ -1,5 +1,6 @@
 //raid.flow
 //四区白三三
+//自动师门、请安、买吃养精，自动调用自动追捕和自动武道两个流程，可选择副本自动脚本或者扫荡。
 
 // 武道自定义参数
 [if] (WudaoWaitCDLevel) == null
@@ -103,6 +104,8 @@ $wait 5000
 
 //副本
 stopstate
+(WudaoBefore)
+$wait 5000
 [if] (FBName) == 温府
     ($FBCr) = cr cd/wen/damen 0 10
 [else if] (FBName) == 恒山
@@ -180,7 +183,7 @@ stopstate
         recordGains->
 [else if] (FBWay) == 自动
     //脚本自动模式
-    [if] (FBName) == 温府 || (FBName) == 恒山 || (FBName) == 衡山 || (FBName) == 嵩山 || (FBName) == 桃花岛(简单) || (FBName) == 桃花岛(困难) || (FBName) == 白驼山(组队) || (FBName) == 星宿海 || (FBName) == 移花宫(简单) || (FBName) == 移花宫(困难) || (FBName) == 燕子坞(简单) || (FBName) == 燕子坞(困难) || (FBName) == 燕子坞(偷书) || (FBName) == 光明顶 || (FBName) == 光明顶(组队)
+    [if] (FBName) == 温府 || (FBName) == 恒山 || (FBName) == 衡山 || (FBName) == 嵩山 || (FBName) == 桃花岛(简单) || (FBName) == 桃花岛(困难) || (FBName) == 白驼山(组队) || (FBName) == 星宿海 || (FBName) == 移花宫(简单) || (FBName) == 移花宫(困难) || (FBName) == 燕子坞(简单) || (FBName) == 燕子坞(困难) || (FBName) == 燕子坞(偷书) || (FBName) == 光明顶 || (FBName) == 光明顶(组队) || (FBName) == 华山论剑
         @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_repeat) = 20'))
         @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 扬州城-大门
     [else]
