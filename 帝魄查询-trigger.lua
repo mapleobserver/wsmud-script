@@ -21,8 +21,8 @@
                 ($count) = (count) + 1
             ($num2) = (num2) + 1
     [if] (dpStat) != null
-        ($dpStat) = (dpStat)；(dpPlayer1)：(count)
+        ($dpStat) = (dpStat)；(dpPlayer1)x(count)
     [else]
-        ($dpStat) = (dpPlayer1)：(count)
+        ($dpStat) = (dpPlayer1)x(count)
     ($num1) = (num1) + (count)
 pty 帝魄统计：(dpStat)

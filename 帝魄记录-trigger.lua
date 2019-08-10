@@ -4,7 +4,7 @@
 // 关键字：的尸体里拿出来 一块帝魄
 @js ($dpName) = '(text)'.match('([^%]+)从.*的尸体')[1]
 [if] (DPList) != null
-    ($DPList) = (DPList),(dpName)
+    ($DPList) = (DPList),'(dpName)'
 [else]
-    ($DPList) = (dpName)
+    ($DPList) = '(dpName)'
 @print (DPList)
