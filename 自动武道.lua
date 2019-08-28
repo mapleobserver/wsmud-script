@@ -1,4 +1,6 @@
 // raid.flow
+<-stopSSAuto
+<-recordGains
 [if] (WudaoWaitCDLevel) == null
     ($WudaoWaitCDLevel) = 75
 [if] (WudaoWaitCDExp) == null
@@ -46,6 +48,9 @@ select {r守门人};ask2 {r守门人}
     shop 0 (num)
 select {r守门人};ask2 {r守门人};ask3 {r守门人}
 @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
+recordGains->
+stopSSAuto->
 stopstate
+@tidyBag
 $to 住房-练功房
 dazuo
