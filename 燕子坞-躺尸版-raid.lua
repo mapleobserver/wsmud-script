@@ -1,0 +1,80 @@
+// raid.flow
+[if] (_DungeonHpThreshold) == null
+    ($_DungeonHpThreshold) = 50
+[if] (_DungeonWaitSkillCD) == null
+    ($_DungeonWaitSkillCD) = 打开
+[if] (_DungeonBagCleanWay) == null
+    ($_DungeonBagCleanWay) = 存仓及售卖
+#select ($FBName) = 副本,燕子坞(简单)|燕子坞(困难),(FBName)
+#select ($_DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(_DungeonHpThreshold)
+#select ($_DungeonWaitSkillCD) = Boss战前等待技能冷却,打开|关闭,(_DungeonWaitSkillCD)
+#select ($_DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(_DungeonBagCleanWay)
+#input ($_repeat) = 重复次数,1
+#config
+[if] (arg0) != null
+    ($_DungeonHpThreshold) = (arg0)
+[if] (arg1) != null
+    ($_DungeonWaitSkillCD) = (arg1)
+[if] (arg2) != null
+    ($_DungeonBagCleanWay) = (arg2)
+[if] (arg3) != null
+    ($_repeat) = (arg3)
+<-stopSSAuto
+stopstate
+<---
+($hpPer) = (_DungeonHpThreshold)/100
+[if] (:hpPer) < (hpPer)
+    @liaoshang
+--->
+<-recordGains
+[if] (FBName) == 燕子坞(简单)
+    ($FBCr) = cr murong/anbian 0 10
+[else if] (FBName) == 燕子坞(困难)
+    ($FBCr) = cr murong/anbian 1 10
+($jianfa) = (:kf_jian)
+($weapon) = (:eq0)
+($_i) = 0
+[while] (_i) < (_repeat)
+    @renew
+    [if] (_DungeonBagCleanWay) == 售卖
+        @cleanBag
+    [else if] (_DungeonBagCleanWay) == 存仓及售卖
+        @tidyBag
+
+// 副本
+    jh fb 23 start1
+    (FBCr)
+    go east;go east
+    @kill 包不同
+    go east;go south;go east;go south;go south
+    @kill 王夫人
+    go north;go north;go west;go north
+    [if] (_DungeonWaitSkillCD) == 打开
+        @cd
+    go east;go east;go east
+    @kill 慕容复
+    go west;go north
+    look pai;bai pai[3]
+    go north;search
+    cha none;enable sword tangshijianfa
+    @wait 3000
+    [if] (_DungeonWaitSkillCD) == 打开
+        @cd
+    go south;$waitpfm sword.wu
+    @cd sword.wu
+    cha none;enable sword (jianfa);eq (weapon)
+    @wait 3000
+    @kill 慕容博
+    go east
+    @kill 阿朱
+
+// 副本结束
+    cr;cr over
+    ($_i) = (_i) + 1
+[if] (_DungeonBagCleanWay) == 售卖
+    @cleanBag
+[else if] (_DungeonBagCleanWay) == 存仓及售卖
+    @tidyBag
+$to 住房-练功房;dazuo
+recordGains->
+stopSSAuto->

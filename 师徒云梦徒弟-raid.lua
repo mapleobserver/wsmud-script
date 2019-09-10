@@ -1,0 +1,29 @@
+// raid.flow
+//四区白三三
+//配合 师徒云梦师父 触发使用
+//提前组队，徒弟号为队长
+#input ($FBMasterName) = 师父名字,(FBMasterName)
+#input ($_repeat) = 重复次数,1
+#config
+<-stopSSAuto
+stopstate
+//组队
+//@toolbar message
+//@js $(".dialog").find(".dialog-footer ").last().children("span:contains('关系')").click()
+//@await 500
+//@js $(".dialog").find(".item-commands").last().children("span:contains('邀请组队')").click()
+//@await 500
+//@tip (FBMasterName)加入队伍
+team set free_get
+@renew
+($_i) = 0
+[while] (_i) < (_repeat)
+    stopstate;jh fb 17 start3;cr cd/yunmeng/senlin 2 0
+    @tip 你们师徒合力完成一次组队副本
+    $wait 2000
+    cr;cr over
+    $wait 2000
+    ($_i) = (_i) + 1
+team out
+stopSSAuto->
+$zdwk

@@ -77,7 +77,16 @@ use {养精丹g}[10]
         use {b养精丹b}[{b养精丹b#}]
     [else]
         use {b养精丹b}[10]
-
+[if] {b朱果g}? != null
+    [if] {b朱果g#} <= 10
+        use {b朱果g}[{b朱果g#}]
+    [else]
+        use {b朱果g}[10]
+[if] {b潜能果g}? != null
+    [if] {b潜能果g#} <= 10
+        use {b潜能果g}[{b潜能果g#}]
+    [else]
+        use {b潜能果g}[10]
 //追捕
 stopstate
 @cd
