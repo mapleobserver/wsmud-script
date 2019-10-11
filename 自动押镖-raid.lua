@@ -19,7 +19,7 @@
 #input ($EscortWaitCDExp) = 等待CD的技能sid,(EscortWaitCDExp)
 #input ($EscortWeaponID) = 切换躺尸武器sid,(EscortWeaponID)
 #input ($repeat) = 重复次数,1
-#input ($wmTime) = 魂归武庙休养时间ms,(wmTime)
+//#input ($wmTime) = 魂归武庙休养时间ms,(wmTime)
 
 #config
 @tidyBag
@@ -27,6 +27,7 @@
 ($mpPer) = (EscortMpThreshold)/100
 ($jianfa) = (:kf_jian)
 ($weapon) = (:eq0)
+($numJF) = 0
 ($num) = 0
 [while] (num) < (repeat)
     @renew
@@ -55,6 +56,7 @@
         [if] (EscortTangshi) == 使用
             cha none;enable sword tangshijianfa;eq (EscortWeaponID)
             @wait 3000
+            @cd
 //切武器等三秒cd
         @cd (EscortWaitCDExp)
         @until (:status xuruo) == false
@@ -68,14 +70,18 @@
                 @cd sword.wu
                 cha none;enable sword (jianfa);eq (weapon)
                 @wait 3000
+                @cd
 //切武器等三秒cd
                 kill {r蒙面大盗}?
             @until {r蒙面大盗}? == null || (:combating) == true || (:living) == false
             @until {r蒙面大盗}? == null || (:combating) == false || (:living) == false
             [if] (:living) == true
+                ($numJF) = (numJF) + 1
+                @print 已打死 (numJF) 个劫匪
                 [continue]
             relive
-            @wait (wmTime)
+            //@wait (wmTime)
+            @renew
             jh fam 0 start;go west[2];go south[2]
             select {林震南};biao {r林震南}
             task yunbiao {r林震南} begin
