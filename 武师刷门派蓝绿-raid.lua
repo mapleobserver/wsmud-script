@@ -23,19 +23,28 @@ stopstate
 [while] true
     @await 100
     [if] (mpzname) == 峨眉
-        ($mpc) = {r峨眉派第五代弟子}?
+        ($mpc1) = {r峨眉派第六代弟子}?
+        ($mpc2) = {r峨眉派第五代弟子}?
     [else if] (mpzname) == 丐帮
-        ($mpc) = {r丐帮七袋弟子}?
+        ($mpc1) = {r丐帮六袋弟子}?
+        ($mpc2) = {r丐帮七袋弟子}?
     [else if] (mpzname) == 华山
-        ($mpc) = {r华山派第十五代弟子}?
+        ($mpc1) = {r华山派第十六代弟子}?
+        ($mpc2) = {r华山派第十五代弟子}?
     [else if] (mpzname) == 武当
-        ($mpc) = {r武当派第三代弟子}?
+        ($mpc1) = {r道童}?
+        ($mpc2) = {r武当派第三代弟子}?
     [else if] (mpzname) == 逍遥
-        ($mpc) = {r逍遥派第三代弟子}?
+        ($mpc1) = {r逍遥派第四代弟子}?
+        ($mpc2) = {r逍遥派第三代弟子}?
     [else if] (mpzname) == 少林
-        ($mpc) = {r少林派第四十代弟子}?
-    [if] (mpc) != null && (:maxHp (mpc)) == 40000
-        kill (mpc)
+        ($mpc1) = {r少林派第四十一代弟子}?
+        ($mpc2) = {r少林派第四十代弟子}?
+    [if] (mpc2) != null && (:maxHp (mpc2)) == 40000
+        kill (mpc2)
+        @until (:combating) == false && (:free) == true
+    [else if] (mpc1) != null && (:maxHp (mpc1)) == 2000
+        kill (mpc1)
         @until (:combating) == false && (:free) == true
     [else]
         [break]
