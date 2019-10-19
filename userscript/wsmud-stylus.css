@@ -1,14 +1,27 @@
 @-moz-document url-prefix("http://game.wsmud.com/"), url-prefix("http://www.wsmud.com/") {
     html, body {
-        font-family: "SourceHanSansSC";
+    
+        font-family: "PingFang SC","FZPingXianYaSong-R-GBK","Source Han Sans SC";
+    }
+    pre{
+        font-size: 1.1em;
+        font-family: "PingFang SC","FZPingXianYaSong-R-GBK","Source Han Sans SC";
+    }
+    .tool-bar{
+        font-family: "PingFang SC","Source Han Sans SC";
+    }
+    .dialog{
+        font-family: "PingFang SC","FZPingXianYaSong-R-GBK","Source Han Sans SC";
     }
     .container, .login-content, .left, .right{
         color: rgb(0,178,0);
         background-color: #212121;
     }
-    pre{
-        font-size: 1.1em;
-        font-family: "SourceHanSansSC";
+    .room-item > .item-name {
+        margin-left: 1em;
+    }
+    .room_items {
+        max-height: 120px;
     }
     .item-status-bar > .status-item {
         font-size: 0.8em;

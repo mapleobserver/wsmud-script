@@ -68,6 +68,8 @@ blade.chan,八方藏刀,断字诀
 blade.duo,无相（未进阶）
 blade.wuwo,无我（未进阶）
 blade.kuang,狂风二十一式
+blade.shi,嗜血
+blade.xue,血海魔刀
 
 club.lian,突击,连刺
 club.hui,回马枪
