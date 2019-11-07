@@ -41,3 +41,4 @@
 静心：room
 专心：room
 寒玉：room
+鼓舞：success
