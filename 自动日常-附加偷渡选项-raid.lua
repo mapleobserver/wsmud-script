@@ -35,8 +35,14 @@
 [if] (FBBefore) == null
     ($FBBefore) = $eq 1
 #input ($FBBefore)=副本前执行命令(用英文;隔开),(FBBefore)
-#select ($FBName) = 副本,温府|恒山|青城山(只扫荡)|青城山(第三方流程)|衡山|嵩山|云梦沼泽(只扫荡)|云梦沼泽(第三方流程)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单扫荡)|冰火岛(困难扫荡)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单扫荡)|黑木崖(困难扫荡)|缥缈峰(简单扫荡)|缥缈峰(困难扫荡)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(简单扫荡)|天龙寺(困难扫荡)|天龙寺(偷渡)|血刀门(只扫荡)|古墓派(简单扫荡)|古墓派(困难扫荡)|古墓派(偷渡)|华山论剑|侠客岛(只扫荡)|净念禅宗(简单扫荡)|净念禅宗(困难扫荡),(FBName)
+#select ($FBName) = 副本,温府|恒山|青城山(只扫荡)|衡山|嵩山|云梦沼泽(只扫荡)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单扫荡)|冰火岛(困难扫荡)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单扫荡)|黑木崖(困难扫荡)|缥缈峰(简单扫荡)|缥缈峰(困难扫荡)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(简单扫荡)|天龙寺(困难扫荡)|天龙寺(偷渡)|血刀门(只扫荡)|古墓派(简单扫荡)|古墓派(困难扫荡)|古墓派(偷渡)|华山论剑|侠客岛(只扫荡)|净念禅宗(简单扫荡)|净念禅宗(困难扫荡),(FBName)
 #select ($FBWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡,(FBWay)
+[if] (_DungeonHpThreshold) == null
+    ($_DungeonHpThreshold) = 50
+[if] (_DungeonWaitSkillCD) == null
+    ($_DungeonWaitSkillCD) = 打开
+#select ($_DungeonHpThreshold) = 自动模式下副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(_DungeonHpThreshold)
+#select ($_DungeonWaitSkillCD) = 自动模式下Boss战前等待技能冷却,打开|关闭,(_DungeonWaitSkillCD)
 
 // 日常结束后动作
 [if](RCAfter_action) == null
@@ -45,7 +51,7 @@
 
 #config
 
-
+@stopSSAuto
 //停止，清包
 stopstate
 @tidyBag
@@ -98,6 +104,7 @@ $wait 10000
 (ZBBefore)
 $wait 5000
 @call 自动追捕
+@stopSSAuto
 stopstate
 $wait 5000
 
@@ -110,7 +117,9 @@ $wait 10000
 (WudaoBefore)
 $wait 5000
 @call 自动武道
+@stopSSAuto
 stopstate
+@tidyBag
 $wait 5000
 
 //副本
@@ -230,7 +239,7 @@ taskover signin
 $wait 2000
 taskover signin
 $wait 10000
-
+@recoverSSAuto
 //日常结束后
 (RCAfter_action)
 @print 自动日常结束！
