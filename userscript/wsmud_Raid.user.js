@@ -3744,7 +3744,7 @@ go north
 select {r四十二章经g}?
 get {r四十二章经g}?
 go south;go south
-($open) = 没开
+($open) = 打开
 look men;unlock men
 @tip 你用一把钥匙($open)了牢房门|你不会撬锁
 [if] (open) == 打开
