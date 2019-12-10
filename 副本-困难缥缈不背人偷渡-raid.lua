@@ -1,4 +1,6 @@
-// raid.flow
+//raid.flow
+//困难缥缈偷渡，不背人杀所有怪，确保自己有1W躲闪，或者杀完卓不凡后身上buff还在，有1W躲闪过桥。
+//四区白三三
 [if] (_DungeonHpThreshold) == null
     ($_DungeonHpThreshold) = 50
 [if] (_DungeonWaitSkillCD) == null
@@ -35,28 +37,26 @@ stopstate
         @tidyBag
 
 //进副本
-    jh fb 17 start1
-    cr cd/yunmeng/senlin
-    $wait 500
-    go east
-    @kill 巨鳄
-    go north
-    @kill 巨鳄,巨鳄
-    go east
-    @kill 巨鳄,巨鳄
-    go west;go north
-    @kill 巨鳄,巨鳄
-    look lu;kan lu;go north
-    @kill 火龙
-    go north
-    @kill 火龙
-    go north
-    @kill 火龙
+    jh fb 25 start2
+    cr lingjiu/shanjiao 1 0
+    go northup
+    @kill 乌老大,不平道人,女童
+    go northup
+    @kill 卓不凡
+    go northup;look tiesuo;zou tiesuo
     [if] (_DungeonWaitSkillCD) == 打开
         @cd
-    go north
-    @kill 火龙王
-
+    @kill 李秋水
+    go northup;go north
+    @kill 余婆婆
+    go north;go north;go west
+    @kill 竹剑
+    go east;go east
+    @kill 梅剑
+    go west;go north;go west
+    @kill 菊剑
+    go east;go east
+    @kill 兰剑
 // 副本结束
     cr;cr over
     ($_i) = (_i) + 1

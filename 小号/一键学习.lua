@@ -2,7 +2,7 @@
 // 一键学习
 // 武馆需要先交学费，其他门派自动拜师
 // 基于@andyfos的版本修改
-// author:四区白三三
+// 四区白三三
 [if] (Sf) == null
    ($Sf) = 逍遥子
 
@@ -389,16 +389,17 @@ select {r(Sf)}?
             ($ts) == 由于你的内力不够，部分技能未能学习
         [if] (nl) == 说道：你对本门的贡献还
             ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = huifengjian
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        [if] (Sf) != 灭绝 && (Sf) != 周芷若
+            ($Lastcmd) = huifengjian
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
 
     [if] (Hzmp) == 逍遥
         ($Lastcmd) = beimingshengong
