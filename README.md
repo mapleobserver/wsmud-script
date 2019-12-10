@@ -11,6 +11,8 @@
 
 带有 `.flow` 后缀的是流程，`.trigger` 后缀的是触发。
 
+为了方便代码高亮，文件格式用了 `.lua`，可以直接用文本编辑器打开。
+
 需要先按顺序安装以下插件：
 
 wsmud_pluginss: [https://greasyfork.org/zh-CN/scripts/371372-wsmud-pluginss](https://greasyfork.org/zh-CN/scripts/371372-wsmud-pluginss)
