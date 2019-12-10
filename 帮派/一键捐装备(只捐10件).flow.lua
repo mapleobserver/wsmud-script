@@ -1,0 +1,14 @@
+// raid.flow
+stopstate
+$to 帮会-仓库
+@cmdDelay 300
+($num) = 0
+[while] true
+    alloc
+    @tip 请选择对|目前没有可用的($finish)|不要急
+    [if] (finish)!=null
+        [break]
+    @js $(".content-message").find(".item-commands").last().children(":first").click()
+    ($num) = (num) + 1
+    [if] (num) == 10
+        [break]
