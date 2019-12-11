@@ -23,7 +23,8 @@ jh fam 9 start
 @toolbar jh
 @toolbar tasks
 @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
-@print (currentN)/(finalN)
+//@print (currentN)/(finalN)
+($manualMax) = (WudaoManualMaxLevel) - 1
 [if] (currentN) == (finalN)
     select {r守门人};ask1 {r守门人}
     @tip 从头开始挑战|已经重置
@@ -31,18 +32,18 @@ go enter
 [while] true
     ($type1) = 0
     @await 500
-    @toolbar jh
+    //@toolbar jh
     @toolbar tasks
     @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
-    [if] (currentN) >= (WudaoManualMaxLevel) || (currentN) == (finalN) 
+    [if] (currentN) >= (manualMax) || (currentN) == (finalN) 
         [break]
-    [if] (currentN) >= (WudaoWaitCDLevel)
-        @cd (WudaoWaitCDExp)
     [if] (WudaoRenew) == 打开 && (:hpPer) < 0.8
         @liaoshang
-    [if] (:mpPer) < 0.01
+    [if] (:mpPer) < 0.1
         dazuo
-        @until (:mpPer) > 0.01
+        @until (:mpPer) > 0.2
+    [if] (currentN) >= (WudaoWaitCDLevel)
+        @cd (WudaoWaitCDExp)
     kill {r武道塔守护者}?
     @tip 你的挑战($type1)了|你现在可以进入|不要急|你要攻击谁
     [if] (type1) != 0
