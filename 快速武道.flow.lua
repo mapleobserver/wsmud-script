@@ -23,7 +23,7 @@ go enter
     @tip 你的挑战($type1)了|你现在可以进入|不要急|你要攻击谁
     [if] (type1) != 0
         ($type1) = 0
-        kill {r武道塔守护者}
+        kill {r武道塔守护者}?
     [else]
         go up
 recordGains->
