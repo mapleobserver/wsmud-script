@@ -11,10 +11,13 @@
     ($WudaoWaitCDExp) = ^none
 [if] (WudaoBefore) == null
     ($WudaoBefore) = $eq 1
+[if] (WudaoRenew) == null
+    ($WudaoRenew) = 打开
 #input ($WudaoBefore)=打塔前执行命令(用英文;隔开),(WudaoBefore)
 #input ($WudaoWaitCDExp)=打塔等待以下技能冷却,(WudaoWaitCDExp)
 #input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
 #input ($WudaoManualMaxLevel)=从此层开始快速扫荡,(WudaoManualMaxLevel)
+#select ($WudaoRenew)=血量低时自动回复,打开|关闭,(WudaoRenew)
 
 // 追捕自定义参数
 [if] (ZBWaitCD) == null

@@ -7,9 +7,12 @@
     ($WudaoWaitCDExp) = ^none
 [if] (WudaoManualMaxLevel) == null
     ($WudaoManualMaxLevel) = 84
+[if] (WudaoRenew) == null
+    ($WudaoRenew) = 打开
 #input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
 #input ($WudaoWaitCDExp)=等待以下技能冷却,(WudaoWaitCDExp)
 #input ($WudaoManualMaxLevel)=从此层开始扫荡符扫荡,(WudaoManualMaxLevel)
+#select ($WudaoRenew)=血量低时自动回复,打开|关闭,(WudaoRenew)
 #config
 <-stopSSAuto
 <-recordGains
@@ -27,12 +30,19 @@ jh fam 9 start
 go enter
 [while] true
     ($type1) = 0
+    @await 500
+    @toolbar jh
     @toolbar tasks
     @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
-    [if] (currentN) >= (WudaoManualMaxLevel)
+    [if] (currentN) >= (WudaoManualMaxLevel) || (currentN) == (finalN) 
         [break]
     [if] (currentN) >= (WudaoWaitCDLevel)
         @cd (WudaoWaitCDExp)
+    [if] (WudaoRenew) == 打开 && (:hpPer) < 0.8
+        @liaoshang
+    [if] (:mpPer) < 0.01
+        dazuo
+        @until (:mpPer) > 0.01
     kill {r武道塔守护者}?
     @tip 你的挑战($type1)了|你现在可以进入|不要急|你要攻击谁
     [if] (type1) != 0
