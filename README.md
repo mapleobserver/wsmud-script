@@ -21,6 +21,10 @@ wsmud-Raid: [https://greasyfork.org/zh-CN/scripts/375851-wsmud-raid](https://gre
 
 wsmud-Trigger: [https://greasyfork.org/zh-CN/scripts/378984-wsmud-trigger](https://greasyfork.org/zh-CN/scripts/378984-wsmud-trigger)
 
+趣味插件：
+
+wsmud-funny: [https://greasyfork.org/zh-CN/scripts/380709-wsmud-funny](https://greasyfork.org/zh-CN/scripts/380709-wsmud-funny)
+
 ## 鸣谢
 
 - 插件作者：knva、Raid、苏轻
