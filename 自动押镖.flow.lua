@@ -22,6 +22,7 @@
 //#input ($wmTime) = 魂归武庙休养时间ms,(wmTime)
 
 #config
+stopstate
 @tidyBag
 ($hpPer) = (EscortHpThreshold)/100
 ($mpPer) = (EscortMpThreshold)/100
@@ -90,6 +91,7 @@
             select {(name)};task yunbiao {(name)} give
             [break]
     ($num) = (num) + 1
+    ($numJF) = 0
 recordGains->
 stopSSAuto->
 enable sword (jianfa);eq (weapon)
