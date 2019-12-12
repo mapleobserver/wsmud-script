@@ -18,9 +18,10 @@ $to 武当派-后山小院
 ($id_fight) = (id_2)
 [while] true
     ($succes) = null
-    $stoppfm
+    //$stoppfm
+    @liaoshang
     fight (id_fight)
-    @perform force.power,parry.yi,unarmed.duo,sword.suo
+    @perform parry.yi,force.power,unarmed.duo,sword.suo
     @tip 当啷一声($succes)地上|手中并($succes)兵器|早有准备|你向后退了几步|这场比试算我输了|承让
     @print 已释放
     [while] true
@@ -46,3 +47,4 @@ pty 武器已下
 $usezml 参合
 @cd
 $killall
+$waitpfm parry.yi,force.power
