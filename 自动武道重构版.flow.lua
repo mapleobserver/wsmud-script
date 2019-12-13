@@ -37,11 +37,16 @@ go enter
     @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
     [if] (currentN) >= (manualMax) || (currentN) == (finalN) 
         [break]
-    [if] (WudaoRenew) == 打开 && (:hpPer) < 0.8
-        @liaoshang
+    [if] (WudaoRenew) == 打开 && (:hpPer) < 0.7
+        liaoshang
+        @until (:hpPer) > 0.99
+        stopstate
     [if] (:mpPer) < 0.1
+        $to 扬州城-武庙
         dazuo
-        @until (:mpPer) > 0.2
+        @until (:mpPer) > 0.9
+        stopstate
+        jh fam 9 start;go enter
     [if] (currentN) >= (WudaoWaitCDLevel)
         @cd (WudaoWaitCDExp)
     kill {r武道塔守护者}?
