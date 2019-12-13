@@ -382,7 +382,7 @@ unsafeWindow.say = say;
                 role.skill_count = message.items.length;
                 role.skills = message.items;
                 message.items.forEach(skill => {
-                    let color = ["/", "wht", "hig", "hic", "hiy", "hiz", "hio", "hir"];
+                    let color = ["/", "wht", "hig", "hic", "hiy", "hiz", "hio", "ord"];
                     for (let i = 1; i < color.length; i++) {
                         if (skill.name.includes(color[i])) {
                             skill.color = i;

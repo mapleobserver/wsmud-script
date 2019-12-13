@@ -313,7 +313,7 @@
                             if (/<hiy>.*/.test(name)) k = 4;
                             if (/<hiz>.*/.test(name)) k = 5;
                             if (/<hio>.*/.test(name)) k = 6; // 橙
-                            if (/<hir>.*/.test(name)) k = 7; // 红
+                            if (/<ord>.*/.test(name)) k = 7; // 红
                             break;
                         }
                     }
