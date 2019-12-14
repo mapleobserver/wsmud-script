@@ -17,7 +17,6 @@
 #input ($WudaoWaitCDExp)=打塔等待以下技能冷却,(WudaoWaitCDExp)
 #input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
 #input ($WudaoManualMaxLevel)=从此层开始快速扫荡,(WudaoManualMaxLevel)
-#select ($WudaoRenew)=血量低时自动回复,打开|关闭,(WudaoRenew)
 
 // 追捕自定义参数
 [if] (ZBWaitCD) == null
