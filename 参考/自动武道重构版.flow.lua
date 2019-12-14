@@ -38,14 +38,10 @@ go enter
     [if] (currentN) >= (manualMax) || (currentN) == (finalN) 
         [break]
     [if] (WudaoRenew) == 打开 && (:hpPer) < 0.7
-        liaoshang
-        @until (:hpPer) > 0.99
-        stopstate
+        @liaoshang
     [if] (:mpPer) < 0.1
         $to 扬州城-武庙
-        dazuo
-        @until (:mpPer) > 0.9
-        stopstate
+        @dazuo
         jh fam 9 start;go enter
     [if] (currentN) >= (WudaoWaitCDLevel)
         @cd (WudaoWaitCDExp)
