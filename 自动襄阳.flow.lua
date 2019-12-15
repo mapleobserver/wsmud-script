@@ -1,6 +1,7 @@
 // raid.flow
 // 自动襄阳扫墙
 // 自动报名，自动复活，自动扫墙
+// 四区白三三
 stopstate
 jh fam 8 start
 select {r郭靖}
@@ -10,12 +11,6 @@ go north[4]
 @cmdDelay 800
 [while] true
     <---
-    @js ($roomXY) = '(:room)'.indexOf('襄阳城')
-    @js ($roomWM) = '(:room)'.indexOf('武庙')
-    [if] (roomXY) == -1
-        [if] (roomWM) == -1
-            $to 襄阳城-广场
-            go north[4]
     [if] {r蒙古}? != null
         stopstate
         kill {r蒙古}?
@@ -25,12 +20,15 @@ go north[4]
         @renew
         $to 襄阳城-广场
         go north[4]
+        [continue]
     [else if] (:hpPer) < 0.5 && (:combating) == false
         stopstate
         @liaoshang
-    [else if] (:mpPer) < 0.3 && (:combating) == false
+    [else if] (:mpPer) < 0.2 && (:combating) == false
         stopstate
-        @dazuo
+        dazuo
+        @until (:mpPer) > 0.5
+        stopstate
     --->
     //从北门开始
     go east
