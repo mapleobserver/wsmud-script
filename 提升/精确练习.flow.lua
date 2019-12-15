@@ -1,5 +1,4 @@
 // raid.flow
-<-stopSSAuto
 @toolbar jh
 @toolbar skills
 //级别上限
@@ -25,6 +24,7 @@
 [if] (arg2) != null
     ($lianxi_map) = (arg2)
 
+<-stopSSAuto
 //获取技能数量
 @js ($skill_num) = [(Skill)].length
 //传送到练功房
