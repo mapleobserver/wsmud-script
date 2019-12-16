@@ -48,5 +48,5 @@ pty 准备下武器，大佬们帮忙清下号令
 pty 武器已下
 @liaoshang
 $usezml 参合
-$killall
-$waitpfm parry.yi,force.power
+kill (id_2);kill (id_2)
+@perform parry.yi,force.power
