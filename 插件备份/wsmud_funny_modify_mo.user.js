@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name        wsmud_funny
+// @name        wsmud_funny_modify_mo
 // @namespace   suqing.fun
-// @version     0.3.26
+// @version     0.3.26.mo
 // @author      SuQing
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/380709
@@ -500,7 +500,7 @@ unsafeWindow.say = say;
                 ["十步杀一人", "千里不留行", "事了拂衣去", "深藏身与名"],
                 ["闲过信陵饮", "脱剑膝前横", "将炙啖朱亥", "持觞劝侯嬴"],
                 ["三杯吐然诺", "五岳倒为轻", "眼花耳热后", "意气素霓生"],
-                ["救赵挥金槌", "邯郸先震惊", "千秋二壮士", "煊赫大梁城"],
+                ["救赵挥金槌", "邯郸先震惊", "千秋二壮士", "烜赫大梁城"],
                 ["纵死侠骨香", "不惭世上英", "谁能书阁下", "白首太玄经"],
             ];
             let go = ["go east", "go south", "go west", "go north"];

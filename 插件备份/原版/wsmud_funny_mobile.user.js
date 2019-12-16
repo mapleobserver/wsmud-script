@@ -313,7 +313,7 @@
                             if (/<hiy>.*/.test(name)) k = 4;
                             if (/<hiz>.*/.test(name)) k = 5;
                             if (/<hio>.*/.test(name)) k = 6; // 橙
-                            if (/<ord>.*/.test(name)) k = 7; // 红
+                            if (/<hir>.*/.test(name)) k = 7; // 红
                             break;
                         }
                     }
@@ -392,11 +392,11 @@
         }
     });
 
-    /* listener.addListener("itemadd", function(data) {
+    listener.addListener("itemadd", function(data) {
         if (/蒙古兵|十夫长|百夫长|千夫长|万夫长/.test(data.name)) {
             if (data.id) fn.send(`kill ${data.id}`);
         }
-    }); */
+    });
 
 
 
@@ -461,7 +461,7 @@
     };
 
     $(document).ready(function() {
-        //GM_addStyle(`.room_desc{overflow:hidden;white-space:nowrap;}`);
+        GM_addStyle(`.room_desc{overflow:hidden;white-space:nowrap;}`);
         GM_addStyle(`.content-bottom{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}`);
     });
 })();

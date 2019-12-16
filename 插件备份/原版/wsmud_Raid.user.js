@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.9
+// @version         2.4.11
 // @date            23/12/2018
 // @modified        15/02/2019
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
-// @author          Bob.cn
+// @author          Bob.cn, 初心
 // @match           http://*.wsmud.com/*
 // @run-at          document-end
 // @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
@@ -3744,13 +3744,13 @@ go north
 select {r四十二章经g}?
 get {r四十二章经g}?
 go south;go south
-($open) = 打开
+($open) = 没开
 look men;unlock men
 @tip 你用一把钥匙($open)了牢房门|你不会撬锁
 [if] (open) == 打开
     go south
     select {r庄允城}?
-    ask {r庄允城}? about 吴荣之
+    ask {r庄允城}? about 吴之荣
     @kill 庄允城`
         },
         {
@@ -4663,7 +4663,7 @@ look men;open men
                 window.open("http://wsmud.bobcn.me/category/4", '_blank').location;
             });
             $(".suqingHome").on('click', function () {
-                window.open("https://suqing.fun/wsmud/", '_blank').location;
+                window.open("https://emeisuqing.github.io/wsmud/", '_blank').location;
             });
         },
         shortcut: function() {
