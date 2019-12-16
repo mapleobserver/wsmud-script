@@ -12,6 +12,7 @@ $stoppfm;enable sword wudugoufa;enable staff shedaoqigong;enable throwing jinshe
 @on 帮战翻车
 $to 武当派-后山小院
 @until (:room) == 武当派-后山小院
+pty 准备下武器，大佬们帮忙清下号令
 ($id_1) = {r武当派长老}?
 ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
 ($id_bang) = {r张三丰}?
@@ -47,6 +48,5 @@ $to 武当派-后山小院
 pty 武器已下
 @liaoshang
 $usezml 参合
-@cd
 $killall
 $waitpfm parry.yi,force.power
