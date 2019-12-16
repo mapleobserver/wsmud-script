@@ -23,19 +23,21 @@ $to 武当派-后山小院
     fight (id_fight)
     @perform parry.yi,force.power,unarmed.duo,sword.suo
     @tip 当啷一声($succes)地上|手中并($succes)兵器|早有准备|你向后退了几步|这场比试算我输了|承让|脸色微变|向后跃开三尺
-    @print 已释放
     [while] true
         go south
         [if] (:room) != 武当派-后山小院
             [break]
     @until (:combating) == false
+    @print 已比试
     go north
     [if] (succes) != null
+        @print 下武器成功，准备下一个
         [if] (id_fight) == (id_2)
             ($id_fight) = (id_1)
         [else if] (id_fight) == (id_1)
             ($id_fight) = (id_bang)
         [else]
+            @print 下武器失败，准备重试
             [break]
     [else]
         $to 扬州城-武庙
