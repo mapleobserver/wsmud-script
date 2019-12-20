@@ -23,7 +23,7 @@ pty 准备下武器，大佬们帮忙清下号令
     @liaoshang
     fight (id_fight)
     @perform parry.yi,force.power,unarmed.duo,sword.suo
-    @tip 当啷一声($succes)地上|手中并($succes)兵器|早有准备|你向后退了几步|这场比试算我输了|承让|脸色微变|向后跃开三尺
+    @tip 当啷一声($succes)地上|手中并($succes)兵器|早有准备|你向后退了几步|这场比试算我输了|承让|脸色微变|向后跃开三尺|果然高明
     [while] true
         go south
         [if] (:room) != 武当派-后山小院
