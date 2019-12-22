@@ -211,7 +211,7 @@ $wait 5000
     [if] (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(偷渡)
         @print <hiy>(FBName)</hiy><ord>无法扫荡！</ord>
     [else]
-        [if] {b扫荡符#} < 20
+        [if] {b扫荡符#}? < 20 || {b扫荡符}? == null
             shop 0 20
         <-recordGains
         (FBCr)
