@@ -22,9 +22,10 @@ jh fam 9 start
 @toolbar tasks
 @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
 //@print (currentN)/(finalN)
+@wait 3000
 ($manualMax) = (WudaoManualMaxLevel) - 1
 [if] (currentN) == (finalN)
-    select {r守门人};ask1 {r守门人}
+    ask1 {r守门人}
     @tip 从头开始挑战|已经重置
 go enter
 [while] true
@@ -45,11 +46,11 @@ go enter
     go up
 ($num)=0
 jh fam 9 start
-select {r守门人};ask2 {r守门人}
+ask2 {r守门人}
 @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
 [if] (num) > 0
     shop 0 (num)
-select {r守门人};ask2 {r守门人};ask3 {r守门人}
+ask2 {r守门人};ask3 {r守门人}
 @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
 recordGains->
 stopSSAuto->
