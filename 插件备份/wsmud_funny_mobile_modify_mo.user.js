@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name        wsmud_funny_mobile_modify_mo
-// @namespace   suqing
+// @namespace   suqing&mapleo
 // @version     0.1.1.mo
 // @author      sq
 // @match       http://*.wsmud.com/*
-// @homepage    https://greasyfork.org/zh-CN/scripts/382076
+// @homepage    
 // @description wsmud_funny 的手机适用版
 // @run-at      document-start
 // @require     http://code.jquery.com/jquery-3.3.1.min.js
@@ -135,6 +135,8 @@
                     case "time":
                         break;
                     case "disobj":
+                        break;
+                    case "enapfm":
                         break;
                     default:
                         console.log(data);
