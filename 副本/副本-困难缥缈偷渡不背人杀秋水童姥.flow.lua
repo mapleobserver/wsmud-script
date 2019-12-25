@@ -64,7 +64,7 @@ stopstate
     fight {r易直非};$waitpfm (skilldodge);go northup[3]
     zou tiesuo
     $startpfm
-    @until {r童姥}? != null
+    @until {r童姥} != null
     @kill 李秋水
     @until {r李秋水的尸体}? != null
     [if] (_DungeonWaitSkillCD) == 打开
