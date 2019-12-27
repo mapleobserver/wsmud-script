@@ -4,5 +4,6 @@
 @js ($onlyroll) = '(content)'.match('^roll$')
 [if] (onlyroll) != null
     @js ($rollNum) = Math.floor(Math.random()*100+1)
-    @print (name)点数：(rollNum)
-    pty (name)点数：(rollNum)
+    @print [(name)]点数：(rollNum)
+    ($LogRoll) = (LogRoll)|[(name)]点数：(rollNum)
+    pty (:date)-(:hour):(:minute):(:second)-([(name)]点数：(rollNum)
