@@ -1,7 +1,7 @@
 // raid.flow
 // 四区白三三
-// 暂用版
-//<-stopSSAuto
+// 圆月弯刀副本，青城山路线，只到挡刀被青青救醒，后续剧情请手动操作。
+<-stopSSAuto
 @cmdDelay 500
 cr wuyue/qingcheng/shanlu
 go westup
@@ -44,13 +44,14 @@ answer s3
 [if] (:living) == true
     @tip 青青看了你一眼转身跟了过去
     go west
-    @wait 600000
-    stopstate
-    go north
+    @print <ord>已进入谷底，请手动进行后续剧情</ord>
+    //@wait 600000
+    //stopstate
+    //go north
     //@tip 青青呢
     //answer s2
     //go south
     //go south
     //@tip 后会有期
     //answer s1
-//stopSSAuto->
+stopSSAuto->
