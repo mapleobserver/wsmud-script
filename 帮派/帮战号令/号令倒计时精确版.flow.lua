@@ -9,7 +9,6 @@ pty 注意：号令计时器已经启动！
 ($did_60) = false
 ($did_30) = false
 ($did_10) = false
-($did_5) = false
 ($num) = 1
 [while] true
     <---
@@ -45,10 +44,6 @@ pty 注意：号令计时器已经启动！
         [else]
             pty 注意：号令将在 10 秒后刷新！
         ($did_10) = true
-    ($r_5) = (stamp) + 5 - (stamp0)
-    [if] (r_5) >= (interval) && (did_5) == false
-        pty 注意：号令将在 5 秒后刷新！
-        ($did_5) = true
     ($r) = (stamp) - (stamp0)
     [if] (r) >= (interval)
         [if] (num) == 5
@@ -61,7 +56,6 @@ pty 注意：号令计时器已经启动！
         ($did_60) = false
         ($did_30) = false
         ($did_10) = false
-        ($did_5) = false
         ($stamp0) = (stamp)
         ($num) = (num) + 1
     @await 200
