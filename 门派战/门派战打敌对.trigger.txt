@@ -1,0 +1,21 @@
+// 门派战自动叫杀敌对门派
+// 四区白三三
+// 频道：世界
+// 发言人：填自己门派掌门的名字
+@js ($match) = var re=/格杀勿论/;var ta=re.exec('(content)');if(ta!=null){true}else{false}
+@js ($mpname) = var re=/(少林|逍遥|峨眉|丐帮|武当|华山)/;var ta=re.exec('(content)');if(ta!=null){ta[0]}else{'null'}
+[if] (match) == true && (mpname) != null
+    stopstate
+    [if] (mpname) == 峨眉
+        $to 峨眉派-清修洞
+    [else if] (mpname) == 武当
+        $to 武当派-后山小院
+    [else if] (mpname) == 少林
+        $to 少林派-方丈楼
+    [else if] (mpname) == 华山
+        $to 华山派-客厅
+    [else if] (mpname) == 逍遥
+        $to 逍遥派-地下石室
+    [else if] (mpname) == 丐帮
+        $to 丐帮-林间小屋
+    $killall
