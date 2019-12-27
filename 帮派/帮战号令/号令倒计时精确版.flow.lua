@@ -1,0 +1,67 @@
+//raid.flow
+//根据论坛 Raid 大佬的精确版修改。
+//四区白三三
+pty 注意：号令计时器已经启动！
+[if] (stamp0) == null
+    ($stamp0) = (:hour) * 60 * 60 + (:minute) * 60 + (:second)
+    ($interval) = 60 * 5
+($did_120) = false
+($did_60) = false
+($did_30) = false
+($did_10) = false
+($did_5) = false
+($num) = 1
+[while] true
+    <---
+    [if] (BPZEnd) == true
+        [exit]
+    --->
+    ($stamp) = (:hour) * 60 * 60 + (:minute) * 60 + (:second)
+    ($r_120) = (stamp) + 120 - (stamp0)
+    [if] (r_120) >= (interval) && (did_120) == false
+        [if] (num) == 5
+            pty 注意：帮战将在 2 分钟后结束！
+        [else]
+            pty 注意：号令将在 2 分钟后刷新！
+        ($did_120) = true
+    ($r_60) = (stamp) + 60 - (stamp0)
+    [if] (r_60) >= (interval) && (did_60) == false
+        [if] (num) == 5
+            pty 注意：帮战将在 1 分钟后结束！
+        [else]
+            pty 注意：号令将在 1 分钟后刷新！
+        ($did_60) = true
+    ($r_30) = (stamp) + 30 - (stamp0)
+    [if] (r_30) >= (interval) && (did_30) == false
+        [if] (num) == 5
+            pty 注意：帮战将在 30 秒后结束！
+        [else]
+            pty 注意：号令将在 30 秒后刷新！
+        ($did_30) = true
+    ($r_10) = (stamp) + 10 - (stamp0)
+    [if] (r_10) >= (interval) && (did_10) == false
+        [if] (num) == 5
+            pty 注意：帮战将在 10 秒后结束！
+        [else]
+            pty 注意：号令将在 10 秒后刷新！
+        ($did_10) = true
+    ($r_5) = (stamp) + 5 - (stamp0)
+    [if] (r_5) >= (interval) && (did_5) == false
+        pty 注意：号令将在 5 秒后刷新！
+        ($did_5) = true
+    ($r) = (stamp) - (stamp0)
+    [if] (r) >= (interval)
+        [if] (num) == 5
+            pty 注意：还有 5 分钟，第 (num) 波号令已经刷新！
+        [else if] (num) == 4
+            pty 注意：还有 10 分钟，第 (num) 波号令已经刷新！
+        [else]
+            pty 注意：第 (num) 波号令已经刷新！
+        ($did_120) = false
+        ($did_60) = false
+        ($did_30) = false
+        ($did_10) = false
+        ($did_5) = false
+        ($stamp0) = (stamp)
+        ($num) = (num) + 1
+    @await 200
