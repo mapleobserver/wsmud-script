@@ -1,0 +1,55 @@
+// 困难天龙偷渡刷六脉
+// wsmud.bobcn.me
+// 基于jicki版本修改
+[if] (_DungeonHpThreshold) == null
+    ($_DungeonHpThreshold) = 50
+[if] (_DungeonWaitSkillCD) == null
+    ($_DungeonWaitSkillCD) = 打开
+[if] (_DungeonBagCleanWay) == null
+    ($_DungeonBagCleanWay) = 存仓及售卖
+#select ($_DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(_DungeonHpThreshold)
+#select ($_DungeonWaitSkillCD) = Boss战前等待技能冷却,打开|关闭,(_DungeonWaitSkillCD)
+#select ($_DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(_DungeonBagCleanWay)
+#input ($_repeat) = 重复次数,1
+#config
+<-stopSSAuto
+stopstate
+<---
+($hpPer) = (_DungeonHpThreshold)/100
+[if] (:hpPer) < (hpPer)
+    @liaoshang
+--->
+<-recordGains
+($_i) = 0
+[while] (_i) < (_repeat)
+    @renew
+    jh fb 27 start2;cr tianlong/damen 1 0
+    go south[3]
+    @kill 本因
+    go north
+    go southwest
+    @kill 本观
+    go south
+    @kill 本参
+    go east
+    go south
+    @liaoshang
+    [if] (_DungeonWaitSkillCD) == 打开
+        @cd
+    @kill 枯荣大师
+    kill {r段誉}
+    @until (:combating) == false
+    go north
+    go east
+    @kill 本相
+    go north
+    @kill 本尘
+    cr;cr over
+    ($_i) = (_i) + 1
+[if] (_DungeonBagCleanWay) == 售卖
+    @cleanBag
+[else if] (_DungeonBagCleanWay) == 存仓及售卖
+    @tidyBag
+$to 住房-练功房;dazuo
+recordGains->
+stopSSAuto->
