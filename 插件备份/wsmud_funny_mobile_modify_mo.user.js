@@ -136,8 +136,6 @@
                         break;
                     case "disobj":
                         break;
-                    case "enapfm":
-                        break;
                     default:
                         console.log(data);
                         break;
