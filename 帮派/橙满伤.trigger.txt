@@ -28,10 +28,18 @@
         pty 占比(percent)，切换目标：洪七公
     [else if] (id) == (id_ban)
         $stoppfm
-        pty 洪七公已满，停手围观
+        pty 洪七公已满，我先撤
+        [while] (:room) == 丐帮-林间小屋
+            go down
+            @await 500
+        @until (:room) == 丐帮-暗道
+        @await 500
+        go up
     @until (:combating) == false
     $startpfm
 [else if] (:room) == 武当派-后山小院 && (:combating) == true
+    ($id_1) = {r武当派长老}?
+    ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
     ($id_ban) = {r张三丰}?
     [if] (id) != (id_1) && (id) != (id_ban)
         kill (id_1);kill (id_1)
@@ -41,7 +49,13 @@
         pty 占比(percent)，切换目标：张三丰
     [else if] (id) == (id_ban)
         $stoppfm
-        pty 张三丰已满，停手围观
+        pty 张三丰已满，我先撤
+        [while] (:room) == 武当派-后山小院
+            go south
+            @await 500
+        @until (:room) == 武当派-林间小径
+        @await 500
+        go north
     @until (:combating) == false
     $startpfm
 [else if] (:room) == 少林派-方丈楼 && (:combating) == true
