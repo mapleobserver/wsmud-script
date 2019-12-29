@@ -67,10 +67,11 @@ stopstate
     //@until (:status tong) == false && {r天山童姥}? != null
     @until {天山童姥} != null
     @kill 李秋水
-    @until {r李秋水的尸体}? != null
-    [if] (_DungeonWaitSkillCD) == 打开
-        @cd
-    @kill 童姥
+    @until {李秋水的尸体} != null
+    [if] {r天山童姥} != null
+        [if] (_DungeonWaitSkillCD) == 打开
+            @cd
+        @kill 童姥
     go northup;go north
     @kill 余婆婆
     go north;go north;go west
