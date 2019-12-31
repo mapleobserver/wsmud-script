@@ -42,3 +42,4 @@
 专心：room
 寒玉：room
 鼓舞：success
+号令：boss
