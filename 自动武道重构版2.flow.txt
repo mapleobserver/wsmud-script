@@ -37,7 +37,7 @@ go enter
     [if] (currentN) >= (WudaoWaitCDLevel)
         @cd (WudaoWaitCDExp)
     kill {r武道塔守护者}?
-    @until {r武道塔守护者}? == null || (:combating) == true
+    //@until {r武道塔守护者}? == null || (:combating) == true
     @until {r武道塔守护者}? == null || (:combating) == false
     [if] (:hpPer) < 0.8 || (:mpPer) < 0.5
         @renew
