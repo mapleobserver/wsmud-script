@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.62
+// @version      0.0.32.64
 // @date         01/07/2018
 // @modified     30/10/2019
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
@@ -138,7 +138,7 @@
                     var itemid = itemids[itemids.length - 1];
                     WG.getItemNameByid(itemid, function (name) {
                         if (lock_list.indexOf(name) >= 0) {
-                            messageAppend(`已锁物品${name},无法丢弃`);
+                            messageAppend(`已锁物品${name}，无法丢弃，请解锁后重试`);
                             return;
                         } else {
                             ws.send(text);
@@ -1289,7 +1289,7 @@
                     var rolep = role;
                     if (G.level) {
                         rolep = G.level + role;
-                        if (G.level.indexOf('武帝') >= 0) {
+                        if (G.level.indexOf('武帝') >= 0||G.level.indexOf('武神') >= 0) {
                             $('.zdy-item.zdwk').html("修炼(Y)");
                         }
                     }
@@ -2336,7 +2336,7 @@
 
         zdwk: function (v) {
             if (G.level) {
-                if (G.level.indexOf('武帝') >= 0) {
+                if (G.level.indexOf('武帝') >= 0||G.level.indexOf('武神') >= 0) {
                     WG.go("住房-练功房");
                     WG.Send("xiulian");
                     return;
@@ -4870,7 +4870,7 @@
                 $(".zdwk").on("click", WG.zdwk);
                 $(".auto_perform").on("click", WG.auto_preform_switch);
                 $(".cmd_echo").on("click", WG.cmd_echo_button);
-                if (G.level != null && G.level.indexOf('武帝') >= 0) {
+                if (G.level != null && (G.level.indexOf('武帝') >= 0||G.level.indexOf('武神') >= 0)) {
                     $('.zdy-item.zdwk').html("修炼(Y)");
                 }
             }
@@ -5796,7 +5796,7 @@
                 + UI.html_input("autobuy", "自动当铺购买清单：(用半角逗号分隔)")
 
                 + UI.html_switch('zdyskillsswitch', '自定义技能顺序开关：', 'zdyskills')
-                + UI.html_input("zdyskilllist", "自定义技能顺序json：")+
+                + UI.html_input("zdyskilllist", "自定义技能顺序json数组：")+
 
                 `
 
