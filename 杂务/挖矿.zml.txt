@@ -1,0 +1,11 @@
+//自命令，选择 Raidjs 流程，方便节日期间武帝挖矿
+//四区白三三
+stopstate
+[if] {b铁镐}? != null
+    wakuang
+[else]
+    $to 扬州城-打铁铺
+    list {r铁匠}
+    @dialog
+    buy 1 {d铁镐} from {r铁匠}
+    wakuang
