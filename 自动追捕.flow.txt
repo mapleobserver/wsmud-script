@@ -3,9 +3,9 @@
 <-stopSSAuto
 <-recordGains
 [if] (ZBWaitCD) == null
-   ($ZBWaitCD) = 15
+   ($ZBWaitCD) = 31
 [if] (ZBMax) == null
-   ($ZBMax) = 52
+   ($ZBMax) = 9999999
 [if] (ZBcdskill) == null
    ($ZBcdskill) = ^none
 [if](AZB_action) == null
