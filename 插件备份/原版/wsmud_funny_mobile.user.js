@@ -245,7 +245,7 @@
                 if (item.state === 2) fn.send(`taskover ${item.id}`); // 自动完成
                 if (item.id === "signin") {
                     let a = item.desc.match(/师门任务：(.*)，副本：<(.*)>(.*)\/20<(.*)>/);
-                    let b = item.desc.match(/(.*)武道塔(.*)，进度(.*)\/(.*)<(.*)>，<(.*)>(.*)首席请安。<(.*)>/);
+                    let b = item.desc.match(/(.*)武道塔(.*)，进度(.*)\/(.*)<(.*)>，<(.*)>(.*)首席请安<(.*)>/);
                     (parseInt(a[3]) < 20) ? fb = `<hig>${a[3]}</hig>` : fb = a[3];
                     (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
                     wd2 = b[4];

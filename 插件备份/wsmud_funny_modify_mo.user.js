@@ -392,7 +392,7 @@ unsafeWindow.say = say;
                     skills[skill.id] = skill;
                 });
             } else if (message.item) {//学会新技能
-                let color = ["/", "wht", "hig", "hic", "hiy", "hiz", "hio", "hir"];
+                let color = ["/", "wht", "hig", "hic", "hiy", "hiz", "hio", "ord"];
                 for (let i = 1; i < color.length; i++) {
                     if (message.item.name.includes(color[i])) {
                         message.item.color = i;//新学的技能也要添加上颜色
@@ -679,7 +679,7 @@ unsafeWindow.say = say;
                 if (task.state === 2) SendCommand(`taskover ${task.id}`);//自动完成
                 if (task.id === "signin") {
                     let a = task.desc.match(/师门任务：(.*)，副本：<(.*)>(.*)\/20<(.*)>/);
-                    let b = task.desc.match(/(.*)武道塔(.*)，进度(.*)\/(.*)<(.*)>，<(.*)>(.*)首席请安。<(.*)>/);
+                    let b = task.desc.match(/(.*)武道塔(.*)，进度(.*)\/(.*)<(.*)>，<(.*)>(.*)首席请安<(.*)>/);
                     (parseInt(a[3]) < 20) ? fb = `<hig>${a[3]}</hig>` : fb = a[3];
                     (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
                     wd2 = b[4];

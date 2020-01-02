@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_funny
 // @namespace   suqing.fun
-// @version     0.3.26
+// @version     0.3.28
 // @author      SuQing
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/380709
@@ -206,12 +206,16 @@ unsafeWindow.say = say;
             room.path = message.path;
 
             room.desc = message.desc;
+            // console.info(room.desc);
             if (room.desc.includes("cmd")) {
+                // 四周灰蒙蒙的不知身在何处，在你的正前方一根巨大的柱子虚空而立，柱子上雕刻着一些神秘的花纹，底下立着一块残破的<cmd cmd="look bei">石碑</cmd>，上面写着【戊申】两个大字。
+                // <cmd cmd="look bei">石碑</cmd>
                 console.log(room.desc);
                 room.desc = room.desc.replace("<hig>椅子</hig>", "椅子");//新手教程的椅子
                 room.desc = room.desc.replace("<CMD cmd='look men'>门(men)<CMD>", "<cmd cmd='look men'>门</cmd>");//兵营副本的门
                 console.log(room.desc);
                 room.desc = room.desc.replace(/span/g, "cmd");//古墓里的画和古琴是<span>标签
+                room.desc = room.desc.replace(/"/g, "'"); // "" => ''
                 console.log(room.desc);
                 room.desc = room.desc.replace(/\((.*?)\)/g, "");//去除括号和里面的英文单词
                 console.log(room.desc);
@@ -382,7 +386,7 @@ unsafeWindow.say = say;
                 role.skill_count = message.items.length;
                 role.skills = message.items;
                 message.items.forEach(skill => {
-                    let color = ["/", "wht", "hig", "hic", "hiy", "hiz", "hio", "hir"];
+                    let color = ["/", "wht", "hig", "hic", "hiy", "hiz", "hio", "ord"];
                     for (let i = 1; i < color.length; i++) {
                         if (skill.name.includes(color[i])) {
                             skill.color = i;
@@ -392,7 +396,7 @@ unsafeWindow.say = say;
                     skills[skill.id] = skill;
                 });
             } else if (message.item) {//学会新技能
-                let color = ["/", "wht", "hig", "hic", "hiy", "hiz", "hio", "hir"];
+                let color = ["/", "wht", "hig", "hic", "hiy", "hiz", "hio", "ord"];
                 for (let i = 1; i < color.length; i++) {
                     if (message.item.name.includes(color[i])) {
                         message.item.color = i;//新学的技能也要添加上颜色
@@ -679,7 +683,7 @@ unsafeWindow.say = say;
                 if (task.state === 2) SendCommand(`taskover ${task.id}`);//自动完成
                 if (task.id === "signin") {
                     let a = task.desc.match(/师门任务：(.*)，副本：<(.*)>(.*)\/20<(.*)>/);
-                    let b = task.desc.match(/(.*)武道塔(.*)，进度(.*)\/(.*)<(.*)>，<(.*)>(.*)首席请安。<(.*)>/);
+                    let b = task.desc.match(/(.*)武道塔(.*)，进度(.*)\/(.*)<(.*)>，<(.*)>(.*)首席请安<(.*)>/);
                     (parseInt(a[3]) < 20) ? fb = `<hig>${a[3]}</hig>` : fb = a[3];
                     (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
                     wd2 = b[4];
