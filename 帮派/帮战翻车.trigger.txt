@@ -1,0 +1,13 @@
+[if] (:room) == 武当派-后山小院
+    relive
+    @liaoshang
+    $to 武当派-后山小院
+    $getall
+    @until (:status xuruo) == false
+    ($id_1) = {r武当派长老}?
+    ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+    ($id_ban) = {r张三丰}?
+    [if] (MPnpc) == (id_2) || (MPnpc) == (id_1)
+        kill (MPnpc);kill (MPnpc)
+    [else if] (MPnpc) != null
+        kill {r张三丰}?
