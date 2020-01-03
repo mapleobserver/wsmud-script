@@ -212,6 +212,7 @@ unsafeWindow.say = say;
                 room.desc = room.desc.replace("<CMD cmd='look men'>门(men)<CMD>", "<cmd cmd='look men'>门</cmd>");//兵营副本的门
                 console.log(room.desc);
                 room.desc = room.desc.replace(/span/g, "cmd");//古墓里的画和古琴是<span>标签
+                room.desc = room.desc.replace(/"/g, "'"); // "" => ''
                 console.log(room.desc);
                 room.desc = room.desc.replace(/\((.*?)\)/g, "");//去除括号和里面的英文单词
                 console.log(room.desc);
