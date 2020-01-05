@@ -56,7 +56,7 @@ stopstate
     go north
     go north
     go north
-    go north
+    //go north
 [else if] (ZBmp) == 华山派
     //jh fam 3 start
     go eastup
@@ -99,7 +99,7 @@ stopstate
     go east;go north
     go west
     go east;go north
-    go north   
+    //go north   
 [else if] (ZBmp) == 峨眉派
     //jh fam 4 start
     go northup
@@ -115,7 +115,7 @@ stopstate
     go south
     go north;go north;go west
     go east;go north
-    go north
+    //go north
 [else if] (ZBmp) == 逍遥派
     //jh fam 5 start
     go north
@@ -129,7 +129,7 @@ stopstate
     jh fam 5 start;go south
     go south
     jh fam 5 start;go down
-    go down
+    //go down
 [else if] (ZBmp) == 丐帮
     //jh fam 6 start
     go down
@@ -139,4 +139,4 @@ stopstate
     go up
     go down;go east
     go east
-    go up
+    //go up
