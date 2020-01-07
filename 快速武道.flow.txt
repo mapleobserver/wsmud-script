@@ -16,14 +16,12 @@ jh fam 9 start
     @tip 从头开始挑战|已经重置
 go enter
 [while] true
-    ($type1) = 0
     [if] (:room) == 武道塔-第一百层
         [break]
     kill {r武道塔守护者}?
     @tip 你的挑战($type1)了|你现在可以进入|不要急|你要攻击谁|你又恢复了知觉
-    [if] (type1) != 0
-        ($type1) = 0
-        kill {r武道塔守护者}?
+    [if] {r武道塔守护者}? != null
+        [continue]
     [else]
         go up
 recordGains->
