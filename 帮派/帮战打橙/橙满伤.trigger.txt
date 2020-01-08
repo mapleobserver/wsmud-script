@@ -42,17 +42,17 @@
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
     ($id_ban) = {r张三丰}?
     [if] (id) != (id_1) && (id) != (id_ban)
-        kill (id_1);kill (id_1)
         ($MPnpc) = (id_1)
+        kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
     [else if] (id) == (id_1)
-        kill (id_ban);kill (id_ban)
         ($MPnpc) = (id_ban)
+        kill (id_ban);kill (id_ban)
         pty 占比(percent)，切换目标：张三丰
     [else if] (id) == (id_ban)
+        ($MPnpc) = null
         $stoppfm
         pty 张三丰已满，我先撤
-        ($MPnpc) = null
         [while] (:room) == 武当派-后山小院
             go south
             @await 500
