@@ -45,13 +45,16 @@ stopstate
     //进副本
     jh fb 25 start2
     cr lingjiu/shanjiao 1 0
+    ($nutong) = false
     go northup
     @kill 乌老大,不平道人
     go northup
     @kill 卓不凡
     @await 1000
     go southdown
-    jiu {r女童}
+    [if] {r女童}? != null
+        jiu {r女童}
+        ($nutong) = true
     go southdown
     @liaoshang
     //等待所有技能冷却，或者只等待凌波神行冷却
@@ -65,7 +68,8 @@ stopstate
     zou tiesuo
     $startpfm
     //@until (:status tong) == false && {r天山童姥}? != null
-    @until {天山童姥} != null
+    [if] (nutong) == true
+        @until {天山童姥} != null
     @kill 李秋水
     @until {李秋水的尸体} != null
     [if] {r天山童姥} != null
