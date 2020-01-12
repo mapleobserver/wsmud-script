@@ -16,6 +16,10 @@ jh fam 9 start
     @tip 从头开始挑战|已经重置
 go enter
 [while] true
+    [if] (:mpPer) <= 0.1
+        dazuo
+        @until (:mpPer) >= 0.3
+        stopstate
     [if] (:room) == 武道塔-第一百层
         [break]
     kill {r武道塔守护者}?
