@@ -6,7 +6,7 @@ stopstate
 $stoppfm;enable sword wudugoufa;enable staff shedaoqigong;enable throwing jinshezhui;enable blade kuangfengkuaidao;enable unarmed jiuyinbaiguzhao2;enable dodge anyingfuxiang;enable parry yihuajiemu;$eq 1
 @await 3000
 @renew
-@off 明玉夺魄
+@on 明玉夺魄
 @on 无缝明玉
 @off 无缝太上
 @on 帮战翻车
@@ -18,7 +18,8 @@ pty 准备下武器，大佬们帮忙清下号令
 ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
 ($id_bang) = {r张三丰}?
 ($id_fight) = (id_2)
-@liaoshang
+liaoshang
+@tip 疗伤完毕|目前气血充沛
 [while] true
     ($succes) = null
     @cd sword.suo,unarmed.duo
@@ -36,12 +37,15 @@ pty 准备下武器，大佬们帮忙清下号令
         @print 下武器成功，准备下一个
         [if] (id_fight) == (id_2)
             ($id_fight) = (id_1)
+            pty 3号武器已下，准备下一个
         [else if] (id_fight) == (id_1)
             ($id_fight) = (id_bang)
+            pty 2号武器已下，准备下一个
         [else]
             [break]
     [else]
         @print 下武器失败，准备重试
+        pty 下武器失败，准备重试
         $to 扬州城-武庙
     @liaoshang
     $to 武当派-后山小院
