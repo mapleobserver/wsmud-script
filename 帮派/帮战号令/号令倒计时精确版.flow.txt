@@ -18,40 +18,41 @@ pty 注意：号令计时器已经启动！
     ($stamp) = (:hour) * 60 * 60 + (:minute) * 60 + (:second)
     ($r_120) = (stamp) + 120 - (stamp0)
     [if] (r_120) >= (interval) && (did_120) == false
-        [if] (num) == 5
+        [if] (num) > 5
             pty 注意：帮战将在 2 分钟后结束！
         [else]
             pty 注意：号令将在 2 分钟后刷新！
         ($did_120) = true
     ($r_60) = (stamp) + 60 - (stamp0)
     [if] (r_60) >= (interval) && (did_60) == false
-        [if] (num) == 5
+        [if] (num) > 5
             pty 注意：帮战将在 1 分钟后结束！
         [else]
             pty 注意：号令将在 1 分钟后刷新！
         ($did_60) = true
     ($r_30) = (stamp) + 30 - (stamp0)
     [if] (r_30) >= (interval) && (did_30) == false
-        [if] (num) == 5
+        [if] (num) > 5
             pty 注意：帮战将在 30 秒后结束！
         [else]
             pty 注意：号令将在 30 秒后刷新！
         ($did_30) = true
     ($r_10) = (stamp) + 10 - (stamp0)
     [if] (r_10) >= (interval) && (did_10) == false
-        [if] (num) == 5
+        [if] (num) > 5
             pty 注意：帮战将在 10 秒后结束！
         [else]
             pty 注意：号令将在 10 秒后刷新！
         ($did_10) = true
     ($r) = (stamp) - (stamp0)
     [if] (r) >= (interval)
-        [if] (num) == 5
+        [if] (num) > 5
             pty 注意：还有 5 分钟，第 (num) 波号令已经刷新！
-        [else if] (num) == 4
+        [else if] (num) > 4
             pty 注意：还有 10 分钟，第 (num) 波号令已经刷新！
         [else]
             pty 注意：第 (num) 波号令已经刷新！
+        @print 注意：第 (num) 波号令已经刷新！
         ($did_120) = false
         ($did_60) = false
         ($did_30) = false
