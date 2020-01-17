@@ -1,3 +1,11 @@
+/* ==UserStyle==
+@name        wsmud_flat_color
+@homepage    https://greasyfork.org/zh-CN/scripts/394736-wsmud-flat-color
+@description 武神传说(wsmud)配色
+@author      mapleo
+@namespace   https://raw.githubusercontent.com/mapleobserver/wsmud-script/master/%E6%8F%92%E4%BB%B6%E5%A4%87%E4%BB%BD/wsmud_flat_color_stylus.css
+@version     1.0.1
+==/UserStyle== */
 @-moz-document url-prefix("http://game.wsmud.com/"), url-prefix("http://www.wsmud.com/") {
 html, body {
     font-family: "PingFang SC",'Noto', 'Noto Sans CJK SC', 'Noto Sans CJK', 'Source Han Sans', source-han-sans-simplified-c, sans-serif,"Microsoft YaHei",微软雅黑;
