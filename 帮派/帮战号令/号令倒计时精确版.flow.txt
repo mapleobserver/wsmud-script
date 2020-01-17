@@ -46,9 +46,9 @@ pty 注意：号令计时器已经启动！
         ($did_10) = true
     ($r) = (stamp) - (stamp0)
     [if] (r) >= (interval)
-        [if] (num) = 5
+        [if] (num) == 5
             pty 注意：还有 5 分钟，第 (num) 波号令已经刷新！
-        [else if] (num) = 4
+        [else if] (num) == 4
             pty 注意：还有 10 分钟，第 (num) 波号令已经刷新！
         [else]
             pty 注意：第 (num) 波号令已经刷新！
