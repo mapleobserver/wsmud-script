@@ -34,14 +34,15 @@ liaoshang
     @print 已比试
     go north
     [if] (succes) != null
-        @print 下武器成功，准备下一个
         [if] (id_fight) == (id_2)
             ($id_fight) = (id_1)
-            pty 3号武器已下，准备下一个
+            @print 3号下武器成功，准备下一个
+            pty 3号下武器成功，准备下一个
         [else if] (id_fight) == (id_1)
             ($id_fight) = (id_bang)
-            pty 2号武器已下，准备下一个
-        [else]
+            @print 2号下武器成功，准备下一个
+            pty 2号下武器成功，准备下一个
+        [else if] (id_fight) == (id_bang)
             [break]
     [else]
         @print 下武器失败，准备重试
@@ -49,7 +50,7 @@ liaoshang
         $to 扬州城-武庙
     @liaoshang
     $to 武当派-后山小院
-pty 武器已下
+pty 武器已下，坦克准备开战
 @liaoshang
 $usezml 参合
 kill (id_2);kill (id_2)
