@@ -1,6 +1,9 @@
 // raid.flow
 // 四区白三三
 // 圆月弯刀副本流程，青城山路线，自动进入青城山，跟随青青，采忘忧草，到挡刀被青青救醒，后续剧情（离开、结婚或者砍仇小楼）请手动操作。
+#input ($introduce) = 请先查看圆月弯刀攻略，先手动1血再运行流程,祝顺利。
+#select ($YYType) = 最后操作,剧情模式|直接砍小楼,(YYType)
+#config
 <-stopSSAuto
 @cmdDelay 500
 cr wuyue/qingcheng/shanlu
@@ -42,8 +45,12 @@ cai cao
 @tip 杀了他
 answer s3
 [if] (:living) == true
-    @tip 青青看了你一眼转身跟了过去
-    go west
+    [if] (YYType) == 剧情模式 || (YYType) == null
+        @tip 青青看了你一眼转身跟了过去
+        go west
+    [else if] (YYType) == 直接砍小楼
+        @tip 你又恢复了知觉
+        go west;go north
     @print <ord>已进入谷底，请手动进行后续剧情</ord>
     //@wait 600000
     //stopstate
