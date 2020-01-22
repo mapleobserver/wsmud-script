@@ -1,7 +1,7 @@
 // raid.flow
 // 四区：白三三
 // 偷渡副本
-#select ($FBName) = 偷渡副本,星宿海|困难移花|困难缥缈|光明顶|困难天龙|困难古墓,(FBName)
+#select ($FBName) = 偷渡副本,星宿海|困难移花|困难缥缈|光明顶|困难天龙|困难古墓|困难禅宗|简单慈航|困难慈航,(FBName)
 #input ($_repeat) = 偷渡副本次数,1
 #config
 <-stopSSAuto
@@ -17,6 +17,12 @@
     ($fbAdd) = tianlong/damen 1
 [else if] (FBName) == 困难古墓
     ($fbAdd) = gumu/gumukou 1
+[else if] (FBName) == 困难禅宗
+    ($fbAdd) = chanzong/shanmen 1
+[else if] (FBName) == 简单慈航
+    ($fbAdd) = cihang/shanmen 0
+[else if] (FBName) == 困难慈航
+    ($fbAdd) = cihang/shanmen 1
 stopstate
 ($_i) = 0
 [while] (_i) < (_repeat)
