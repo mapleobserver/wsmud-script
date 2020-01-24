@@ -1,0 +1,5 @@
+// 触发：buff改变
+// 对象：他人
+// buffid：busy
+// 改变类型：移除
+@perform sword.chan

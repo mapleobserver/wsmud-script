@@ -1,0 +1,3 @@
+// 触发：技能冷却
+// 技能id：sword.lian
+@perform sword.lian

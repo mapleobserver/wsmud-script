@@ -1,0 +1,9 @@
+// raid.flow
+// 触发：人物刷新
+// 人物关键字：徐子陵的尸体
+@off 补玄灵
+@off 禅宗九阴缠
+@on 躺尸躲僧人
+go south;go south;go northwest
+@cd
+enable sword tangshijianfa

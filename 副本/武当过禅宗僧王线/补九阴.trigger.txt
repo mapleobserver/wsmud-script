@@ -1,0 +1,5 @@
+// 触发：buff改变
+// 对象：自己
+// buffid：force
+// 改变类型：移除
+@perform force.cui

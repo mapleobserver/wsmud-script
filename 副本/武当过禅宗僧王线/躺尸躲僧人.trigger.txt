@@ -1,0 +1,8 @@
+// raid.flow
+// 触发：进入战斗
+// 四区白三三
+$waitpfm sword.wu
+@cd sword.wu
+enable sword taijijian2
+@on 禅宗九阴缠
+@off 躺尸躲僧人
