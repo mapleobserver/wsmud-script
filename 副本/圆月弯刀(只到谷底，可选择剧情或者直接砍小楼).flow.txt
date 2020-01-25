@@ -1,10 +1,17 @@
 // raid.flow
 // 四区白三三
 // 圆月弯刀副本流程，青城山路线，自动进入青城山，跟随青青，采忘忧草，到挡刀被青青救醒，后续剧情（离开、结婚或者砍仇小楼）请手动操作。
-#input ($introduce) = 请先查看圆月弯刀攻略，先手动1血再运行流程,祝顺利。
+// 会自动卸掉、装上当前内功
+#input ($introduce01) = 圆月弯刀副本流程，青城山路线，会自动进入青城山，跟随青青，采忘忧草，挡刀被青青救醒。,节
+#input ($introduce02) = 选【剧情模式】需要自己等10分钟才见到小楼，18-40岁之间可以结婚拿20页(5忘忧草和10醉仙酿，等5小时，建议在花厅练技能不要掉线，5小时后走出花厅再进去原地等青青回来后，带到谷口触发剧情)。,日
+#input ($introduce03) = 不在这个年龄范围的和小楼对话选择「告辞」拿5残页。,快
+#input ($introduce04) = 选【直接砍小楼】会跳过剧情，砍25次小楼可以进地窖触发剧情拿20页。,乐
 #select ($YYType) = 最后操作,剧情模式|直接砍小楼,(YYType)
 #config
 <-stopSSAuto
+($force) = (:kf_nei)
+enable force none
+enable force (force)
 @cmdDelay 500
 cr wuyue/qingcheng/shanlu
 go westup
