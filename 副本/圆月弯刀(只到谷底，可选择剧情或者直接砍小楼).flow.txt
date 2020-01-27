@@ -8,7 +8,7 @@
 #input ($introduce04) = 选【直接砍小楼】会跳过剧情，砍25次小楼可以进地窖触发剧情拿20页。没有十几万命中就不用试了,乐
 #select ($YYType) = 最后操作,剧情模式|直接砍小楼,(YYType)
 #config
-<-stopSSAuto
+@stopSSAuto
 ($force) = (:kf_nei)
 enable force none
 enable force (force)
@@ -55,10 +55,27 @@ answer s3
     [if] (YYType) == 剧情模式 || (YYType) == null
         @tip 青青看了你一眼转身跟了过去
         go west
+        @print <ord>已进入山谷，请手动进行后续剧情</ord>
     [else if] (YYType) == 直接砍小楼
         @tip 你又恢复了知觉
         go west;go north
-    @print <ord>已进入谷底，请手动进行后续剧情</ord>
+        @until (:room) == 忧愁谷-小楼
+        liaoshang
+        $wait 5000
+        stopstate
+        @cd
+        kill {r仇小楼}?
+        @tip 从仇小楼的尸体|凝听后($dijiao)大变
+        [if] (dijiao) != null
+            @until {r仇小楼}? == null
+            go down
+            @print <ord>已进入地窖，请手动进行后续剧情</ord>
+        [else]
+            go south[4]
+            ofb
+            @tip 当天进入次数($yynum)/10
+            ofb ok
+            @print <ord>今日已完成(yynum)次</ord>
     //@wait 600000
     //stopstate
     //go north
