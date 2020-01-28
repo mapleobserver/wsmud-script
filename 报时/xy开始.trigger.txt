@@ -8,3 +8,4 @@
 ($TimeXyStartMinute) = (:minute)
 ($TimeXyStartSecond) = (:second)
 ($EnableXy) = false
+@call 襄阳倒计时
