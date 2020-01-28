@@ -16,9 +16,10 @@ $to (bossPlace)
     $eq 1
     @await 500
     kill {r(bossName)}?
-    @untill {r(bossName)}? == null
-    relive
+    @untill {r(bossName)}? == null || (:combating) ==false || (:living) == false
+    relive;relive
     @await 500
+    @renew
     $zdwk
 [else]
     $zdwk
