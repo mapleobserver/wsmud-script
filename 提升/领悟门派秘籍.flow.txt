@@ -14,7 +14,7 @@ stopstate
 [if] (MPJJname) == 武当派
     ($mpskills_name) = '太极拳','梯云纵','太极剑法','太极神功'
     ($mpskills_id) = 'taijiquan','tiyunzong','taijijian','taijishengong'
-    ($mpbooks_name) = '太极拳进阶秘籍','梯云纵进阶秘籍','太极剑法进阶秘籍','太极神功进阶秘籍'
+    ($mpbooks_name) = '太极拳进阶秘籍','梯云纵进阶秘籍','太极剑法进阶秘籍','先天太极进阶秘籍'
 [if] (MPJJname) == 丐帮
     ($mpskills_name) = '混天气功','逍遥游','打狗棒','降龙十八掌'
     ($mpskills_id) = 'huntianqigong','xiaoyaoyou','dagoubang','xianglongzhang'
@@ -30,7 +30,7 @@ stopstate
 [if] (MPJJname) == 少林派
     ($mpskills_name) = '一指禅','少林身法','燃木刀法','易筋经'
     ($mpskills_id) = 'yizhichan','shaolinshenfa','ranmudao','yijinjing'
-    ($mpbooks_name) = '一指禅进阶秘籍','少林身法进阶秘籍','燃木刀法进阶秘籍','易筋经进阶秘籍'
+    ($mpbooks_name) = '一指禅进阶秘籍','一苇渡江进阶秘籍','燃木刀法进阶秘籍','金刚不坏体进阶秘籍'
 [if] (MPJJname) == 逍遥派
     ($mpskills_name) = '北冥神功','天山六阳掌','凌波微步','小无相功'
     ($mpskills_id) = 'beimingshengong','liuyangzhang','lingboweibu','xianwuxianggong'
