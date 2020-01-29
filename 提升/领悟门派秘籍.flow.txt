@@ -18,7 +18,7 @@ stopstate
 [if] (MPJJname) == 丐帮
     ($mpskills_name) = '混天气功','逍遥游','打狗棒','降龙十八掌'
     ($mpskills_id) = 'huntianqigong','xiaoyaoyou','dagoubang','xianglongzhang'
-    ($mpbooks_name) = '混天气功进阶秘籍','逍遥游进阶秘籍','打狗棒进阶秘籍','降龙十八掌进阶秘籍'
+    ($mpbooks_name) = '混元天罡进阶秘籍','逍遥游进阶秘籍','打狗棒进阶秘籍','降龙十八掌进阶秘籍'
 [if] (MPJJname) == 华山派
     ($mpskills_name) = '劈石破玉拳','紫霞神功','狂风快剑','独孤九剑'
     ($mpskills_id) = 'poyuquan','zixiashengong','kuangfengkuaijian','dugujiujian'
