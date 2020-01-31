@@ -124,93 +124,93 @@ stopstate
 (FBBefore)
 $wait 5000
 [if] (FBName) == 财主家(困难)
-    ($FBCr) = cr yz/cuifu/caizhu 1 0
+    ($fbcr) = cr yz/cuifu/caizhu 1 0
 [else if] (FBName) == 鳌拜府
-    ($FBCr) = cr bj/ao/damen
+    ($fbcr) = cr bj/ao/damen 0 10
 [else if] (FBName) == 温府
-    ($FBCr) = cr cd/wen/damen 0 10
+    ($fbcr) = cr cd/wen/damen 0 10
 [else if] (FBName) == 五毒教
-    ($FBCr) = cr cd/wudu/damen 0 10
+    ($fbcr) = cr cd/wudu/damen 0 10
 [else if] (FBName) == 恒山
-    ($FBCr) = cr wuyue/hengshan/daziling 0 10
+    ($fbcr) = cr wuyue/hengshan/daziling 0 10
 [else if] (FBName) == 青城山(只扫荡)
-    ($FBCr) = cr wuyue/qingcheng/shanlu 0 10
+    ($fbcr) = cr wuyue/qingcheng/shanlu 0 10
 [else if] (FBName) == 衡山
-    ($FBCr) = cr wuyue/henshan/hengyang 0 10
+    ($fbcr) = cr wuyue/henshan/hengyang 0 10
 [else if] (FBName) == 嵩山
-    ($FBCr) = cr wuyue/songshan/taishi 0 10
+    ($fbcr) = cr wuyue/songshan/taishi 0 10
 [else if] (FBName) == 云梦沼泽(只扫荡)
-    ($FBCr) = cr cd/yunmeng/senlin 0 10
+    ($fbcr) = cr cd/yunmeng/senlin 0 10
 [else if] (FBName) == 桃花岛(简单)
-    ($FBCr) = cr taohua/haitan 0 10
+    ($fbcr) = cr taohua/haitan 0 10
 [else if] (FBName) == 桃花岛(困难)
-    ($FBCr) = cr taohua/haitan 1 10
+    ($fbcr) = cr taohua/haitan 1 10
 [else if] (FBName) == 白驼山
-    ($FBCr) = cr baituo/damen 0 10
+    ($fbcr) = cr baituo/damen 0 10
 [else if] (FBName) == 星宿海
-    ($FBCr) = cr xingxiu/xxh6 0 10
+    ($fbcr) = cr xingxiu/xxh6 0 10
 [else if] (FBName) == 冰火岛(简单扫荡)
-    ($FBCr) = cr mj/bhd/haibian 0 10
+    ($fbcr) = cr mj/bhd/haibian 0 10
 [else if] (FBName) == 冰火岛(困难扫荡)
-    ($FBCr) = cr mj/bhd/haibian 1 10
+    ($fbcr) = cr mj/bhd/haibian 1 10
 [else if] (FBName) == 冰火岛(偷渡)
-    ($FBCr) = cr mj/bhd/haibian 1 0
+    ($fbcr) = cr mj/bhd/haibian 1 0
 [else if] (FBName) == 移花宫(简单)
-    ($FBCr) = cr huashan/yihua/shandao 0 10
+    ($fbcr) = cr huashan/yihua/shandao 0 10
 [else if] (FBName) == 移花宫(困难)
-    ($FBCr) = cr huashan/yihua/shandao 1 10
+    ($fbcr) = cr huashan/yihua/shandao 1 10
 [else if] (FBName) == 移花宫(偷渡)
-    ($FBCr) = cr huashan/yihua/shandao 1 0
+    ($fbcr) = cr huashan/yihua/shandao 1 0
 [else if] (FBName) == 燕子坞(简单)
-    ($FBCr) = cr murong/anbian 0 10
+    ($fbcr) = cr murong/anbian 0 10
 [else if] (FBName) == 燕子坞(困难)
-    ($FBCr) = cr murong/anbian 1 10
+    ($fbcr) = cr murong/anbian 1 10
 [else if] (FBName) == 黑木崖(简单扫荡)
-    ($FBCr) = cr heimuya/shangu 0 10
+    ($fbcr) = cr heimuya/shangu 0 10
 [else if] (FBName) == 黑木崖(困难扫荡)
-    ($FBCr) = cr heimuya/shangu 1 10
+    ($fbcr) = cr heimuya/shangu 1 10
 [else if] (FBName) == 缥缈峰(简单扫荡)
-    ($FBCr) = cr lingjiu/shanjiao 0 10
+    ($fbcr) = cr lingjiu/shanjiao 0 10
 [else if] (FBName) == 缥缈峰(困难扫荡)
-    ($FBCr) = cr lingjiu/shanjiao 1 10
+    ($fbcr) = cr lingjiu/shanjiao 1 10
 [else if] (FBName) == 缥缈峰(偷渡)
-    ($FBCr) = cr lingjiu/shanjiao 1 0
+    ($fbcr) = cr lingjiu/shanjiao 1 0
 [else if] (FBName) == 光明顶
-    ($FBCr) = cr mj/shanmen 0 10
+    ($fbcr) = cr mj/shanmen 0 10
 [else if] (FBName) == 光明顶(偷渡)
-    ($FBCr) = cr mj/shanmen 0 0
+    ($fbcr) = cr mj/shanmen 0 0
 [else if] (FBName) == 天龙寺(简单扫荡)
-    ($FBCr) = cr tianlong/damen 0 10
+    ($fbcr) = cr tianlong/damen 0 10
 [else if] (FBName) == 天龙寺(困难扫荡)
-    ($FBCr) = cr tianlong/damen 1 10
+    ($fbcr) = cr tianlong/damen 1 10
 [else if] (FBName) == 天龙寺(偷渡)
-    ($FBCr) = cr tianlong/damen 1 0
+    ($fbcr) = cr tianlong/damen 1 0
 [else if] (FBName) == 血刀门(只扫荡)
-    ($FBCr) = cr xuedao/shankou 0 10
+    ($fbcr) = cr xuedao/shankou 0 10
 [else if] (FBName) == 古墓派(简单扫荡)
-    ($FBCr) = cr gumu/gumukou 0 10
+    ($fbcr) = cr gumu/gumukou 0 10
 [else if] (FBName) == 古墓派(困难扫荡)
-    ($FBCr) = cr gumu/gumukou 1 10
+    ($fbcr) = cr gumu/gumukou 1 10
 [else if] (FBName) == 古墓派(偷渡)
-        ($FBCr) = cr gumu/gumukou 1 0
+        ($fbcr) = cr gumu/gumukou 1 0
 [else if] (FBName) == 华山论剑
-    ($FBCr) = cr huashan/lunjian/leitaixia 0 10
+    ($fbcr) = cr huashan/lunjian/leitaixia 0 10
 [else if] (FBName) == 侠客岛(只扫荡)
-    ($FBCr) = cr xkd/shimen 0 10
+    ($fbcr) = cr xkd/shimen 0 10
 [else if] (FBName) == 净念禅宗(普通扫荡)
-    ($FBCr) = cr chanzong/shanmen 0 10
+    ($fbcr) = cr chanzong/shanmen 0 10
 [else if] (FBName) == 净念禅宗(困难扫荡)
-    ($FBCr) = cr chanzong/shanmen 1 10
+    ($fbcr) = cr chanzong/shanmen 1 10
 [else if] (FBName) == 慈航静斋(简单扫荡)
-    ($FBCr) = cr cihang/shanmen 0 10
+    ($fbcr) = cr cihang/shanmen 0 10
 [else if] (FBName) == 慈航静斋(困难扫荡)
-    ($FBCr) = cr cihang/shanmen 1 10
+    ($fbcr) = cr cihang/shanmen 1 10
 [else if] (FBName) == 阴阳谷(只扫荡)
-    ($FBCr) = cr yyg/ya 0 10
+    ($fbcr) = cr yyg/ya 0 10
 [else if] (FBName) == 战神殿(简单扫荡)
-    ($FBCr) = cr zsd/damen 0 10
+    ($fbcr) = cr zsd/damen 0 10
 [else if] (FBName) == 战神殿(困难扫荡)
-    ($FBCr) = cr zsd/damen 1 10
+    ($fbcr) = cr zsd/damen 1 10
 [if] (FBWay) == 扫荡
     //扫荡模式
     [if] (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(偷渡)
@@ -219,11 +219,11 @@ $wait 5000
         [if] {b扫荡符#}? < 20 || {b扫荡符}? == null
             shop 0 20
         <-recordGains
-        (FBCr)
+        (fbcr)
         $wait 10000
         @tidyBag
         $wait 10000
-        (FBCr)
+        (fbcr)
         $wait 10000
         @tidyBag
         $wait 10000
@@ -240,7 +240,7 @@ $wait 5000
     [else if] (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(偷渡)
         ($tdnum) = 0
         [while] (tdnum) < 20
-            (FBCr);cr over
+            (fbcr);cr over
             ($tdnum) = (tdnum) + 1
     [else]
         @print <hiy>(FBName)</hiy><ord>没有自动脚本！</ord>

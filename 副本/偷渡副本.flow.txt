@@ -6,27 +6,27 @@
 #config
 <-stopSSAuto
 [if] (FBName) == 星宿海
-    ($fbAdd) = xingxiu/xxh6 0
+    ($fbcr) = xingxiu/xxh6 0
 [else if] (FBName) == 困难移花
-    ($fbAdd) = huashan/yihua/shandao 1
+    ($fbcr) = huashan/yihua/shandao 1
 [else if] (FBName) == 困难缥缈
-    ($fbAdd) = lingjiu/shanjiao 1
+    ($fbcr) = lingjiu/shanjiao 1
 [else if] (FBName) == 光明顶
-    ($fbAdd) = mj/shanmen 0
+    ($fbcr) = mj/shanmen 0
 [else if] (FBName) == 困难天龙
-    ($fbAdd) = tianlong/damen 1
+    ($fbcr) = tianlong/damen 1
 [else if] (FBName) == 困难古墓
-    ($fbAdd) = gumu/gumukou 1
+    ($fbcr) = gumu/gumukou 1
 [else if] (FBName) == 困难禅宗
-    ($fbAdd) = chanzong/shanmen 1
+    ($fbcr) = chanzong/shanmen 1
 [else if] (FBName) == 简单慈航
-    ($fbAdd) = cihang/shanmen 0
+    ($fbcr) = cihang/shanmen 0
 [else if] (FBName) == 困难慈航
-    ($fbAdd) = cihang/shanmen 1
+    ($fbcr) = cihang/shanmen 1
 stopstate
 ($_i) = 0
 [while] (_i) < (_repeat)
-    cr (fbAdd) 0;cr over
+    cr (fbcr) 0;cr over
     ($_i) = (_i) + 1
 $to 住房-练功房;dazuo
 stopSSAuto->
