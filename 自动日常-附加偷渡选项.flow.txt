@@ -255,9 +255,9 @@ $wait 10000
 //领取签到奖励
 $wait 5000
 stopstate
-taskover signin
+taskover signin;taskover zz1;taskover zz2
 $wait 2000
-taskover signin
+taskover signin;taskover zz1;taskover zz2
 $wait 10000
 @recoverSSAuto
 //日常结束后
