@@ -5,21 +5,34 @@
 // 发言人：自己定义
 // 关键字：武圣boss出现
 // 装备套装默认是1，有不同的话，自己在下面那句 $eq 1 改一下数字。
+[if] (:date) != (BossTodayDate)
+    [if] (:hour) > 4
+        ($BossTodayFull) = false
+[if] (BossTodayFull) == true
+    @print <ord>今日公共boss已满！</ord>
+    @await 2000
+    [exit]
 @js ($bossPlace) = "(content)".match("出现在([^%]+)一带。")[1]
 @js ($bossName) = "(content)".match("听说([^%]+)出现在")[1]
-@print (bossName)
-@print (bossPlace)
+@print <hiy>(bossName):(bossPlace)</hiy>
 stopstate
 $to (bossPlace)
 @await 200
 [if] {r(bossName)}? != null
-    $eq 1
     @await 500
     kill {r(bossName)}?
-    @untill {r(bossName)}? == null || (:combating) ==false || (:living) == false
+    kill {r(bossName)}?
+    $eq 1
+    [if] (:combating) == true
+        @until (:combating) == false || (:living) == false
+        @tip 你从(bossName)的尸体里拿出来|那里面($none)东西|一股阴冷的气息包围着你
+        [if] (none) != null
+            ($BossTodayFull) = true
+    @await 1000
     relive;relive
-    @await 500
+    @await 2000
     @renew
     $zdwk
 [else]
     $zdwk
+($BossTodayDate) = (:date)
