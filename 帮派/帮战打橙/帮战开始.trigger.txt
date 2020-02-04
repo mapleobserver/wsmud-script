@@ -19,4 +19,9 @@ $wait 5000
 @print 等待开战
 //长老血量低于1950W，掌门低于4950W时自动叫杀最下面的长老。如果不想监控血量，也可以改成等待指定时间后叫杀。
 @until (:hp (id_2)) < 19500000 && (:hp (id_1)) < 19500000 && (:hp (id_bang)) < 49500000
-kill (id_2);kill (id_2)
+[if] (id_2) != null
+    kill (id_2);kill (id_2)
+[else if] (id_2) == null && (id_1) != null
+    kill (id_1);kill (id_1)
+[else]
+    kill (id_bang);kill (id_bang)
