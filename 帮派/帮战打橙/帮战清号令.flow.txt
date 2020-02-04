@@ -1,46 +1,47 @@
 //raid.flow
 //帮战清号令
 //四区白三三
-#select ($ZBmp) = 门派战刷玄晶,武当派|丐帮|华山派|峨眉派|少林派|逍遥派,(ZBmp)
+#select ($ZBmp) = 请选择进攻门派,武当派|丐帮|华山派|峨眉派|少林派|逍遥派,(ZBmp)
 #config
 stopstate
 @await 500
+$startpfm
 [if] (arg0) != null
-      ($ZBmp)=(arg0)
-($n1)=弟子
-($n2)=弟子
-($bang)=掌门
+    ($ZBmp)=(arg0)
 [if] (ZBmp) == 丐帮
-    ($n2)=长老
-    ($bang)=帮主
+    ($bang)=洪七公
     jh fam 6 start
 [else if] (ZBmp) == 武当派
-    ($n1)=道童
+    ($bang)=张三丰
     jh fam 1 start
 [else if] (ZBmp) == 华山派
-    ($n1) = 十六代弟子
+    ($bang)=岳不群
     jh fam 3 start
 [else if] (ZBmp) == 少林派
-    ($bang)=方丈
+    ($bang)=玄难
     jh fam 2 start
 [else if] (ZBmp) == 峨眉派
+    ($bang)=灭绝
     jh fam 4 start
 [else if] (ZBmp) == 逍遥派
+    ($bang)=逍遥子
     jh fam 5 start
 @wait 100
 <---
 [if] {r(bang)}? == null
     @await 100
     $killall
-    @until (:combating) == false && (:free) == true
+    @until (:combating) == false && (:status busy) == false
 [else if] {r岳不群}? != null
     @await 500
+    [if] ($hsover) == true
+        [exit]
 [else]
     [exit]
 --->
 @cmdDelay 500
 [if] (ZBmp) == 武当派
-    //jh fam 1 start
+    jh fam 1 start
     go north
     go south;go west
     go west
@@ -56,9 +57,10 @@ stopstate
     go north
     go north
     go north
-    //go north
+    go north
 [else if] (ZBmp) == 华山派
-    //jh fam 3 start
+    ($hsover) = false
+    jh fam 3 start
     go eastup
     go southup
     jumpdown
@@ -80,8 +82,10 @@ stopstate
     go westup
     go westup
     jumpup
+    ($hsover) = true
+    $to 华山派-客厅
 [else if] (ZBmp) == 少林派
-    //jh fam 2 start
+    jh fam 2 start
     go north
     go west
     go east;go east
@@ -99,9 +103,9 @@ stopstate
     go east;go north
     go west
     go east;go north
-    //go north   
+    go north
 [else if] (ZBmp) == 峨眉派
-    //jh fam 4 start
+    jh fam 4 start
     go northup
     go east
     go west;go southdown;go west
@@ -115,9 +119,9 @@ stopstate
     go south
     go north;go north;go west
     go east;go north
-    //go north
+    go north
 [else if] (ZBmp) == 逍遥派
-    //jh fam 5 start
+    jh fam 5 start
     go north
     go north
     jh fam 5 start;go east
@@ -129,9 +133,9 @@ stopstate
     jh fam 5 start;go south
     go south
     jh fam 5 start;go down
-    //go down
+    go down
 [else if] (ZBmp) == 丐帮
-    //jh fam 6 start
+    jh fam 6 start
     go down
     go east
     go east
@@ -139,4 +143,4 @@ stopstate
     go up
     go down;go east
     go east
-    //go up
+    go up
