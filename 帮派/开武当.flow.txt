@@ -8,7 +8,7 @@
 //四区白三三
 @stopSSAuto
 stopstate
-$usezml 百免
+$usezml 毒手
 $wait 3000
 party fam
 @tip 正在进攻别的门派，还有($cd_time)分结束|正在进攻别的门派，还有结束战斗|对门派发起($go)会消耗
@@ -19,7 +19,6 @@ party fam
     @wait (wait_time)
 [else if] (cd_time) == null && (go) == null
     @wait 60000
-party fam GAIBANG
+party fam WUDANG
 $wait 2000
-$to 丐帮-林间小屋
-$killall
+$to 武当派-后山小院
