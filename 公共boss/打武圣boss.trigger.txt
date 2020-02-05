@@ -32,6 +32,7 @@ $to (bossPlace)
     relive;relive
     @await 2000
     @renew
+    @cd
     $zdwk
 [else]
     $zdwk
