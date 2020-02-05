@@ -7,6 +7,8 @@
         [if] (:hour) > 4
             ($TodayNum) = 0
             ($TodayDate) = (:date)
+[else]
+    ($TodayNum) == 0
 #select ($YYType) = 最后操作,剧情模式|直接砍小楼,(YYType)
 #input ($TodayNum) = 今天已完成次数(如果不清楚就不要改),(TodayNum)
 #input ($introduce01) = 圆月弯刀副本流程，青城山路线，会自动残血进入青城山，跑地图，跟随青青，采忘忧草，挡刀被青青救醒。,节
