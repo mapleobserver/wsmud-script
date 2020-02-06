@@ -25,7 +25,7 @@ $to (bossPlace)
     $eq 1
     [if] (:combating) == true
         @until (:combating) == false || (:living) == false
-        @tip 你从(bossName)的尸体里拿出来|那里面($none)东西|一股阴冷的气息包围着你
+        @tip 你从(bossName)的尸体里拿出来|那里面($none)东西|阴冷的气息包围
         [if] (none) != null
             ($BossTodayFull) = true
     @await 1000
@@ -33,6 +33,7 @@ $to (bossPlace)
     @await 2000
     @renew
     @cd
+    @await 3000
     $zdwk
 [else]
     $zdwk
