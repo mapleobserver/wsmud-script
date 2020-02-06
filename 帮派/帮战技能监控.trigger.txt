@@ -1,3 +1,7 @@
 // 新提示信息
-// 万蛊噬天|中指一按|冷笑数声|缠字决|手忙脚乱|一股劲气无声无息|金芒大盛|金蛇狂舞
-($LOG) = (LOG)|(:hour):(:minute):(:second) (text)
+// 中指一按|冷笑数声|缠字决|手忙脚乱|突然金芒大盛|使出一招“金蛇狂舞”
+@js ($pass) = '(text)'.indexOf('这里填需要忽略的工具人名字')
+[if] (pass) == -1
+    @print (text)
+    pty (:hour):(:minute):(:second) (text)
+    ($BPZLog) = (BPZLog)|(:hour):(:minute):(:second) (text)
