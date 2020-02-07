@@ -1,0 +1,9 @@
+//自命令类型选 Raidjs流程，编辑保存后，在 设置-登录后执行命令 中添加：$usezml 清理数据
+//自动判断是否已经过去一天，清除前一天的常量数据。
+//四区白三三
+[if] (CleanTodayDate) == null
+    ($CleanTodayDate) = (:date)
+[if] (:date) != (CleanTodayDate) && (:hour) > 4
+    ($CleanTodayDate) = (:date)
+    ($BPZLogYesterday) = (BPZLog)
+    ($BPZLog) = (:date)号记录

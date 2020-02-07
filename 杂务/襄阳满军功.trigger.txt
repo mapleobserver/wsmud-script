@@ -1,0 +1,12 @@
+//raid.flow
+//新提示信息：触发军功，目前5
+//打满500后自动疗伤清包闪人。
+//四区白三三
+@js ($xyjg) = "(text)".match("目前([^%]+)\/500")[1]
+[if] (xyjg) >= 500
+    pty 襄阳满
+    @until (:combating) == false || living == false
+    relive
+    @renew
+    @tidyBag
+    $zdwk
