@@ -12,9 +12,9 @@
 @stopSSAuto
 stopstate
 [if] (MPJJname) == 武当派
-    ($mpskills_name) = '太极拳','梯云纵','太极剑法','太极神功'
-    ($mpskills_id) = 'taijiquan','tiyunzong','taijijian','taijishengong'
-    ($mpbooks_name) = '太极拳进阶秘籍','梯云纵进阶秘籍','太极剑法进阶秘籍','先天太极进阶秘籍'
+    ($mpskills_name) = '太极拳','梯云纵','太极神功','太极剑法'
+    ($mpskills_id) = 'taijiquan','tiyunzong','taijishengong','taijijian'
+    ($mpbooks_name) = '太极拳进阶秘籍','梯云纵进阶秘籍','先天太极进阶秘籍','太极剑法进阶秘籍'
 [if] (MPJJname) == 丐帮
     ($mpskills_name) = '混天气功','逍遥游','打狗棒','降龙十八掌'
     ($mpskills_id) = 'huntianqigong','xiaoyaoyou','dagoubang','xianglongzhang'
@@ -36,9 +36,9 @@ stopstate
     ($mpskills_id) = 'beimingshengong','liuyangzhang','lingboweibu','xianwuxianggong'
     ($mpbooks_name) = '北冥神功进阶秘籍','天山六阳掌进阶秘籍','凌波微步进阶秘籍','小无相功进阶秘籍'
 [if] (MPJJname) == 杀手楼
-    ($mpskills_name) = '穿心掌','杀生决','漫天花雨','踏雪寻梅'
-    ($mpskills_id) = 'chuanxinzhang','shashengjue','mantianhuayu','taxuexunmei'
-    ($mpbooks_name) = '穿心掌进阶秘籍','杀生决进阶秘籍','漫天花雨进阶秘籍','踏雪寻梅进阶秘籍'
+    ($mpskills_name) = '穿心掌','杀生决','踏雪寻梅','漫天花雨'
+    ($mpskills_id) = 'chuanxinzhang','shashengjue','taxuexunmei','mantianhuayu'
+    ($mpbooks_name) = '穿心掌进阶秘籍','杀生决进阶秘籍','踏雪寻梅进阶秘籍','漫天花雨进阶秘籍'
 $to (lianxi_map)
 //循环匹配技能
 ($num)=0
