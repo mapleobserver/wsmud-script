@@ -1,0 +1,20 @@
+// 触发气血低于一定百分比，人名关键词填自己的角色名
+// 四区白三三
+($thisroom) = (:room)
+($id_zl) = {r武当派长老}?
+@until (:hp (id_zl)) > 18000000
+@perform unarmed.duo
+[while]  (:room) == 武当派-后山小院 && (:living) == true
+    go south
+    @await 500
+@until (:combating) == false || (:living) == false
+relive
+$to 扬州城-武庙
+@liaoshang
+$to (thisroom)
+[if] (MPnpc) != null
+    kill (MPnpc);kill (MPnpc)
+[else]
+    $getall
+    ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+    kill (id_2);kill (id_2)

@@ -1,6 +1,9 @@
+// 触发气血低于一定百分比，人名关键词填自己的角色名
+// 四区白三三
 ($thisroom) = (:room)
 $waitpfm force.tuoli
-@until (:combating) == false
+@until (:combating) == false || (:living) == false
+relive
 $to 扬州城-武庙
 @liaoshang
 $to (thisroom)
