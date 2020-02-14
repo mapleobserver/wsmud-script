@@ -7,7 +7,7 @@
    ($Sf) = 逍遥子
 
 #select ($Sf) = 师傅姓名,谷虚道长|宋远桥|张三丰|清乐比丘|道绝禅师|慧合尊者|澄净|玄难|高根明|岳不群|封不平|风清扬|苏梦清|静心|周芷若|灭绝|薛慕华|苏星河|逍遥子|左全|简长老|鲁有脚|洪七公|何小二|李四|雾中楼|武馆教习,(Sf)
-#select ($Xsm) = 学习何种技能,基本技能|门派技能|两者皆学,两者皆学
+#select ($Xsm) = 学习何种技能,基本技能|门派技能|两者皆学,(Xsm)
 #config
 
 [if] (Sf) == 谷虚道长||(Sf) == 宋远桥||(Sf) == 张三丰
@@ -221,8 +221,28 @@ select {r(Sf)}?
     [if] (nl) == 说道：你对本门的贡献还
         ($ts2) == 由于你的门贡不够，部分技能未能学习
 [if] (Xsm) == 门派技能 || (Xsm) == 两者皆学
-
     [if] (Hzmp) == 武当
+        [if] (Sf) == 谷虚道长
+            ($Lastcmd) = wudangxinfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            ($Lastcmd) = wudangjianfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
         ($Lastcmd) = taijijian
         xue (Lastcmd) from {r(Sf)}?
         @wait 300
@@ -265,6 +285,17 @@ select {r(Sf)}?
             ($ts2) == 由于你的门贡不够，部分技能未能学习
 
     [if] (Hzmp) == 少林
+        [if] (Sf) == 清乐比丘 || (Sf) == 道觉禅师
+            ($Lastcmd) = hunyuanyiqi
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
         ($Lastcmd) = yijinjing
         xue (Lastcmd) from {r(Sf)}?
         @wait 300
@@ -307,6 +338,40 @@ select {r(Sf)}?
             ($ts2) == 由于你的门贡不够，部分技能未能学习
 
     [if] (Hzmp) == 华山
+        [if] (Sf) == 高根明
+            ($Lastcmd) = huashanxinfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            ($Lastcmd) = huashanjianfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
+        [if] (Sf) == 岳不群
+            @toolbar jh
+            @toolbar skills
+            @js ($skill_level) = /\d+/.exec($("[skid=huashanjianfa]").children(".skill-level").text())['0']
+            [if] (skill_level) < 200
+                xue huashanjianfa from {r(Sf)}?
+                [while]
+                    @tip 等级提升了
+                    @await 2000
+                    @toolbar skills
+                    @js ($skill_level) = /\d+/.exec($("[skid=huashanjianfa]").children(".skill-level").text())['0']
+                    [if] (skill_level) >= 200
+                        [break]
         ($Lastcmd) = kuangfengkuaijian
         xue (Lastcmd) from {r(Sf)}?
         @wait 300
@@ -349,6 +414,27 @@ select {r(Sf)}?
             ($ts2) == 由于你的门贡不够，部分技能未能学习
 
     [if] (Hzmp) == 峨眉
+        [if] (Sf) == 苏梦清
+            ($Lastcmd) = emeixinfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            ($Lastcmd) = jindingzhang
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
         ($Lastcmd) = yitianjianfa
         xue (Lastcmd) from {r(Sf)}?
         @wait 300
@@ -402,6 +488,17 @@ select {r(Sf)}?
                 ($ts2) == 由于你的门贡不够，部分技能未能学习
 
     [if] (Hzmp) == 逍遥
+        [if] (Sf) == 薛慕华
+            ($Lastcmd) = xiaoyaoxinfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
         ($Lastcmd) = beimingshengong
         xue (Lastcmd) from {r(Sf)}?
         @wait 300
@@ -413,16 +510,6 @@ select {r(Sf)}?
         [if] (nl) == 说道：你对本门的贡献还
             ($ts2) == 由于你的门贡不够，部分技能未能学习
         ($Lastcmd) = lingboweibu
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = zhemeishou
         xue (Lastcmd) from {r(Sf)}?
         @wait 300
         xue (Lastcmd) from {r(Sf)}?
@@ -455,6 +542,27 @@ select {r(Sf)}?
 
 
     [if] (Hzmp) == 丐帮
+        [if] (Sf) == 左全
+            ($Lastcmd) = gaibangxinfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            ($Lastcmd) = jiaohuabangfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
         ($Lastcmd) = xianglongzhang
         xue (Lastcmd) from {r(Sf)}?
         @wait 300
@@ -498,26 +606,27 @@ select {r(Sf)}?
 
 
     [if] (Hzmp) == 杀手楼
-        ($Lastcmd) = shashouxinfa
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = feidao
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        [if] (Sf) == 何小二
+            ($Lastcmd) = shashouxinfa
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            ($Lastcmd) = feidao
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            xue (Lastcmd) from {r(Sf)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
+            [if] (nl) == 的内力
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (nl) == 说道：你对本门的贡献还
+                ($ts2) == 由于你的门贡不够，部分技能未能学习
         ($Lastcmd) = taxuexunmei
         xue (Lastcmd) from {r(Sf)}?
         @wait 300
