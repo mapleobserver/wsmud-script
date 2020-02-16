@@ -3,6 +3,7 @@
 ($thisroom) = (:room)
 ($id_zl) = {r武当派长老}?
 @until (:hp (id_zl)) > 18000000
+kill (id_zl);kill (id_zl)
 @perform unarmed.duo
 [while]  (:room) == 武当派-后山小院 && (:living) == true
     go south
@@ -12,9 +13,9 @@ relive
 $to 扬州城-武庙
 @liaoshang
 $to (thisroom)
+$getall
 [if] (MPnpc) != null
     kill (MPnpc);kill (MPnpc)
 [else]
-    $getall
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
     kill (id_2);kill (id_2)
