@@ -9,3 +9,9 @@
     @until (:status xuruo) == false
     jh fb 30 start1;cr huashan/lunjian/leitaixia
     go up
+    [if] (:date) != (FCdate) && (:hour) >4
+        ($FCdate) = (:date)
+        ($FC_LunjianYesterday) = (FC_Lunjian)
+        ($FC_Lunjian) = 0
+    ($FC_Lunjian) = (FC_Lunjian) + 1
+    @print 论剑翻车次数更新：昨日(FC_LunjianYesterday)次，今日(FC_Lunjian)次。
