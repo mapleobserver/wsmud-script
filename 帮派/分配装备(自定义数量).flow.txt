@@ -1,0 +1,31 @@
+//raid.flow
+//四区白三三
+#input ($PlayerName)=请输入参与分配的玩家名字,(PlayerName)
+#input ($EquipNum)=请输入分配给该玩家的装备数量,(EquipNum)
+#config
+stopstate
+$to 帮会-仓库
+@cmdDelay 300
+($num) = 0
+[while] (num) < (EquipNum)
+    alloc
+    @tip 请选择对|目前没有可用的($finish)|不要急
+    [if] (finish)!=null
+        pty 仓库空了！
+        @await 4000
+        [break]
+    //点击分配按钮
+    @js $(".content-message").find(".item-commands").last().children("span:contains('分配给参与战斗的玩家')").click()
+    //检查是否存在指定玩家
+    $wait 500
+    @js ($playerList) = $(".content-message").find(".item-commands").last().children().text()
+    @js ($playerYes) = "(playerList)".indexOf('(PlayerName)')
+    //分配或扩充
+    [if] (playerYes) != -1
+        @js ($playlist) = $(".content-message").find(".item-commands").last().children("span:contains('(PlayerName)')").click()
+        ($num) = (num) + 1
+    [else]
+        alloc
+        @js $(".content-message").find(".item-commands").last().children(":first").click()
+pty 已分配 (num) 件装备给[(PlayerName)]
+$zdwk
