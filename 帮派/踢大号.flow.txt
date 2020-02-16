@@ -1,0 +1,23 @@
+// 根据设定的人名自动踢号
+// 四区白三三
+
+[if] (RoleList) == null
+    ($RoleList) = '张三','李四','王五'
+#input ($RoleList)=要踢掉的玩家名字(用英文单引号和逗号隔开),(RoleList)
+#config
+
+[if] (arg0) != null
+    ($RoleList) = (arg0)
+
+@js ($role_num) = [(RoleList)].length
+@toolbar jh
+@js $(`span[command=message]`).click()
+@js $(`span[for=3]`).click()
+@await 500
+($num) = 0
+[while] (num) < (role_num)
+    @js ($roleName) = [(RoleList)][(num)]
+    @js ($roleid) = $("span:contains('(roleName)')").parent().attr("roleid")
+    @print (roleid)
+    party remove (roleid) ok
+    ($num) = (num) + 1

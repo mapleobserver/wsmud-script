@@ -1,0 +1,17 @@
+//自动从下往上踢指定数量的小号
+//四区白三三
+#input ($KickNum)=请输入踢号数量,(KickNum)
+#config
+[if] (arg0) != null
+    ($KickNum) = (arg0)
+
+@toolbar jh
+@js $(`span[command=message]`).click()
+@js $(`span[for=3]`).click()
+@await 500
+($num) = 0
+[while] (num) < (KickNum)
+    @js ($roleid) = $(".dialog-party").find(".party-role").last().attr("roleid")
+    @print (roleid)
+    party remove (roleid) ok
+    ($num) = (num) + 1
