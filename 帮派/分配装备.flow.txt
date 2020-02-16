@@ -1,6 +1,8 @@
 //raid.flow
+//四区白三三
 #input ($PlayerName)=请输入参与分配的玩家名字,(PlayerName)
 #config
+stopstate
 $to 帮会-仓库
 @cmdDelay 300
 [while] true
@@ -20,3 +22,4 @@ $to 帮会-仓库
     [else]
         alloc
         @js $(".content-message").find(".item-commands").last().children(":first").click()
+$zdwk

@@ -12,3 +12,4 @@ $to 帮会-仓库
     ($num) = (num) + 1
     [if] (num) == 10
         [break]
+$zdwk
