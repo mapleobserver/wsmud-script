@@ -1,12 +1,24 @@
-#select ($_DungeonWaitSkillCD) = Boss战前等待技能冷却,打开|关闭,关闭
+#input ($NameSC) = 输入组队的随从名字,(NameSC)
+#select ($_DungeonWaitSkillCD) = Boss战前等待技能冷却,打开|关闭,(_DungeonWaitSkillCD)
+#select ($_DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(_DungeonBagCleanWay)
 #input ($repeat) = 重复次数,1
 #config
 <-recordGains
 <-stopSSAuto
+stopstate
+team out
 ($num) = 0
 [while] (num) < (repeat)
     @renew
-    jh fb 11 start3;cr cd/wudu/damen 2 0
+    [if] (_DungeonBagCleanWay) == 售卖
+        @cleanBag
+    [else if] (_DungeonBagCleanWay) == 存仓及售卖
+        @tidyBag
+    @cmdDelay 500
+    $to 住房-小花园
+    team with {r(NameSC)}
+    jh fb 11 start3
+    cr cd/wudu/damen 2 0
     @kill 五毒教徒,五毒教徒,五毒教徒,五毒教徒
     go east
     @kill 沙千里
@@ -35,8 +47,13 @@
     go east
     @kill 何铁手
     cr;cr over
-    @tidyBag
+    team out
     ($num) = (num) + 1
+[if] (_DungeonBagCleanWay) == 售卖
+    @cleanBag
+[else if] (_DungeonBagCleanWay) == 存仓及售卖
+    @tidyBag
+team out
 stopSSAuto->
 recordGains->
 $zdwk
