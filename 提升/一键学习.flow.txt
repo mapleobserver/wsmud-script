@@ -3,368 +3,326 @@
 // 武馆需要先交学费，其他门派自动拜师
 // 基于@andyfos的版本修改
 // 四区白三三
-[if] (Sf) == null
-   ($Sf) = 逍遥子
-
-#select ($Sf) = 师傅姓名,谷虚道长|宋远桥|张三丰|清乐比丘|道绝禅师|慧合尊者|澄净|玄难|高根明|岳不群|封不平|风清扬|苏梦清|静心|周芷若|灭绝|薛慕华|苏星河|逍遥子|左全|简长老|鲁有脚|洪七公|何小二|李四|雾中楼|武馆教习,(Sf)
+@toolbar jh
+@toolbar score
+@js ($MyMP) = $(`span[data-prop=family]`).text()
+@js ($MySF) = $(`span[data-prop=master]`).text()
+[if] (MyMP) == 无门无派
+    ($MySF) = 武馆教习
+    ($MyMP) = 武馆
+@print 门派：(MyMP)，师傅：(MySF)
+[if] (Xsm) == null
+    ($Xsm) = 两者皆学
+#select ($MySF) = 师傅姓名,谷虚道长|宋远桥|张三丰|清乐比丘|道绝禅师|慧合尊者|澄净|玄难|高根明|岳不群|封不平|风清扬|苏梦清|静心|周芷若|灭绝|薛慕华|苏星河|逍遥子|左全|简长老|鲁有脚|洪七公|何小二|李四|雾中楼|武馆教习,(MySF)
 #select ($Xsm) = 学习何种技能,基本技能|门派技能|两者皆学,(Xsm)
 #config
 
-[if] (Sf) == 谷虚道长||(Sf) == 宋远桥||(Sf) == 张三丰
-    ($Hzmp) = 武当
-[if] (Sf) == 清乐比丘||(Sf) == 道绝禅师||(Sf) == 慧合尊者||(Sf) == 澄净||(Sf) == 玄难
-    ($Hzmp) = 少林
-[if] (Sf) == 高根明||(Sf) == 岳不群||(Sf) == 封不平||(Sf) == 风清扬
-    ($Hzmp) = 华山
-[if] (Sf) == 苏梦清||(Sf) == 静心||(Sf) == 周芷若||(Sf) == 灭绝
-    ($Hzmp) = 峨眉
-[if] (Sf) == 薛慕华||(Sf) == 苏星河||(Sf) == 逍遥子
-    ($Hzmp) = 逍遥
-[if] (Sf) == 左全||(Sf) == 简长老||(Sf) == 鲁有脚||(Sf) == 洪七公
-    ($Hzmp) = 丐帮
-[if] (Sf) == 何小二||(Sf) == 李四||(Sf) == 雾中楼
-    ($Hzmp) = 杀手楼
-[if] (Sf) == 武馆教习
-    ($Hzmp) = 武馆
-
-[if] (Sf) == 谷虚道长||(Sf) == 宋远桥
+@stopSSAuto
+[if] (MySF) == 谷虚道长|(MySF) == 宋远桥
     ($Xxdd) = 武当派-三清殿
-[if] (Sf) == 张三丰
+[if] (MySF) == 张三丰
     ($Xxdd) = 武当派-后山小院
-[if] (Sf) == 清乐比丘
+[if] (MySF) == 清乐比丘
     ($Xxdd) = 少林派-广场
-[if] (Sf) == 道绝禅师
+[if] (MySF) == 道绝禅师
     ($Xxdd) = 少林派-天王殿
-[if] (Sf) == 慧合尊者
+[if] (MySF) == 慧合尊者
     ($Xxdd) = 少林派-般若堂
-[if] (Sf) == 澄净
+[if] (MySF) == 澄净
     ($Xxdd) = 少林派-罗汉堂
-[if] (Sf) == 玄难
+[if] (MySF) == 玄难
     ($Xxdd) = 少林派-方丈楼
-[if] (Sf) == 高根明
+[if] (MySF) == 高根明
     ($Xxdd) = 华山派-镇岳宫
-[if] (Sf) == 岳不群
+[if] (MySF) == 岳不群
     ($Xxdd) = 华山派-客厅
-[if] (Sf) == 封不平
+[if] (MySF) == 封不平
     ($Xxdd) = 华山派-林间小屋
-[if] (Sf) == 风清扬
+[if] (MySF) == 风清扬
     ($Xxdd) = 华山派-落雁峰
-[if] (Sf) == 苏梦清
+[if] (MySF) == 苏梦清
     ($Xxdd) = 峨眉派-庙门
-[if] (Sf) == 静心
+[if] (MySF) == 静心
     ($Xxdd) = 峨眉派-大殿
-[if] (Sf) == 周芷若
+[if] (MySF) == 周芷若
     ($Xxdd) = 峨眉派-小屋
-[if] (Sf) == 灭绝
+[if] (MySF) == 灭绝
     ($Xxdd) = 峨眉派-清修洞
-[if] (Sf) == 薛慕华
+[if] (MySF) == 薛慕华
     ($Xxdd) = 逍遥派-木屋
-[if] (Sf) == 苏星河
+[if] (MySF) == 苏星河
     ($Xxdd) = 逍遥派-青草坪
-[if] (Sf) == 逍遥子
+[if] (MySF) == 逍遥子
     ($Xxdd) = 逍遥派-地下石室
-[if] (Sf) == 左全
+[if] (MySF) == 左全
     ($Xxdd) = 丐帮-树洞下
-[if] (Sf) == 简长老
+[if] (MySF) == 简长老
     ($Xxdd) = 丐帮-土地庙
-[if] (Sf) == 鲁有脚
+[if] (MySF) == 鲁有脚
     ($Xxdd) = 丐帮-林间小屋
-[if] (Sf) == 洪七公
+[if] (MySF) == 洪七公
     ($Xxdd) = 丐帮-林间小屋
-[if] (Sf) == 何小二
+[if] (MySF) == 何小二
     ($Xxdd) = 杀手楼-大厅
-[if] (Sf) == 李四
+[if] (MySF) == 李四
     ($Xxdd) = 杀手楼-银楼
-[if] (Sf) == 雾中楼
+[if] (MySF) == 雾中楼
     ($Xxdd) = 杀手楼-书房
-[if] (Sf) == 武馆教习
+[if] (MySF) == 武馆教习
     ($Xxdd) = 扬州城-扬州武馆
 
 stopstate
 $to (Xxdd)
-[if] (Sf) == 鲁有脚
+[if] (MySF) == 鲁有脚
     go down
 @wait 300
-select {r(Sf)}?
+select {r(MySF)}?
 @wait 300
 @liaoshang
 @dazuo
+
+@toolbar jh
+@toolbar skills
+@js ($skill_level) = /\d+/.exec($("[skid=force]").children(".skill-level").text())['0']
+[if] (skill_level) < 1000
+    ($beginner) = true
 
 <===
 [while] true
     [if] (:living) != true
         relive
         @renew
-    [else if] (:hpPer) < 0.8
-        stopstate
-        @liaoshang
-    [else if] (:mpPer) < 0.8
-        stopstate
-        @dazuo
     [if] (:room) != (Xxdd)
         stopstate
         @wait 300
         $to (Xxdd)
-        [if] (Sf) == 鲁有脚
+        [if] (MySF) == 鲁有脚
             go down
         @wait 300
-    [if] {r(Sf)}? != null && (:state) != 学习
-        stopstate
-        bai {r(Sf)}?
-        @wait 300
-        select {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+    [if] {r(MySF)}? != null && (:state) != 学习
+        [if] (:state) != 打坐
+            stopstate
+            bai {r(MySF)}?
+            @wait 300
+            select {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
     @wait 60000
 ===>
 
-
 [if] (Xsm) == 基本技能 || (Xsm) == 两者皆学
     ($Lastcmd) = force
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = dodge
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = unarmed
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = parry
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = sword
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = blade
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = throwing
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = club
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = whip
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
     ($Lastcmd) = staff
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    xue (Lastcmd) from {r(Sf)}?
+    xue (Lastcmd) from {r(MySF)}?
     @wait 300
-    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-    [if] (nl) == 的内力
-        ($ts) == 由于你的内力不够，部分技能未能学习
-    [if] (nl) == 说道：你对本门的贡献还
-        ($ts2) == 由于你的门贡不够，部分技能未能学习
+    @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
 [if] (Xsm) == 门派技能 || (Xsm) == 两者皆学
-    [if] (Hzmp) == 武当
-        [if] (Sf) == 谷虚道长
+    [if] (MyMP) == 武当派
+        [if] (MySF) == 谷虚道长
             ($Lastcmd) = wudangxinfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
             ($Lastcmd) = wudangjianfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = taijijian
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = taijishengong
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = taijiquan
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = tiyunzong
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-
-    [if] (Hzmp) == 少林
-        [if] (Sf) == 清乐比丘 || (Sf) == 道觉禅师
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (beginner) == true
+                enable sword (Lastcmd)
+        [else]
+            ($Lastcmd) = taijishengong
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            ($Lastcmd) = taijiquan
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                enable unarmed (Lastcmd);enable parry (Lastcmd)
+            ($Lastcmd) = tiyunzong
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                enable dodge (Lastcmd)
+        [if] (MySF) == 张三丰
+            ($Lastcmd) = taijijian
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (beginner) == true && (gx) == null
+                enable sword (Lastcmd)
+    [if] (MyMP) == 少林派
+        [if] (MySF) == 清乐比丘 || (MySF) == 道觉禅师
             ($Lastcmd) = hunyuanyiqi
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = yijinjing
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+        [if] (MySF) == 玄难
+            ($Lastcmd) = yijinjing
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (:maxMp) < 100000 && (gx) == null
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
         ($Lastcmd) = yizhichan
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+        [if] (beginner) == true
+            enable unarmed (Lastcmd)
         ($Lastcmd) = ranmudao
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+        [if] (beginner) == true
+            enable blade (Lastcmd);enable parry (Lastcmd)
         ($Lastcmd) = shaolinshenfa
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+        [if] (beginner) == true
+            enable dodge (Lastcmd)
 
-    [if] (Hzmp) == 华山
-        [if] (Sf) == 高根明
+    [if] (MyMP) == 华山派
+        [if] (MySF) == 高根明
             ($Lastcmd) = huashanxinfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+                [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
             ($Lastcmd) = huashanjianfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
-        [if] (Sf) == 岳不群
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                enable sword (Lastcmd)
+        [if] (MySF) == 岳不群
             @toolbar jh
             @toolbar skills
             @js ($skill_level) = /\d+/.exec($("[skid=huashanjianfa]").children(".skill-level").text())['0']
             [if] (skill_level) < 200
-                xue huashanjianfa from {r(Sf)}?
+                xue huashanjianfa from {r(MySF)}?
                 [while]
                     @tip 等级提升了
                     @await 2000
@@ -372,311 +330,359 @@ select {r(Sf)}?
                     @js ($skill_level) = /\d+/.exec($("[skid=huashanjianfa]").children(".skill-level").text())['0']
                     [if] (skill_level) >= 200
                         [break]
-        ($Lastcmd) = kuangfengkuaijian
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = dugujiujian
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = zixiashengong
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        [if] (MySF) == 封不平
+            ($Lastcmd) = kuangfengkuaijian
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                enable sword (Lastcmd);enable dodge (Lastcmd)
+        [if] (MySF) == 岳不群
+            ($Lastcmd) = zixiashengong
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
         ($Lastcmd) = poyuquan
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+        [if] (nl) != null
             ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-
-    [if] (Hzmp) == 峨眉
-        [if] (Sf) == 苏梦清
+        [if] (gx) != null
+            ($ts) == 由于你的门贡不够，部分技能未能学习
+        [if] (beginner) == true
+            enable unarmed (Lastcmd)
+        [if] (MySF) == 风清扬
+            ($Lastcmd) = dugujiujian
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
+                ($ts) == 由于你的内力不够，部分技能未能学习
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (beginner) == true && (gx) == null
+                enable sword (Lastcmd);enable parry (Lastcmd)
+    [if] (MyMP) == 峨眉派
+        [if] (MySF) == 苏梦清
             ($Lastcmd) = emeixinfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
             ($Lastcmd) = jindingzhang
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = yitianjianfa
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = linjizhuang
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = jiuyinbaiguzhao
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = zhutianbu
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        [if] (Sf) != 灭绝 && (Sf) != 周芷若
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                enable unarmed (Lastcmd);enable parry (Lastcmd)
+        [if] (MySF) != 灭绝 && (MySF) != 周芷若
             ($Lastcmd) = huifengjian
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
                 ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (beginner) == true
+                enable sword (Lastcmd)
+        [if] (MySF) != 苏梦清
+            ($Lastcmd) = linjizhuang
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+        [if] (MySF) == 周芷若
+            ($Lastcmd) = jiuyinbaiguzhao
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                enable unarmed (Lastcmd);enable parry (Lastcmd)
+        ($Lastcmd) = zhutianbu
+        xue (Lastcmd) from {r(MySF)}?
+        @wait 300
+        xue (Lastcmd) from {r(MySF)}?
+        @wait 300
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+        [if] (beginner) == true
+            enable dodge (Lastcmd)
+        [if] (MySF) == 灭绝
+            ($Lastcmd) = yitianjianfa
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (beginner) == true && (gx) == null
+                enable sword (Lastcmd)
 
-    [if] (Hzmp) == 逍遥
-        [if] (Sf) == 薛慕华
+    [if] (MyMP) == 逍遥派
+        [if] (MySF) == 薛慕华
             ($Lastcmd) = xiaoyaoxinfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
                 ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = beimingshengong
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = lingboweibu
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = liuyangzhang
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = xiaowuxianggong
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+        [else]
+            ($Lastcmd) = beimingshengong
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd);enable parry (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            ($Lastcmd) = lingboweibu
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (beginner) == true
+                enable dodge (Lastcmd)
+            ($Lastcmd) = liuyangzhang
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (beginner) == true
+                enalbe unarmed (Lastcmd)
+        [if] (MySF) == 逍遥子
+            ($Lastcmd) = xiaowuxianggong
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (beginner) == true && (gx) == null
+                enable unarmed (Lastcmd);enalbe sword (Lastcmd);enable blade (Lastcmd)
 
-
-    [if] (Hzmp) == 丐帮
-        [if] (Sf) == 左全
+    [if] (MyMP) == 丐帮
+        [if] (MySF) == 左全
             ($Lastcmd) = gaibangxinfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
             ($Lastcmd) = jiaohuabangfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = xianglongzhang
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = huntianqigong
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                enable club (Lastcmd)
+        [else]
+            ($Lastcmd) = huntianqigong
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
         ($Lastcmd) = dagoubang
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+        [if] (nl) != null
             ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        [if] (gx) != null
+            ($ts) == 由于你的门贡不够，部分技能未能学习
+        [if] (beginner) == true
+            eanble club (Lastcmd)
         ($Lastcmd) = xiaoyaoyou
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+        [if] (nl) != null
+            dazuo
+            @tip 已经没有办法再增加内力
+            stopstate
+        [if] (beginner) == true
+            enable dodge (Lastcmd)
+        [if] (MySF) == 洪七公
+            ($Lastcmd) = xianglongzhang
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (beginner) == true
+                enable unarmed (Lastcmd);enable parry (Lastcmd)
 
-
-    [if] (Hzmp) == 杀手楼
-        [if] (Sf) == 何小二
+    [if] (MyMP) == 杀手楼
+        [if] (MySF) == 何小二
             ($Lastcmd) = shashouxinfa
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
             ($Lastcmd) = feidao
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            xue (Lastcmd) from {r(Sf)}?
+            xue (Lastcmd) from {r(MySF)}?
             @wait 300
-            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-            [if] (nl) == 的内力
-                ($ts) == 由于你的内力不够，部分技能未能学习
-            [if] (nl) == 说道：你对本门的贡献还
-                ($ts2) == 由于你的门贡不够，部分技能未能学习
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                enable throwing (Lastcmd)
         ($Lastcmd) = taxuexunmei
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = mantianhuayu
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-        ($Lastcmd) = shashengjue
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        xue (Lastcmd) from {r(Sf)}?
-        @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+        [if] (nl) != null
+            dazuo
+            @tip 已经没有办法再增加内力
+            stopstate
+        [if] (beginner) == true
+            enable dodge (Lastcmd)
+        [if] (MySF) != 何小二
+            ($Lastcmd) = shashengjue
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (:maxMp) < 100000
+                enable force (Lastcmd)
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
         ($Lastcmd) = chuanxinzhang
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        xue (Lastcmd) from {r(Sf)}?
+        xue (Lastcmd) from {r(MySF)}?
         @wait 300
-        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你($nl)不够
-        [if] (nl) == 的内力
-            ($ts) == 由于你的内力不够，部分技能未能学习
-        [if] (nl) == 说道：你对本门的贡献还
-            ($ts2) == 由于你的门贡不够，部分技能未能学习
-
+        @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+        [if] (beginner) == true
+            enable unarmed (Lastcmd)
+        [if] (MySF) == 雾中楼
+            ($Lastcmd) = mantianhuayu
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            xue (Lastcmd) from {r(MySF)}?
+            @wait 300
+            @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (nl) != null
+                dazuo
+                @tip 已经没有办法再增加内力
+                stopstate
+            [if] (gx) != null
+                ($ts) == 由于你的门贡不够，部分技能未能学习
+            [if] (beginner) == true && (gx) == null
+                enable throwing (Lastcmd)
 $zdwk
-
-[if] (ts) != null && (ts2) != null
-    @js alert('学习已完成\n(ts)\n(ts2)')
-[else if] (ts) != null
+stopstate
+dazuo
+@recoverSSAuto
+[if] (ts) != null
     @js alert('学习已完成\n(ts)')
-[else if] (ts2) != null
-    @js alert('学习已完成\n(ts2)')
 [else]
     @js alert('学习已完成')
-
 [exit]

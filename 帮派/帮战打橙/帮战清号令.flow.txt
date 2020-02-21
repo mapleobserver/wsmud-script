@@ -32,6 +32,7 @@ $startpfm
     @await 100
     $killall
     @until (:combating) == false && (:status busy) == false
+    @await 1000
 [else if] {r岳不群}? != null
     @await 500
     [if] ($hsover) == true
@@ -74,7 +75,8 @@ $startpfm
     go west;go north
     go east
     go west;go north
-    go south[3];go west
+    go south[3]
+    go west
     go east;go south
     go southup
     go southup
