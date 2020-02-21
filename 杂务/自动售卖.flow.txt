@@ -2,7 +2,7 @@
 // 自动出售聚气丹、培元丹、混天黄紫装
 // 紫装只出售没精炼过的
 $to 扬州城-杂货铺
-// 卖聚气丹
+@print 卖聚气丹
 [if] {b聚气丹g#}? != null
     sell {b聚气丹g#}? {b聚气丹g}? to {r杨永福}?
 [if] {b聚气丹b#}? != null
@@ -11,10 +11,10 @@ $to 扬州城-杂货铺
     sell {b聚气丹y#}? {b聚气丹y}? to {r杨永福}?
 [if] {b聚气丹p#}? != null
     sell {b聚气丹p#}? {b聚气丹p}? to {r杨永福}?
-// 卖培元丹
+@print 卖培元丹
 [if] {b培元丹o#}? != null
     sell {b培元丹o#}? {b培元丹o}? to {r杨永福}?
-// 卖混天装
+@print 卖混天装
 [while] true
     [if] {b混天y#}? != null
         sell 1 {b混天y}? to {r杨永福}?
@@ -30,5 +30,29 @@ $to 扬州城-杂货铺
         sell 1 {b混天护腕p%}? to {r杨永福}?
     [else if] {b混天腰带p%#}? != null
         sell 1 {b混天腰带p%}? to {r杨永福}?
+    [else]
+        [break]
+@print 卖副本紫
+[while] true
+    [if] {b灵蛇杖p%#}? != null
+        sell 1 {b灵蛇杖p%}? to {r杨永福}?
+    [else if] {b玉竹杖p%#}? != null
+        sell 1 {b玉竹杖p%}? to {r杨永福}?
+    [else if] {b玉箫p%#}? != null
+        sell 1 {b玉箫p%}? to {r杨永福}?
+    [else if] {b冰魄银针p%#}? != null
+        sell 1 {b冰魄银针p%}? to {r杨永福}?
+    [else if] {b金铃索p%#}? != null
+        sell 1 {b金铃索p%}? to {r杨永福}?
+    [else if] {b韦一笑的逃命鞋p%#}? != null
+        sell 1 {b韦一笑的逃命鞋p%}? to {r杨永福}?
+    [else if] {b周芷若的手镯p%#}? != null
+        sell 1 {b周芷若的手镯p%}? to {r杨永福}?
+    [else if] {b杨不悔的项链p%#}? != null
+        sell 1 {b杨不悔的项链p%}? to {r杨永福}?
+    [else if] {b赵敏的戒指p%#}? != null
+        sell 1 {b赵敏的戒指p%}? to {r杨永福}?
+    [else if] {b圣火令p%#}? != null
+        sell 1 {b圣火令p%}? to {r杨永福}?
     [else]
         [break]
