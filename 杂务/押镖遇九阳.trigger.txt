@@ -1,0 +1,7 @@
+//新提示信息：九阳神功摧毁了你的真元
+[if] (:room) == 运镖-青石大道
+    $stopautopfm unarmed.san,unarmed.liu,throwing.jiang,blade.xue;
+    @until (:hpPer) < 0.7
+    @perform blade.xue
+    @until (:combating) == false
+    $startautopfm unarmed.san,unarmed.liu,throwing.jiang,blade.xue;
