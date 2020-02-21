@@ -31,17 +31,14 @@ team out
     @kill 毒郎中
     go north
     go north
-    @liaoshang
     [if](_DungeonWaitSkillCD) == 打开
         @cd
     go east
     @kill 潘秀达,岑其斯,齐云敖
-    @liaoshang
     [if](_DungeonWaitSkillCD) == 打开
          @cd   
     go east
     @kill 何红药
-    @liaoshang
     [if](_DungeonWaitSkillCD) == 打开
          @cd   
     go east

@@ -40,7 +40,14 @@ team out
                 team with {r(NameSC)}
                 jh fb 24 start3
                 cr heimuya/shangu 2 0
-                go east;go east
+                go north[2]
+                @kill 教徒,教徒
+                go south[4]
+                @kill 教徒,教徒
+                go north[2]
+                go east;go north[2]
+                @kill 教徒,教徒
+                go south[2];go east
                 look xiazi;push xiazi
                 go enter;go up
                 look xiazi;push xiazi
