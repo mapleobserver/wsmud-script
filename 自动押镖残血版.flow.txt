@@ -1,8 +1,6 @@
 // raid.flow
 // 四区白三三
 // 可选择残血状态增加攻击力，适用于九阴血刀。
-<-stopSSAuto
-<-recordGains
 [if] (EscortHpThreshold) == null
     ($EscortHpThreshold) = 90
 [if] (EscortMpThreshold) == null
@@ -23,6 +21,8 @@
 #input ($EscortWeaponID) = 切换躺尸武器sid,(EscortWeaponID)
 #input ($repeat) = 重复次数,1
 #config
+<-stopSSAuto
+<-recordGains
 stopstate
 @tidyBag
 ($hpPer) = (EscortHpThreshold)/100
@@ -64,10 +64,9 @@ stopstate
         [if] (EscortTangshi) == 使用
             go east;$waitpfm sword.wu
         [else]
-            [if] (EscortXuedao) == 打开
+            [if] (EscortXuedao) == 打开 && (jiuyang) == null
                 enable force none;enable force jiuyinshengong
             go east
-            @wait 1000
         [if] (:room) == 运镖-青石大道
             [if] (EscortTangshi) == 使用
                 @cd sword.wu
@@ -75,13 +74,21 @@ stopstate
                 @wait 3000
                 @cd
                 kill {r蒙面大盗}?
-            @until {r蒙面大盗}? == null || (:combating) == true || (:living) == false
+            //@until {r蒙面大盗}? == null || (:combating) == true || (:living) == false
+            //@tip 九阳神功($jiuyang)了|<hir>鲜血</hir>|<hir>死了</hir>|倒在地上,死了|挣扎了几下，
+            @tip 九阳神功($jiuyang)了|你获得了|没有东西|<hir>鲜血</hir>|<hir>死了</hir>|你口中喷出几口<hir>鲜血</hir>，倒在地上,死了！|你现在是灵魂状态|朦胧中你好像听到有人在喊
+            //@print (jiuyang)
             @until {r蒙面大盗}? == null || (:combating) == false || (:living) == false
             [if] (:living) == true
+                ($jiuyang) = null
                 ($numJF) = (numJF) + 1
-                @print 已打死 (numJF) 个劫匪
+                @print 当前运镖流程已完成 <hiy>(num)/(repeat)</hiy> 次，本次已打死 <hiy>(numJF)</hiy> 个劫匪。
+                ($jiuyang) = null
                 [continue]
             [if] (:living) == false
+                [if] (jiuyang) != null
+                    @print <hir>有九阳，暂停残血模式</hir>
+                relive
                 relive
                 @renew
                 jh fam 0 start;go west[2];go south[2]
