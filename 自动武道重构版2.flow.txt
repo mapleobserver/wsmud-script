@@ -39,10 +39,10 @@ go enter
     kill {r武道塔守护者}?
     //@until {r武道塔守护者}? == null || (:combating) == true
     @until {r武道塔守护者}? == null || (:combating) == false
-    [if] (:hpPer) < 0.8 || (:mpPer) < 0.5
+    [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
         @renew
         jh fam 9 start;go enter
-    @liaoshang
+    //@liaoshang
     go up
 ($num)=0
 jh fam 9 start
