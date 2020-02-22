@@ -1,6 +1,7 @@
 // raid.flow
 // 频道：帮派
 // 关键字：成员听令
+($BPZEnd) = false
 ($BPZStart) = (:hour)*3600 + (:minute)*60 + (:second)
 ($BPZHour) = (:hour)
 ($BPZMin) = (:minute)
