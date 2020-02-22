@@ -24,10 +24,10 @@ stopstate
 @cd
 ($mpzname) = 丐帮
 <---
-[if] (:hpPer) < 0.8
-    @liaoshang
-[if] (:mpPer) < 0.5
-    @dazuo
+[if] (:hpPer) < 0.2 || (:mpPer) < 0.1
+    ($thisroom) = (:room)
+    @renew
+    $to (thisroom)
 @await 100
 [while] true
     @await 100
@@ -45,41 +45,47 @@ stopstate
         ($mpc3) = {r峨眉派第四代弟子}?
         ($mpc4) = {r峨眉派第三代弟子}?
         ($mpc5) = {r灭绝}?
+        ($mpc5) = {r梵心}?
     [else if] (mpzname) == 丐帮
         ($mpc1) = {r丐帮六袋弟子}?
         ($mpc2) = {r丐帮七袋弟子}?
         ($mpc3) = {r丐帮八袋弟子}?
         ($mpc4) = {r丐帮九袋长老}?
         ($mpc5) = {r洪七公}?
+        ($mpc6) = {r行墨}?
     [else if] (mpzname) == 华山派
         ($mpc1) = {r华山派第十六代弟子}?
         ($mpc2) = {r华山派第十五代弟子}?
         ($mpc3) = {r华山派第十四代弟子}?
         ($mpc4) = {r华山派第十三代弟子}?
         ($mpc5) = {r岳不群}?
+        ($mpc6) = {r独孤败天}?
     [else if] (mpzname) == 武当派
         ($mpc1) = {r道童}?
         ($mpc2) = {r武当派第三代弟子}?
         ($mpc3) = {r武当派第二代弟子}?
         ($mpc4) = {r武当派第一代弟子}?
         ($mpc5) = {r张三丰}?
+        ($mpc6) = {r道藏}?
     [else if] (mpzname) == 逍遥派
         ($mpc1) = {r逍遥派第四代弟子}?
         ($mpc2) = {r逍遥派第三代弟子}?
         ($mpc3) = {r逍遥派第二代弟子}?
         ($mpc4) = {r逍遥派第一代弟子}?
         ($mpc5) = {r逍遥子}?
+        ($mpc6) = {r庄周}?
     [else if] (mpzname) == 少林派
         ($mpc1) = {r少林派第四十一代弟子}?
         ($mpc2) = {r少林派第四十代弟子}?
         ($mpc3) = {r少林派第三十九代弟子}?
         ($mpc4) = {r少林派第三十八代弟子}?
         ($mpc5) = {r玄难}?
+        ($mpc6) = {r达摩}?
     [if] (mpc4) != null && (:maxHp (mpc4)) == 2000000
         kill (mpc4)
         @until (:combating) == false && (:free) == true
     [else if] (mpc3) != null && (:maxHp (mpc3)) == 200000
-        [if] (mpc5) == null
+        [if] (mpc5) == null && (mpc6) == null
             kill (mpc3)
         @until (:combating) == false && (:free) == true
     [if] (mpc2) != null && (:maxHp (mpc2)) == 40000
