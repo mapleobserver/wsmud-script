@@ -15,26 +15,27 @@
 @js ($bossPlace) = "(content)".match("出现在([^%]+)一带。")[1]
 @js ($bossName) = "(content)".match("听说([^%]+)出现在")[1]
 @print <hiy>(bossName):(bossPlace)</hiy>
-stopstate
-$to (bossPlace)
-@await 200
-[if] {r(bossName)}? != null
-    @await 500
-    kill {r(bossName)}?
-    kill {r(bossName)}?
-    $eq 1
-    [if] (:combating) == true
-        @until (:combating) == false || (:living) == false
-        @tip 你从(bossName)的尸体里拿出来|那里面($none)东西|阴冷的气息包围
-        [if] (none) != null
-            ($BossTodayFull) = true
-    @await 1000
-    relive;relive
-    @await 2000
-    @renew
-    @cd
-    @await 3000
-    $zdwk
-[else]
-    $zdwk
-($BossTodayDate) = (:date)
+[if] (:state)==挖矿
+    stopstate
+    $to (bossPlace)
+    @await 200
+    [if] {r(bossName)}? != null
+        @await 500
+        kill {r(bossName)}?
+        kill {r(bossName)}?
+        $eq 1
+        [if] (:combating) == true
+            @until (:combating) == false || (:living) == false
+            @tip 你从(bossName)的尸体里拿出来|那里面($none)东西|阴冷的气息包围
+            [if] (none) != null
+                ($BossTodayFull) = true
+        @await 1000
+        relive;relive
+        @await 2000
+        @renew
+        @cd
+        @await 3000
+        $zdwk
+    [else]
+        $zdwk
+    ($BossTodayDate) = (:date)

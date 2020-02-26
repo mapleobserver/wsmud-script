@@ -85,9 +85,19 @@ stopstate
         kill (mpc4)
         @until (:combating) == false && (:free) == true
     [else if] (mpc3) != null && (:maxHp (mpc3)) == 200000
-        [if] (mpc5) == null && (mpc6) == null
-            kill (mpc3)
-        @until (:combating) == false && (:free) == true
+        [if] (mpc5) == null
+            [if] (mpc6) == null
+                kill (mpc3)
+        [else]
+            [if] (:combating) == true
+                @until (:living) == false || (:combating) == false
+                    [if] (mpc5) != null || (mpc6) != null
+                        relive
+                        @renew
+                        @until (:status xuruo) == false
+                        ($enemy) = (mpzname)
+                        [continue]
+         @until (:combating) == false && (:free) == true
     [if] (mpc2) != null && (:maxHp (mpc2)) == 40000
         kill (mpc2)
         @until (:combating) == false && (:free) == true
@@ -101,7 +111,7 @@ stopstate
     @cmdDelay 500
     //丐帮
     ($mpzname) = 丐帮
-    [if] (myMP) != (mpzname)
+    [if] (myMP) != (mpzname) && (mpzname) != (enemy)
         jh fam 6 start
         go down
         go east
@@ -113,7 +123,7 @@ stopstate
         go up
     //峨眉派
     ($mpzname) = 峨眉派
-    [if] (myMP) != (mpzname)
+    [if] (myMP) != (mpzname) && (mpzname) != (enemy)
         jh fam 4 start
         go northup
         go east
@@ -131,7 +141,7 @@ stopstate
         go north
     //华山派
     ($mpzname) = 华山派
-    [if] (myMP) != (mpzname)
+    [if] (myMP) != (mpzname) && (mpzname) != (enemy)
         jh fam 3 start
         go eastup
         go southup
@@ -157,7 +167,7 @@ stopstate
         jumpup
     //逍遥派
     ($mpzname) = 逍遥派
-    [if] (myMP) != (mpzname)
+    [if] (myMP) != (mpzname) && (mpzname) != (enemy)
         jh fam 5 start
         go north
         go north
@@ -173,7 +183,7 @@ stopstate
         go down
     //少林派
     ($mpzname) = 少林派
-    [if] (myMP) != (mpzname)
+    [if] (myMP) != (mpzname) && (mpzname) != (enemy)
         jh fam 2 start
         go north
         go west
@@ -195,7 +205,7 @@ stopstate
         go north
     //武当派
     ($mpzname) = 武当派
-    [if] (myMP) != (mpzname)
+    [if] (myMP) != (mpzname) && (mpzname) != (enemy)
         jh fam 1 start
         go north
         go south;go west

@@ -26,12 +26,12 @@
     @kill 潘秀达,岑其斯,齐云敖
     @liaoshang
     [if](_DungeonWaitSkillCD) == 打开
-         @cd   
+         @cd
     go east
     @kill 何红药
     @liaoshang
     [if](_DungeonWaitSkillCD) == 打开
-         @cd   
+         @cd
     go east
     @kill 何铁手
     cr;cr over

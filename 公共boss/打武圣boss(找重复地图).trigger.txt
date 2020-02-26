@@ -5,19 +5,60 @@
 // 发言人：自己定义
 // 关键字：武圣boss出现
 // 装备套装默认是1，有不同的话，自己在下面那句 $eq 1 改一下数字。
+[if] (:date) != (BossTodayDate)
+    [if] (:hour) > 4
+        ($BossTodayFull) = false
+[if] (BossTodayFull) == true
+    @print <ord>今日公共boss已满！</ord>
+    @await 2000
+    [exit]
 @js ($bossPlace) = "(content)".match("出现在([^%]+)一带。")[1]
 @js ($bossName) = "(content)".match("听说([^%]+)出现在")[1]
 @print (bossName) - (bossPlace)
-stopstate
-$to (bossPlace)
-@await 200
-[if] {r(bossName)}? != null
-    $usezml 攻装
-    @await 500
-    kill {r(bossName)}?
-    @untill {r(bossName)}? == null
-    relive
-    @await 500
-    $zdwk
-[else]
-    $zdwk
+[if] (:state)==挖矿
+    stopstate
+    @await 200
+    <---
+    [if] {r(bossName)}? != null
+        @await 500
+        kill {r(bossName)}?
+        kill {r(bossName)}?
+        $eq 1
+        [if] (:combating) == true
+            @until (:living) == false || (:combating) == false
+            @tip 你从(bossName)的尸体里拿出来|那里面($none)东西|阴冷的气息包围
+            [if] (none) != null
+                ($BossTodayFull) = true
+        @await 1000
+        relive;relive
+        @await 2000
+        @renew
+        @cd
+        @await 3000
+        $zdwk
+        [exit]   
+    --->
+    $to (bossPlace)
+    [if] {r(bossName)}? == null
+        [if] (bossPlace) == 逍遥派-林间小道
+            go west;go north
+            go south;go west
+            go east;go south
+        [else if] (bossPlace) == 逍遥派-木屋
+            go south[4]
+        [else if] (bossPlace) == 逍遥派-地下石室
+            go up
+        [else if] (bossPlace) == 丐帮-暗道
+            go east
+            go east[2]
+            go east
+        [else if] (bossPlace) == 峨眉派-走廊
+            go north
+            go south[2]
+            go north;go east[2]
+        [else if] (bossPlace) == 少林派-竹林
+            go north
+        [else if] (bossPlace) == 武当派-林间小径
+            go south
+        [else]
+            $zdwk

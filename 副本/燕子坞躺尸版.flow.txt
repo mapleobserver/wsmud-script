@@ -28,9 +28,9 @@ stopstate
 --->
 <-recordGains
 [if] (FBName) == 燕子坞(简单)
-    ($FBCr) = cr murong/anbian 0 10
+    ($FBCr) = cr murong/anbian 0 0
 [else if] (FBName) == 燕子坞(困难)
-    ($FBCr) = cr murong/anbian 1 10
+    ($FBCr) = cr murong/anbian 1 0
 ($jianfa) = (:kf_jian)
 ($weapon) = (:eq0)
 ($_i) = 0
@@ -42,7 +42,6 @@ stopstate
         @tidyBag
 
 // 副本
-    jh fb 23 start1
     (FBCr)
     go east;go east
     @kill 包不同

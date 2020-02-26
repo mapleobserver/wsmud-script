@@ -29,11 +29,12 @@ $startpfm
     jh fam 5 start
 @wait 100
 <---
-[if] {r(bang)}? == null || {r(red)}? == null
-    @await 100
-    $killall
-    @until (:combating) == false && (:status busy) == false
-    @await 500
+[if] {r(bang)}? == null
+    [if] {r(red)}? == null
+        @await 100
+        $killall
+        @until (:combating) == false && (:status busy) == false
+        @await 500
 [else if] {r岳不群}? != null
     @await 500
     [if] ($hsover) == true

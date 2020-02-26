@@ -1,0 +1,7 @@
+//召唤武帝boss
+//四区白三三
+($num) = 0
+$to 帮会-大院
+[while] (num) < 11
+    party boss 5
+    ($num) = (num) + 1
