@@ -1,0 +1,20 @@
+// raid.flow
+// 战神殿开门
+// 四区白三三
+look shi
+@tip 和外面星空星宿位置一一对应，($star_0)，($star_1)，($star_2)，($star_3)，($star_4)，($star_5)，($star_6)，($star_7)这些星宿依次闪烁
+($stars) = "(star_0)","(star_1)","(star_2)","(star_3)","(star_4)","(star_5)","(star_6)","(star_7)"
+($dirs) = {"star":"角","dir":1},{"star":"亢","dir":1},{"star":"氏","dir":0},{"star":"房","dir":0},{"star":"心","dir":0},{"star":"尾","dir":2},{"star":"箕","dir":2},{"star":"井","dir":4},{"star":"鬼","dir":4},{"star":"柳","dir":3},{"star":"星","dir":3},{"star":"张","dir":3},{"star":"翼","dir":3},{"star":"轸","dir":2},{"star":"奎","dir":6},{"star":"娄","dir":6},{"star":"胃","dir":5},{"star":"昴","dir":5},{"star":"毕","dir":5},{"star":"觜","dir":5},{"star":"参","dir":4},{"star":"胃","dir":5},{"star":"斗","dir":6},{"star":"牛","dir":6},{"star":"女","dir":7},{"star":"虚","dir":7},{"star":"危","dir":7},{"star":"室","dir":1},{"star":"壁","dir":7}
+
+($num_1) = 0
+[while] (num_1) < 8
+    @js ($star) = [(stars)][(num_1)]
+    ($num_2) = 0
+    [while] (num_2) < 28
+        @js ($dir_star) = var d=[(dirs)];d[(num_2)]["star"]
+        [if] (dir_star) == (star)
+            [break]
+        ($num_2) = (num_2) + 1
+    @js ($dir) = var d=[(dirs)];d[(num_2)]["dir"]
+    push (dir)
+    ($num_1) = (num_1) + 1
