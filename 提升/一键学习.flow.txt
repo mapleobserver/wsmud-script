@@ -322,14 +322,7 @@ select {r(MySF)}?
             @toolbar skills
             @js ($skill_level) = /\d+/.exec($("[skid=huashanjianfa]").children(".skill-level").text())['0']
             [if] (skill_level) < 200
-                xue huashanjianfa from {r(MySF)}?
-                [while]
-                    @tip 等级提升了
-                    @await 2000
-                    @toolbar skills
-                    @js ($skill_level) = /\d+/.exec($("[skid=huashanjianfa]").children(".skill-level").text())['0']
-                    [if] (skill_level) >= 200
-                        [break]
+                xue  200 huashanjianfa from {r(MySF)}?
         [if] (MySF) == 封不平
             ($Lastcmd) = kuangfengkuaijian
             xue (Lastcmd) from {r(MySF)}?
