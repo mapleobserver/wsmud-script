@@ -17,7 +17,7 @@ jh fam 9 start
 go enter
 [while] true
     [if] (:mpPer) <= 0.1
-        @until (:combating) == false
+        @until (:combating) == false && (:free) == true && (:status faint) == false && (:status miss) == false
         dazuo
         @until (:mpPer) >= 0.3
         stopstate

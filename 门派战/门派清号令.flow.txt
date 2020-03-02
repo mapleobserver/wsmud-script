@@ -10,8 +10,9 @@
     ($MPPass) = 跳过
 [if](MPAfter) == null
     ($MPAfter) = $zdwk
-#input ($MPBefore)=刷蓝前执行命令(用英文;隔开),(MPBefore)
+#input ($MPBefore)=清号令前执行命令(用英文;隔开),(MPBefore)
 #select ($MPPass) =跳过自己的门派,跳过|不跳过,(MPPass)
+#select ($MPHs)=跳过华山让大佬开红,跳过|不跳过,(MPHs)
 #input ($MPAfter) =结束后命令(用英文;隔开),(MPAfter)
 #config
 <-stopSSAuto
@@ -81,6 +82,7 @@ stopstate
         ($mpc4) = {r少林派第三十八代弟子}?
         ($mpc5) = {r玄难}?
         ($mpc6) = {r达摩}?
+    @print (mpc1),(mpc2),(mpc3),(mpc4),(mpc5),(mpc6)
     [if] (mpc4) != null && (:maxHp (mpc4)) == 2000000
         kill (mpc4)
         @until (:combating) == false && (:free) == true
@@ -142,29 +144,30 @@ stopstate
     //华山派
     ($mpzname) = 华山派
     [if] (myMP) != (mpzname) && (mpzname) != (enemy)
-        jh fam 3 start
-        go eastup
-        go southup
-        jumpdown
-        go southup
-        go south
-        go east
-        jh fam 3 start
-        go westup
-        go north
-        go east
-        go west;go north
-        go east
-        go west;go north
-        go south[3]
-        go west
-        go east;go south
-        go southup
-        go southup
-        look bi;break bi;go enter
-        go westup
-        go westup
-        jumpup
+        [if] (MPHs) != 跳过
+            jh fam 3 start
+            go eastup
+            go southup
+            jumpdown
+            go southup
+            go south
+            go east
+            jh fam 3 start
+            go westup
+            go north
+            go east
+            go west;go north
+            go east
+            go west;go north
+            go south[3]
+            go west
+            go east;go south
+            go southup
+            go southup
+            look bi;break bi;go enter
+            go westup
+            go westup
+            jumpup
     //逍遥派
     ($mpzname) = 逍遥派
     [if] (myMP) != (mpzname) && (mpzname) != (enemy)

@@ -72,7 +72,7 @@ stopstate
     [if] {b扫荡符#}? < (_repeat) && {b扫荡符#}? != null
         ($num) = (_repeat) - {b扫荡符#}
         shop 0 (num)
-    [else if] {b扫荡符#} == null
+    [else if] {b扫荡符#}? == null
         shop 0 (_repeat)
 <-recordGains
 [while] (_repeat) > 0
@@ -89,3 +89,4 @@ stopstate
     ($_repeat) = (_repeat) - (Num_tidy)
 recordGains->
 stopSSAuto->
+$zdwk
