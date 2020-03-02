@@ -1,0 +1,10 @@
+// 用于自动领取花、首席奖励等
+// 这个版本是从最早的开始领取到最新
+// 四区白三三
+($num) = 0
+[while] true
+    receive system (num)
+    @tip 没有($nothing)消息|你已经($finish)了|你获得了($flower)朵
+    [if] (nothing) != null
+        [break]
+    ($num) = (num) + 1
