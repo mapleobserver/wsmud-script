@@ -1,6 +1,11 @@
 // raid.flow
 // 自动出售聚气丹、培元丹、混天黄紫装
 // 紫装只出售没精炼过的
+stopstate
+@toolbar jh
+@toolbar pack
+@js ($money1) = /\d+/.exec($(".obj-money").text())['0']
+@print (money1)
 $to 扬州城-杂货铺
 @print 卖聚气丹
 [if] {b聚气丹g#}? != null
@@ -32,6 +37,24 @@ $to 扬州城-杂货铺
         sell 1 {b混天腰带p%}? to {r杨永福}?
     [else]
         [break]
+@print 卖真武装
+[while] true
+    [if] {b真武y#}? != null
+        sell 1 {b真武y}? to {r杨永福}?
+    [else if] {b真武剑p%#}? != null
+        sell 1 {b真武剑p%}? to {r杨永福}?
+    [else if] {b真武道簪p%#}? != null
+        sell 1 {b真武道簪p%}? to {r杨永福}?
+    [else if] {b真武道袍p%#}? != null
+        sell 1 {b真武道袍p%}? to {r杨永福}?
+    [else if] {b真武道靴p%#}? != null
+        sell 1 {b真武道靴p%}? to {r杨永福}?
+    [else if] {b真武护腕p%#}? != null
+        sell 1 {b真武护腕p%}? to {r杨永福}?
+    [else if] {b真武腰带p%#}? != null
+        sell 1 {b真武腰带p%}? to {r杨永福}?
+    [else]
+        [break]
 @print 卖副本紫
 [while] true
     [if] {b灵蛇杖p%#}? != null
@@ -56,3 +79,8 @@ $to 扬州城-杂货铺
         sell 1 {b圣火令p%}? to {r杨永福}?
     [else]
         [break]
+$zdwk
+@toolbar pack
+@js ($money2) = /\d+/.exec($(".obj-money").text())['0']
+($income) = (money2) - (money1)
+@print 本次售卖收益 <hiy>(income)</hiy> 两黄金
