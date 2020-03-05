@@ -2,18 +2,46 @@
 // 四区：白三三
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
 #select ($AutoBuy) = 自动补充扫荡符(免费扫荡期间选不购买),购买|不购买,(AutoBuy)
-#select ($FBName) = 副本,温府|五毒教|云梦沼泽(只扫荡)|桃花岛(简单)|桃花岛(困难)|白驼山|星宿海|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|黑木崖(简单扫荡)|黑木崖(困难扫荡)|缥缈峰(困难扫荡)|光明顶|天龙寺(困难扫荡)|血刀门(只扫荡)|古墓派(简单扫荡)|古墓派(困难扫荡)|华山论剑|侠客岛(只扫荡)|净念禅宗(简单扫荡)|净念禅宗(困难扫荡)|慈航静斋(简单扫荡)|慈航静斋(困难扫荡)|阴阳谷(只扫荡)|战神殿(简单扫荡)|战神殿(困难扫荡),(FBName)
+#select ($FBName) = 副本,财主家(困难)|丽春院|鳌拜府|天地会|神龙教|关外|温府|五毒教|云梦沼泽(只扫荡)|桃花岛(简单)|桃花岛(困难)|白驼山|星宿海|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|黑木崖(简单扫荡)|黑木崖(困难扫荡)|缥缈峰(困难扫荡)|光明顶|天龙寺(困难扫荡)|血刀门(只扫荡)|古墓派(简单扫荡)|古墓派(困难扫荡)|华山论剑|侠客岛(只扫荡)|净念禅宗(简单扫荡)|净念禅宗(困难扫荡)|慈航静斋(简单扫荡)|慈航静斋(困难扫荡)|阴阳谷(只扫荡)|战神殿(简单扫荡)|战神殿(困难扫荡),(FBName)
 #input ($_repeat) = 扫荡副本次数,1
 #input ($Num_tidy) = 每扫荡 N 次后清包,(Num_tidy)
 #config
 <-stopSSAuto
 stopstate
-[if] (FBName) == 温府
+[if] (FBName) == 财主家(困难)
+    ($fbcr) = cr yz/cuifu/caizhu 1
+[else if] (FBName) == 丽春院
+    ($fbcr) = cr yz/lcy/dating 0
+[else if] (FBName) == 鳌拜府
+    ($fbcr) = cr bj/ao/damen 0
+[else if] (FBName) == 天地会
+    ($fbcr) = cr bj/tdh/hct 0
+[else if] (FBName) == 神龙教
+    ($fbcr) = cr bj/shenlong/haitan 0
+[else if] (FBName) == 关外
+    ($fbcr) = cr bj/guanwai/damen 0
+[else if] (FBName) == 温府
     ($fbcr) = cr cd/wen/damen 0
 [else if] (FBName) == 五毒教
     ($fbcr) = cr cd/wudu/damen 0
+[else if] (FBName) == 恒山
+    ($fbcr) = cr wuyue/hengshan/daziling 0
+[else if] (FBName) == 青城山(只扫荡)
+    ($fbcr) = cr wuyue/qingcheng/shanlu 0
+[else if] (FBName) == 衡山
+    ($fbcr) = cr wuyue/henshan/hengyang 0
+[else if] (FBName) == 嵩山
+    ($fbcr) = cr wuyue/songshan/taishi 0
 [else if] (FBName) == 云梦沼泽(只扫荡)
     ($fbcr) = cr cd/yunmeng/senlin 0
+[else if] (FBName) == 恒山
+    ($fbcr) = cr wuyue/hengshan/daziling 0
+[else if] (FBName) == 青城山(只扫荡)
+    ($fbcr) = cr wuyue/qingcheng/shanlu 0
+[else if] (FBName) == 衡山
+    ($fbcr) = cr wuyue/henshan/hengyang 0
+[else if] (FBName) == 嵩山
+    ($fbcr) = cr wuyue/songshan/taishi 0
 [else if] (FBName) == 桃花岛(简单)
     ($fbcr) = cr taohua/haitan 0
 [else if] (FBName) == 桃花岛(困难)
@@ -32,8 +60,6 @@ stopstate
     ($fbcr) = cr heimuya/shangu 0
 [else if] (FBName) == 黑木崖(困难扫荡)
     ($fbcr) = cr heimuya/shangu 1
-[else if] (FBName) == 缥缈峰(简单扫荡)
-    ($fbcr) = cr lingjiu/shanjiao 0
 [else if] (FBName) == 缥缈峰(困难扫荡)
     ($fbcr) = cr lingjiu/shanjiao 1
 [else if] (FBName) == 光明顶

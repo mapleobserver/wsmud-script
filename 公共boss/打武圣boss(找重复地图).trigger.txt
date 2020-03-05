@@ -4,7 +4,7 @@
 // 频道：帮派或公共
 // 发言人：自己定义
 // 关键字：武圣boss出现
-// 装备套装默认是1，有不同的话，自己在下面那句 $eq 1 改一下数字。
+// 装备套装默认是1，有不同的话，自己在下面那句 $eq 1 改一下数字。或者用 @eq 武器id 的形式，确保换武器成功。
 [if] (:date) != (BossTodayDate)
     [if] (:hour) > 4
         ($BossTodayFull) = false
@@ -15,6 +15,8 @@
 @js ($bossPlace) = "(content)".match("出现在([^%]+)一带。")[1]
 @js ($bossName) = "(content)".match("听说([^%]+)出现在")[1]
 @print (bossName) - (bossPlace)
+[if] (bossName) == 慕容博
+    [exit]
 [if] (:state)==挖矿
     stopstate
     @await 200
@@ -26,8 +28,10 @@
         $eq 1
         [if] (:combating) == true
             @until (:living) == false || (:combating) == false
-            @tip 你从(bossName)的尸体里拿出来|那里面($none)东西|阴冷的气息包围
-            [if] (none) != null
+            @print living:(:living);combating:(:combating)
+            @tip 你从($theboss)的尸体里拿出来|那里面($nothing)东西|死了
+            @print (bossName);(nothing)
+            [if] (nothing) != null
                 ($BossTodayFull) = true
         @await 1000
         relive;relive

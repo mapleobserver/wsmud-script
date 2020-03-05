@@ -11,7 +11,7 @@ $to 帮会-仓库
     alloc
     @tip 请选择对|目前没有可用的($finish)|不要急
     [if] (finish)!=null
-        pty 仓库空了！
+        pty 仓库空了！已分配 (num) 件装备给[(PlayerName)]
         @await 4000
         [break]
     //点击分配按钮
