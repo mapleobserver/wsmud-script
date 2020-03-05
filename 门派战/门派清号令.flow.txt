@@ -18,6 +18,8 @@
 <-stopSSAuto
 <-recordGains
 stopstate
+[if] (MPPass) == 不跳过
+    ($myMP) = 杀手楼
 @await 500
 (MPBefore)
 @await 4000
