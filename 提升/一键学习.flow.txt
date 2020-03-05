@@ -18,7 +18,7 @@
 #config
 
 @stopSSAuto
-[if] (MySF) == 谷虚道长|(MySF) == 宋远桥
+[if] (MySF) == 谷虚道长 || (MySF) == 宋远桥
     ($Xxdd) = 武当派-三清殿
 [if] (MySF) == 张三丰
     ($Xxdd) = 武当派-后山小院
