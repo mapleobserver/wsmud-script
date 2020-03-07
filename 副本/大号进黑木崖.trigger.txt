@@ -1,0 +1,21 @@
+// raid.flow
+// 大号进黑木崖
+// 队伍频道。关键字：进来
+// 四区白三三
+@cmdDelay 500
+stopstate
+cr heimuya/shangu 2 0
+go east[2]
+go enter;go up
+go enter;go up
+go enter;go up
+go east[2]
+go down
+go south
+@await 1000
+go east
+@kill 东方不败
+go west
+@await 1000
+cr;cr over
+$zdwk

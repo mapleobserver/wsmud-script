@@ -1,0 +1,88 @@
+// raid.flow
+// 根据论坛上的版本和一区辟邪山庄【妙妙教主】版本修改。
+// 小号插令牌打堂主开暗道，大号进本砍东方。配合触发【大号进黑木崖】使用。
+// 先手动组好队伍
+// 四区白三三
+[if] (_DungeonHpThreshold) == null
+    ($_DungeonHpThreshold) = 50
+[if] (_DungeonWaitSkillCD) == null
+    ($_DungeonWaitSkillCD) = 打开
+[if] (_DungeonBagCleanWay) == null
+    ($_DungeonBagCleanWay) = 存仓及售卖
+#input ($FBTeamPlayerName) = 大号名字,(FBTeamPlayerName)
+#select ($_DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(_DungeonHpThreshold)
+#select ($_DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(_DungeonBagCleanWay)
+#input ($_repeat) = 重复次数,1
+#config
+<-recordGains
+<-stopSSAuto
+stopstate
+
+<---
+($hpPer) = (_DungeonHpThreshold)/100
+[if] (:hpPer) < (hpPer)
+    @liaoshang
+--->
+
+($_i) = 0
+[while] (_i) < (_repeat)
+    @renew
+    [if] (_DungeonBagCleanWay) == 售卖
+        @cleanBag
+    [else if] (_DungeonBagCleanWay) == 存仓及售卖
+        @tidyBag
+    //队伍分配改为自由拾取
+    team set free_get
+    [if] {b青龙堂令牌}? != null
+        [if] {b白虎堂令牌}? != null
+            [if] {b风雷堂令牌}? != null
+                @cmdDelay 500
+                jh fb 24 start3
+                cr heimuya/shangu 2 0
+                go north[2]
+                @kill 教徒,教徒
+                go south[4]
+                @kill 教徒,教徒
+                go north[2]
+                go east;go north[2]
+                @kill 教徒,教徒
+                go south[2];go east
+                look xiazi;push xiazi
+                go enter;go up
+                look xiazi;push xiazi
+                go enter;go up
+                look xiazi;push xiazi
+                go enter;go up
+                @kill 教徒,教徒
+                go east
+                @kill 童百熊,贾布,上官云
+                go east
+                look wan;circle wan
+                go down;fire
+                push
+                @tip 开启了一扇石门
+                go south
+                tm 进来
+                @until {r(FBTeamPlayerName)} != null
+                @until {r(FBTeamPlayerName)} == null
+                @until {r(FBTeamPlayerName)} != null
+                @until {r(FBTeamPlayerName)} == null
+            [else]
+                @print <ord>缺少<hiy>风雷堂令牌</hiy>，中断流程！</ord>
+                [break]
+        [else]
+            @print <ord>缺少<hiy>白虎堂令牌</hiy>，中断流程！</ord>
+            [break]
+    [else]
+        @print <ord>缺少<hiy>青龙堂令牌</hiy>，中断流程！</ord>
+        [break]
+    // 副本结束
+    cr;cr over
+    ($_i) = (_i) + 1
+[if] (_DungeonBagCleanWay) == 售卖
+    @cleanBag
+[else if] (_DungeonBagCleanWay) == 存仓及售卖
+    @tidyBag
+$to 住房-练功房;dazuo
+stopSSAuto->
+recordGains->

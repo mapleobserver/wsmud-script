@@ -1,5 +1,5 @@
 // raid.flow
-// 只杀韦一笑,殷天正,张无忌,杨逍,范遥五个人
+// 组队模式，只杀韦一笑,殷天正,张无忌,杨逍,范遥五个人
 // 四区白三三
 [if] (_DungeonHpThreshold) == null
     ($_DungeonHpThreshold) = 50
@@ -7,6 +7,7 @@
     ($_DungeonWaitSkillCD) = 打开
 [if] (_DungeonBagCleanWay) == null
     ($_DungeonBagCleanWay) = 存仓及售卖
+#input ($NameSC) = 输入组队的随从名字,(NameSC)
 #select ($_DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(_DungeonHpThreshold)
 #select ($_DungeonWaitSkillCD) = 进副本前先等待技能冷却,打开|关闭,(_DungeonWaitSkillCD)
 #select ($_DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(_DungeonBagCleanWay)
@@ -38,8 +39,10 @@ stopstate
     // 副本
     [if] (_DungeonWaitSkillCD) == 打开
         @cd
-    jh fb 26 start1
-    cr mj/shanmen
+    $to 住房-小花园
+    team with {r(NameSC)}
+    jh fb 26 start3
+    cr mj/shanmen 2 0
     go north;go west;go northwest
     go north[5]
     @kill 韦一笑,殷天正
@@ -51,6 +54,8 @@ stopstate
     @cleanBag
 [else if] (_DungeonBagCleanWay) == 存仓及售卖
     @tidyBag
+@renew
 $to 住房-练功房;dazuo
+team out
 recordGains->
 stopSSAuto->

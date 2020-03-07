@@ -1,0 +1,21 @@
+//raid.flow
+//四区白三三
+//配合 师徒光明顶徒弟 流程使用
+//新提示信息
+//关键字：已进入组队副本【光明顶】
+//提前组队，徒弟号为队长
+@stopSSAuto
+stopstate
+$wait 500
+@renew
+//进副本
+cr mj/shanmen 2 0
+go north;go west;go northwest
+go north[5]
+@kill 韦一笑,殷天正
+go north[2]
+@kill 张无忌,杨逍,范遥
+@cd
+cr;cr over
+$zdwk
+@recoverSSAuto
