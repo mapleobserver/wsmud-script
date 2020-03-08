@@ -32,7 +32,7 @@ go enter
     @await 500
     @toolbar tasks
     @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
-    [if] (currentN) >= (manualMax) || (currentN) == (finalN) 
+    [if] (currentN) >= (manualMax)
         [break]
     [if] (currentN) >= (WudaoWaitCDLevel)
         @cd (WudaoWaitCDExp)
