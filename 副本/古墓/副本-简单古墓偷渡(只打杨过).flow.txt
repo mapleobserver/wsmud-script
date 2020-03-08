@@ -1,5 +1,6 @@
 //raid.flow
-//困难古墓，卸下九阴再装上，残血血刀砍杨过拿残页
+//简单古墓，卸下九阴再装上，残血血刀砍杨过拿残页
+//建议配合【简单古墓翻车】触发一起使用
 [if] (_DungeonBagCleanWay) == null
     ($_DungeonBagCleanWay) = 存仓及售卖
 #select ($_DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(_DungeonBagCleanWay)
@@ -16,8 +17,8 @@ stopstate
     [else if] (_DungeonBagCleanWay) == 存仓及售卖
         @tidyBag
 //进副本
-    jh fb 29 start2
-    cr gumu/gumukou 1 0
+    jh fb 29 start1
+    cr gumu/gumukou 0 0
     go enter;go east
     enable force none;enable force jiuyinshengong
     @cd

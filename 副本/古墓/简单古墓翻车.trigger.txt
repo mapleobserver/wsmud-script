@@ -1,0 +1,11 @@
+[if] (:room) == 古墓派-后堂(副本区域)
+    relive
+    relive
+    @renew
+    @cd
+    @until (:status xuruo) == false
+    jh fb 29 start1;cr gumu/gumukou 0 0
+    go enter;go east
+    enable force none;enable force jiuyinshengong
+    @cd
+    kill {r小龙女}?

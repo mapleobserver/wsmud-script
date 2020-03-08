@@ -4,7 +4,7 @@
     @renew
     @cd
     @until (:status xuruo) == false
-    jh fb 29 start1;cr gumu/gumukou
+    jh fb 29 start2;cr gumu/gumukou 1 0
     go enter;go east
     enable force none;enable force jiuyinshengong
     @cd
