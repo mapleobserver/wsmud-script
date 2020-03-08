@@ -241,9 +241,9 @@ stopstate
             (fbcr) 0;cr over
             ($tdnum) = (tdnum) + 1
     [else]
-        @print <hiy>(FBName)</hiy><ord>没有自动脚本！</ord>
+        @print <hiy>(FBName)</hiy><hir>没有自动脚本！</hir>
 [else if] (FBWay) == 跳过副本
-    @print <ord>跳过副本部分，请自己手动完成想要的副本。</ord>
+    @print <hir>跳过副本部分，请自己手动完成想要的副本。</hir>
 
 //请安
 @wait 2000
@@ -260,4 +260,6 @@ taskover signin;taskover zz1;taskover zz2
 @recoverSSAuto
 //日常结束后
 (RCAfter_action)
-@print 自动日常结束！
+@print <hiy>自动日常结束！</hiy>
+[if] (FBWay) == 跳过副本
+    @print <hir>跳过副本部分，请自己手动完成想要的副本。</hir>
