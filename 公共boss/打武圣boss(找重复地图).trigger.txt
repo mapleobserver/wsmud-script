@@ -7,6 +7,7 @@
 // 装备套装默认是1，有不同的话，自己在下面那句 $eq 1 改一下数字。或者用 @eq 武器id 的形式，确保换武器成功。
 [if] (:date) != (BossTodayDate)
     [if] (:hour) > 4
+        ($BossTodayDate) = (:date)
         ($BossTodayFull) = false
 [if] (BossTodayFull) == true
     @print <ord>今日公共boss已满！</ord>
