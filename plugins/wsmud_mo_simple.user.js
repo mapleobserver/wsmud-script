@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
-// @namespace   suqing&mapleo
+// @namespace   mos
 // @version     0.1.1.1
-// @author      sq&mo
+// @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
 // @description 基于 wsmud_funny_mobile 修改

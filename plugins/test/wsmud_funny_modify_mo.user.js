@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        wsmud_funny_modify_mo
+// @name        wsmud_funny
 // @namespace   suqing.fun
-// @version     0.3.26.mo
-// @author      SuQing
+// @version     0.3.27
+// @author      SuQing, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/380709
 // @description 如果你由于使用 wsmud_funny 插件而产生了任何不适，那么请即时关闭此插件即可。

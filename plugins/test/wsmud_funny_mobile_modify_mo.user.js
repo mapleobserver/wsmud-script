@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        wsmud_funny_mobile_modify_mo
-// @namespace   suqing&mapleo
-// @version     0.1.1.mo
-// @author      sq
+// @name        wsmud_funny_mobile
+// @namespace   suqing
+// @version     0.1.2
+// @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    
 // @description wsmud_funny 的手机适用版
