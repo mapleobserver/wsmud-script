@@ -1,0 +1,277 @@
+//raid.flow
+//四区白三三
+//自动师门、请安、买吃养精，自动调用自动追捕和自动武道两个流程，可选择副本自动脚本或者扫荡。
+
+// 武道自定义参数
+[if] (WudaoWaitCDLevel) == null
+    ($WudaoWaitCDLevel) = 30
+[if] (WudaoManualMaxLevel) == null
+    ($WudaoManualMaxLevel) = 84
+[if] (WudaoWaitCDExp) == null
+    ($WudaoWaitCDExp) = ^none
+[if] (WudaoBefore) == null
+    ($WudaoBefore) = $eq 1
+#input ($WudaoBefore)=打塔前执行命令(用英文;隔开),(WudaoBefore)
+#input ($WudaoWaitCDExp)=打塔等待以下技能冷却,(WudaoWaitCDExp)
+#input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
+#input ($WudaoManualMaxLevel)=从此层开始快速扫荡,(WudaoManualMaxLevel)
+
+// 追捕自定义参数
+[if] (ZBWaitCD) == null
+    ($ZBWaitCD) = 30
+[if] (ZBMax) == null
+    ($ZBMax) = 9999999
+[if] (ZBcdskill) == null
+    ($ZBcdskill) = ^none
+[if] (ZBBefore) == null
+    ($ZBBefore) = $eq 1
+#input ($ZBBefore)=追捕前执行命令(用英文;隔开),(ZBBefore)
+#input ($ZBWaitCD) = 从此次追捕开始，等待技能冷却,(ZBWaitCD)
+#input ($ZBcdskill) = 需要cd的技能使用英文逗号隔开或^不需要cd的技能,(ZBcdskill)
+#input ($ZBMax) = 最高连续追捕数达到后自动放弃,(ZBMax)
+#select ($DieToReset) = 死亡自动重置,已开启|已关闭,已关闭
+
+// 副本
+[if] (FBBefore) == null
+    ($FBBefore) = $eq 1
+#input ($FBBefore)=副本前执行命令(用英文;隔开),(FBBefore)
+#select ($FBName) = 副本,财主家(困难)|丽春院|鳌拜府|天地会|神龙教|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBName)
+#select ($FBWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡|跳过副本,(FBWay)
+[if] (_DungeonHpThreshold) == null
+    ($_DungeonHpThreshold) = 50
+[if] (_DungeonWaitSkillCD) == null
+    ($_DungeonWaitSkillCD) = 打开
+#select ($_DungeonHpThreshold) = 自动模式下副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(_DungeonHpThreshold)
+#select ($_DungeonWaitSkillCD) = 自动模式下Boss战前等待技能冷却,打开|关闭,(_DungeonWaitSkillCD)
+
+// 请安
+[if] (RC_qingan) == null
+    ($RC_qingan) = 请安
+#select ($RC_qingan) = 是否给首席请安,请安|跳过,(RC_qingan)
+
+// 日常结束后动作
+[if](RCAfter_action) == null
+    ($RCAfter_action) = $zdwk
+#input ($RCAfter_action) = 日常结束后命令(用英文;隔开),(RCAfter_action)
+
+#config
+
+@stopSSAuto
+//停止，清包
+stopstate
+@tidyBag
+@wait 2000
+
+//师门
+$sm
+@tip 你先去休息一下吧
+
+// 买十个养精丹吃+吃师门的养精丹，蓝养精丹一次最多吃10个，以防太快被游戏强制下线。
+stopstate
+@await 500
+$to 扬州城-药铺
+select {r平一指}
+list {r平一指}
+@dialog
+($count) = {b养精丹g#}?
+[if] (count) == null
+    ($count) = 10
+[else]
+    ($count) = 10 - (count)
+buy (count) {d养精丹g} from {r平一指}
+use {养精丹g}[10]
+[if] {b养精丹b}? != null
+    [if] {b养精丹b#} <= 10
+        use {b养精丹b}[{b养精丹b#}]
+    [else]
+        use {b养精丹b}[10]
+[if] {b朱果g}? != null
+    [if] {b朱果g#} <= 10
+        use {b朱果g}[{b朱果g#}]
+    [else]
+        use {b朱果g}[10]
+[if] {b潜灵果g}? != null
+    [if] {b潜灵果g#} <= 10
+        use {b潜灵果g}[{b潜灵果g#}]
+    [else]
+        use {b潜灵果g}[10]
+//追捕
+stopstate
+@cd
+@print 开始自动追捕
+@tidyBag
+@wait 10000
+(ZBBefore)
+@wait 5000
+@call 自动追捕
+@stopSSAuto
+stopstate
+@wait 5000
+
+//武道塔
+stopstate
+@cd
+@print 开始自动武道塔
+@tidyBag
+@wait 10000
+(WudaoBefore)
+@wait 5000
+@call 自动武道
+@stopSSAuto
+stopstate
+@tidyBag
+@wait 5000
+
+//副本
+stopstate
+@print 等待技能冷却
+@cd
+(FBBefore)
+@wait 5000
+[if] (FBName) == 财主家(困难)
+    ($fbcr) = cr yz/cuifu/caizhu 1
+[else if] (FBName) == 丽春院
+    ($fbcr) = cr yz/lcy/dating 0
+[else if] (FBName) == 鳌拜府
+    ($fbcr) = cr bj/ao/damen 0
+[else if] (FBName) == 天地会
+    ($fbcr) = cr bj/tdh/hct 0
+[else if] (FBName) == 神龙教
+    ($fbcr) = cr bj/shenlong/haitan 0
+[else if] (FBName) == 关外
+    ($fbcr) = cr bj/guanwai/damen 0
+[else if] (FBName) == 温府
+    ($fbcr) = cr cd/wen/damen 0
+[else if] (FBName) == 五毒教
+    ($fbcr) = cr cd/wudu/damen 0
+[else if] (FBName) == 恒山
+    ($fbcr) = cr wuyue/hengshan/daziling 0
+[else if] (FBName) == 青城山
+    ($fbcr) = cr wuyue/qingcheng/shanlu 0
+[else if] (FBName) == 衡山
+    ($fbcr) = cr wuyue/henshan/hengyang 0
+[else if] (FBName) == 嵩山
+    ($fbcr) = cr wuyue/songshan/taishi 0
+[else if] (FBName) == 云梦沼泽
+    ($fbcr) = cr cd/yunmeng/senlin 0
+[else if] (FBName) == 桃花岛(简单)
+    ($fbcr) = cr taohua/haitan 0
+[else if] (FBName) == 桃花岛(困难)
+    ($fbcr) = cr taohua/haitan 1
+[else if] (FBName) == 白驼山
+    ($fbcr) = cr baituo/damen 0
+[else if] (FBName) == 星宿海
+    ($fbcr) = cr xingxiu/xxh6 0
+[else if] (FBName) == 冰火岛(简单)
+    ($fbcr) = cr mj/bhd/haibian 1
+[else if] (FBName) == 冰火岛(困难)
+    ($fbcr) = cr mj/bhd/haibian 1
+[else if] (FBName) == 冰火岛(偷渡)
+    ($fbcr) = cr mj/bhd/haibian 1
+[else if] (FBName) == 移花宫(简单)
+    ($fbcr) = cr huashan/yihua/shandao 0
+[else if] (FBName) == 移花宫(困难)
+    ($fbcr) = cr huashan/yihua/shandao 1
+[else if] (FBName) == 移花宫(偷渡)
+    ($fbcr) = cr huashan/yihua/shandao 1
+[else if] (FBName) == 燕子坞(简单)
+    ($fbcr) = cr murong/anbian 0
+[else if] (FBName) == 燕子坞(困难)
+    ($fbcr) = cr murong/anbian 1
+[else if] (FBName) == 黑木崖(简单)
+    ($fbcr) = cr heimuya/shangu 0
+[else if] (FBName) == 黑木崖(困难)
+    ($fbcr) = cr heimuya/shangu 1
+[else if] (FBName) == 缥缈峰(困难)
+    ($fbcr) = cr lingjiu/shanjiao 1
+[else if] (FBName) == 缥缈峰(偷渡)
+    ($fbcr) = cr lingjiu/shanjiao 1
+[else if] (FBName) == 光明顶
+    ($fbcr) = cr mj/shanmen 0
+[else if] (FBName) == 光明顶(偷渡)
+    ($fbcr) = cr mj/shanmen 0
+[else if] (FBName) == 天龙寺(困难)
+    ($fbcr) = cr tianlong/damen 1
+[else if] (FBName) == 天龙寺(偷渡)
+    ($fbcr) = cr tianlong/damen 1
+[else if] (FBName) == 血刀门
+    ($fbcr) = cr xuedao/shankou 0
+[else if] (FBName) == 古墓派(简单)
+    ($fbcr) = cr gumu/gumukou 0
+[else if] (FBName) == 古墓派(困难)
+    ($fbcr) = cr gumu/gumukou 1
+[else if] (FBName) == 古墓派(困难偷渡)
+        ($fbcr) = cr gumu/gumukou 1
+[else if] (FBName) == 华山论剑
+    ($fbcr) = cr huashan/lunjian/leitaixia 0
+[else if] (FBName) == 侠客岛
+    ($fbcr) = cr xkd/shimen 0
+[else if] (FBName) == 净念禅宗(普通)
+    ($fbcr) = cr chanzong/shanmen 0
+[else if] (FBName) == 净念禅宗(困难)
+    ($fbcr) = cr chanzong/shanmen 1
+[else if] (FBName) == 慈航静斋(简单)
+    ($fbcr) = cr cihang/shanmen 0
+[else if] (FBName) == 慈航静斋(困难)
+    ($fbcr) = cr cihang/shanmen 1
+[else if] (FBName) == 阴阳谷
+    ($fbcr) = cr yyg/ya 0
+[else if] (FBName) == 战神殿(简单)
+    ($fbcr) = cr zsd/damen 0
+[else if] (FBName) == 战神殿(困难)
+    ($fbcr) = cr zsd/damen 1
+[if] (FBWay) == 扫荡
+    //扫荡模式
+    [if] (FBName) == 五毒教(组队) || (FBName) == 云梦沼泽(组队) || (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
+        @print <hiy>(FBName)</hiy><hir>无法扫荡！</hir>
+    [else]
+        [if] {b扫荡符#}? < 20 || {b扫荡符}? == null
+            shop 0 20
+        <-recordGains
+        (fbcr) 20
+        @wait 10000
+        @tidyBag
+        @wait 10000
+        recordGains->
+[else if] (FBWay) == 自动
+    //脚本自动模式
+    stopstate
+    @renew
+    (WudaoBefore)
+    @wait 5000
+    [if] (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
+        ($tdnum) = 0
+        [while] (tdnum) < 20
+            (fbcr) 0;cr over
+            ($tdnum) = (tdnum) + 1
+    [else]
+        @js ($fbexist) = if(GetDungeonFlow(`(FBName)`)!=null){true}else{false}
+        [if] (fbexist) == true
+            @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_repeat) = 20'))
+            @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门
+        [else]
+            @print <hiy>(FBName)</hiy><hir>没有自动脚本！</hir>
+[else if] (FBWay) == 跳过副本
+    @print <hir>跳过副本部分，请自己手动完成想要的副本。</hir>
+
+//请安
+[if] (RC_qingan) == 请安
+    @wait 2000
+    @js WG.oneKeyQA()
+    @wait 10000
+[else]
+    @print <hir>根据设置，已跳过请安。</hir>
+
+//领取签到奖励
+@wait 5000
+stopstate
+taskover signin;taskover zz1;taskover zz2
+@wait 2000
+taskover signin;taskover zz1;taskover zz2
+@wait 10000
+@recoverSSAuto
+//日常结束后
+(RCAfter_action)
+@print <hiy>自动日常结束！</hiy>
+[if] (FBWay) == 跳过副本
+    @print <hir>跳过副本部分，请自己手动完成想要的副本。</hir>
