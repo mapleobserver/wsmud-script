@@ -4,6 +4,8 @@
 @toolbar jh
 @toolbar score
 @js ($myMP) = $(`span[data-prop=family]`).text()
+@toolbar pack
+@js ($money1) = /\d+/.exec($(".obj-money").text())['0']
 [if] (MPBefore) == null
     ($MPBefore) = $eq 1
 [if] (MPPass) == null
@@ -12,6 +14,7 @@
     ($MPAfter) = $zdwk
 #input ($MPBefore)=刷蓝前执行命令(用英文;隔开),(MPBefore)
 #select ($MPPass) =跳过自己的门派,跳过|不跳过,(MPPass)
+#select ($MPHs)=跳过华山让大佬开红,跳过|不跳过,(MPHs)
 #input ($MPAfter) =结束后命令(用英文;隔开),(MPAfter)
 #config
 <-stopSSAuto
@@ -40,21 +43,45 @@ stopstate
         @tidyBag
         @renew
         (MPAfter)
+        @js ($money2) = /\d+/.exec($(".obj-money").text())['0']
+        ($income) = (money2) - (money1)
+        @print 本次门派战扫荡收益约 <hiy>(income)</hiy> 两黄金
         [exit]
     [if] (mpzname) == 峨眉派
-        ($mpc) = {r峨眉派第五代弟子}?
+        ($mpc2) = {r峨眉派第五代弟子}?
+        ($mpc5) = {r灭绝}?
+        ($mpc6) = {r梵心}?
     [else if] (mpzname) == 丐帮
-        ($mpc) = {r丐帮七袋弟子}?
+        ($mpc2) = {r丐帮七袋弟子}?
+        ($mpc5) = {r洪七公}?
+        ($mpc6) = {r行墨}?
     [else if] (mpzname) == 华山派
-        ($mpc) = {r华山派第十五代弟子}?
+        ($mpc2) = {r华山派第十五代弟子}?
+        ($mpc5) = {r岳不群}?
+        ($mpc6) = {r独孤败天}?
     [else if] (mpzname) == 武当派
-        ($mpc) = {r武当派第三代弟子}?
+        ($mpc2) = {r武当派第三代弟子}?
+        ($mpc5) = {r张三丰}?
+        ($mpc6) = {r道藏}?
     [else if] (mpzname) == 逍遥派
-        ($mpc) = {r逍遥派第三代弟子}?
+        ($mpc2) = {r逍遥派第三代弟子}?
+        ($mpc5) = {r逍遥子}?
+        ($mpc6) = {r庄周}?
     [else if] (mpzname) == 少林派
-        ($mpc) = {r少林派第四十代弟子}?
-    [if] (mpc) != null && (:maxHp (mpc)) == 40000
-        kill (mpc)
+        ($mpc2) = {r少林派第四十代弟子}?
+        ($mpc5) = {r玄难}?
+        ($mpc6) = {r达摩}?
+    [if] (mpc5) != null || (mpc6) != null
+        [if] (:combating) == true
+            @until (:living) == false || (:combating) == false
+            [if] (mpc5) != null || (mpc6) != null
+                relive
+                @renew
+                @until (:status xuruo) == false
+                ($enemy) = (mpzname)
+                [continue]
+    [if] (mpc2) != null && (:maxHp (mpc2)) == 40000
+        kill (mpc2)
         @until (:combating) == false && (:free) == true
     [else]
         [break]
@@ -72,7 +99,8 @@ stopstate
         go up
         go down;go east
         go east
-        go up
+        [if] (mpzname) != (enemy)
+            go up
     //峨眉派
     ($mpzname) = 峨眉派
     [if] (myMP) != (mpzname)
@@ -86,36 +114,39 @@ stopstate
         go west;go south
         go north;go west;go south
         go north;go west
-        go south
-        go south
-        go north;go north;go west
+        go west
         go east;go north
         go north
+        go south;go south;go south
+        [if] (mpzname) != (enemy)
+            go south
     //华山派
     ($mpzname) = 华山派
     [if] (myMP) != (mpzname)
-        jh fam 3 start
-        go eastup
-        go southup
-        jumpdown
-        go southup
-        go south
-        go east
-        jh fam 3 start
-        go westup
-        go north
-        go east
-        go west;go north
-        go east
-        go west;go north
-        go south[3];go west
-        go east;go south
-        go southup
-        go southup
-        look bi;break bi;go enter
-        go westup
-        go westup
-        jumpup
+        [if] (MPHs) != 跳过
+            jh fam 3 start
+            go eastup
+            go southup
+            jumpdown
+            go southup
+            go south
+            go east
+            jh fam 3 start
+            go westup
+            go west
+            go east;go south
+            go southup
+            go southup
+            look bi;break bi;go enter
+            go westup
+            go westup
+            jumpup
+            jh fam 3 start;go westup;go north
+            go east
+            [if] (mpzname) != (enemy)
+                go west;go north
+                go east
+                go west;go north
     //逍遥派
     ($mpzname) = 逍遥派
     [if] (myMP) != (mpzname)
@@ -131,7 +162,8 @@ stopstate
         jh fam 5 start;go south
         go south
         jh fam 5 start;go down
-        go down
+        [if] (mpzname) != (enemy)
+            go down
     //少林派
     ($mpzname) = 少林派
     [if] (myMP) != (mpzname)
@@ -147,13 +179,14 @@ stopstate
         go northeast;go north
         go east
         go west;go west
-        go east;go north
-        go east
-        go west;go west
-        go east;go north
-        go west
-        go east;go north
-        go north
+        [if] (mpzname) != (enemy)
+            go east;go north
+            go east
+            go west;go west
+            go east;go north
+            go west
+            go east;go north
+            go north
     //武当派
     ($mpzname) = 武当派
     [if] (myMP) != (mpzname)
@@ -173,4 +206,5 @@ stopstate
         go north
         go north
         go north
-        go north
+        [if] (mpzname) != (enemy)
+            go north
