@@ -6,6 +6,7 @@
 @js ($myMP) = $(`span[data-prop=family]`).text()
 @toolbar pack
 @js ($money1) = /\d+/.exec($(".obj-money").text())['0']
+($ebony1) = {b玄晶#}?
 [if] (MPBefore) == null
     ($MPBefore) = $eq 1
 [if] (MPPass) == null
@@ -43,8 +44,10 @@ stopstate
         @renew
         (MPAfter)
         @js ($money2) = /\d+/.exec($(".obj-money").text())['0']
-        ($income) = (money2) - (money1)
-        @print 本次门派战扫荡收益约 <hiy>(income)</hiy> 两黄金
+        ($income_m) = (money2) - (money1)
+        ($ebony2) = {b玄晶#}?
+        ($income_e) = (ebony2) - (ebony1)
+        @print 本次门派战扫荡收益：<hiy>(income_e)</hiy> 个玄晶，<hiy>(income_m)</hiy> 两黄金
         [exit]
     [if] (mpzname) == 峨眉派
         ($mpc1) = {r峨眉派第六代弟子}?
@@ -97,6 +100,7 @@ stopstate
 [while] true
     @cmdDelay 500
     //丐帮
+    @await 500
     ($mpzname) = 丐帮
     [if] (myMP) != (mpzname)
         jh fam 6 start
@@ -110,6 +114,7 @@ stopstate
         [if] (mpzname) != (enemy)
             go up
     //峨眉派
+    @await 500
     ($mpzname) = 峨眉派
     [if] (myMP) != (mpzname)
         jh fam 4 start
@@ -129,6 +134,7 @@ stopstate
         [if] (mpzname) != (enemy)
             go south
     //华山派
+    @await 500
     ($mpzname) = 华山派
     [if] (myMP) != (mpzname)
         [if] (MPHs) != 跳过
@@ -156,6 +162,7 @@ stopstate
                 go east
                 go west;go north
     //逍遥派
+    @await 500
     ($mpzname) = 逍遥派
     [if] (myMP) != (mpzname)
         jh fam 5 start
@@ -173,6 +180,7 @@ stopstate
         [if] (mpzname) != (enemy)
             go down
     //少林派
+    @await 500
     ($mpzname) = 少林派
     [if] (myMP) != (mpzname)
         jh fam 2 start
@@ -196,6 +204,7 @@ stopstate
             go east;go north
             go north
     //武当派
+    @await 500
     ($mpzname) = 武当派
     [if] (myMP) != (mpzname)
         jh fam 1 start
