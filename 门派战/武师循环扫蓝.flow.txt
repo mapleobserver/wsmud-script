@@ -87,6 +87,7 @@ stopstate
         kill (mpc2)
         @until (:combating) == false && (:free) == true
     [else]
+        @until (:combating) == false && (:free) == true
         [break]
 --->
 [while] true
