@@ -1,0 +1,18 @@
+//raid.flow
+//已死亡
+[if] (:room) == 光明顶-圣火堂(副本区域)
+    relive
+    relive
+    @renew
+    @cd
+    @until (:status xuruo) == false
+    team out
+    $to 住房-小花园
+    team with {r(NameSC)}
+    jh fb 26 start3
+    cr mj/shanmen 2 0
+    go north;go west;go northwest
+    go north[5]
+    @kill 韦一笑,殷天正
+    go north[2]
+    @kill 张无忌,杨逍,范遥

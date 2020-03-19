@@ -1,6 +1,13 @@
 // raid.flow
+stopstate
+@toolbar jh
+@toolbar pack
+@js ($money1) = /\d+/.exec($(".obj-money").text())['0']
+($ebony1) = {b玄晶#}?
 ($number)=1
 ($pos)=初始值
+@stopSSAuto
+<-recordGains
 [while] {b藏宝图}? != null
     <---
     ($pos)=null
@@ -153,3 +160,12 @@ $wait 1000
 @tidyBag
 $wait 10000
 $zdwk
+recordGains->
+@recoverSSAuto
+@toolbar pack
+@js ($money2) = /\d+/.exec($(".obj-money").text())['0']
+($income_m) = (money2) - (money1)
+($ebony2) = {b玄晶#}?
+($income_e) = (ebony2) - (ebony1)
+tm 本次挖宝收益 (income_e)个玄晶，(income_m) 两黄金
+@print 本次挖宝收益 <hiy>(income_e)</hiy> 个玄晶，<hiy>(income_m)</hiy> 两黄金

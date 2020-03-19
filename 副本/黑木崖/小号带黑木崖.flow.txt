@@ -1,6 +1,6 @@
 // raid.flow
 // 根据论坛上的版本和一区辟邪山庄【妙妙教主】版本修改。
-// 小号插令牌打堂主开暗道，大号进本砍东方。配合触发【大号进黑木崖】使用。
+// 小号插令牌打堂主开暗道，大号进本砍东方。配合触发【大号进黑木崖】、【小号出本】使用。
 // 先手动组好队伍
 // 四区白三三
 [if] (_DungeonHpThreshold) == null
@@ -17,7 +17,7 @@
 <-recordGains
 <-stopSSAuto
 stopstate
-
+($HMYover) == null
 <---
 ($hpPer) = (_DungeonHpThreshold)/100
 [if] (:hpPer) < (hpPer)
@@ -63,10 +63,12 @@ stopstate
                 @tip 开启了一扇石门
                 go south
                 tm 进来
-                @until {r(FBTeamPlayerName)} != null
-                @until {r(FBTeamPlayerName)} == null
-                @until {r(FBTeamPlayerName)} != null
-                @until {r(FBTeamPlayerName)} == null
+                //@until {r(FBTeamPlayerName)} != null
+                //@until {r(FBTeamPlayerName)} == null
+                //@until {r(FBTeamPlayerName)} != null
+                //@until {r(FBTeamPlayerName)} == null
+                @until (HMYover) == true
+                ($HMYover) == null
             [else]
                 @print <ord>缺少<hiy>风雷堂令牌</hiy>，中断流程！</ord>
                 [break]
