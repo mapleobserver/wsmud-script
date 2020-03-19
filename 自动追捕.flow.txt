@@ -1,7 +1,5 @@
 // raid.flow
 // auto_zhuibu v2.1
-<-stopSSAuto
-<-recordGains
 [if] (ZBWaitCD) == null
    ($ZBWaitCD) = 31
 [if] (ZBMax) == null
@@ -15,11 +13,11 @@
 #input ($ZBMax) = 最高连续追捕数达到后自动放弃,(ZBMax)
 #select ($DieToReset) = 死亡自动重置,已开启|已关闭,已关闭
 #input ($AZB_action) = 追捕完行为,(AZB_action)
-
 #config
 
+<-stopSSAuto
+<-recordGains
 stopstate
-
 @cmdDelay 1000
 @toolbar tasks
 @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
