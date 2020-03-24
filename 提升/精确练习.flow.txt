@@ -44,6 +44,7 @@ $wait 5000
 ($num)=0
 [while](num) < (skill_num)
     //依次获取技能列表
+    @toolbar jh
     @toolbar skills
     @js ($skill_name) = [(Skill)][(num)]
     //获取技能id
