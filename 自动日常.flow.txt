@@ -1,7 +1,21 @@
 //raid.flow
 //四区白三三
-//自动师门、请安、买吃养精，自动调用自动追捕和自动武道两个流程，可选择副本自动脚本或者扫荡。
-//2020.03.16 - 1.新增当铺购买、师父请安；调整绿养精丹吃法提高成功率。2.优化追捕、武道塔、副本次数判断，减少等待时间。3.日常结束后语音播报。
+//1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
+//2020.03.23 - 增加根据时间段和环数判断是否跳过师门的选项，方便抢首席的时候使用。
+
+// 师门任务
+@toolbar jh
+@toolbar tasks
+@task 师门委托目前完成($smnum)/20个，共连续完成($smComboN)个
+[if] (SMtasks) == null
+    ($SMtasks) = 正常进行
+[if] (smComboN) >= 100
+    [if] (:hour) <5 || (:hour) >= 20
+        #select ($SMtasks)=处于抢首席时段，师门任务可正常进行,正常进行|跳过,正常进行
+    [else]
+        #select ($SMtasks)=师门已连(smComboN)次，是否先跳过等晚上抢首席,正常进行|跳过,跳过
+[else]
+    #select ($SMtasks)=师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
 
 // 武道自定义参数
 [if] (WudaoWaitCDLevel) == null
@@ -67,6 +81,7 @@
     @await 1000
     @toolbar jh
     @toolbar score
+    @js $(`span[for=0]`).click()
     @js ($myName) = $(".dialog-title").text().match(".* ([^%]+)")[1]
     $tts 开始(myName)的自动日常。
 
@@ -77,8 +92,11 @@ stopstate
 @wait 2000
 
 //师门
-$sm
-@tip 你先去休息一下吧
+[if] (SMtasks) == 正常进行
+    $sm
+    @tip 你先去休息一下吧
+[else]
+    ($alert_sm) = 根据设置，已跳过师门任务。
 
 // 买十个养精丹吃+吃师门的养精丹，蓝养精丹一次最多吃10个，以防太快被游戏强制下线。
 stopstate
@@ -314,12 +332,16 @@ taskover signin;taskover zz1;taskover zz2
 //日常结束后
 (RCAfter_action)
 @print <hiy>自动日常结束！</hiy>
+[if] (alert_sm) != null
+    @print <hir>(alert_sm)</hir>
 [if] (alert_fb) != null
     @print <hir>(alert_fb)</hir>
 [if] (alert_qa) != null
     @print <hir>(alert_qa)</hir>
 [if] (TTSover) == 播报
     ($bobao) = (myName)，自动日常结束！
+    [if] (alert_sm) != null
+        ($bobao) = (bobao)(alert_sm)
     [if] (alert_fb) != null
         ($bobao) = (bobao)(alert_fb)
     [if] (alert_qa) != null
