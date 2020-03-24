@@ -1,0 +1,32 @@
+//raid.flow
+//四区白三三
+//配合 师徒五毒徒弟 流程使用
+//新提示信息
+//关键字：已进入组队副本【五毒教】
+//提前组队，徒弟号为队长
+@stopSSAuto
+stopstate
+$wait 500
+@tidyBag
+@renew
+//进副本
+cr cd/wudu/damen 2 0
+@kill 五毒教徒,五毒教徒,五毒教徒,五毒教徒
+go east
+@kill 沙千里
+go south
+@kill 藏獒
+go west
+@kill 白髯老者
+go east;go south
+@kill 毒郎中
+go north;go north;go east
+@kill 潘秀达,岑其斯,齐云敖
+go east
+@kill 何红药
+go east
+@kill 何铁手
+cr;cr over
+@tidyBag
+$zdwk
+@recoverSSAuto

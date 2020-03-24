@@ -7,6 +7,7 @@
 @stopSSAuto
 stopstate
 $wait 500
+@tidyBag
 @renew
 //进副本
 cr cd/yunmeng/senlin 2 0
@@ -28,5 +29,6 @@ go north
 go north
 @kill 火龙王
 cr;cr over
+@tidyBag
 $zdwk
 @recoverSSAuto

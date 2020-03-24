@@ -1,0 +1,22 @@
+// raid.flow
+//四区白三三
+//配合 师徒五毒师父 触发使用
+//提前组队，徒弟号为队长
+#input ($FBMasterName) = 师父名字,(FBMasterName)
+#input ($_repeat) = 重复次数,1
+#config
+<-stopSSAuto
+stopstate
+team set free_get
+@renew
+($_i) = 0
+[while] (_i) < (_repeat)
+    stopstate;jh fb 17 start3;cr cd/wudu/damen 2 0
+    @tip 你们师徒合力完成一次组队副本
+    $wait 2000
+    cr;cr over
+    $wait 2000
+    ($_i) = (_i) + 1
+team out
+stopSSAuto->
+$zdwk
