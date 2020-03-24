@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.1
+// @version     0.1.1.2
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -209,12 +209,15 @@
                 if (item.state === 2) fn.send(`taskover ${item.id}`); // 自动完成
                 if (item.id === "signin") {
                     let a = item.desc.match(/师门任务：(.*)，副本：<(.*)>(.*)\/20<(.*)>/);
-                    let b = item.desc.match(/(.*)武道塔(.*)，进度(.*)\/(.*)<(.*)>，<(.*)>(.*)首席请安<(.*)>/);
+                    let b = item.desc.match(/(.*)武道塔(.*)，进度(\d+)\/(\d+)<(.*)/);
+                    let c = item.desc.match(/<.+?>(.+)首席请安<.+?>/);
                     (parseInt(a[3]) < 20) ? fb = `<hig>${a[3]}</hig>` : fb = a[3];
                     (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
                     wd2 = b[4];
                     /可以重置/.test(b[2]) ? wd3 = "<hig>可以重置</hig>" : wd3 = "已经重置";
-                    /已经/.test(b[7]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
+                    if (c) {
+                        /已经/.test(c[1]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
+                    }else {qa = "武神无需请安"}
                 } else if (item.id === "sm") {
                     let a = item.desc.match(/目前完成(.*)\/20个，共连续完成(.*)个。/);
                     (parseInt(a[1]) < 20) ? sm1 = `<hig>${a[1]}</hig>` : sm1 = a[1];
