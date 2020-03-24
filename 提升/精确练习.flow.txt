@@ -3,18 +3,24 @@
 @toolbar skills
 //级别上限
 @js ($level) = /\d+/.exec($(".obj-money").text())['0']
-
 [if] (Skill) == null
     ($Skill) = '基本拳脚','基本内功','基本轻功','基本招架','基本剑法','基本刀法','基本杖法','基本鞭法','基本暗器','基本棍法'
 [if] (lianxi_map) == null
     ($lianxi_map) = 住房-练功房
+@js ($thisroom) = '(:room)'.indexOf('副本区域')
+[if] (thisroom) != -1
+    ($lianxi_map) = 原地不动
+    ($LXAfter) = stopstate;$tts 练习结束，请手动进行后续操作;$wait 5000;$music
 [if] (chiyao) == null
     ($chiyao) = 否
+[if] (LXAfter) == null
+    ($LXAfter) = $zdwk
 #input ($Skill)=技能列表,(Skill)
 #input ($target_level)=目标技能等级,(level)
 #input ($LXBefore)=练习前执行命令(用英文;隔开),(LXBefore)
-#select ($lianxi_map)=练习地点,住房-练功房|帮会-练功房,(lianxi_map)
+#select ($lianxi_map)=练习地点,住房-练功房|帮会-练功房|原地不动,(lianxi_map)
 #select ($chiyao)=是否吃冰心丹,是|否,(chiyao)
+#input ($LXAfter)=练习结束后执行命令(用英文;隔开),(LXAfter)
 #config
 
 [if] (arg0) != null
@@ -29,7 +35,8 @@
 @js ($skill_num) = [(Skill)].length
 //传送到练功房
 stopstate
-$to (lianxi_map)
+[if] (lianxi_map) != 原地不动
+    $to (lianxi_map)
 //练习前执行命令
 (LXBefore)
 $wait 5000
@@ -70,6 +77,6 @@ $wait 5000
         [if] (:state) == 发呆
             [break]
         @tip 等级提升了
-        @await 2000
-$zdwk
+        @await 2000        
+(LXAfter)
 stopSSAuto->
