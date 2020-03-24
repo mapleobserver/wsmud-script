@@ -1,6 +1,7 @@
 // raid.flow
 // 战神殿开门
 // 四区白三三
+// 2020.03.24 修复最后一颗星宿的判断bug，感谢越狱兔大佬的提醒🙏
 look shi
 @tip 和外面星空星宿位置一一对应，($star_0)，($star_1)，($star_2)，($star_3)，($star_4)，($star_5)，($star_6)，($star_7)这些星宿依次闪烁
 ($stars) = "(star_0)","(star_1)","(star_2)","(star_3)","(star_4)","(star_5)","(star_6)","(star_7)"
@@ -23,7 +24,7 @@ look shi
 ($num_3) = 0
 [while] (num_3) < 28
         ($dir_l) = null
-        @js ($dir_l) = var d=[(dirs)];var s=d[(num_3)]["star"].indexOf("(star)");if(s>=0){d[(num_3)]["eswn"]}
+        @js ($dir_l) = var d=[(dirs)];var s=d[(num_3)]["star"].indexOf("(last)");if(s>=0){d[(num_3)]["eswn"]}
         [if] (dir_l) != null
             [break]
         ($num_3) = (num_3) + 1
