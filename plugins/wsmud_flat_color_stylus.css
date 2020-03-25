@@ -3,77 +3,73 @@
 @homepage    https://greasyfork.org/zh-CN/scripts/394736-wsmud-flat-color
 @description 武神传说(wsmud)配色
 @author      mapleo
-@namespace   https://raw.githubusercontent.com/mapleobserver/wsmud-script/master/%E6%8F%92%E4%BB%B6%E5%A4%87%E4%BB%BD/wsmud_flat_color_stylus.css
-@version     1.0.1
+@namespace   mos
+@version     1.0.2
 ==/UserStyle== */
-@-moz-document url-prefix("http://game.wsmud.com/"), url-prefix("http://www.wsmud.com/") {
-html, body {
-    font-family: "PingFang SC",'Noto', 'Noto Sans CJK SC', 'Noto Sans CJK', 'Source Han Sans', source-han-sans-simplified-c, sans-serif,"Microsoft YaHei",微软雅黑;
-}
-pre{
-    font-size: 1.1em;
-    font-family: "PingFang SC",'Noto', 'Noto Sans CJK SC', 'Noto Sans CJK', 'Source Han Sans', source-han-sans-simplified-c, sans-serif,"Microsoft YaHei",微软雅黑;
-}
-.tool-bar{
-    font-family: "PingFang SC",'Noto', 'Noto Sans CJK SC', 'Noto Sans CJK', 'Source Han Sans', source-han-sans-simplified-c, sans-serif,"Microsoft YaHei",微软雅黑;
-}
-.dialog{
-    font-family: "PingFang SC",'Noto', 'Noto Sans CJK SC', 'Noto Sans CJK', 'Source Han Sans', source-han-sans-simplified-c, sans-serif,"Microsoft YaHei",微软雅黑;
-}
-.container, .login-content, .left, .right{
-    color: rgb(0,178,0);
-    background-color: #212121;
-}
-.room-item > .item-name {
-    margin-left: 1em;
-}
-.room_items {
-    max-height: 120px;
-}
-.item-status-bar > .status-item {
-    font-size: 0.8em;
-    font-weight: lighter;
-}
-.hp > .progress-bar {
-    background-color: #c0392b;
-}
-.mp > .progress-bar {
-    background-color: #2980b9;
-}
-HIG {
-    color: #2ecc71;
-}
-HIC {
-    color: #2980b9;
-}
-HIY {
-    color: #f1c40f;
-}
-HIZ {
-    color: #8e44ad;
-}
-HIO {
-    color: #e67e22;
-}
-HIR {
-    color: #c0392b;
-}
-HIM {
-    color: #e84393;
-}
-
-/* left right */
-.left, .right {
-    width: 350px;
-}
-.left-content {
-    font-size: 13px;
-}
-.span-btn {
-    font-size: 13px;
-}
-/* pluggis */
-.layui-layer-content {
-    font-size: 13px;
-}
-}
+@-moz-document domain("wsmud.com") {
+    @media screen and (-webkit-min-device-pixel-ratio:0) {
+        .item-status-bar > .status-item {
+            zoom: 1
+        }
+    }
+    pre{
+        font-size: 1em;
+    }
+    .container, .login-content, .left, .right{
+        color: rgb(0,178,0);
+        background-color: #212121;
+    }
+    .room-item > .item-name {
+        margin-left: 1em;
+    }
+    .room_items {
+        max-height: 120px;
+    }
+    .item-status-bar > .status-item {
+        font-size: 0.8em;
+        font-weight: lighter;
+    }
+    .hp > .progress-bar {
+        background-color: #c0392b;
+    }
+    .mp > .progress-bar {
+        background-color: #2980b9;
+    }
+    HIG {
+        color: #2ecc71;
+    }
+    HIC {
+        color: #2980b9;
+    }
+    HIY {
+        color: #f1c40f;
+    }
+    HIZ {
+        color: #8e44ad;
+    }
+    HIO {
+        color: #e67e22;
+    }
+    HIR {
+        color: #c0392b;
+    }
+    HIM {
+        color: #e84393;
+    }
+    
+    /* left right */
+    .left, .right {
+        width: 350px;
+    }
+    .left-content {
+        font-size: 13px;
+    }
+    .span-btn {
+        font-size: 13px;
+    }
+    /* pluggis */
+    .layui-layer-content {
+        font-size: 12px;
+        color: rgb(0, 128, 0);
+    }
+    }
