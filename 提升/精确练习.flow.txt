@@ -1,4 +1,7 @@
 // raid.flow
+// 基于论坛qqqq大佬的版本修改
+// 四区白三三
+// 2020.03.26 当funny插件开启时，等级提升时的提示信息有和原来的不同，增加了对应的判断。
 @toolbar jh
 @toolbar skills
 //级别上限
@@ -20,7 +23,7 @@
 #input ($LXBefore)=练习前执行命令(用英文;隔开),(LXBefore)
 #select ($lianxi_map)=练习地点,住房-练功房|帮会-练功房|原地不动,(lianxi_map)
 #select ($chiyao)=是否吃冰心丹,是|否,(chiyao)
-#input ($LXAfter)=练习结束后执行命令(用英文;隔开),(LXAfter)
+#input ($LXAfter)=练习结束后执行命令(用英文;隔开，默认请填$zdwk),(LXAfter)
 #config
 
 [if] (arg0) != null
@@ -69,7 +72,7 @@ $wait 5000
         //判断是否吃药
         [if] (:status food) == false && (chiyao) == 是 && {b冰心丹}? != null
             stopstate
-            use {b冰心丹}
+            use {b冰心丹}?
         @await 1000
         [if] (:state) != 练习
             lianxi (skill_id)
@@ -77,7 +80,7 @@ $wait 5000
         //判断是否用完潜能或者无法学习在发呆
         [if] (:state) == 发呆
             [break]
-        @tip 等级提升了
+        @tip 等级提升了|提升到($level_1)级
         @await 2000        
 (LXAfter)
 stopSSAuto->
