@@ -22,7 +22,7 @@ stopstate
     go enter;go east
     enable force none;enable force jiuyinshengong
     @cd
-    //kill {r杨过}?;kill {r杨过}?
+    @until (:status unarmed) == false && (:status xuantie) == false
     // 叫杀小龙女让杨过挡刀
     kill {r小龙女}?
     @until {r杨过的尸体}? != null && {r小龙女的尸体}? != null
