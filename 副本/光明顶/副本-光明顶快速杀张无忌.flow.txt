@@ -30,6 +30,7 @@ stopstate
 --->
 <-recordGains
 ($_i) = 0
+@on 光明顶翻车
 [while] (_i) < (_repeat)
     @renew
     [if] (_DungeonBagCleanWay) == 售卖
@@ -49,6 +50,7 @@ stopstate
     go north[2]
     @kill 张无忌,杨逍,范遥
     cr;cr over
+    taskover signin;taskover zz1;taskover zz2
     ($_i) = (_i) + 1
 [if] (_DungeonBagCleanWay) == 售卖
     @cleanBag
@@ -56,6 +58,7 @@ stopstate
     @tidyBag
 @renew
 $to 住房-练功房;dazuo
+@off 光明顶翻车
 team out
 recordGains->
 stopSSAuto->

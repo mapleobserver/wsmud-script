@@ -10,6 +10,7 @@
 <-recordGains
 stopstate
 ($_i) = 0
+@on 简单古墓翻车
 [while] (_i) < (_repeat)
     //@renew
     [if] (_DungeonBagCleanWay) == 售卖
@@ -28,11 +29,13 @@ stopstate
     @until {r杨过的尸体}? != null && {r小龙女的尸体}? != null
 // 副本结束
     cr;cr over
+    taskover signin;taskover zz1;taskover zz2
     ($_i) = (_i) + 1
 [if] (_DungeonBagCleanWay) == 售卖
     @cleanBag
 [else if] (_DungeonBagCleanWay) == 存仓及售卖
     @tidyBag
 $to 住房-练功房;dazuo
+@off 简单古墓翻车
 recordGains->
 stopSSAuto->
