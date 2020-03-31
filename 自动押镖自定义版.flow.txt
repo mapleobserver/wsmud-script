@@ -20,6 +20,7 @@
 #select ($EscortHpThreshold) = 疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(EscortHpThreshold)
 #select ($EscortMpThreshold) = 打坐，当内力低于百分比,100|90|80|70|60|50|40|30|20|10,(EscortMpThreshold)
 #select ($EscortTangshi) = 唐诗剑法,使用|不使用,(EscortTangshi)
+#select ($WDXuruo) = 死亡后自动到武道塔一百层清除虚弱,打开|关闭,(WDXuruo)
 #select ($EscortXuedao) = 残血使用血刀九阴(不自动疗伤),打开|关闭,(EscortXuedao)
 #select ($EscortJiuyin) = 有九阴buff时不等九阴CD(请修改需要等待CD的技能，残血模式会被关闭),打开|关闭,(EscortJiuyin)
 #input ($EscortWaitCDExp) = 等待CD的技能sid,(EscortWaitCDExp)
@@ -86,8 +87,9 @@ stopstate
                 kill {r蒙面大盗}?
             //@until {r蒙面大盗}? == null || (:combating) == true || (:living) == false
             //@tip 九阳神功($jiuyang)了|<hir>鲜血</hir>|<hir>死了</hir>|倒在地上,死了|挣扎了几下，
-            @tip 九阳神功($jiuyang)了|你获得了|没有东西|<hir>鲜血</hir>|<hir>死了</hir>|你口中喷出几口<hir>鲜血</hir>，倒在地上,死了！|你现在是灵魂状态|朦胧中你好像听到有人在喊|一股阴冷的气息包围着你
-            //@print (jiuyang)
+            [if] (EscortXuedao) == 打开
+                @tip 九阳神功($jiuyang)了|你获得了|没有东西|<hir>鲜血</hir>|<hir>死了</hir>|你口中喷出几口<hir>鲜血</hir>，倒在地上,死了！|你现在是灵魂状态|朦胧中你好像听到有人在喊|一股阴冷的气息包围着你
+                //@print (jiuyang)
             @until {r蒙面大盗}? == null || (:combating) == false || (:living) == false
             [if] (:living) == true
                 ($jiuyang) = null
@@ -96,10 +98,15 @@ stopstate
                 ($jiuyang) = null
                 [continue]
             [if] (:living) == false
-                [if] (jiuyang) != null
+                [if] (jiuyang) != null && (EscortXuedao) == 打开
                     @print <hir>有九阳，暂停残血模式</hir>
                 relive
                 relive
+                [if] (WDXuruo) == 打开
+                    jh fam 9 start
+                    go enter
+                    kill {r武道}
+                    @until (:combating) == false
                 @renew
                 jh fam 0 start;go west[2];go south[2]
                 select {林震南};biao {r林震南}

@@ -93,7 +93,7 @@ stopstate
     [exit]
 //是否补充扫荡符
 [if] (AutoBuy) == 购买
-    [if] {b扫荡符#}? < (_repeat) && {b扫荡符#}? != null
+    [if] {b扫荡符#}? != null && {b扫荡符#}? < (_repeat)
         ($num) = (_repeat) - {b扫荡符#}
         shop 0 (num)
     [else if] {b扫荡符#}? == null
