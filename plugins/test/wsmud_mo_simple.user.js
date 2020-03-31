@@ -227,7 +227,7 @@
                         (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
                         wd2 = b[4];
                         /可以重置/.test(b[2]) ? wd3 = "<hig>可以重置</hig>" : wd3 = "已经重置";
-                        wd = ${wd1}/${wd2} ${wd3}
+                        wd = wd1+"/"+wd2+" "+wd3
                     }else {wd = "已设置只打塔主"}
                     if (c) {
                         /已经/.test(c[1]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
