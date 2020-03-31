@@ -1,6 +1,8 @@
 // raid.flow
 // 根据论坛上的版本和一区辟邪山庄【妙妙教主】版本修改。
 // 四区白三三
+[if] (NeedProp) == null
+    ($NeedProp) = 扫荡
 [if] (_DungeonHpThreshold) == null
     ($_DungeonHpThreshold) = 50
 [if] (_DungeonWaitSkillCD) == null
@@ -8,6 +10,7 @@
 [if] (_DungeonBagCleanWay) == null
     ($_DungeonBagCleanWay) = 存仓及售卖
 #input ($NameSC) = 输入组队的随从名字,(NameSC)
+#select ($NeedProp) = 令牌火折子不足时是否先扫荡至物品齐全,扫荡|中断,(NeedProp)
 #select ($_DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(_DungeonHpThreshold)
 #select ($_DungeonWaitSkillCD) = Boss战前等待技能冷却,打开|关闭,(_DungeonWaitSkillCD)
 #select ($_DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(_DungeonBagCleanWay)
@@ -31,54 +34,42 @@ team out
         @cleanBag
     [else if] (_DungeonBagCleanWay) == 存仓及售卖
         @tidyBag
-
-    [if] {b青龙堂令牌}? != null
-        [if] {b白虎堂令牌}? != null
-            [if] {b风雷堂令牌}? != null
-                @cmdDelay 500
-                $to 住房-小花园
-                team with {r(NameSC)}
-                jh fb 24 start3
-                cr heimuya/shangu 2 0
-                go north[2]
-                @kill 教徒,教徒
-                go south[4]
-                @kill 教徒,教徒
-                go north[2]
-                go east;go north[2]
-                @kill 教徒,教徒
-                go south[2];go east
-                look xiazi;push xiazi
-                go enter;go up
-                look xiazi;push xiazi
-                go enter;go up
-                look xiazi;push xiazi
-                go enter;go up
-                go east
-                @kill 童百熊,贾布,上官云
-                go east
-                look wan;circle wan
-                go down;fire
-                push
-                [if] (_DungeonWaitSkillCD) == 打开
-                    @cd
-                go south;go east
-                @kill 东方不败
-            [else]
-                @print <ord>缺少<hiy>风雷堂令牌</hiy>，中断流程！</ord>
-                team out
-                [break]
-        [else]
-            @print <ord>缺少<hiy>白虎堂令牌</hiy>，中断流程！</ord>
-            team out
-            [break]
-    [else]
-        @print <ord>缺少<hiy>青龙堂令牌</hiy>，中断流程！</ord>
+    [if] {b青龙堂令牌}? != null && {b白虎堂令牌}? != null && {b风雷堂令牌}? != null && {b火折子}? != null
+        @cmdDelay 500
+        $to 住房-小花园
+        team with {r(NameSC)}
+        jh fb 24 start3
+        cr heimuya/shangu 2 0
+        go east;go east
+        look xiazi;push xiazi
+        go enter;go up
+        look xiazi;push xiazi
+        go enter;go up
+        look xiazi;push xiazi
+        go enter;go up
+        go east
+        @kill 童百熊,贾布,上官云
+        go east
+        look wan;circle wan
+        go down;fire
+        push
+        [if] (_DungeonWaitSkillCD) == 打开
+            @cd
+        go south;go east
+        @kill 东方不败
+        cr;cr over
         team out
-        [break]
-// 副本结束
-    cr;cr over
-    team out
+    [else]
+        [if] (NeedProp) == 扫荡
+            @print <hiy>令牌或火折子不足，根据设置先扫荡。</hiy>
+            tm 令牌或火折子不足，根据设置先扫荡。
+            [if] {b扫荡符#}? != null
+                shop 0 1
+            cr heimuya/shangu 1 1
+        [else]
+            @print <ord>缺少<hiy>令牌</hiy>或<hiy>火折子</hiy>，中断流程！</ord>
+            tm 缺少【令牌】或【火折子】，中断流程！
+            [break]
     ($_i) = (_i) + 1
 [if] (_DungeonBagCleanWay) == 售卖
     @cleanBag
