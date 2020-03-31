@@ -200,12 +200,6 @@
             let timeString = time < 60 ? `${parseInt(time)}分钟` : `${parseInt(time / 60)}小时${parseInt(time % 60)}分钟`;
             $(".remove_dzsj").remove();
             $(".content-message pre").append(`<span class="remove_dzsj">当前内力: ${max}\n上限内力: ${limit}\n需要时间: ${timeString}\n</span>`);
-        } else if (/无数花瓣夹杂着寒气/.test(data)) {
-            let a = data.match(/无数花瓣夹杂着寒气将(.*)围起/);
-            $(".content-message pre").append(`<him>「太上忘情」 => ${a[1]}（无法躲闪）</him>\n`);
-        } else if (/数息后只留下一堆玄色石头/.test(data)) {
-            let a = data.match(/只见(.*)发出一阵白光/);
-            $(".content-message pre").append(`你分解了 => ${a[1]}\n`);
         } else {
             funny.onmessage_fn.apply(this, arguments);
         }

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.3
+// @version     0.1.1.4
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -200,12 +200,6 @@
             let timeString = time < 60 ? `${parseInt(time)}分钟` : `${parseInt(time / 60)}小时${parseInt(time % 60)}分钟`;
             $(".remove_dzsj").remove();
             $(".content-message pre").append(`<span class="remove_dzsj">当前内力: ${max}\n上限内力: ${limit}\n需要时间: ${timeString}\n</span>`);
-        } else if (/无数花瓣夹杂着寒气/.test(data)) {
-            let a = data.match(/无数花瓣夹杂着寒气将(.*)围起/);
-            $(".content-message pre").append(`<him>「太上忘情」 => ${a[1]}（无法躲闪）</him>\n`);
-        } else if (/数息后只留下一堆玄色石头/.test(data)) {
-            let a = data.match(/只见(.*)发出一阵白光/);
-            $(".content-message pre").append(`你分解了 => ${a[1]}\n`);
         } else {
             funny.onmessage_fn.apply(this, arguments);
         }
@@ -215,7 +209,7 @@
     // tasks
     listener.addListener("dialog", function(data) {
         if (data.dialog === "tasks" && data.items) {
-            let fb, qa, wd1, wd2, wd3, sm1, sm2, ym1, ym2, yb1, yb2;
+            let fb, qa, wd, wd1, wd2, wd3, sm1, sm2, ym1, ym2, yb1, yb2;
             data.items.forEach(item => {
                 if (item.state === 2) fn.send(`taskover ${item.id}`); // 自动完成
                 if (item.id === "signin") {
@@ -223,9 +217,12 @@
                     let b = item.desc.match(/(.*)武道塔(.*)，进度(\d+)\/(\d+)<(.*)/);
                     let c = item.desc.match(/<.+?>(.+)首席请安<.+?>/);
                     (parseInt(a[3]) < 20) ? fb = `<hig>${a[3]}</hig>` : fb = a[3];
-                    (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
-                    wd2 = b[4];
-                    /可以重置/.test(b[2]) ? wd3 = "<hig>可以重置</hig>" : wd3 = "已经重置";
+                    if (b) {
+                        (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
+                        wd2 = b[4];
+                        /可以重置/.test(b[2]) ? wd3 = "<hig>可以重置</hig>" : wd3 = "已经重置";
+                        wd = wd1+"/"+wd2+" "+wd3
+                    }else {wd = "已设置只打塔主"}
                     if (c) {
                         /已经/.test(c[1]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
                     }else {qa = "武神无需请安"}
@@ -243,7 +240,7 @@
                     yb2 = a[2];
                 }
             });
-            let html = `门派请安 => ${qa}\n武道之塔 => ${wd1}/${wd2} ${wd3}\n`;
+            let html = `门派请安 => ${qa}\n武道之塔 => ${wd}\n`;
             html += `日常副本 => ${fb}/20\n师门任务 => ${sm1}/20 ${sm2}连\n`;
             html += `衙门追捕 => ${ym1}/20 ${ym2}连\n每周运镖 => ${yb1}/20 ${yb2}连\n`;
             $(".remove_tasks").remove();
