@@ -1,84 +1,84 @@
 /* ==UserStyle==
 @name        wsmud_accessibility_color
-@homepage    https://greasyfork.org/zh-CN/scripts/395561-wsmud-accessibility-color
-@description 武神传说(wsmud)无障碍配色，适用于色弱色盲群体
+@homepageURL    https://greasyfork.org/zh-CN/scripts/395561-wsmud-accessibility-color
+@description 武神传说(wsmud)无障碍配色，适用于色弱色盲群体。正常视觉可使用 wsmud_flat_color
 @author      mapleo
 @namespace   https://greasyfork.org/zh-CN/scripts/395561-wsmud-accessibility-color
-@version     1.0.0
+@version     1.0.2
 ==/UserStyle== */
 @-moz-document domain("wsmud.com") {
-html, body {
-    font-family: "PingFang SC","FZPingXianYaSong-R-GBK","Source Han Sans SC","Microsoft YaHei",微软雅黑;
-}
-pre{
-    font-size: 1.1em;
-    font-family: "PingFang SC","FZPingXianYaSong-R-GBK","Source Han Sans SC","Microsoft YaHei",微软雅黑;
-}
-.tool-bar{
-    font-family: "PingFang SC","Source Han Sans SC","Microsoft YaHei",微软雅黑;
-}
-.dialog{
-    font-family: "PingFang SC","FZPingXianYaSong-R-GBK","Source Han Sans SC","Microsoft YaHei",微软雅黑;
-}
-.container, .login-content, .left, .right{
-	color: rgb(0,178,0);
-    background-color: #000000;
-}
-.tool-bar > .tool-item {
-    color:#000000;
-    background-color:#ADADAD;
-}
-.room-item > .item-name {
-	margin-left: 1em;
-}
-.room_items {
-	max-height: 120px;
-}
-.item-status-bar > .status-item {
-	font-size: 0.6rem;
-    transform: scale(0.833333);
-    font-weight: lighter;
-}
-.hp > .progress-bar {
-	background-color: #D55E00;
-}
-.mp > .progress-bar {
-	background-color: #56B4DF;
-}
-HIG {
-    color: #009E73;
-}
-HIC {
-    color: #56B4DF;
-}
-HIY {
-    color: #F0E442;
-}
-HIZ {
-	color: #CC79A7;
-}
-HIO {
-    color: #E69F00;
-}
-HIR {
-    color: #D55E00;
-}
-HIM {
-    color: #e84393;
-}
+    @media screen and (-webkit-min-device-pixel-ratio:0) {
+        .item-status-bar > .status-item {
+            zoom: 1
+        }
+    }
+    pre{
+        font-size: 1em;
+    }
+    .container, .login-content, .left, .right{
+        color: rgb(0,178,0);
+        background-color: #000000;
+    }
+    .tool-bar > .tool-item {
+        color:#000000;
+        background-color:#ADADAD;
+    }
+    .room-item > .item-name {
+        margin-left: 1em;
+    }
+    .room-item > .item-name {
+        margin-left: 1em;
+    }
+    .room_items {
+        max-height: 120px;
+    }
+    .item-status-bar > .status-item {
+        font-size: 0.8em;
+        font-weight: lighter;
+    }
+    .state-bar {
+        overflow-x: auto;
+    }
+    .hp > .progress-bar {
+        background-color: #D55E00;
+    }
+    .mp > .progress-bar {
+        background-color: #56B4DF;
+    }
+    HIG {
+        color: #009E73;
+    }
+    HIC {
+        color: #56B4DF;
+    }
+    HIY {
+        color: #F0E442;
+    }
+    HIZ {
+        color: #CC79A7;
+    }
+    HIO {
+        color: #E69F00;
+    }
+    HIR {
+        color: #D55E00;
+    }
+    HIM {
+        color: #e84393;
+    }
 
-/* left right */
-.left, .right {
-	width: 350px;
-}
-.left-content {
-	font-size: 13px;
-}
-.span-btn {
-	font-size: 13px;
-}
-/* pluggis */
-.layui-layer-content {
-	font-size: 13px;
-}
+    /* left right */
+    .left, .right {
+        width: 350px;
+    }
+    .left-content {
+        font-size: 13px;
+    }
+    .span-btn {
+        font-size: 13px;
+    }
+    /* pluggis */
+    .layui-layer-content {
+        font-size: 13px;
+    }
 }

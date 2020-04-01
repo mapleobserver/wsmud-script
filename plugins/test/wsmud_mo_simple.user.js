@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.4
+// @version     0.1.1.5
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -200,6 +200,11 @@
             let timeString = time < 60 ? `${parseInt(time)}分钟` : `${parseInt(time / 60)}小时${parseInt(time % 60)}分钟`;
             $(".remove_dzsj").remove();
             $(".content-message pre").append(`<span class="remove_dzsj">当前内力: ${max}\n上限内力: ${limit}\n需要时间: ${timeString}\n</span>`);
+        } else if (/只留下一堆玄色石头/.test(data)) {
+            if (data.includes("你")) {
+                let a = data.match(/只见(.*)发出一阵白光/);
+                $(".content-message pre").append(`你分解了 => ${a[1]}！\n`);
+            } else {}
         } else {
             funny.onmessage_fn.apply(this, arguments);
         }
