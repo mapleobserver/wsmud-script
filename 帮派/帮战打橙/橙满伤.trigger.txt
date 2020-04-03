@@ -42,10 +42,10 @@
             go south
             @await 500
         @await 500
+        @until (:combating) == false
         [while] (:room) != 武当派-后山小院
             $to 武当派-后山小院
             @await 500
-    @until (:combating) == false
     $startpfm
 [else if] (:room) == 华山派-客厅 && (:combating) == true
     ($id_1) = {r华山派长老}?
