@@ -13,6 +13,7 @@
 stopstate
 //这里可以自己修改为换技能装备的代码
 $usezml 攻装
+@on 帮战翻车
 $wait 5000
 @renew
 @wait 1000
