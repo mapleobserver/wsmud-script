@@ -9,10 +9,10 @@
     @until (:status xuruo) == false
     ($id_1) = {r武当派长老}?
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
-    ($id_ban) = {r张三丰}?
-    [if] (MPnpc) == (id_2) || (MPnpc) == (id_1) || (MPnpc) == (id_ban)
+    ($id_bang) = {r张三丰}?
+    [if] (MPnpc) == (id_2) || (MPnpc) == (id_1) || (MPnpc) == (id_bang)
         kill (MPnpc);kill (MPnpc)
-    [else if] (id_2) == null && (id_1) != null && (MPnpc) != (id_1) && (MPnpc) != (id_ban)
+    [else if] (id_2) == null && (id_1) != null && (MPnpc) != (id_1) && (MPnpc) != (id_bang)
         kill (id_1);kill (id_1)
     [else if] (id_2) == null && (id_1) == null && (MPnpc) != null
         kill {r张三丰}?
