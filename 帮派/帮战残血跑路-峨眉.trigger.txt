@@ -10,7 +10,7 @@
     ($id_pl) = {r张三丰}?
 @until (:hp (id_pl)) > 18000000
 kill (id_pl);kill (id_pl)
-[while] (:status faint,(id_pl)) == false && (:combating) == true && (:living) == true
+[if] (:status faint,(id_pl)) == false
     @perform unarmed.duo
 [while] (:room) == 武当派-后山小院 && (:living) == true
     go south

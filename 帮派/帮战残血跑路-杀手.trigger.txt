@@ -6,7 +6,7 @@
 [else]
     ($id_bang) = {r张三丰}?
     pty 残血快死了，求给三丰一个昏迷好跑路🙏
-    [while] (:status faint,(id_bang)) == false && (:combating) == true && (:living) == true
+    [if] (:status faint,(id_bang)) == true
         kill (id_bang);kill (id_bang)
     [while] (:room) == 武当派-后山小院 && (:living) == true
         go south
