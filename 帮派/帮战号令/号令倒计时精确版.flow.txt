@@ -1,6 +1,7 @@
 //raid.flow
 //根据论坛 Raid 大佬的精确版修改。
 //四区白三三
+@cmdDelay 0
 pty 注意：号令计时器已经启动！
 [if] (stamp0) == null
     ($stamp0) = (:hour) * 60 * 60 + (:minute) * 60 + (:second)

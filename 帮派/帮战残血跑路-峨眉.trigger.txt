@@ -1,21 +1,33 @@
 // 触发气血低于一定百分比，人名关键词填自己的角色名
+// 仅用于武当
 // 四区白三三
-($thisroom) = (:room)
-($id_zl) = {r武当派长老}?
-@until (:hp (id_zl)) > 18000000
-kill (id_zl);kill (id_zl)
-@perform unarmed.duo
-[while]  (:room) == 武当派-后山小院 && (:living) == true
+@cmdDelay 100
+($id_1) = {r武当派长老}?
+($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+[if] (id_1) != null
+    ($id_pl) = (id_1)
+[else]
+    ($id_pl) = {r张三丰}?
+@until (:hp (id_pl)) > 18000000
+kill (id_pl);kill (id_pl)
+[if] (:status faint,(id_pl)) == false
+    @perform unarmed.duo
+[while] (:room) == 武当派-后山小院 && (:living) == true
     go south
     @await 500
 @until (:combating) == false || (:living) == false
 relive
 $to 扬州城-武庙
 @liaoshang
-$to (thisroom)
+$to 武当派-后山小院
 $getall
+@until  (:status xuruo) == false
+($id_1) = {r武当派长老}?
+($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
 [if] (MPnpc) != null
-    kill (MPnpc);kill (MPnpc)
+    [if] (MPnpc) == (id_2) || (MPnpc) == (id_1)
+        kill (MPnpc);kill (MPnpc)
+    [else]
+        kill (id_bang);kill (id_bang)
 [else]
-    ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
-    kill (id_2);kill (id_2)
+    $killall

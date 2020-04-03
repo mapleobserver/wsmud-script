@@ -7,14 +7,14 @@
 ($id_1) = {r副帮主}?
 ($id_2) = {r副帮主}?# obj.id == "(id_1)" #
 [if] (:room) == 丐帮-林间小屋 && (:combating) == true
-    ($id_ban) = {r洪七公}?
-    [if] (id) != (id_1) && (id) != (id_ban)
+    ($id_bang) = {r洪七公}?
+    [if] (id) != (id_1) && (id) != (id_bang)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
     [else if] (id) == (id_1)
-        kill (id_ban);kill (id_ban)
+        kill (id_bang);kill (id_bang)
         pty 占比(percent)，切换目标：洪七公
-    [else if] (id) == (id_ban)
+    [else if] (id) == (id_bang)
         $stoppfm
         pty 洪七公已满，我先撤
         [while] (:room) == 丐帮-林间小屋
@@ -28,35 +28,36 @@
 [else if] (:room) == 武当派-后山小院 && (:combating) == true
     ($id_1) = {r武当派长老}?
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
-    ($id_ban) = {r张三丰}?
-    [if] (id) != (id_1) && (id) != (id_ban)
+    ($id_bang) = {r张三丰}?
+    [if] (id) != (id_1) && (id) != (id_bang)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
     [else if] (id) == (id_1)
-        kill (id_ban);kill (id_ban)
+        kill (id_bang);kill (id_bang)
         pty 占比(percent)，切换目标：张三丰
-    [else if] (id) == (id_ban)
+    [else if] (id) == (id_bang)
         $stoppfm
         pty 张三丰已满，我先撤
         [while] (:room) == 武当派-后山小院
             go south
             @await 500
-        @until (:room) == 武当派-林间小径
         @await 500
-        go north
-    @until (:combating) == false
+        @until (:combating) == false
+        [while] (:room) != 武当派-后山小院
+            $to 武当派-后山小院
+            @await 500
     $startpfm
 [else if] (:room) == 华山派-客厅 && (:combating) == true
     ($id_1) = {r华山派长老}?
     ($id_2) = {r华山派长老}?# obj.id == "(id_1)" #
-    ($id_ban) = {r岳不群}?
-    [if] (id) != (id_1) && (id) != (id_ban)
+    ($id_bang) = {r岳不群}?
+    [if] (id) != (id_1) && (id) != (id_bang)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
     [else if] (id) == (id_1)
-        kill (id_ban);kill (id_ban)
+        kill (id_bang);kill (id_bang)
         pty 占比(percent)，切换目标：岳不群
-    [else if] (id) == (id_ban)
+    [else if] (id) == (id_bang)
         $stoppfm
         pty 岳不群已满，我先撤
         [while] (:room) == 华山派-客厅

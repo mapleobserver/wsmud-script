@@ -1,0 +1,51 @@
+//武当帮战。可以保存为自命令，用触发调用
+//帮派频道关键字：即刻起开始进攻武当
+//四区白三三
+//********使用前请根据自己需要，自行修改以下几个参数********
+//第几波号令才开打就填几
+($haoling) = 2
+//号令清完后等多久再叫杀(默认30秒：30000)
+($waitkill) == 30000
+//是否关闭自动出招，0为关闭，1为打开
+($autopfm) = 1
+//********使用前请根据自己需要，自行修改以上几个参数********
+@stopSSAuto
+stopstate
+//这里可以自己修改为换技能装备的代码
+$usezml 攻装
+@on 帮战翻车
+$wait 5000
+@renew
+@wait 1000
+[if] (autopfm) = 0
+    $stoppfm
+[else]
+    $startpfm
+[while] (:room) != 武当派-后山小院
+    $to 武当派-后山小院
+    @await 2000
+@print 等待开战
+($id_1) = {r武当派长老}?
+($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+($id_bang) = {r张三丰}?
+//长老血量低于1950W，掌门低于4950W时自动叫杀最下面的长老。如果不想监控血量，也可以改成等待指定时间后叫杀。
+@until (:hp (id_2)) < 19500000 && (:hp (id_1)) < 19500000 && (:hp (id_bang)) < 49500000
+@wait 60000
+($num) = 0
+[while] (num) < (haoling)
+    @until (:status boss,(id_bang)) == false
+    @until (:status boss,(id_bang)) == true
+    ($num) = (num) + 1
+[if] (waitkill) != null
+    @wait (waitkill)
+($id_1) = {r武当派长老}?
+($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+[if] (id_2) != null
+    kill (id_2);kill (id_2)
+    ($MPnpc) = (id_2)
+[else if] (id_2) == null && (id_1) != null
+    kill (id_1);kill (id_1)
+    ($MPnpc) = (id_1)
+[else]
+    kill (id_bang);kill (id_bang)
+    ($MPnpc) = (id_bang)
