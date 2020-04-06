@@ -15,7 +15,7 @@
     //@js ($mpskill) = '(content)'.substr(0,2)
     @js ($mpyes) = '(content)'.indexOf('(mymp)')
     //[if] (mpskill) == (mymp)
-    [if] (myyes) != -1
+    [if] (mpyes) != -1
         ($mpzm) = (name)
 [if] (mpname) != null || (mpzm) != null
     stopstate
