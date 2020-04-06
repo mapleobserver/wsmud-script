@@ -76,7 +76,7 @@ stopstate
                 kill {r蒙面大盗}?
             //@until {r蒙面大盗}? == null || (:combating) == true || (:living) == false
             //@tip 九阳神功($jiuyang)了|<hir>鲜血</hir>|<hir>死了</hir>|倒在地上,死了|挣扎了几下，
-            @tip 九阳神功($jiuyang)了|你获得了|没有东西|<hir>鲜血</hir>|<hir>死了</hir>|你口中喷出几口<hir>鲜血</hir>，倒在地上,死了！|你现在是灵魂状态|朦胧中你好像听到有人在喊
+            @tip 九阳神功($jiuyang)了|你获得了|没有东西|<HIR>鲜血</HIR>|<HIR>死了</HIR>|你口中喷出几口<HIR>鲜血</HIR>，倒在地上,死了！|你现在是灵魂状态|朦胧中你好像听到有人在喊
             //@print (jiuyang)
             @until {r蒙面大盗}? == null || (:combating) == false || (:living) == false
             [if] (:living) == true
