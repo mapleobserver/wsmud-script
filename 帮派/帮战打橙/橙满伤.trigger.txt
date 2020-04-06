@@ -20,6 +20,7 @@
         [while] (:room) == 丐帮-林间小屋
             go down
             @await 500
+        @until (:combating) == false
         @until (:room) == 丐帮-暗道
         @await 500
         go up
@@ -63,6 +64,7 @@
         [while] (:room) == 华山派-客厅
             go south
             @await 500
+        @until (:combating) == false
         @until (:room) == 华山派-客厅
         @await 500
         go north
