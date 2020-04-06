@@ -12,8 +12,10 @@
 [if] (name) == (myzm)
     @js ($mpname) = var re=/(少林|逍遥|峨眉|丐帮|武当|华山)/;var ta=re.exec('(content)');if(ta!=null){ta[0]}else{'null'}
 [else]
-    @js ($mpskill) = '(content)'.substr(0,2)
-    [if] (mpskill) == (mymp)
+    //@js ($mpskill) = '(content)'.substr(0,2)
+    @js ($mpyes) = '(content)'.indexOf('(mymp)')
+    //[if] (mpskill) == (mymp)
+    [if] (myyes) != -1
         ($mpzm) = (name)
 [if] (mpname) != null || (mpzm) != null
     stopstate
