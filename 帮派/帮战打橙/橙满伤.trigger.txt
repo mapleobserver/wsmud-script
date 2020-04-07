@@ -21,10 +21,9 @@
             go down
             @await 500
         @until (:combating) == false
-        @until (:room) == 丐帮-暗道
-        @await 500
-        go up
-    @until (:combating) == false
+        [while] (:room) != 丐帮-林间小屋
+            $to 丐帮-林间小屋
+            @await 500
     $startpfm
 [else if] (:room) == 武当派-后山小院 && (:combating) == true
     ($id_1) = {r武当派长老}?
@@ -42,7 +41,6 @@
         [while] (:room) == 武当派-后山小院
             go south
             @await 500
-        @await 500
         @until (:combating) == false
         [while] (:room) != 武当派-后山小院
             $to 武当派-后山小院
@@ -65,10 +63,9 @@
             go south
             @await 500
         @until (:combating) == false
-        @until (:room) == 华山派-客厅
-        @await 500
-        go north
-    @until (:combating) == false
+        [while] (:room) != 华山派-客厅
+            $to 华山派-客厅
+            @await 500
     $startpfm
 [else]
     $startpfm
