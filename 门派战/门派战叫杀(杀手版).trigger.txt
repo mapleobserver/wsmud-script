@@ -46,4 +46,5 @@
         ($MPing) = false
         relive
         @renew
+        @wait 3000
         $zdwk
