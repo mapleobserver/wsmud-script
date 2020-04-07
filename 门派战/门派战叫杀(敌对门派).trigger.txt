@@ -22,23 +22,29 @@
     [if] (mpname) == 峨眉 || (mpzm) == 灭绝
         $to 峨眉派-清修洞
         ($mpplace) = 峨眉派-清修洞
+        ($zmname) = 灭绝
     [else if] (mpname) == 武当 || (mpzm) == 张三丰
         $to 武当派-后山小院
         ($mpplace) = 武当派-后山小院
+        ($zmname) = 张三丰
     [else if] (mpname) == 少林 || (mpzm) == 玄难
         $to 少林派-方丈楼
         ($mpplace) = 少林派-方丈楼
+        ($zmname) = 玄难
     [else if] (mpname) == 华山 || (mpzm) == 岳不群
         $to 华山派-客厅
         ($mpplace) = 华山派-客厅
+        ($zmname) = 岳不群
     [else if] (mpname) == 逍遥 || (mpzm) == 逍遥子
         $to 逍遥派-地下石室
         ($mpplace) = 逍遥派-地下石室
+        ($zmname) = 逍遥子
     [else if] (mpname) == 丐帮 || (mpzm) == 洪七公
         $to 丐帮-林间小屋
         ($mpplace) = 丐帮-林间小屋
+        ($zmname) = 洪七公
     @until (:room) == (mpplace)
-    $killall
+    kill {r(zmname)}?
     @until (:combating) == false || (:living) == false
     relive
     @renew
