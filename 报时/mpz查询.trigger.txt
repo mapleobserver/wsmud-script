@@ -20,7 +20,7 @@
                 @js ($dm) = parseInt((d)%3600/60)
                 ($ds) = (d)%60
                 [if] (dm) >= 30
-                    [if] (:hour) >= 22
+                    //[if] (:hour) >= 22
                     @js ($dm) = parseInt((3600-(dm)*60-(ds))/60)
                     ($ds) = 60-(ds)
                     ($msg1) = 【冷却】(MPA1)⌛️(MPB1) 需等待(dm)分(ds)秒

@@ -1,6 +1,6 @@
 //raid.flow
 //四区白三三
-//世界频道关键字：33|jn
+//世界频道关键字：33|jn|yf
 //第一行机器人的名字自行修改
 [if] (name) != 村花三三
     [if] (SSstatus) == false || (SSstatus) == null
@@ -8,6 +8,7 @@
         ($SSname) = (name)
         @js ($ssStart) = '(content)'.match('^33')
         @js ($jnStart) = '(content)'.match('^jn')
+        @js ($yfStart) = '(content)'.match('^yf')
         //@print (ssStart)
         [if] (ssStart) != null
             @js ($ssContent) = '(content)'.substr([2]).trim()
@@ -21,3 +22,6 @@
         [if] (jnStart) != null
             ($SSstatus) = true
             @call 技能查询
+        [if] (yfStart) != null
+            ($SSstatus) = true
+            @call 药方查询
