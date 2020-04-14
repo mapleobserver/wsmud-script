@@ -9,7 +9,7 @@
 @cmdDelay 0
 [if] (MPing) == true
     [if] (MPhour) != (:hour)
-        ($MPing) == false
+        ($MPing) = false
 [if] (MPing) == false || (MPing) == null
     @js ($mpname) = var re=/(少林|逍遥|峨眉|丐帮|武当|华山)/;var ta=re.exec('(content)');if(ta!=null){ta[0]}else{'null'}
     [if] (mpname) != null && (:living) == true

@@ -25,7 +25,7 @@ jiu {r女童}?
 go northup;go northup;look tiesuo;zou tiesuo
 $startpfm
 //****换正常技能*
-enable force zixiashengong2
+//enable force zixiashengong2
 enable dodge tagexing
 //****换正常技能***
 //如果有起手触发就先打开
