@@ -21,7 +21,7 @@ go enter
         dazuo
         @until (:mpPer) >= 0.3
         stopstate
-    [if] (:room) == 武道塔-第一百层
+    [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
         [break]
     kill {r武道塔守护者}?
     @tip 你的挑战($type1)了|你现在可以进入|不要急|你要攻击谁|你又恢复了知觉
