@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.11
+// @version         2.4.14
 // @date            23/12/2018
-// @modified        15/02/2019
+// @modified        15/04/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
-// @author          Bob.cn, 初心
+// @author          Bob.cn, 初心, 白三三
 // @match           http://*.wsmud.com/*
 // @run-at          document-end
 // @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
@@ -3172,6 +3172,8 @@
 <-stopSSAuto
 stopstate
 <---
+[if] (_DungeonHpThreshold) == null
+    ($_DungeonHpThreshold) = 50
 ($hpPer) = (_DungeonHpThreshold)/100
 [if] (:hpPer) < (hpPer)
     @liaoshang
@@ -3397,6 +3399,55 @@ go down;fire;go west
 look xia;open xia`
         },
         {
+            name: "冰火岛(困难)",
+            source: `
+@print 👑 感谢 WanJiaQi 分享此副本代码。
+jh fb 21 start2;cr mj/bhd/haibian 1 0
+go west
+@kill 炎龙
+go west
+@kill 炎龙
+go west
+@kill 炎龙王
+@liaoshang
+go west;search
+@tip 你找到了
+go east[4];go north
+@kill 白熊
+go north
+@kill 白熊
+@liaoshang
+go north;go west;zuan dong
+[if] (_DungeonWaitSkillCD) == 打开
+    @cd
+@kill 张翠山
+@kill 谢逊`
+        },
+        {
+            name: "冰火岛(简单)",
+            source: `
+@print 👑 感谢 WanJiaQi 分享此副本代码。
+jh fb 21 start1;cr mj/bhd/haibian 0 0
+go west
+@kill 炎龙
+go west
+@kill 炎龙
+go west
+@kill 炎龙王
+@liaoshang
+go west;search
+@tip 你找到了
+go east[4];go north
+@kill 白熊
+go north
+@kill 白熊
+@liaoshang
+go north;go west;zuan dong
+[if] (_DungeonWaitSkillCD) == 打开
+    @cd
+@kill 谢逊`
+        },
+        {
             name: "星宿海",
             source: `
 jh fb 20 start1;cr xingxiu/xxh6
@@ -3480,6 +3531,56 @@ select {黄蓉};give1 {黄蓉}
 @kill 黄蓉`
         },
         {
+            name: "云梦沼泽(组队)",
+            source: `
+@print 👑 感谢 leiyulin 分享此副本代码。
+jh fb 17 start3;cr cd/yunmeng/senlin 2 0
+$wait 500
+go east
+@kill 巨鳄
+go north
+@kill 巨鳄,巨鳄
+go east
+@kill 巨鳄,巨鳄
+go west;go north
+@kill 巨鳄,巨鳄
+look lu;kan lu;go north
+@kill 火龙
+go north
+@kill 火龙
+go north
+@kill 火龙
+[if] (_DungeonWaitSkillCD) == 打开
+    @cd
+go north
+@kill 火龙王`
+        },
+        {
+            name: "云梦沼泽",
+            source: `
+@print 👑 感谢 leiyulin 分享此副本代码。
+jh fb 17 start1;cr cd/yunmeng/senlin
+$wait 500
+go east
+@kill 巨鳄
+go north
+@kill 巨鳄,巨鳄
+go east
+@kill 巨鳄,巨鳄
+go west;go north
+@kill 巨鳄,巨鳄
+look lu;kan lu;go north
+@kill 火龙
+go north
+@kill 火龙
+go north
+@kill 火龙
+[if] (_DungeonWaitSkillCD) == 打开
+    @cd
+go north
+@kill 火龙王`
+        },
+        {
             name: "嵩山",
             source: `
 jh fb 16 start1;cr wuyue/songshan/taishi
@@ -3518,6 +3619,31 @@ go south[3];go west[2]
 @kill 曲洋,曲非烟
 go east[4];go southeast;go south;go east;go south
 @kill 莫大`
+        },
+        {
+            name: "青城山",
+            source: `
+@print 👑 感谢 矮大瓜 分享此副本代码。
+jh fb 13 start1;cr wuyue/qingcheng/shanlu
+go westup
+@kill 青城派弟子,青城派弟子
+go north
+go northup
+go eastup
+@kill 青城派弟子,青城派弟子
+go northup
+@kill 洪人雄
+go north[3]
+@kill 于人豪
+go north
+@kill 侯人英,罗人杰
+go south
+go east
+@kill 余人彦
+[if] (_DungeonWaitSkillCD) == 打开
+    @cd
+go north
+@kill 余沧海`
         },
         {
             name: "恒山",
@@ -3567,6 +3693,66 @@ go north;go north
     go northup
     go north
     go north`
+        },
+        {
+            name: "五毒教(组队)",
+            source: `
+@print 👑 感谢 矮大瓜 分享此副本代码。
+jh fb 11 start3;cr cd/wudu/damen 2 0
+@kill 五毒教徒,五毒教徒,五毒教徒,五毒教徒
+go east
+@kill 沙千里
+go south
+@kill 藏獒
+go west
+@kill 白髯老者
+go east
+go south
+@kill 毒郎中
+go north
+go north
+[if](_DungeonWaitSkillCD) == 打开
+    @cd
+go east
+@kill 潘秀达,岑其斯,齐云敖
+[if](_DungeonWaitSkillCD) == 打开
+    @cd   
+go east
+@kill 何红药
+[if](_DungeonWaitSkillCD) == 打开
+    @cd
+go east
+@kill 何铁手`
+        },
+        {
+            name: "五毒教",
+            source: `
+@print 👑 感谢 矮大瓜 分享此副本代码。
+jh fb 11 start1;cr cd/wudu/damen
+@kill 五毒教徒,五毒教徒,五毒教徒,五毒教徒
+go east
+@kill 沙千里
+go south
+@kill 藏獒
+go west
+@kill 白髯老者
+go east
+go south
+@kill 毒郎中
+go north
+go north
+[if](_DungeonWaitSkillCD) == 打开
+    @cd
+go east
+@kill 潘秀达,岑其斯,齐云敖
+[if](_DungeonWaitSkillCD) == 打开
+    @cd   
+go east
+@kill 何红药
+[if](_DungeonWaitSkillCD) == 打开
+    @cd
+go east
+@kill 何铁手`
         },
         {
             name: "温府",
