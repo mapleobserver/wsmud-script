@@ -24,7 +24,7 @@
         [while] (:room) != 丐帮-林间小屋
             $to 丐帮-林间小屋
             @await 500
-    $startpfm
+        $startpfm
 [else if] (:room) == 武当派-后山小院 && (:combating) == true
     ($id_1) = {r武当派长老}?
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
@@ -45,7 +45,7 @@
         [while] (:room) != 武当派-后山小院
             $to 武当派-后山小院
             @await 500
-    $startpfm
+        $startpfm
 [else if] (:room) == 华山派-客厅 && (:combating) == true
     ($id_1) = {r华山派长老}?
     ($id_2) = {r华山派长老}?# obj.id == "(id_1)" #
@@ -66,6 +66,6 @@
         [while] (:room) != 华山派-客厅
             $to 华山派-客厅
             @await 500
-    $startpfm
+        $startpfm
 [else]
     $startpfm
