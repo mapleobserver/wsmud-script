@@ -25,3 +25,6 @@
         [if] (yfStart) != null
             ($SSstatus) = true
             @call 药方查询
+@await 2000
+[if] (SSstatus) == true
+    ($SSstatus) = false

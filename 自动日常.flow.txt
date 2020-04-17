@@ -272,7 +272,7 @@ use {养精丹g}[5]
             ($fbcr) = cr huashan/lunjian/leitaixia 0
         [else if] (FBName) == 侠客岛
             ($fbcr) = cr xkd/shimen 0
-        [else if] (FBName) == 净念禅宗(普通)
+        [else if] (FBName) == 净念禅宗(简单)
             ($fbcr) = cr chanzong/shanmen 0
         [else if] (FBName) == 净念禅宗(困难)
             ($fbcr) = cr chanzong/shanmen 1
