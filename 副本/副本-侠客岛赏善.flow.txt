@@ -1,0 +1,72 @@
+//raid.flow
+//四区白三三
+//建议先把基础技能熟练度练至90%以上，换好悟性装备再运行流程,节约时间
+[if] (fight_before) == null
+    ($fight_before) = $eq 1
+#input ($intro)=建议先把基础技能熟练度练至90%以上，换好悟性装备再运行流程,节约时间
+#input ($fight_before)=第六次告诉石破天之前更换技能装备命令(多个命令用英文;隔开),(fight_before)
+#select ($fight_yes)=是否需要比试石破天来增加命中,比试|不比试,(fight_yes)
+#input ($fight_skill)=比试石破天释放技能代码(多个技能用英文逗号隔开),(fight_skill)
+#input ($skill_before)=不比试时，告诉石破天之前释放技能代码(一般是明玉，多个技能用英文逗号隔开),(skill_before)
+#config
+<-stopSSAuto
+stopstate
+jh fb 31 start1
+cr xkd/shimen
+@await 500
+go north
+@tip 你目前可以直接前往第($floor)层石洞
+go east
+@tip 石破天对你说到：你知道($poem)是什么意思吗
+@print 诗句：(poem)
+[if] (poem) == 赵客缦胡缨 || (poem) == 十步杀一人 || (poem) == 闲过信陵饮 || (poem) == 三杯吐然诺 || (poem) == 救赵挥金槌 || (poem) == 纵死侠骨香
+    ($go) = go east
+    ($out) = go west
+[else if] (poem) == 吴钩霜雪明 || (poem) == 千里不留行 || (poem) == 脱剑膝前横 || (poem) == 五岳倒为轻 || (poem) == 邯郸先震惊 || (poem) == 不惭世上英
+    ($go) = go south
+    ($out) = go north
+[else if] (poem) == 银鞍照白马 || (poem) == 事了拂衣去 || (poem) == 将炙啖朱亥 || (poem) == 眼花耳热后 || (poem) == 千秋二壮士 || (poem) == 谁能书阁下
+    ($go) = go west
+    ($out) = go east
+[else if] (poem) == 飒沓如流星 || (poem) == 深藏身与名 || (poem) == 持觞劝侯嬴 || (poem) == 意气素霓生 || (poem) == 烜赫大梁城 || (poem) == 白首太玄经 || (poem) == 煊赫大梁城
+    ($go) = go north
+    ($out) = go south
+[if] (go) != null
+    stopstate;go enter;(go);lingwu bi
+[else]
+    tm 房间识别错误，请手动操作
+    $tts 房间识别错误，请手动操作
+@tip 你观察石壁上的一幅刻图和诗句
+[if] (floor) != 六
+    @tip 你的<wht>基本($skill)</wht>等级提升了
+    stopstate;(out);go out
+    say 是(skill)
+    @tip 你帮助石破天解惑
+[else]
+    @tip 感到一阵眩晕
+    stopstate;(out);go out
+    (fight_before)
+    @liaoshang
+    say 不知道
+    @tip 看上去很好玩
+    go enter;go north
+    @tip 石破天的内息忽然($type1)，顷刻间冲破了七八个窒滞之处||你眼见石破天($type2)，全身大汗淋漓
+    [if] (type1) != null
+        @liaoshang
+        [if] (fight_yes) == 比试
+            fight {r石破天}?
+            @until (:combating) == true
+            [if] (fight_skill) != null
+                $waitpfm (fight_skill)
+            @until (:combating) == false
+        @tip 你眼见石破天($type2)，全身大汗淋漓
+    [else]
+        [if] (skill_before) != null
+            $waitpfm (skill_before)
+    helpshi {r石破天}?
+    @tip 一道劲气破空而去
+    @tip 石破天的痛色渐去，全身内力汇流成河
+    @tip 你帮助石破天领悟太玄功
+cr;cr over
+$zdwk
+stopSSAuto->
