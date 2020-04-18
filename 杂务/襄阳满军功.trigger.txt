@@ -1,9 +1,9 @@
 //raid.flow
-//新提示信息：触发军功，目前5
+//新提示信息：军功，目前5
 //四区白三三
 @js ($xyjg) = "(text)".match("目前([^%]+)\/500")[1]
 [if] (xyjg) >= 500
-    chat 坐标[(:room)]，襄阳已满，我先撤
+    tm 坐标[(:room)]，襄阳已满，我先撤
     @until (:combating) == false || living == false
     relive
     @renew

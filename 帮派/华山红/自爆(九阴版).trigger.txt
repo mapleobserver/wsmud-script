@@ -1,0 +1,6 @@
+//已死亡
+@cmdDelay 0
+relive
+@wait 800
+jh fam 3 start;go westup;go north;go north;
+kill {r独孤败天}?;perform force.cui

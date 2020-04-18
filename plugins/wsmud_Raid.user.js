@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.13
+// @version         2.4.14
 // @date            23/12/2018
-// @modified        15/02/2019
+// @modified        15/04/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -3172,6 +3172,8 @@
 <-stopSSAuto
 stopstate
 <---
+[if] (_DungeonHpThreshold) == null
+    ($_DungeonHpThreshold) = 50
 ($hpPer) = (_DungeonHpThreshold)/100
 [if] (:hpPer) < (hpPer)
     @liaoshang

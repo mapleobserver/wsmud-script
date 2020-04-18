@@ -1,5 +1,5 @@
 @-moz-document domain("wsmud.com") {
-    @media screen and (min-width: 900px){
+    @media screen and (min-width: 1200px){
     body {
         width:48%;
     }

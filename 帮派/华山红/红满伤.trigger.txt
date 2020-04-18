@@ -1,0 +1,14 @@
+//伤害已满：
+//人名：独孤败天
+//百分比值：10 (武当少林可填8)
+[if] (:room) == 华山派-客厅 && (:combating) == true
+    @off 自爆
+    pty 已满10
+    @until (:living) == false || (:combating) == false
+    @wait 1000
+    relive;relive
+    @until (:mpPer) >= 0.1
+    $to 华山派-客厅
+    $getall
+    liaoshang
+    @off 红满伤

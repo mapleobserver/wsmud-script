@@ -1,8 +1,0 @@
-// 频道：系统
-// 关键字：襄阳城大获全胜|失守
-($TimeXyEndHour) = (:hour)
-($TimeXyEndMinute) = (:minute)
-($TimeXyEndSecond) = (:second)
-($EnableXy) = true
-($XYWait) == null
-($XYBPname) == null

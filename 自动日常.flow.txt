@@ -1,7 +1,7 @@
 //raid.flow
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-//2020.03.31 - 优化初始师门环数检测
+//2020.04.15 - 优化副本环节的参数设置
 
 // 师门任务
 @toolbar jh
@@ -49,9 +49,18 @@
 // 副本
 [if] (FBBefore) == null
     ($FBBefore) = $eq 1
+[if] (DungeonHpThreshold) == null
+    ($DungeonHpThreshold) = 50
+[if] (DungeonWaitSkillCD) == null
+    ($DungeonWaitSkillCD) = 打开
+[if] (DungeonBagCleanWay) == null
+    ($DungeonBagCleanWay) = 存仓及售卖
 #input ($FBBefore)=副本前执行命令(用英文;隔开),(FBBefore)
-#select ($FBName) = 副本,财主家(困难)|丽春院|鳌拜府|天地会|神龙教|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBName)
+#select ($FBName) = 副本,财主家(简单)|财主家(困难)|丽春院|流氓巷|流氓巷(组队)|兵营|庄府|鳌拜府|天地会|神龙教|神龙教(组队)|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBName)
 #select ($FBWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡|跳过副本,(FBWay)
+#select ($DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(DungeonHpThreshold)
+#select ($DungeonWaitSkillCD) = Boss战前等待技能冷却,打开|关闭,(DungeonWaitSkillCD)
+#select ($DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(DungeonBagCleanWay)
 
 // 请安
 [if] (RC_qingan) == null
@@ -177,10 +186,18 @@ use {养精丹g}[5]
         @cd
         (FBBefore)
         @wait 5000
-        [if] (FBName) == 财主家(困难)
+        [if] (FBName) == 财主家(简单)
+            ($fbcr) = cr yz/cuifu/caizhu 0
+        [else if] (FBName) == 财主家(困难)
             ($fbcr) = cr yz/cuifu/caizhu 1
         [else if] (FBName) == 丽春院
             ($fbcr) = cr yz/lcy/dating 0
+        [else if] (FBName) == 流氓巷
+            ($fbcr) = cr yz/lmw/xiangzi1 0
+        [else if] (FBName) == 兵营
+            ($fbcr) = cr yz/by/damen 0
+        [else if] (FBName) == 庄府
+            ($fbcr) = cr bj/zhuang/xiaolu 0
         [else if] (FBName) == 鳌拜府
             ($fbcr) = cr bj/ao/damen 0
         [else if] (FBName) == 天地会
@@ -255,7 +272,7 @@ use {养精丹g}[5]
             ($fbcr) = cr huashan/lunjian/leitaixia 0
         [else if] (FBName) == 侠客岛
             ($fbcr) = cr xkd/shimen 0
-        [else if] (FBName) == 净念禅宗(普通)
+        [else if] (FBName) == 净念禅宗(简单)
             ($fbcr) = cr chanzong/shanmen 0
         [else if] (FBName) == 净念禅宗(困难)
             ($fbcr) = cr chanzong/shanmen 1
@@ -271,7 +288,7 @@ use {养精丹g}[5]
             ($fbcr) = cr zsd/damen 1
         [if] (FBWay) == 扫荡
             //扫荡模式
-            [if] (FBName) == 五毒教(组队) || (FBName) == 云梦沼泽(组队) || (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
+            [if] (FBName) == 流氓巷(组队) || (FBName) == 神龙教(组队) || (FBName) == 五毒教(组队) || (FBName) == 云梦沼泽(组队) || (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
                 ($alert_fb) = (FBName)无法扫荡！
             [else]
                 [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
@@ -296,7 +313,7 @@ use {养精丹g}[5]
             [else]
                 @js ($fbexist) = if(GetDungeonFlow(`(FBName)`)!=null){true}else{false}
                 [if] (fbexist) == true
-                    @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_repeat) = (fb_num)'))
+                    @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_repeat)=(fb_num)\n'))
                     @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门
                 [else]
                     ($alert_fb) = (FBName)没有自动脚本！

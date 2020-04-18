@@ -1,11 +1,17 @@
 // raid.flow
+// 基于论坛 WanJiaQi 大佬版本修改。
+// 四区白三三
+[if] {b藏宝图}? == null
+    tm 背包中无藏宝图，取消本次寻宝。
+    [exit]
+@cmdDelay 500
 stopstate
 @toolbar jh
 @toolbar pack
 @js ($money1) = /\d+/.exec($(".obj-money").text())['0']
 ($ebony1) = {b玄晶#}?
 ($number)=1
-($pos)=初始值
+($cbt_n) = 0
 @stopSSAuto
 <-recordGains
 [while] {b藏宝图}? != null
@@ -15,6 +21,7 @@ stopstate
     @tip 发现上面的图案所绘的方位似乎($pos)。|你找到了
     [if] (pos) == 就在你这里
         use {b藏宝图}?
+        ($cbt_n) = (cbt_n) + 1
         [continue]
     [else if] (pos) == null
         [continue]
@@ -166,6 +173,9 @@ recordGains->
 @js ($money2) = /\d+/.exec($(".obj-money").text())['0']
 ($income_m) = (money2) - (money1)
 ($ebony2) = {b玄晶#}?
-($income_e) = (ebony2) - (ebony1)
-tm 本次挖宝收益 (income_e)个玄晶，(income_m) 两黄金
-@print 本次挖宝收益 <hiy>(income_e)</hiy> 个玄晶，<hiy>(income_m)</hiy> 两黄金
+[if] (ebony1) != null
+    ($income_e) = (ebony2) - (ebony1)
+[else]
+    ($income_e) = (ebony2)
+tm 本次挖宝 (cbt_n) 次，收益 (income_e)个玄晶，(income_m) 两黄金
+@print 本次挖宝 (cbt_n) 次，收益 <hiy>(income_e)</hiy> 个玄晶，<hiy>(income_m)</hiy> 两黄金

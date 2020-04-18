@@ -1,8 +1,0 @@
-// 频道：谣言
-// 关键字：将会进攻襄阳
-($XYBPname) = null
-($XYWait) = null
-@js ($bpxy) = '(content)'.indexOf('前往增援')
-[if] (bpxy) != -1
-    @js ($XYBPname) = "(content)".match("进攻襄阳，([^%]+)前往增援")[1]
-($XYWait) = (:hour)*3600+(:minute)*60+(:second)

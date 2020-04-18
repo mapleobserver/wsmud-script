@@ -1,6 +1,7 @@
 // raid.flow
-// 自动出售聚气丹、培元丹、混天黄紫装
+// 自动出售聚气丹、培元丹、混天真武黄紫装、副本紫装
 // 紫装只出售没精炼过的
+@cmdDelay 500
 stopstate
 @toolbar jh
 @toolbar pack
