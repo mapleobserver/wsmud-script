@@ -1,8 +1,0 @@
-// 频道：系统
-// 关键字：襄阳城告急
-($TimeXyStartHour) = (:hour)
-($TimeXyStartMinute) = (:minute)
-($TimeXyStartSecond) = (:second)
-($EnableXy) = false
-($XYWait) = null
-//@call 襄阳倒计时
