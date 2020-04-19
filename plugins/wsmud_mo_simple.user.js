@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.4
+// @version     0.1.1.5
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
 // @description 基于 wsmud_funny_mobile 修改
 // @run-at      document-start
-// @require     http://code.jquery.com/jquery-3.3.1.min.js
+// @require     https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js
 // @grant       unsafeWindow
 // @grant       GM_addStyle
 // @grant       GM_setValue
