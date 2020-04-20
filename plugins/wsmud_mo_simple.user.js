@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.5
+// @version     0.1.1.6
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -187,6 +187,7 @@
             };
         } else if (/你轻声吟道/.test(data)) {
         } else if (/盘膝坐下，开始治疗伤势/.test(data)) {
+        } else if (/停止疗伤站了起来/.test(data)) {
         } else if (/疗伤完毕，脸色看起来好了很多/.test(data)) {
         } else if (/盘膝坐下，开始修炼内力/.test(data)) {
         } else if (/运功完毕，站了起来/.test(data)) {
