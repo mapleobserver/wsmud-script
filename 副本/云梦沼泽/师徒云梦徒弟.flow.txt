@@ -9,7 +9,7 @@
 stopstate
 //组队
 //@toolbar message
-//@js $(".dialog").find(".dialog-footer ").last().children("span:contains('关系')").click()
+//@js $(".dialog").find(".dialog-footer").last().children("span:contains('关系')").click()
 //@await 500
 //@js $(".dialog").find(".item-commands").last().children("span:contains('邀请组队')").click()
 //@await 500

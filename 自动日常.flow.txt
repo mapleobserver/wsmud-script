@@ -1,7 +1,7 @@
 //raid.flow
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-//2020.04.15 - 优化副本环节的参数设置
+//2020.04.20 - 根据Raid插件新参数优化语音播报时角色名的获取方式。
 
 // 师门任务
 @toolbar jh
@@ -80,12 +80,15 @@
 #config
 
 [if] (TTSover) == 播报
-    stopstate
-    @await 1000
-    @toolbar jh
-    @toolbar score
-    @js $(`span[for=0]`).click()
-    @js ($myName) = $(".dialog-title").text().match(".* ([^%]+)")[1]
+    ($myName) = (:name)
+    [if] (myName) == null
+        stopstate
+        @await 1000
+        @toolbar jh
+        @toolbar score
+        @js $(`span[for=0]`).click()
+        @js ($myName) = $(".dialog-title").text().split(/\s+/).pop()
+        //@js ($myName) = $(".dialog-title").text().match(".* ([^%]+)")[1]
     $tts 开始(myName)的自动日常。
 
 @stopSSAuto
