@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.14
+// @version         2.4.15
 // @date            23/12/2018
-// @modified        15/04/2020
+// @modified        20/04/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -2461,6 +2461,7 @@
     VariableStore.register(_ => {
         return {
             ":id": Role.id,
+            ":name": Role.name,
             ":hp": Role.hp,
             ":maxHp": Role.maxHp,
             ":hpPer": Role.hp/Role.maxHp,    // 0-1
@@ -3180,6 +3181,8 @@ stopstate
 --->
 <-recordGains
 ($_i) = 0
+[if] (_repeat) == null
+    ($_repeat) = 1
 [while] (_i) < (_repeat)
     @renew
     [if] (_DungeonBagCleanWay) == 售卖
