@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.15
+// @version         2.4.16
 // @date            23/12/2018
-// @modified        20/04/2020
+// @modified        22/04/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1641,7 +1641,11 @@
         lianxi: "练习",
         xuexi: "学习",
         biguan: "闭关",
-        lianyao: "炼药"
+        lianyao: "炼药",
+        lingwu: "领悟",
+        dushu: "读书",
+        juhun: "聚魂",
+        tuiyan: "推演"
     };
 
     /**
