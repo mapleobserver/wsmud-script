@@ -1,6 +1,7 @@
 // raid.flow
 // 新提示信息：内部有些异响
 // 四区白三三
+@cmdDelay 0
 go north;go northwest
 @tip 一个黑影扑向
 go southeast;go north;go north

@@ -3,6 +3,7 @@
 // buffid：food
 // 改变类型：移除
 // 四区白三三
+@cmdDelay 0
 [if] (:room) == 净念禅宗-铜殿内部(副本区域)
     use {b玄灵丹y}
 [else if] (:room) == 净念禅宗-钟楼(副本区域)
