@@ -19,10 +19,10 @@ go enter
 [while] true
     [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
         [break]
-    [if] (:mpPer) <= 0.1
+    [while] (:mpPer) <= 0.1
         dazuo
-        @until (:mpPer) >= 0.3
-        stopstate
+        @await 5000
+    stopstate
     [if] (:hpPer) <= 0.01
         @js var jy='(:room)'.indexOf('第七十');if(jy!=-1){WG.SendCmd('liaoshang;$wait 10000;stopstate')}
         @await 100
