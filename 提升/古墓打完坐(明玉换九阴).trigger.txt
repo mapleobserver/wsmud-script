@@ -1,0 +1,11 @@
+[if] (:room) == 古墓派-卧室(副本区域)
+    stopstate
+    [if] (:kf_nei) == mingyugong
+        enable force jiuyinshengong
+        @await 1000
+        dazuo
+    [else if] (:kf_nei) == jiuyinshengong
+        cr;cr over
+        $eq 3
+        $wait 6000
+        dazuo
