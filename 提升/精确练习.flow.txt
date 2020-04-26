@@ -1,13 +1,14 @@
 // raid.flow
 // 基于论坛qqqq大佬的版本修改
 // 四区白三三
-// 2020.03.26 当funny插件开启时，等级提升时的提示信息有和原来的不同，增加了对应的判断。
+// 2020.04.26 获取不到技能id时将重试，超过5次则跳过该技能。
 @toolbar jh
 @toolbar skills
 //级别上限
 @js ($level) = /\d+/.exec($(".obj-money").text())['0']
+($skill_base)='基本拳脚','基本内功','基本轻功','基本招架','基本剑法','基本刀法','基本杖法','基本鞭法','基本暗器','基本棍法'
 [if] (Skill) == null
-    ($Skill) = '基本拳脚','基本内功','基本轻功','基本招架','基本剑法','基本刀法','基本杖法','基本鞭法','基本暗器','基本棍法'
+    ($Skill) = (skill_base)
 [if] (lianxi_map) == null
     ($lianxi_map) = 住房-练功房
 @js ($thisroom) = '(:room)'.indexOf('副本区域')
@@ -25,14 +26,14 @@
 #select ($chiyao)=是否吃冰心丹,是|否,(chiyao)
 #input ($LXAfter)=练习结束后执行命令(用英文;隔开，默认请填$zdwk),(LXAfter)
 #config
-
 [if] (arg0) != null
     ($Skill) = (arg0)
 [if] (arg1) != null
     ($target_level) = (arg1)
 [if] (arg2) != null
     ($lianxi_map) = (arg2)
-
+[if] (Skill) == null
+    ($Skill) = (skill_base)
 <-stopSSAuto
 //获取技能数量
 @js ($skill_num) = [(Skill)].length
@@ -45,9 +46,11 @@ stopstate
 $wait 5000
 //循环判断
 ($num)=0
+($endless)=0
 [while](num) < (skill_num)
     //依次获取技能列表
     @toolbar jh
+    @await 200
     @toolbar skills
     @js ($skill_name) = [(Skill)][(num)]
     //获取技能id
@@ -60,6 +63,15 @@ $wait 5000
         [else]
             @js ($skill_id) = $(".skill:contains((skill_name))").attr("skid")
     @print (skill_id)
+    [if] (skill_id) == null
+        [if] (endless) = 5
+            tm 连续(endless)次无法获取【(skill_name)】技能id，跳过！
+            ($endless)=0
+            ($num)=(num)+1
+        [else]
+            @print <ord>未获取到【(skill_name)】技能id，正在重试！</ord>
+            ($endless)=(endless)+1
+        [continue]
     //获取技能目前等级
     @js ($skill_level) = /\d+/.exec($("[skid=(skill_id)]").children(".skill-level").text())['0']
     @print <hig>目前技能等级:</hig><hiy>(skill_level)</hiy><hig>，预计目标等级:</hig><hiy>(target_level)</hiy>
