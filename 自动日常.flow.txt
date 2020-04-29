@@ -1,7 +1,7 @@
 //raid.flow
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-//2020.04.20 - 根据Raid插件新参数优化语音播报时角色名的获取方式。
+//2020.04.29 - 1.缩短请安等待时间。2.签到增加领取回馈礼包命令。
 
 // 师门任务
 @toolbar jh
@@ -321,7 +321,6 @@ use {养精丹g}[5]
                 [else]
                     ($alert_fb) = (FBName)没有自动脚本！
 
-
 //当铺
 stopstate
 $tnbuy
@@ -332,15 +331,15 @@ greet master
 [if] (RC_qingan) == 请安
     @wait 2000
     @js WG.oneKeyQA()
-    @wait 10000
+    @tip 恭恭敬敬的一鞠躬|每天请一次安就可以|凑什么热闹
 [else]
     ($alert_qa) = 根据设置，已跳过请安。
 
 //领取签到奖励
 stopstate
-taskover signin;taskover zz1;taskover zz2
+taskover signin;taskover zz1;taskover zz2;taskover hk
 @wait 2000
-taskover signin;taskover zz1;taskover zz2
+taskover signin;taskover zz1;taskover zz2;taskover hk
 @wait 10000
 @recoverSSAuto
 //日常结束后
