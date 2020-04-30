@@ -331,7 +331,7 @@ greet master
 [if] (RC_qingan) == 请安
     @wait 2000
     @js WG.oneKeyQA()
-    @tip 恭恭敬敬的一鞠躬|每天请一次安就可以|凑什么热闹
+    @await 5000
 [else]
     ($alert_qa) = 根据设置，已跳过请安。
 
