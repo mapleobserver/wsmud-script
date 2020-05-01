@@ -1,17 +1,20 @@
-name: 'GitHub Actions Mirror'
+name: 'Mirror To Gitee'
 
-on: [push, delete]
+on:
+    push:
+        branches:
+            - master
 
 jobs:
-  mirror_to_gitee:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 'Checkout'
-        uses: actions/checkout@v1
-      - name: 'Mirror to gitee'
-        uses: pixta-dev/repository-mirroring-action@v1
-        with:
-          target_repo_url:
-            git@gitee.com:mapleobserver/wsmud-script.git
-          ssh_private_key:
-            ${{ secrets.GITEE_PRIVATE_KEY }}
+    mirror_to_gitee:
+        runs-on: ubuntu-latest
+        steps:
+            - name: 'Checkout'
+              uses: actions/checkout@v1
+            - name: 'Mirror to Gitee'
+              uses: wearerequired/git-mirror-action@master
+              env:
+                  SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
+              with:
+                  source-repo: "git@github.com:mapleobserver/wsmud-script.git"
+                  destination-repo: "git@gitee.com:mapleobserver/wsmud-script.git"
