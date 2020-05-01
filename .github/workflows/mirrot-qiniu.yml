@@ -4,11 +4,11 @@ jobs:
   mirror_to_qiniu:
     runs-on: ubuntu-latest
     steps:
-      - name
+      - name: 'Checkout'
         uses: actions/checkout@v2
         with: 
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name
+      - name: 'Mirror to Qiniu'
         uses: laoergege/sync-to-qiniu-action@v1
         with:
           accessKey: ${{ secrets.QINIU_ACCESS_KEY }}
