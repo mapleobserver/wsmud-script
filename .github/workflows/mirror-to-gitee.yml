@@ -1,20 +1,33 @@
-name: 'Mirror To Gitee'
+name: Gitee repos mirror periodic job
 
 on:
-    push:
-        branches:
-            - master
+  pull_request:
+    paths:
+    - '.github/workflows/**'
+    # Runs at every pull requests submitted in master branch 
+    branches: [ master ]
+  # schedule:
+    # Runs at 01:00 UTC (9:00 AM Beijing) every day
+    # - cron:  '0 1 * * *'
 
 jobs:
-    mirror_to_gitee:
-        runs-on: ubuntu-latest
-        steps:
-            - name: 'Checkout'
-              uses: actions/checkout@v1
-            - name: 'Mirror to Gitee'
-              uses: wearerequired/git-mirror-action@master
-              env:
-                  SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
-              with:
-                  source-repo: "git@github.com:mapleobserver/wsmud-script.git"
-                  destination-repo: "git@gitee.com:mapleobserver/wsmud-script.git"
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Cache wsmud-script src repos
+      uses: actions/cache@v1
+      with:
+        path: /home/runner/work/wsmud-script/wsmud-script/wsmud-script-cache
+        key: ${{ runner.os }}-wsmud-script-repos-cache
+
+    - name: Mirror the Github organization repos to Gitee.
+      uses: Yikun/hub-mirror-action@v0.05
+      with:
+        src: github/wsmud-script
+        dst: gitee/wsmud-script
+        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+        dst_token:  ${{ secrets.GITEE_TOKEN }}
+        account_type: org
+        cache_path: /github/workspace/wsmud-script-cache
