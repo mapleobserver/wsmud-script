@@ -1,0 +1,8 @@
+//触发变量：人物刷新
+//关键字：蒙古|夫长|蒙哥
+stopstate;kill (id)
+@await 1000
+kill (id)
+@await 1000
+kill (id)
+@await 1000
