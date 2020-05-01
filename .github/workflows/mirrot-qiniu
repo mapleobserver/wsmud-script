@@ -1,0 +1,19 @@
+name: 'Mirror to Qiniu'
+on: [push, delete]
+jobs:
+  mirror_to_qiniu:
+    runs-on: ubuntu-latest
+    steps:
+      - name
+        uses: actions/checkout@v2
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name
+        uses: laoergege/sync-to-qiniu-action@v1
+        with:
+          accessKey: ${{ secrets.QINIU_ACCESS_KEY }}
+          secretKey: ${{ secrets.QINIU_SECRET_KEY }}
+          bucket: 'wsmud'
+          zone: 'z1'
+          path: 'wsmud-script/'
+          token: ${{ secrets.GITHUB_TOKEN }}
