@@ -34,8 +34,6 @@
         [else if] (mpname) == 丐帮 || (mpzm) == 洪七公
             ($mpplace) = 丐帮-林间小屋
             ($zmname) = 洪七公
-        //$to (mpplace)
-        //@until (:room) == (mpplace)
         [while] (:room) != (mpplace)
             $to (mpplace)
             @await 500
