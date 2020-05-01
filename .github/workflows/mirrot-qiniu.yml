@@ -15,5 +15,5 @@ jobs:
           secretKey: ${{ secrets.QINIU_SECRET_KEY }}
           bucket: 'wsmud'
           zone: 'z1'
-          path: 'wsmud-script/'
+          path: ''
           token: ${{ secrets.GITHUB_TOKEN }}
