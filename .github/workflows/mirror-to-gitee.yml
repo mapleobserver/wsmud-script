@@ -1,0 +1,20 @@
+name: 'Mirror To Gitee'
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    mirror_to_gitee:
+        runs-on: ubuntu-latest
+        steps:
+            - name: 'Checkout'
+              uses: actions/checkout@v1
+            - name: 'Mirror to Gitee'
+              uses: wearerequired/git-mirror-action@master
+              env:
+                  SSH_PRIVATE_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
+              with:
+                  source-repo: "git@github.com:mapleobserver/wsmud-script.git"
+                  destination-repo: "git@gitee.com:mapleobserver/wsmud-script.git"
