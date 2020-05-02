@@ -21,18 +21,18 @@
 #config
 
 //流程
-($f_zdrc)={"name":"自动日常","source":"http://wsmud-cdn.if404.com/wsmud-script/自动日常.flow.txt","finder":"根文件夹"}
-($f_zdzb)={"name":"自动追捕","source":"http://wsmud-cdn.if404.com/wsmud-script/自动追捕.flow.txt","finder":"根文件夹"}
-($f_zdwd)={"name":"自动武道","source":"http://wsmud-cdn.if404.com/wsmud-script/自动武道.flow.txt","finder":"根文件夹"}
-($f_kswd)={"name":"自动武道","source":"http://wsmud-cdn.if404.com/wsmud-script/自动武道(九阴血刀快速版).flow.txt","finder":"根文件夹"}
-($f_kssd)={"name":"快速扫荡","source":"http://wsmud-cdn.if404.com/wsmud-script/副本/快速扫荡.flow.txt","finder":"根文件夹"}
-($f_tdfb)={"name":"偷渡副本","source":"http://wsmud-cdn.if404.com/wsmud-script/副本/偷渡副本.flow.txt","finder":"根文件夹"}
-($f_yjsg)={"name":"一键收割","source":"http://wsmud-cdn.if404.com/wsmud-script/杂务/一键收割.flow.txt","finder":"杂务"}
-($f_zdcbt)={"name":"自动藏宝图","source":"http://wsmud-cdn.if404.com/wsmud-script/杂务/自动藏宝图.flow.txt","finder":"杂务"}
-($f_yjxx)={"name":"一键学习","source":"http://wsmud-cdn.if404.com/wsmud-script/提升/一键学习.flow.txt","finder":"提升"}
-($f_jqlx)={"name":"精确练习","source":"http://wsmud-cdn.if404.com/wsmud-script/提升/精确练习.flow.txt","finder":"提升"}
-($f_mpjj)={"name":"门派进阶","source":"http://wsmud-cdn.if404.com/wsmud-script/提升/门派进阶.flow.txt","finder":"提升"}
-($f_yzdy)={"name":"研制绿丹","source":"http://wsmud-cdn.if404.com/wsmud-script/杂务/研制丹药/研制绿丹.flow.txt","finder":"研制丹药"},{"name":"研制蓝丹","source":"http://wsmud-cdn.if404.com/wsmud-script/杂务/研制丹药/研制蓝丹.flow.txt","finder":"研制丹药"},{"name":"研制黄丹","source":"http://wsmud-cdn.if404.com/wsmud-script/杂务/研制丹药/研制黄丹.flow.txt","finder":"研制丹药"},{"name":"研制紫丹","source":"http://wsmud-cdn.if404.com/wsmud-script/杂务/研制丹药/研制紫丹.flow.txt","finder":"研制丹药"},{"name":"研制橙丹","source":"http://wsmud-cdn.if404.com/wsmud-script/杂务/研制丹药/研制橙丹.flow.txt","finder":"研制丹药"},{"name":"研制突破","source":"http://wsmud-cdn.if404.com/wsmud-script/杂务/研制丹药/研制突破.flow.txt","finder":"研制丹药"}
+($f_zdrc)={"name":"自动日常","source":"http://wsmud-cdn.if404.com/自动日常.flow.txt","finder":"根文件夹"}
+($f_zdzb)={"name":"自动追捕","source":"http://wsmud-cdn.if404.com/自动追捕.flow.txt","finder":"根文件夹"}
+($f_zdwd)={"name":"自动武道","source":"http://wsmud-cdn.if404.com/自动武道.flow.txt","finder":"根文件夹"}
+($f_kswd)={"name":"自动武道","source":"http://wsmud-cdn.if404.com/自动武道(九阴血刀快速版).flow.txt","finder":"根文件夹"}
+($f_kssd)={"name":"快速扫荡","source":"http://wsmud-cdn.if404.com/副本/快速扫荡.flow.txt","finder":"根文件夹"}
+($f_tdfb)={"name":"偷渡副本","source":"http://wsmud-cdn.if404.com/副本/偷渡副本.flow.txt","finder":"根文件夹"}
+($f_yjsg)={"name":"一键收割","source":"http://wsmud-cdn.if404.com/杂务/一键收割.flow.txt","finder":"杂务"}
+($f_zdcbt)={"name":"自动藏宝图","source":"http://wsmud-cdn.if404.com/杂务/自动藏宝图.flow.txt","finder":"杂务"}
+($f_yjxx)={"name":"一键学习","source":"http://wsmud-cdn.if404.com/提升/一键学习.flow.txt","finder":"提升"}
+($f_jqlx)={"name":"精确练习","source":"http://wsmud-cdn.if404.com/提升/精确练习.flow.txt","finder":"提升"}
+($f_mpjj)={"name":"门派进阶","source":"http://wsmud-cdn.if404.com/提升/门派进阶.flow.txt","finder":"提升"}
+($f_yzdy)={"name":"研制绿丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制绿丹.flow.txt","finder":"研制丹药"},{"name":"研制蓝丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制蓝丹.flow.txt","finder":"研制丹药"},{"name":"研制黄丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制黄丹.flow.txt","finder":"研制丹药"},{"name":"研制紫丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制紫丹.flow.txt","finder":"研制丹药"},{"name":"研制橙丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制橙丹.flow.txt","finder":"研制丹药"},{"name":"研制突破","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制突破.flow.txt","finder":"研制丹药"}
 
 [if] (flowZDRC)==导入
     ($flowZDZB)=导入
