@@ -1,4 +1,4 @@
-name: 'GitHub Actions Mirror'
+name: 'Mirror To Gitee'
 
 on: [push, delete]
 
