@@ -36,7 +36,8 @@
 
 [if] (flowZDRC)==导入
     ($flowZDZB)=导入
-    [if] (flowKSWD)==导入
+    [if] (USE_kswd)==true || (flowKSWD)==导入
+        ($flowKSWD)=导入
         ($flowZDWD)=跳过
     [else]
         ($flowZDWD)=导入
@@ -45,8 +46,10 @@
 [if] (flowZDZB)==导入
     ($f_list)=(f_list),(f_zdzb)
 [if] (flowZDWD)==导入
+    ($USE_kswd)=null
     ($f_list)=(f_list),(f_zdwd)
 [if] (flowKSWD)==导入
+    ($USE_kswd)=true
     ($f_list)=(f_list),(f_kswd)
 [if] (flowKSSD)==导入
     ($f_list)=(f_list),(f_kssd)
