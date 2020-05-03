@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.80
+// @version      0.0.32.87
 // @date         01/07/2018
-// @modified     22/02/2020
+// @modified     02/05/2020
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
-// @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589 
+// @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
 // @match        http://*.wsmud.com/*
 // @run-at       document-start
@@ -118,7 +118,7 @@
                         }, 10000);
                     }
                 }
-              
+
             },
             get onerror() {
                 return ws.onerror;
@@ -2028,7 +2028,7 @@
                         return;
                     }
                 const colorSet = ['wht','hig','hic','hiy','hiz','hio','red','hir','ord'];
-        
+
                     for (let store of data.stores) {
                         let num = 0;
                         for (let cx of colorSet){
@@ -2041,7 +2041,7 @@
                             }
                             num++;
                         }
-                  
+
                     }
                     for (let item of storeset) {
                         if(item){
@@ -2096,7 +2096,7 @@
                         return;
                     }
                     const colorSet = ['wht','hig','hic','hiy','hiz','hio','red','hir','ord'];
-              
+
                     for (let store of data.items) {
                         let num = 0;
                         for (let cx of colorSet){
@@ -2342,12 +2342,14 @@
             $('#store_drop_info').val(zdy_item_drop);
         },
 
-        zdwk: function (v) {
-            if (G.level) {
-                if (G.level.indexOf('武帝') >= 0||G.level.indexOf('武神') >= 0) {
-                    WG.go("住房-练功房");
-                    WG.Send("xiulian");
-                    return;
+        zdwk: function (v,x=true) {
+            if(x){
+                if (G.level) {
+                    if (G.level.indexOf('武帝') >= 0||G.level.indexOf('武神') >= 0) {
+                        WG.go("住房-练功房");
+                        WG.Send("xiulian");
+                        return;
+                    }
                 }
             }
             if (WebSocket) {
@@ -2663,6 +2665,21 @@
                     },
                     onekeypk: function () {
                         WG.auto_fight();
+                    },
+                    onekeysansan: function () {
+                        let mlh=`// 导入三三懒人包流程，方便后续导入操作
+                        // 自命令类型选 Raidjs流程
+                        // 四区白三三
+                        ($f_ss)={"name":"三三懒人包","source":"http://wsmud-cdn.if404.com/三三懒人包.flow.txt","finder":"根文件夹"}
+                        @js var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+                        @awiat 2000
+                        tm 【三三懒人包】流程已导入，如果曾用早期版本的懒人包导入过流程，请先删除这些流程后再使用。`;
+                        
+                        if (unsafeWindow && unsafeWindow.ToRaid) {
+                            ToRaid.perform(mlh);
+                        }else{
+                            messageAppend("请先安装Raid.js");
+                        }
                     },
                     onekeystore: function () {
                         WG.SendCmd("$store")
@@ -4141,15 +4158,12 @@
             WG.daily_hook = WG.add_hook("dialog", async function (data) {
                 if (data.dialog == "tasks") {
                     if (data.items) {
-                        let dailylog = data.items[1].desc;
-                        let dailystate = data.items[1].state;
-
-                        if (data.items[1].title.indexOf("<hig>每日签到</hig>") == -1) {
-                            for (let item of data.items) {
-                                if (item.title.indexOf("<hig>每日签到</hig>") >= 0) {
-                                    dailylog = item.desc;
-                                    dailystate = item.state;
-                                }
+                        let dailylog ="";
+                        let dailystate="";
+                        for(let item of data.items){
+                            if(item.id == "signin"){
+                                dailylog = item.desc;
+                                dailystate = item.state;
                             }
                         }
                         if (dailystate == 3) {
@@ -4220,7 +4234,7 @@
         },
         oneKeyQA: async function () {
             WG.Send("stopstate");
-            WG.sm_state = 0;
+            WG.sm_state = -1;
             var sxplace = sm_array[family].sxplace;
             var sx = sm_array[family].sx;
             if (sxplace.indexOf("-") == 0) {
@@ -4302,8 +4316,12 @@
                 }
                 if (data.dialog == "tasks") {
                     if (data.items) {
-                        let dailylog = data.items[3].desc;
-
+                        let dailylog = "";
+                        for(let item of data.items){
+                            if(item.id == "yamen"){
+                                dailylog = item.desc;
+                            }
+                        }
                         let str = dailylog;
                         str = str.replace(/<(?!\/?p\b)[^>]+>/ig, '');
 
@@ -4741,7 +4759,7 @@
                 $('.backup_btn').on('click', WG.make_config);
                 $('.load_btn').on('click', WG.load_config);
                 $('.clean_dps').on('click', WG.clean_dps);
-                
+
                 $('.clear_skillJson').on('click', ()=>{
                     zdyskilllist == "";
                     messageAppend("已关闭自定义，请刷新重新获取技能数据!");
@@ -5252,6 +5270,12 @@
         zdwk: async function (idx = 0, n, cmds) {
             cmds = T.recmd(idx, cmds);
             WG.zdwk();
+            await WG.sleep(100);
+            WG.SendCmd(cmds);
+        },
+        rzdwk: async function (idx = 0, n, cmds) {
+            cmds = T.recmd(idx, cmds);
+            WG.zdwk("",false);
             await WG.sleep(100);
             WG.SendCmd(cmds);
         },
@@ -5802,7 +5826,7 @@
                     </select>
                 </span>
                     </div>`
-                    
+
                 + UI.html_switch('autorelogin', '自动重连: ', 'auto_relogin')
                 + UI.html_switch('shieldswitch', '聊天频道屏蔽开关: ', 'shieldswitch')
                 + UI.html_switch('silence', '安静模式:', 'silence')
@@ -5836,7 +5860,7 @@
                 + UI.html_switch('autopfmswitch', '自动施法开关：', 'auto_pfmswitch')
                 + UI.html_switch('autorewardgoto', '开启转发路径：', 'auto_rewardgoto')
                 + UI.html_input("unauto_pfm", "自动施法黑名单(填技能代码，使用半角逗号分隔)：")
-                
+
                 + UI.html_switch('autoupdateStore', '自动更新仓库数据：', 'auto_updateStore')
                 + UI.html_input("store_info", "自动存储的物品名称（自动获得的物品信息,随仓库内容更新）：")
                 + UI.html_input("store_info2", "手动添加的自动存仓物品信息（不会随仓库内容更新，使用半角逗号分隔）：")
@@ -5851,7 +5875,7 @@
                 + UI.html_input("autobuy", "自动当铺购买清单：(用半角逗号分隔)")
 
                 + UI.html_switch('zdyskillsswitch', '自定义技能顺序开关：', 'zdyskills')
-    
+
                 + UI.html_input("zdyskilllist", "自定义技能顺序json数组：")
                 +` <div class="setting-item" ><div class="item-commands"><span class="clear_skillJson">清空技能json数组</span></div></div>`
                 +`
@@ -5973,6 +5997,7 @@
             <div class="item-commands">
                 <span  @click='onekeydaily'>一键日常</span>
                 <span  @click='onekeypk'>自动比试</span>
+                <span  @click='onekeysansan'>导入白三三懒人包（依赖raid.js）</span>
             </div>
             <div class="item-commands">
                 <span  @click="onekeystore">存仓及贩卖</span>
@@ -6048,7 +6073,7 @@
 </div>`,
         lyui: `<div class='zdy_dialog' id="LianYao" style='text-align:right;width:280px'> 有空的话请点个star,您的支持是我最大的动力 <a target="_blank"
         href="https://github.com/knva/wsmud_plugins">https://github.com/knva/wsmud_plugins</a> 药方链接:<a target="_blank"
-        href="https://suqing.fun/wsmud.old/yaofang/">https://emeisuqing.github.io/wsmud.old/yaofang/</a>
+        href="https://emeisuqing.github.io/wsmud.old/yaofang/">https://emeisuqing.github.io/wsmud.old/yaofang/</a>
     <div class="setting-item"> <span> <label for="medicine_level"> 级别选择： </label><select style='width:80px'
                 id="medicine_level" v-model="level">
                 <option value="1">绿色</option>
@@ -6199,13 +6224,13 @@
                         GM_setValue(role + "_zdyskills", zdyskills);
                     }
                 }
-                
+
                  auto_updateStore = GM_getValue(role + "_auto_updateStore", auto_updateStore);
                 if(data.dialog == "list" && G.room_name.indexOf("钱庄")&&WG.sort_hook==null && auto_updateStore=="开"){
                     if(data.id!=null&&data.store!=null){
                         WG.SendCmd("store")
                     }
-                    
+
                     var stores = data.stores;
                     if(stores!=null){
                         store_list = [];
@@ -6960,6 +6985,14 @@
         function receiveMessage(event) {
             var origin = event.origin;
             var data = event.data;
+            try {
+                if(JSON.parse(data) instanceof Object){
+                    return;
+                }
+            } catch (error) {
+                console.log("Run at message");
+            }
+            
             if (data === '挖矿' || data === '修炼') {
                 WG.zdwk();
             } else if (data === '日常') {
@@ -6967,7 +7000,17 @@
             } else if (data === '挂机') {
                 WG.SendCmd("stopstate");
             } else {
-                WG.SendCmd(data);
+                if (data.split("\n")[0].indexOf("//") >= 0) {
+                    if (unsafeWindow && unsafeWindow.ToRaid) {
+                        ToRaid.perform(data);
+                    }
+                } else if (data.split("\n")[0].indexOf("#js") >= 0) {
+                    var jscode = data.split("\n");
+                    jscode.baoremove(0)
+                    eval(jscode.join(""));
+                } else {
+                    WG.SendCmd(data);
+                }
             }
         }
         $('.room-name').on('click', (e) => {
