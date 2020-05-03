@@ -39,8 +39,8 @@
         [if] {r(mpname)}? != null
             kill {r(zmname)}?
         @until (:combating) == false || (:living) == false
-        ($MPing) = false
-        relive
+        relive;relive
         $to 扬州城-武庙
         @liaoshang
         $zdwk
+        ($MPing) = false

@@ -40,10 +40,10 @@
         [if] {r(mpname)}? != null || {r(mpname)}? != null
             kill {r(zmname)}?;tm (zmname)：{r(zmname)}?
         @until (:combating) == false || (:living) == false
-        relive
+        relive;relive
         $to 扬州城-武庙
-        ($MPing) = false
         liaoshang
-        @tip 你疗伤完毕，深深吸了口气
-        @until (MPing) = false
+        @tip 你疗伤完毕，深深吸了口气|气血充沛|战斗中
+        @until (:combating) == false || (:living) == false
         $zdwk
+        ($MPing) = false
