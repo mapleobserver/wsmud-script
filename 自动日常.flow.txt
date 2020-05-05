@@ -337,9 +337,9 @@ greet master
 
 //领取签到奖励
 stopstate
-taskover signin;taskover zz1;taskover zz2;taskover hk
+taskover signin;taskover zz1;taskover zz2
 @wait 2000
-taskover signin;taskover zz1;taskover zz2;taskover hk
+taskover signin;taskover zz1;taskover zz2
 @wait 10000
 @recoverSSAuto
 //日常结束后
