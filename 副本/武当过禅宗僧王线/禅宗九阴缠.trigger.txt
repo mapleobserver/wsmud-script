@@ -6,5 +6,5 @@
     use {b玄灵丹y}?
 [else if] (:room) == 净念禅宗-钟楼(副本区域)
     use {b玄灵丹p}?
-@perform force.cui,sword.chan
+@perform force.cui,sword.chan,parry.yi,sword.lian
 @on 补玄灵
