@@ -3,6 +3,8 @@
 //四区白三三
 #select ($ZBmp) = 请选择进攻门派,武当派|丐帮|华山派|峨眉派|少林派|逍遥派,(ZBmp)
 #config
+[if] (arg0) != null
+    ($ZBmp) = (arg0)
 stopstate
 @await 500
 $startpfm
