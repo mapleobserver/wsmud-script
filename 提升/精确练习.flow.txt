@@ -1,7 +1,6 @@
 // raid.flow
-// 基于论坛qqqq大佬的版本修改
 // 四区白三三
-// 2020.04.26 获取不到技能id时将重试，超过5次则跳过该技能。
+// 2020.05.09 - 重构精确练习，不再每练一级判断一次。增加补飞翼功能。
 @toolbar jh
 @toolbar skills
 //级别上限
@@ -19,21 +18,14 @@
     ($chiyao) = 否
 [if] (LXAfter) == null
     ($LXAfter) = $zdwk
-#input ($Skill)=技能列表,(Skill)
+#input ($Skill)=技能列表(请用英文单引号和逗号隔开要练习的技能),(Skill)
 #input ($target_level)=目标技能等级,(level)
 #input ($LXBefore)=练习前执行命令(用英文;隔开),(LXBefore)
 #select ($lianxi_map)=练习地点,住房-练功房|帮会-练功房|原地不动,(lianxi_map)
 #select ($chiyao)=是否吃冰心丹,是|否,(chiyao)
+#select ($feiyi)=是否补飞翼(请事先装备飞翼剑),是|否,(feiyi)
 #input ($LXAfter)=练习结束后执行命令(用英文;隔开，默认请填$zdwk),(LXAfter)
 #config
-[if] (arg0) != null
-    ($Skill) = (arg0)
-[if] (arg1) != null
-    ($target_level) = (arg1)
-[if] (arg2) != null
-    ($lianxi_map) = (arg2)
-[if] (Skill) == null
-    ($Skill) = (skill_base)
 <-stopSSAuto
 //获取技能数量
 @js ($skill_num) = [(Skill)].length
@@ -42,57 +34,68 @@ stopstate
 [if] (lianxi_map) != 原地不动
     $to (lianxi_map)
 //练习前执行命令
-(LXBefore)
-$wait 5000
+[if] (LXBefore) != null
+    (LXBefore)
+    $wait 5000
 //循环判断
 ($num)=0
 ($endless)=0
+($tip_done) = start
 [while](num) < (skill_num)
-    //依次获取技能列表
-    @toolbar jh
-    @await 200
-    @toolbar skills
-    @js ($skill_name) = [(Skill)][(num)]
-    //获取技能id
-    @js ($skilltype) = '(skill_name)'.indexOf('基本')
-    [if] (skilltype) != -1
-        @js ($skill_id) = $(".base:contains((skill_name))").attr("skid")
-    [else]
-        [if] (skill_name) == 野兽扑咬
+    [if] (tip_done) != null || (tip_limit) != null || (tip_base) != null
+        ($tip_done) = null
+        ($tip_limit) = null
+        ($tip_base) = null
+        //依次获取技能列表
+        @toolbar jh
+        @await 200
+        @toolbar skills
+        @js ($skill_name) = [(Skill)][(num)]
+        //获取技能id
+        @js ($skilltype) = '(skill_name)'.indexOf('基本')
+        [if] (skilltype) != -1
             @js ($skill_id) = $(".base:contains((skill_name))").attr("skid")
         [else]
-            @js ($skill_id) = $(".skill:contains((skill_name))").attr("skid")
-    @print (skill_id)
-    [if] (skill_id) == null
-        [if] (endless) = 5
-            tm 连续(endless)次无法获取【(skill_name)】技能id，跳过！
-            ($endless)=0
-            ($num)=(num)+1
-        [else]
-            @print <ord>未获取到【(skill_name)】技能id，正在重试！</ord>
-            ($endless)=(endless)+1
-        [continue]
-    //获取技能目前等级
-    @js ($skill_level) = /\d+/.exec($("[skid=(skill_id)]").children(".skill-level").text())['0']
-    @print <hig>目前技能等级:</hig><hiy>(skill_level)</hiy><hig>，预计目标等级:</hig><hiy>(target_level)</hiy>
-    //判断目前等级和目标等级
-    [if] (skill_level) >= (target_level)
-         @print (skill_name)<hig>已到达目标等级</hig><hir>(target_level)</hir>
-         stopstate
-        ($num) = (num) + 1
-    [else]
+            [if] (skill_name) == 野兽扑咬
+                @js ($skill_id) = $(".base:contains((skill_name))").attr("skid")
+            [else]
+                @js ($skill_id) = $(".skill:contains((skill_name))").attr("skid")
+        @print (skill_id)
+        [if] (skill_id) == null
+            [if] (endless) = 5
+                tm 连续(endless)次无法获取【(skill_name)】技能id，跳过！
+                ($endless)=0
+                ($num)=(num)+1
+            [else]
+                @print <ord>未获取到【(skill_name)】技能id，正在重试！</ord>
+                ($endless)=(endless)+1
+            [continue]
+        stopstate
+    //开始练习
+    lianxi (skill_id) (target_level)
+    @tip 缺乏($tip_limit)经验|已经练习($tip_done)了|练习($tip_done)毕|你的($tip_base)功火候未到|等级($levelup)了|提升到($levelup)级|你的($tip_qn)不够
+    [if] (levelup) != null
         //判断是否吃药
         [if] (:status food) == false && (chiyao) == 是 && {b冰心丹}? != null
             stopstate
             use {b冰心丹}?
-        @await 1000
-        [if] (:state) != 练习
-            lianxi (skill_id)
-        @await 1000
-        //判断是否用完潜能或者无法学习在发呆
-        [if] (:state) == 发呆
-            [break]
-        @tip 等级提升了|提升到($level_1)级
-        @await 2000        
+            @await 1000
+        //判断是否用飞翼
+        [if] (:status fy) == false && (feiyi) == 是
+            stopstate
+            use (:eq0)
+            @await 1000
+        ($levelup) = null
+        [continue]
+    [if] (tip_limit) != null
+        tm 技能上限不足(target_level)级，(skill_name)无法继续练习。
+    [else if] (tip_base) != null
+        tm 基础技能等级不足(target_level)级，(skill_name)无法继续练习。
+    [else if] (tip_done) != null
+        tm (skill_name)已练习(target_level)级，继续练习下一个。
+    [else if] (tip_qn) != null
+        tm 潜能不够，停止练习！
+        [break]
+    ($num) = (num) + 1
 (LXAfter)
 stopSSAuto->
