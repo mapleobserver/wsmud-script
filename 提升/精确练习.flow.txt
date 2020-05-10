@@ -1,6 +1,7 @@
 // raid.flow
 // 四区白三三
 // 2020.05.09 - 重构精确练习，不再每练一级判断一次。增加补飞翼功能。
+// 2020.05.10 - 补充练习完成的提示语句。
 @toolbar jh
 @toolbar skills
 //级别上限
@@ -73,7 +74,7 @@ stopstate
         stopstate
     //开始练习
     lianxi (skill_id) (target_level)
-    @tip 缺乏($tip_limit)经验|已经练习($tip_done)了|练习($tip_done)毕|你的($tip_base)功火候未到|等级($levelup)了|提升到($levelup)级|你的($tip_qn)不够
+    @tip 缺乏($tip_limit)经验|已经练习($tip_done)了|练习($tip_done)毕|练习($tip_done)成|你的($tip_base)功火候未到|等级($levelup)了|提升到($levelup)级|你的($tip_qn)不够
     [if] (levelup) != null
         //判断是否吃药
         [if] (:status food) == false && (chiyao) == 是 && {b冰心丹}? != null
