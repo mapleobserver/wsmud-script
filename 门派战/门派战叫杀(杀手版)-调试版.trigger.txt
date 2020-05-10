@@ -1,20 +1,22 @@
 // 门派战叫杀(杀手版)
 // 适用于杀手，其他门派要用也行，但不会限定敌对门派
 // 四区白三三
-// 更新时间：2020.05.01
+// 更新时间：2020.05.10
 // 感谢二区【野卡拉】大佬参与测试
 // 频道：世界
 // 发言人：逍遥子|灭绝|岳不群|张三丰|洪七公|玄难
 // 关键字：格杀勿论
-@cmdDelay 0
+@cmdDelay 100
 [if] (MPing) == true
     [if] (MPhour) != (:hour)
         ($MPing) = false
+    [else]
+        [exit]
 [if] (MPing) == false || (MPing) == null
     @js ($mpname) = var re=/(少林|逍遥|峨眉|丐帮|武当|华山)/;var ta=re.exec('(content)');if(ta!=null){ta[0]}else{'null'}
     [if] (mpname) != null && (:living) == true
-        ($MPing) = true
         ($MPhour) = (:hour)
+        ($MPing) = true
         stopstate
         [if] (mpname) == 峨眉 || (mpzm) == 灭绝
             ($mpplace) = 峨眉派-清修洞
@@ -39,11 +41,14 @@
             @await 500
         [if] {r(mpname)}? != null || {r(mpname)}? != null
             kill {r(zmname)}?;tm (zmname)：{r(zmname)}?
+            @print (zmname)：{r(zmname)}?
         @until (:combating) == false || (:living) == false
+        @print c:(:combating),l:(:living)
+        @await 3000
         relive;relive
         $to 扬州城-武庙
-        liaoshang
-        @tip 你疗伤完毕，深深吸了口气|气血充沛|战斗中
-        @until (:combating) == false || (:living) == false
+        //@until (:mp) >=10000
+        @liaoshang
+        //@until (:combating) == false || (:living) == false
         $zdwk
         ($MPing) = false
