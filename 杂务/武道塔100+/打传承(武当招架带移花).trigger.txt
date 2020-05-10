@@ -1,0 +1,9 @@
+//进入战斗
+//传承的凌波快结束前叫杀，缠住。招架带移花用来在补忙乱之间挡技能。该触发会自动在凌波结束后开九阴出招。打传承类似打天僧，需要玄灵丹或者蛇步。无缝缠、释放连字诀追魂等技能触发请自己准备。
+//四区白三三
+@cmdDelay 0
+($id_wd) = {r武道传承者}?
+use {b玄灵丹y}?;$waitpfm sword.chan
+@until (:status dodge,(id_wd)) == false
+@perform force.cui,parry.yi,unarmed.liu,throwing.jiang
+$startpfm

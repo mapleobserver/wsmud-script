@@ -1,0 +1,14 @@
+//进入战斗
+//先手动换上唐诗剑法，武器用剑（不要用真武），轻功不要装蛇步、腰带换混天腰带或者君子腰减少装死时间。
+//四区白三三
+$stoppfm;$waitpfm sword.wu
+[while] true
+    enable sword taijijian2
+    @tip 你现在正忙|你决定使用($skill)做为
+    [if] (skill) != null
+        //轻功可以根据自己需要更换为蛇步或者暗影等
+        //enable dodge jinsheyoushenbu
+        [break]
+@eq {b真武剑o}?
+@off 躺尸
+@on 打镇守
