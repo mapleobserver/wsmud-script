@@ -9,6 +9,7 @@ $stoppfm;$waitpfm sword.wu
         //轻功可以根据自己需要更换为蛇步或者暗影等
         //enable dodge jinsheyoushenbu
         [break]
-@eq {b真武剑o}?
+($weapon) = {b真武剑o}?
+@eq (weapon)
 @off 躺尸
 @on 打镇守
