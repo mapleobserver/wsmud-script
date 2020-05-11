@@ -1,6 +1,7 @@
 // raid.flow
 // 四区白三三
 // 2020.05.09 - 重构精确练习，不再每练一级判断一次。增加补飞翼功能。
+// 2020.05.11 - 增加练完一个技能后的房间判断，解决受系统设置影响跑出练习房间的问题。
 @toolbar jh
 @toolbar skills
 //级别上限
@@ -72,7 +73,17 @@ stopstate
             [continue]
         stopstate
     //开始练习
-    lianxi (skill_id) (target_level)
+    @await 500
+    [if] (:room) != (lianxi_map) && (lianxi_map) != 原地不动
+        stopstate
+        [if] (:room) == 扬州城-矿山
+            (LXBefore)
+            @await 5000
+        $to (lianxi_map)
+        @await 500
+    [if] (:state) != 练习
+        stopstate
+        lianxi (skill_id) (target_level)
     @tip 缺乏($tip_limit)经验|已经练习($tip_done)了|练习($tip_done)毕|你的($tip_base)功火候未到|等级($levelup)了|提升到($levelup)级|你的($tip_qn)不够
     [if] (levelup) != null
         //判断是否吃药
@@ -97,5 +108,6 @@ stopstate
         tm 潜能不够，停止练习！
         [break]
     ($num) = (num) + 1
+stopstate
 (LXAfter)
 stopSSAuto->
