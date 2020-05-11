@@ -1,7 +1,7 @@
 // raid.flow
 // 四区白三三
 // 2020.05.09 - 重构精确练习，不再每练一级判断一次。增加补飞翼功能。
-// 2020.05.11 - 增加练完一个技能后的房间判断，解决受系统设置影响跑出练习房间的问题。
+// 2020.05.11 - 1.增加练完一个技能后的房间判断，解决受系统设置影响跑出练习房间的问题。2.修复@tip对同一信息重复生效的问题。
 @toolbar jh
 @toolbar skills
 //级别上限
@@ -81,9 +81,9 @@ stopstate
             @await 5000
         $to (lianxi_map)
         @await 500
-    [if] (:state) != 练习
-        stopstate
-        lianxi (skill_id) (target_level)
+    //避免@tip对同一句内容重复生效
+    lianxi (skill_id) (target_level)
+    //判断练习状态
     @tip 缺乏($tip_limit)经验|已经练习($tip_done)了|练习($tip_done)毕|你的($tip_base)功火候未到|等级($levelup)了|提升到($levelup)级|你的($tip_qn)不够
     [if] (levelup) != null
         //判断是否吃药
