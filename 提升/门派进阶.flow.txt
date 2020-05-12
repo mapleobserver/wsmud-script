@@ -1,6 +1,7 @@
 // raid.flow
 // 四区：白三三
 // 自动领悟门派进阶书籍
+// 2020.05.12 - 优化秘籍判断和过程。
 [if] (lianxi_map) == null
     ($lianxi_map) = 住房-练功房
 [if] (chiyao) == null
