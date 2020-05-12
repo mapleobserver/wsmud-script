@@ -54,9 +54,9 @@ $to (lianxi_map)
         [if] (:status food) == false && (chiyao) == 是 && {b清心丹}? != null
             stopstate
             use {b清心丹}
-        use {b(skill_book)}
-        @tip 恭喜你领悟了
-    [else]
-        ($num) = (num) + 1
+        [if] {b(skill_book)}? != null
+            use {b(skill_book)}
+            @tip 恭喜你领悟了
+    ($num) = (num) + 1
 @recoverSSAuto
 dazuo
