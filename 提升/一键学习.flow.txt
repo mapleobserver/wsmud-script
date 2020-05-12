@@ -122,20 +122,20 @@ select {r(MySF)}?
         @renew
     [if] (:room) != (Xxdd)
         stopstate
-        @wait 300
+        @await 300
         $to (Xxdd)
         [if] (MySF) == 鲁有脚
             go down
-        @wait 300
+        @await 300
     [if] {r(MySF)}? != null && (:state) != 学习
         [if] (:state) != 打坐
             stopstate
             bai {r(MySF)}?
-            @wait 300
+            @await 300
             select {r(MySF)}?
-            @wait 300
+            @await 300
             xue (Lastcmd) from {r(MySF)}?
-    @wait 60000
+    @await 60000
 ===>
 
 [if] (Xsm) == 基本技能 || (Xsm) == 两者皆学
