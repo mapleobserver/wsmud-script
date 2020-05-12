@@ -1,0 +1,27 @@
+// 新提示信息：转身想跑
+[if] (:room) != 武当派-后山小院
+    [exit]
+@js ($oname) = "(text)".match("转身想跑，([^%]+)一把拦住")[1]
+@print (oname)
+($oid)={r(oname)}?
+[if] (oid) != null && (:status faint,(oid)) == false && (:combating) == true
+    @off 晕橙脱战
+    ($bang) = {r张三丰}?
+    ($id_1) = {r武当派长老}?
+    ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+    [if] (oid) == (id_1) || (oid) == (id_2)
+        @until (:hp (oid)) >= 15000000
+    [else if] (oid) == (bang)
+        @until (:hp (oid)) >= 40000000
+    [else]
+        tm 未找到对应橙，无法昏迷
+        @on 晕橙脱战
+        [exit]
+    kill (oid);kill (oid)
+    [if] (:kf_quan) == jiuyinbaiguzhao2
+        $waitpfm unarmed.duo
+    [else if] (:kf_quan) == liumaishenjian
+        $waitpfm unarmed.qi
+    @until (:status faint,(oid)) == true
+    kill (MPnpc);kill (MPnpc)
+    @on 晕橙脱战
