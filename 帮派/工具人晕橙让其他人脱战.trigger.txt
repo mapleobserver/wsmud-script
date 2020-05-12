@@ -1,8 +1,9 @@
 // 新提示信息：转身想跑
 [if] (:room) != 武当派-后山小院
     [exit]
+@js ($bname) = "(text)".match("([^%]+)转身想跑")[1]
 @js ($oname) = "(text)".match("转身想跑，([^%]+)一把拦住")[1]
-@print (oname)
+@print (bname),(oname)
 ($oid)={r(oname)}?
 [if] (oid) != null && (:status faint,(oid)) == false && (:combating) == true
     @off 晕橙脱战
