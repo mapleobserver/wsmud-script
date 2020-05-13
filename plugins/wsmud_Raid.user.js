@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.16
+// @version         2.4.17
 // @date            23/12/2018
-// @modified        22/04/2020
+// @modified        13/05/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -3359,22 +3359,24 @@ go southeast
 @kill 涟星
 [if] {r邀月}? != null
     @kill 邀月
-($deadyaoyue) = true
 [if] {邀月的尸体}? == null
-    ($deadyaoyue) = false
     [if] (_DungeonWaitSkillCD) == 打开
         @cd
 go northwest;go southwest
-[if] ($deadyaoyue) == false
+[if] {r邀月}? != null
     @kill 邀月
-look hua
-@tip 你数了下大概有($number)朵花
-go southeast
-look bed;pushstart bed;pushleft bed[(number)]
-pushright bed[8]
-go down;fire;go west
-@kill 花无缺
-look xia;open xia`
+[if] {b火折子g}? != null
+    look hua
+    @tip 你数了下大概有($number)朵花
+    go southeast
+    look bed;pushstart bed
+    pushleft bed[(number)]
+    @await 1000
+    pushright bed[8]
+    @await 1000
+    go down;fire;go west
+    @kill 花无缺
+    look xia;open xia`
         },
         {
             name: "移花宫(简单)",
@@ -3396,14 +3398,18 @@ go southeast
     @cd
 go northwest;go southwest
 @kill 邀月
-look hua
-@tip 你数了下大概有($number)朵花
-go southeast
-look bed;pushstart bed;pushleft bed[(number)]
-pushright bed[8]
-go down;fire;go west
-@kill 花无缺
-look xia;open xia`
+[if] {b火折子g}? != null
+    look hua
+    @tip 你数了下大概有($number)朵花
+    go southeast
+    look bed;pushstart bed
+    pushleft bed[(number)]
+    @await 1000
+    pushright bed[8]
+    @await 1000
+    go down;fire;go west
+    @kill 花无缺
+    look xia;open xia`
         },
         {
             name: "冰火岛(困难)",
