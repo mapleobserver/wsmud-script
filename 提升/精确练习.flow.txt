@@ -17,6 +17,8 @@
     ($LXAfter) = stopstate;$tts 练习结束，请手动进行后续操作;$wait 5000;$music
 [if] (chiyao) == null
     ($chiyao) = 否
+[if] (feiyi) == null
+    ($feiyi) = 否
 [if] (LXAfter) == null
     ($LXAfter) = $zdwk
 #input ($Skill)=技能列表(请用英文单引号和逗号隔开要练习的技能),(Skill)
@@ -27,6 +29,14 @@
 #select ($feiyi)=是否补飞翼(请事先装备飞翼剑),是|否,(feiyi)
 #input ($LXAfter)=练习结束后执行命令(用英文;隔开，默认请填$zdwk),(LXAfter)
 #config
+[if] (arg0) != null
+    ($target_level) = (arg0)
+[if] (arg1) != null
+    ($lianxi_map) = (arg1)
+[if] (arg2) != null
+    ($chiyao) = (arg2)
+[if] (arg3) != null
+    ($feiyi) = (arg3)
 <-stopSSAuto
 //获取技能数量
 @js ($skill_num) = [(Skill)].length
