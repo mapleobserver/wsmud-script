@@ -5,5 +5,5 @@
 ($id_wd) = {r武道传承者}?
 use {b玄灵丹y}?;$waitpfm sword.chan
 @until (:status dodge,(id_wd)) == false
-@perform force.cui,parry.yi,unarmed.liu,throwing.jiang
-$startpfm
+@perform force.cui,parry.yi,unarmed.liu,sword.lian,throwing.jiang
+//$startpfm

@@ -6,5 +6,5 @@
 @perform sword.chan,parry.dao
 @eq 刀类武器id
 @until (:status force,(id_wd)) == false
-@perform blade.shi,force.cui,parry.yi,unarmed.liu,throwing.jiang
+@perform blade.shi,force.cui,unarmed.liu,throwing.jiang
 $startpfm

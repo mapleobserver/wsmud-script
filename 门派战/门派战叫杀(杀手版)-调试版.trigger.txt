@@ -6,6 +6,7 @@
 // 频道：世界
 // 发言人：逍遥子|灭绝|岳不群|张三丰|洪七公|玄难
 // 关键字：格杀勿论
+@off 门派战叫杀
 @cmdDelay 100
 [if] (MPing) == true
     [if] (MPhour) != (:hour)
@@ -17,6 +18,8 @@
     [if] (mpname) != null && (:living) == true
         ($MPhour) = (:hour)
         ($MPing) = true
+        @on 门派战叫杀
+        @off 橙满伤
         stopstate
         [if] (mpname) == 峨眉 || (mpzm) == 灭绝
             ($mpplace) = 峨眉派-清修洞
@@ -52,3 +55,5 @@
         //@until (:combating) == false || (:living) == false
         $zdwk
         ($MPing) = false
+@on 门派战叫杀
+@on 橙满伤
