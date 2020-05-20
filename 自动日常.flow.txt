@@ -1,7 +1,7 @@
 //raid.flow
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-//2020.05.05 - 撤销自动领取回馈礼包，避免多角色时分配错人。
+//2020.05.20 - 1.增加武道塔选项，可选择正常肝塔或者跳过只打塔主；2.优化师门任务状态判断
 
 // 师门任务
 @toolbar jh
@@ -14,10 +14,14 @@
         #select ($SMtasks)=处于抢首席时段，师门任务可正常进行,正常进行|跳过,正常进行
     [else]
         #select ($SMtasks)=师门已连(smComboN)次，是否先跳过等晚上抢首席,正常进行|跳过,跳过
+[else if] (smComboN) < 10
+    #select ($SMtasks)=师门任务正常进行或跳过(抢首席),正常进行|跳过,正常进行
 [else]
     #select ($SMtasks)=师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
 
 // 武道自定义参数
+[if] (WudaoMode) == null
+    ($WudaoMode) = 正常肝塔
 [if] (WudaoWaitCDLevel) == null
     ($WudaoWaitCDLevel) = 30
 [if] (WudaoManualMaxLevel) == null
@@ -26,6 +30,7 @@
     ($WudaoWaitCDExp) = ^none
 [if] (WudaoBefore) == null
     ($WudaoBefore) = $eq 1
+#select ($WudaoMode)=正常肝塔或跳过只打塔主,正常肝塔|只打塔主,(WudaoMode)
 #input ($WudaoBefore)=打塔前执行命令(用英文;隔开),(WudaoBefore)
 #input ($WudaoWaitCDExp)=打塔等待以下技能冷却,(WudaoWaitCDExp)
 #input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
@@ -154,24 +159,25 @@ use {养精丹g}[5]
     @wait 5000
 
 //武道塔
-@toolbar jh
-@toolbar tasks
-@task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
-[if] (reset) == 已 && (currentN) == (finalN)
-    @print <hiy>当日武道塔已完成。</hiy>
-[else]
-    stopstate
-    @cd
-    @print 开始自动武道塔
-    @tidyBag
-    @wait 10000
-    (WudaoBefore)
-    @wait 5000
-    @call 自动武道
-    @stopSSAuto
-    stopstate
-    @tidyBag
-    @wait 5000
+[if] (WudaoMode) == 正常肝塔
+    @toolbar jh
+    @toolbar tasks
+    @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
+    [if] (reset) == 已 && (currentN) == (finalN)
+        @print <hiy>当日武道塔已完成。</hiy>
+    [else]
+        stopstate
+        @cd
+        @print 开始自动武道塔
+        @tidyBag
+        @wait 10000
+        (WudaoBefore)
+        @wait 5000
+        @call 自动武道
+        @stopSSAuto
+        stopstate
+        @tidyBag
+        @wait 5000
 
 //副本
 [if] (FBWay) == 跳过副本
