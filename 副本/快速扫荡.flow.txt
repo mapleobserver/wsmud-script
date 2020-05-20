@@ -1,10 +1,10 @@
 // raid.flow
 // 四区：白三三
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
+// 2020.05.20 - 精简快速扫荡流程
 #select ($AutoBuy) = 自动补充扫荡符(免费扫荡期间选不购买),购买|不购买,(AutoBuy)
 #select ($FBNameQ) = 副本,财主家(困难)|丽春院|鳌拜府|天地会|神龙教|关外|温府|五毒教|恒山|青城山|衡山|嵩山|云梦沼泽|桃花岛(简单)|桃花岛(困难)|白驼山|星宿海|冰火岛(困难)|移花宫(简单)|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|光明顶|光明顶(组队)|天龙寺(困难)|血刀门|古墓派(简单)|古墓派(困难)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBNameQ)
-#input ($_repeat) = 扫荡副本次数,1
-#input ($Num_tidy) = 每扫荡 N 次后清包,(Num_tidy)
+#input ($repeat) = 扫荡副本次数,1
 #config
 <-stopSSAuto
 stopstate
@@ -93,27 +93,26 @@ stopstate
     [exit]
 //是否补充扫荡符
 [if] (AutoBuy) == 购买
-    [if] {b扫荡符#}? != null && {b扫荡符#}? < (_repeat)
-        ($num) = (_repeat) - {b扫荡符#}
+    [if] {b扫荡符#}? != null && {b扫荡符#}? < (repeat)
+        ($num) = (repeat) - {b扫荡符#}
         shop 0 (num)
     [else if] {b扫荡符#}? == null
-        shop 0 (_repeat)
+        shop 0 (repeat)
 <-recordGains
-[while] (_repeat) > 0
+[while] (repeat) > 0 && (repeat) != null
     [if] (fbcr) == null
         @print <ord>副本代码无效，请重新选择！</ord>
         [break]
-    [if] (_repeat) >= (Num_tidy)
-        (fbcr) (Num_tidy)
     [else]
-        (fbcr) (_repeat)
+        (fbcr) (repeat)
     @tip 扫荡完成|扫荡符($lack)继续扫荡
     [if] (lack) != null
         @print <ord>扫荡符不足，已停止</ord>
-        [exit]
-    @tidyBag
-    @wait 5000
-    ($_repeat) = (_repeat) - (Num_tidy)
+        [break]
 recordGains->
+@tidyBag
+@wait 3000
+$cleanall
+@await 3000
 stopSSAuto->
 $zdwk
