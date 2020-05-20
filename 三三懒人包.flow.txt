@@ -14,7 +14,7 @@
 #select ($flowMPJJ)=[门派进阶]门派武功自动进阶,导入|跳过,跳过
 #select ($flowYZDY)=[研制丹药]自动研制绿蓝黄紫橙丹药和突破丹,导入|跳过,跳过
 #input ($info2)=👇以下是触发👇,愉快游戏🎮
-//#select ($triggerXWZZ)=[卸武自装]被下武器后自动重新装备,导入|跳过,跳过
+#select ($triggerXWZZ)=[卸武自装]被下武器后自动重新装备,导入|跳过,跳过
 #select ($triggerCMS)=[帮战橙满伤]满伤停止出招自动脱战,导入|跳过,跳过
 #select ($triggerXYJS)=[襄阳叫杀]襄阳自动叫杀蒙古夫长蒙哥,导入|跳过,跳过
 #select ($triggerXYMJG)=[襄阳满军功]襄阳打满500军功后自动清包撤离(可自己删减是否等蒙哥),导入|跳过,跳过
@@ -82,9 +82,9 @@
         ($num)=(num)+1
 
 //触发
-//[if] (triggerXWZZ)==导入 
-//    @print 导入 <hic>卸武自装</hic> 触发
-//    @js Server.importTrigger("")
+[if] (triggerXWZZ)==导入 
+    @print 导入 <hic>卸武自装</hic> 触发
+    @js Server.importTrigger("白三三@卸武自装·触发@1589945364753")
 [if] (triggerCMS)==导入
     @print 导入 <hic>帮战橙满伤</hic> 触发
     @js Server.importTrigger("白三三@橙满伤·触发@1587006323679")
