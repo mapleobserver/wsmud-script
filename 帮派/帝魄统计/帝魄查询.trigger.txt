@@ -25,12 +25,12 @@
                 ($num2) = (num2) + 1
         [if] (count) < 5
             [if] (dpStat) != null
-                ($dpStat) = (dpStat);(dpPlayer1)x(count)
+                ($dpStat) = (dpStat)；(dpPlayer1)x(count)
             [else]
                 ($dpStat) = (dpPlayer1)x(count)
         [else]
             [if] (dpStatFull) != null
-                ($dpStatFull) = (dpStatFull);(dpPlayer1)
+                ($dpStatFull) = (dpStatFull)；(dpPlayer1)
             [else]
                 ($dpStatFull) = (dpPlayer1)
         ($num1) = (num1) + (count)
