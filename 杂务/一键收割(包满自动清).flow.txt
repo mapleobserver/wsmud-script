@@ -36,6 +36,7 @@ team out
 ($sc) = '(SC_1)','(SC_2)','(SC_3)'
 ($work) = '(SCWork_1)','(SCWork_2)','(SCWork_3)'
 ($num) = 0
+@cmdDelay 500
 [while] (num) < 3
     @js ($s) = [(sc)][(num)]
     @js ($w) = [(work)][(num)]
@@ -45,7 +46,7 @@ team out
         ($w) = cai
     [else]
         ($w) = diao
-    [if] (s) != null
+    [if] (s) != null && {r(s)}? != null
         dc {r(s)}? stopstate;select {r(s)}?;pack {r(s)}?
     [else]
         ($num) = (num) + 1
@@ -53,8 +54,9 @@ team out
     @dialog
     <---
     [if] (get) == true
-        @tip 给了你|身上东西($bagfull)了
+        @tip 给了你|(:name)身上东西($bagfull)了
         [if] (bagfull) != null
+            @await 1000
             @tidyBag
             ($bagfull) = null
             @await 1000

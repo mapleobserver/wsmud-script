@@ -36,6 +36,7 @@ team out
 ($sc) = '(SC_1)','(SC_2)','(SC_3)'
 ($work) = '(SCWork_1)','(SCWork_2)','(SCWork_3)'
 ($num) = 0
+@cmdDelay 500
 [while] (num) < 3
     @js ($s) = [(sc)][(num)]
     @js ($w) = [(work)][(num)]
@@ -44,7 +45,7 @@ team out
         ($w) = cai
     [else]
         ($w) = diao
-    [if] (s) != null
+    [if] (s) != null && {r(s)}? != null
         dc {r(s)}? stopstate;select {r(s)}?;pack {r(s)}?
     [else]
         ($num) = (num) + 1
@@ -204,4 +205,5 @@ team out
     [else]
         dc {r(s)} diao
 @tidyBag
+@await 1000
 $zdwk
