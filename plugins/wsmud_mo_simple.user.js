@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.6
+// @version     0.1.1.7
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -185,12 +185,11 @@
                 await fn.sleep(1000);
                 $(".dialog-close").click();
             };
-        } else if (/你轻声吟道/.test(data)) {
-        } else if (/盘膝坐下，开始治疗伤势/.test(data)) {
-        } else if (/停止疗伤站了起来/.test(data)) {
-        } else if (/疗伤完毕，脸色看起来好了很多/.test(data)) {
-        } else if (/盘膝坐下，开始修炼内力/.test(data)) {
-        } else if (/运功完毕，站了起来/.test(data)) {
+        } else if (/数息后只留下一堆玄色石头/.test(data)) {
+            if (data.includes("你")) {
+                let a = data.match(/只见(.*)发出一阵白光/);
+                $(".content-message pre").append(`你分解了 => ${a[1]}\n`)
+            } else {}
         } else if (/你的最大内力增加了/.test(data)) {
             funny.onmessage_fn.apply(this, arguments);
             let a = data.match(/你的最大内力增加了(.*)点。/);
@@ -295,7 +294,8 @@
                     }
                 }
                 let qianneng = (djsx * djsx - level * level) * 2.5 * k;
-                if (funny.state === "你正在练习技能") {
+                //if (funny.state === "你正在练习技能") {
+                if (funny.state.indexOf("练习") != -1) {
                     let time = qianneng / (xtwx + htwx) / (1 + lxxl / 100 - xtwx / 100) / 12;
                     let timeString = time < 60 ? `${parseInt(time)}分钟` : `${parseInt(time / 60)}小时${parseInt(time % 60)}分钟`;
                     $(".remove_lx").remove();
@@ -303,16 +303,14 @@
                     $(".content-message pre").append(`练习${name}消耗了${parseInt(qianneng / time / 12)}点潜能。\n`);
                     $(".content-message pre").append(`<span class="remove_lx">角色悟性: ${xtwx}＋${htwx}\n练习效率: ${lxxl}%\n等级上限: ${djsx}级\n需要潜能: ${qianneng}\n需要时间: ${timeString}\n</span>`);
                     fn.scroll(".content-message");
-                } else if (funny.state === "你正在读书") {
-                    // 学习每一跳的消耗公式＝（先天悟性＋后天悟性）×（1＋学习效率%－先天悟性%）×3
-                    let cost = (xtwx + htwx) * (1 +  xxxl / 100 - xtwx / 100) * 3;
-                    $(".content-message pre").append(`学习${name}消耗了${parseInt(cost)}点潜能。\n`);
-                    if (funny.data.id === "j9h729c52bc") {
-                        let time = qianneng / cost / 12;
-                        let timeString = time < 60 ? `${parseInt(time)}分钟` : `${parseInt(time / 60)}小时${parseInt(time % 60)}分钟`;
-                        $(".content-message pre").append(`练满时间 => ${timeString}\n`);
-                    }
-                    fn.scroll(".content-message");
+                // } else if (funny.state.search(/读书|学习/) != -1) {
+                //     // 学习每一跳的消耗公式＝（先天悟性＋后天悟性）×（1＋学习效率%－先天悟性%）×3
+                //     let cost = (xtwx + htwx) * (1 +  xxxl / 100 - xtwx / 100) * 3;
+                //     $(".content-message pre").append(`学习${name}消耗了${parseInt(cost)}点潜能。\n`);
+                //     let time = qianneng / cost / 12;
+                //     let timeString = time < 60 ? `${parseInt(time)}分钟` : `${parseInt(time / 60)}小时${parseInt(time % 60)}分钟`;
+                //     $(".content-message pre").append(`<span class="remove_xx">练满时间 => ${timeString}\n</span>`);
+                //     fn.scroll(".content-message");
                 }
             }
         }
@@ -340,6 +338,28 @@
             if (data.name) {
                 if (/<hig>大宋(.*)<\/hig>|<hig>蒙古(.*)<\/hig>|<hig>笠子帽<\/hig>|<hic>大宋(.*)<\/hic>|<hic>蒙古(.*)<\/hic>|<hic>笠子帽<\/hic>|<hiy>大宋(.*)<\/hiy>|<hiy>蒙古(.*)<\/hiy>|<hiy>笠子帽<\/hiy>/.test(data.name)) {
                     fn.send(`fenjie ${data.id}`);
+                }
+            }
+
+            if (data.jldesc) {
+                let jl = data.jldesc.match(/<hio>(.*)<\/hio><br\/>精炼<(hig|hic|hiy|hiz|ord)>＋(.*)\s</);
+                if (jl) {
+                    let n = "<hio>" + jl[1] + "</hio>";
+                    let j = parseInt(jl[3]);
+                    let c = 13 - j;
+                    let cmd = [];
+                    for (let i = 0; i < c; i ++) {
+                        cmd.push(`jinglian ${data.id} ok`);
+                        cmd.push(500);
+                    }
+                    $(".content-message pre").append(
+                        $(`<div class="item-commands"></div>`).append(
+                            $(`<span>精炼6星 => ${n}</span>`).click(() => {
+                                fn.send(cmd);
+                            }),
+                        ),
+                    );
+                    fn.scroll(".content-message");
                 }
             }
         }
