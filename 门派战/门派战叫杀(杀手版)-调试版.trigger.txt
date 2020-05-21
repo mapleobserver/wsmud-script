@@ -42,16 +42,18 @@
         [while] (:room) != (mpplace)
             $to (mpplace)
             @await 500
-        [if] {r(mpname)}? != null || {r(mpname)}? != null
-            kill {r(zmname)}?;tm (zmname)：{r(zmname)}?
-            @print (zmname)：{r(zmname)}?
-        @until (:combating) == false || (:living) == false
-        @print c:(:combating),l:(:living)
-        @await 3000
+        [if] {r(mpname)}? != null
+            kill {r(zmname)}?;tm (:hour):(:minute):(:second) - (zmname)：{r(zmname)}?
+            @print (:hour):(:minute):(:second) - (zmname)：{r(zmname)}?
+        @await 1000
+        @until (:combating) == false
+        @print (:hour):(:minute):(:second) - c:(:combating),l:(:living)
+        @until (:combating) == false && (:status faint) == false && (:status busy) == false && (:free) == true
         relive;relive
         $to 扬州城-武庙
         //@until (:mp) >=10000
         @liaoshang
+        @await 500
         //@until (:combating) == false || (:living) == false
         $zdwk
         ($MPing) = false
