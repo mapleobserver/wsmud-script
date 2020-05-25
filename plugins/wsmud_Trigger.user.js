@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name            wsmud_Trigger
 // @namespace       cqv3
-// @version         0.0.35
+// @version         0.0.36
 // @date            03/03/2019
-// @modified        04/03/2019
+// @modified        25/05/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
 // @description     武神传说 MUD
-// @author          Bob.cn
+// @author          Bob.cn, 白三三
 // @match           http://*.wsmud.com/*
 // @run-at          document-end
 // @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
@@ -454,7 +454,7 @@
     //---------------------------------------------------------------------------
 
     (function() {
-        const chanel = new SelectFilter(
+        const channel = new SelectFilter(
             "频道",
             ["全部", "世界", "队伍", "门派", "全区", "帮派", "谣言", "系统"],
             0,
@@ -465,10 +465,11 @@
         );
         const talker = new InputFilter("发言人", InputFilterFormat.text, "", ContainAssert);
         const key = new InputFilter("关键字", InputFilterFormat.text, "", KeyAssert);
-        let filters = [chanel, talker, key];
+        let filters = [channel, talker, key];
         const intro = `// 新聊天信息触发器
 // 聊天信息内容：(content)
-// 发言人：(name)`;
+// 发言人：(name)
+// 频道：(channel)`;
         const t = new TriggerTemplate("新聊天信息", filters, intro);
         TriggerTemplateCenter.add(t);
 
@@ -484,16 +485,17 @@
                     "rumor": "谣言",
                     "sys": "系统"
                 };
-                const chanel = types[data.ch];
-                if (chanel == null) return;
+                const channel = types[data.ch];
+                if (channel == null) return;
                 const name = data.name == null ? "无" : data.name;
                 let params = {
-                    "频道": chanel,
+                    "频道": channel,
                     "发言人": name,
                     "关键字": data.content
                 };
                 params["content"] = data.content;
                 params["name"] = name;
+                params["channel"] = channel;
                 const n = new Notification("新聊天信息", params);
                 NotificationCenter.post(n);
             });
