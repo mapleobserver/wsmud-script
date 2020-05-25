@@ -36,11 +36,11 @@ team out
     go east
     @kill 潘秀达,岑其斯,齐云敖
     [if](_DungeonWaitSkillCD) == 打开
-         @cd   
+         @cd
     go east
     @kill 何红药
     [if](_DungeonWaitSkillCD) == 打开
-         @cd   
+         @cd
     go east
     @kill 何铁手
     cr;cr over

@@ -54,7 +54,7 @@
             delete this._observers[index];
         },
         /**
-         * @param {Notification} notification 
+         * @param {Notification} notification
          */
         post: function(notification) {
             for (const key in this._observers) {
@@ -156,7 +156,7 @@
     class InputFilter extends Filter {
         /**
          * @param {String} name
-         * @param {InputFilterFormat} format 
+         * @param {InputFilterFormat} format
          * @param {*} defaultValue
          */
         constructor(name, format, defaultValue, assert) {
@@ -297,7 +297,7 @@
         modify: function(originalName, name, conditions, source) {
             const trigger = this._triggers[originalName];
             if (trigger == null) return "修改不存在的触发器？";
-            
+
             const event = trigger.event();
             if (originalName == name) {
                 const data = new TriggerData(name, event, conditions, source, trigger.active());
@@ -455,9 +455,9 @@
 
     (function() {
         const chanel = new SelectFilter(
-            "频道", 
+            "频道",
             ["全部", "世界", "队伍", "门派", "全区", "帮派", "谣言", "系统"],
-            0, 
+            0,
             function(fromUser, fromGame) {
                 if (fromUser == "全部") return true;
                 return fromUser == fromGame;
@@ -670,13 +670,13 @@
 
     (function() {
         const hours = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
             20, 21, 22, 23
         ];
         const minutes = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
             20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
             30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
             40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
@@ -978,7 +978,7 @@
                     editTrigger: UI.editTrigger,
                     activeStyle: function(t) {
                         if (t.active()) {
-                            return { 
+                            return {
                                 "background-color": "#a0e6e0",
                                 "border": "1px solid #7284ff",
                                 "color": "#001bff"

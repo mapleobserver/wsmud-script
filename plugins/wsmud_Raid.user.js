@@ -50,8 +50,8 @@
     }
 
     /**
-     * @param {Array} list 
-     * @param {*} value 
+     * @param {Array} list
+     * @param {*} value
      * @param {Function} assert function(previous, current)
      */
     const SortInsert = function(list, value, assert) {
@@ -225,8 +225,8 @@
         }
 
         /**
-         * @param {string[]} cmds 
-         * @param {number} start block 首句在的 index 
+         * @param {string[]} cmds
+         * @param {number} start block 首句在的 index
          * @param {number} loopStart 最邻近的 while 的首句索引
          */
         _handleBlock(cmds, start, loopStart) {
@@ -295,7 +295,7 @@
                 default:
                 throw "未知的控制关键字: " + r.type;
             }
-        
+
             var cmdsLength = cmds.length;
             var i = 1;
             while (i < cmdsLength) {
@@ -328,7 +328,7 @@
                     i += 1;
                 }
             }
-        
+
             callback();
             return {type: r.type, cmds: result};
         }
@@ -725,7 +725,7 @@
     class AssertWrapper {
         /**
          * @param {Function} assert1 function(string)->Bool
-         * @param {string} text 
+         * @param {string} text
          */
         constructor(assert1) {
             var theSelf = this;
@@ -760,7 +760,7 @@
             this._assertHolders.push(holder);
         },
         /**
-         * @param {string} expression 
+         * @param {string} expression
          * @returns {Function} assert: function()
          */
         get: function(expression) {
@@ -1441,7 +1441,7 @@
     \***********************************************************************************/
 
     /**
-     * @param {String} source 
+     * @param {String} source
      * @param {Function} callback function(resolve)->void
      */
     function PerformerPromise(source, callback, log) {
@@ -1649,7 +1649,7 @@
     };
 
     /**
-     * @param {string} itemName 
+     * @param {string} itemName
      * @param {Boolean} blurry
      * @param {string} [quality] white(w), green(g), blue(b), yellow(y), purple(p), orange(o), red(r)
      */
@@ -1723,7 +1723,7 @@
             WG.add_hook("login", function(data) {
                 Role.id = data.id;
                 Role.status = [];
-                setTimeout(function() { 
+                setTimeout(function() {
                     $("span[command=skills]").click();
                     setTimeout(_ => { $(".glyphicon-remove-circle").click(); }, 500);
                 }, 2000); // 查看装备技能
@@ -2100,7 +2100,7 @@
                     Role.kongfu.bian = value; break;
                     case "throwing":
                     Role.kongfu.an = value; break;
-                    default: 
+                    default:
                     break;
                 }
             };
@@ -2473,7 +2473,7 @@
             ":maxMp": Role.maxMp,
             ":mpPer": Role.mp/Role.maxMp,    // 0-1
             ":living": Role.living,          // true/false
-            ":state": Role.state,            // RoleState 
+            ":state": Role.state,            // RoleState
             ":combating": Role.combating,    // true/false
             ":free": Role.isFree,
 
@@ -3729,7 +3729,7 @@ go north
 go east
 @kill 潘秀达,岑其斯,齐云敖
 [if](_DungeonWaitSkillCD) == 打开
-    @cd   
+    @cd
 go east
 @kill 何红药
 [if](_DungeonWaitSkillCD) == 打开
@@ -3759,7 +3759,7 @@ go north
 go east
 @kill 潘秀达,岑其斯,齐云敖
 [if](_DungeonWaitSkillCD) == 打开
-    @cd   
+    @cd
 go east
 @kill 何红药
 [if](_DungeonWaitSkillCD) == 打开
@@ -4053,8 +4053,8 @@ look men;open men
 [if] (open) == 打开
     go east;go east;look gui;search gui`
         },
-        { 
-            name: "财主家(简单)", 
+        {
+            name: "财主家(简单)",
             source: `
 jh fb 1 start1;cr yz/cuifu/caizhu
 @kill 大狼狗,大狼狗
@@ -4203,7 +4203,7 @@ look men;open men
                 }
             });
         },
-        
+
         shareFlowTrigger: function (username, password, type, data) {
             let value = data;
             value["author"] = username;
@@ -4418,17 +4418,17 @@ look men;open men
             return workflow;
         },
         /**
-         * @param {string} name 
-         * @param {{ id: string, repeat: number }[]} cmdGroupInfos 
+         * @param {string} name
+         * @param {{ id: string, repeat: number }[]} cmdGroupInfos
          */
         createWorkflowConfig: function(name, cmdGroupInfos) {
             var id = new Date().getTime();
             return this.updateWorkflowConfig(id, name, cmdGroupInfos);
         },
         /**
-         * @param {number} id 
-         * @param {string} name 
-         * @param {{ id: string, repeat: number }[]} cmdGroupInfos 
+         * @param {number} id
+         * @param {string} name
+         * @param {{ id: string, repeat: number }[]} cmdGroupInfos
          */
         updateWorkflowConfig: function(id, name, cmdGroupInfos) {
             if (name == null || !/\S+/g.test(name)) {
@@ -4450,7 +4450,7 @@ look men;open men
         removeWorkflowConfig: function(id) {
             GM_deleteValue(this._key(id));
         },
-        
+
         _prefix: "workflow@",
         _isMyKey: function(key) {
             return key.indexOf(this._prefix + Role.id) == 0;
@@ -4489,7 +4489,7 @@ look men;open men
                 const source = `($_i) = 0\n[while] (_i) < (arg0)\n${cmdsTextHasHeader}\n${header}($_i) = (_i) + 1`;
                 WorkflowConfig.createWorkflow(g.name, source, "原命令组");
             });
-            
+
             allWorkflow.forEach(f => {
                 const infos = WorkflowConfigManager.getCmdGroupInfos(f.id);
                 let source = "";
@@ -4758,7 +4758,7 @@ look men;open men
             const key = `key${this._counter}`;
             this._counter += 1;
             this._performers[key] = p;
-            p.start(_ => { 
+            p.start(_ => {
                 delete ManagedPerformerCenter._performers[key];
                 if (ManagedPerformerCenter.getAll().length == 0) {
                     $("#workflows-button").css("border-color", "inherit");
@@ -5178,13 +5178,13 @@ look men;open men
                 methods: {
                     createSpan: function(createElement, item) {
                         let style = {
-                            width: "120px", 
+                            width: "120px",
                             "background-color": "#12e4a0",
                             border: "solid 1px rgb(107, 255, 70)",
                             color: "#000dd4"
                         };
                         if (item.type == "finder") {
-                            style = { 
+                            style = {
                                 width: "120px",
                                 "background-color": "#0359c3",
                                 border: "solid 1px rgb(107, 203, 255)",
@@ -5210,7 +5210,7 @@ look men;open men
                             }
                         };
                         const leftProperties = {
-                            style: { 
+                            style: {
                                 width: "30px",
                                 float: "left",
                                 "background-color": "#ffffff4f",
@@ -5293,7 +5293,7 @@ look men;open men
                 methods: {
                     createSpan: function(createElement, flow) {
                         let style = {
-                            width: "120px", 
+                            width: "120px",
                             "background-color": "#05b77d",
                             border: "solid 1px rgb(107, 255, 70)",
                             color: "white"
@@ -5319,7 +5319,7 @@ look men;open men
                             }
                         };
                         const leftProperties = {
-                            style: { 
+                            style: {
                                 width: "30px",
                                 float: "left",
                                 "background-color": "#ffffff4f",
@@ -5746,7 +5746,7 @@ look men;open men
         Ready
     \***********************************************************************************/
 
-    const ToRaid = { 
+    const ToRaid = {
         menu :UI.showToolbar,
 
         perform: function(content, name, log) {
