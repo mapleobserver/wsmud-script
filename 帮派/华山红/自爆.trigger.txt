@@ -1,6 +1,6 @@
 //已死亡
-@cmdDelay 0
 relive
-@wait 800
-jh fam 3 start;go westup;go north;go north;
+@cmdDelay 50
+$to 华山派-客厅
+@wait 200
 kill {r独孤败天}?
