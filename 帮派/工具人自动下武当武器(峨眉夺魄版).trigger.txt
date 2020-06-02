@@ -1,14 +1,15 @@
 // raid.flow
 // 帮派频道：即刻起开始进攻武当
 // 四区白三三
+@js ($fbroom)='(:room)'.indexOf('副本区域')
+[if] (fbroom) != -1
+    stopstate
+    cr;cr over
 stopstate
 @await 500
 $stoppfm;enable sword wudugoufa;enable unarmed jiuyinbaiguzhao2;enable dodge anyingfuxiang;enable parry yihuajiemu;enable force mingyugong;$eq 1
 @await 4000
 @renew
-@on 明玉夺魄
-@on 无缝明玉
-@off 无缝太上
 @on 帮战翻车
 [while] (:room) != 武当派-后山小院
     $to 武当派-后山小院
@@ -52,6 +53,10 @@ liaoshang
     $to 武当派-后山小院
 pty 武器已下，坦克准备开战
 @liaoshang
+@on 帮战技能监控
 $usezml 参合
+$wait 8000
 kill (id_2);kill (id_2)
-@perform parry.yi,force.power,force.wang
+@perform parry.yi,force.power
+@until (:status mingyu) == false
+@perform force.wang
