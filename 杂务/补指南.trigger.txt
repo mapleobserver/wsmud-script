@@ -1,0 +1,16 @@
+// 世界频道；发言人填报挖矿信息的机器人；关键字：矿山封印消失
+// 四区白三三
+[if] {b挖矿指南}? != null
+    [if] (:state) == 挖矿 || (:state) == 闭关
+        stopstate
+        [if] {b挖矿指南o}? != null
+            use {b挖矿指南o}?
+        [else if] {b挖矿指南p}? != null
+            use {b挖矿指南p}?
+        [else if] {b挖矿指南y}? != null
+            use {b挖矿指南y}?
+        [else if] {b挖矿指南b}? != null
+            use {b挖矿指南b}?
+        [else]
+            use {b挖矿指南}?
+        $zdwk
