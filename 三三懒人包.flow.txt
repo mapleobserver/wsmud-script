@@ -85,7 +85,7 @@
 //触发
 [if] (triggerXWZZ)==导入
     @print 导入 <hic>卸武自装</hic> 触发
-    @js Server.importTrigger("白三三@卸武自装·触发@1589945364753")
+    @js Server.importTrigger("白三三@橙满伤·触发@1591359219624")
 [if] (triggerCMS)==导入
     @print 导入 <hic>帮战橙满伤</hic> 触发
     @js Server.importTrigger("白三三@橙满伤·触发@1591358391505")
