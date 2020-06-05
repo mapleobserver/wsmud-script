@@ -6,7 +6,7 @@
 // @modified        05/06/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
 // @description     武神传说 MUD
-// @author          Bob.cn, 白三三
+// @author          Bob.cn, 初心, 白三三
 // @match           http://*.wsmud.com/*
 // @run-at          document-end
 // @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
