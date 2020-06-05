@@ -1,5 +1,6 @@
 // raid.flow
 // 四区白三三
+// 2020.06.05 - 更新橙满伤触发
 #input ($info1)=👉第一次使用前，如已有同名流程，请先手动删除👈,挖矿愉快😊
 #select ($flowZDRC)=[自动日常]师门、养精、追捕、打塔、副本、请安,导入|跳过,跳过
 #select ($flowZDZB)=[自动追捕]自动寻路追捕逃犯,导入|跳过,跳过
@@ -82,12 +83,12 @@
         ($num)=(num)+1
 
 //触发
-[if] (triggerXWZZ)==导入 
+[if] (triggerXWZZ)==导入
     @print 导入 <hic>卸武自装</hic> 触发
     @js Server.importTrigger("白三三@卸武自装·触发@1589945364753")
 [if] (triggerCMS)==导入
     @print 导入 <hic>帮战橙满伤</hic> 触发
-    @js Server.importTrigger("白三三@橙满伤·触发@1587006323679")
+    @js Server.importTrigger("白三三@橙满伤·触发@1591358391505")
 [if] (triggerXYJS)==导入
     @print 导入 <hic>襄阳叫杀</hic> 触发
     @js Server.importTrigger("白三三@襄阳叫杀·触发@1587006710095")

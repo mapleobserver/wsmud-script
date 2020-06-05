@@ -7,16 +7,16 @@
 ($id_1) = {r副帮主}?
 ($id_2) = {r副帮主}?# obj.id == "(id_1)" #
 [if] (:room) == 丐帮-林间小屋 && (:combating) == true
-    ($id_bang) = {r洪七公}?
-    [if] (id) != (id_1) && (id) != (id_bang)
+    ($id_0) = {r洪七公}?
+    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
         ($MPnpc) = (id_1)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
-    [else if] (id) == (id_1)
-        ($MPnpc) = (id_bang)
-        kill (id_bang);kill (id_bang)
+    [else if] "(id)" == "(id_1)"
+        ($MPnpc) = (id_0)
+        kill (id_0);kill (id_0)
         pty 占比(percent)，切换目标：洪七公
-    [else if] (id) == (id_bang)
+    [else if] "(id)" == "(id_0)"
         ($MPnpc) = null
         $stoppfm
         pty 洪七公已满，我先撤
@@ -31,16 +31,16 @@
 [else if] (:room) == 武当派-后山小院 && (:combating) == true
     ($id_1) = {r武当派长老}?
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
-    ($id_bang) = {r张三丰}?
-    [if] (id) != (id_1) && (id) != (id_bang)
+    ($id_0) = {r张三丰}?
+    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
         ($MPnpc) = (id_1)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
-    [else if] (id) == (id_1)
-        ($MPnpc) = (id_bang)
-        kill (id_bang);kill (id_bang)
+    [else if] "(id)" == "(id_1)"
+        ($MPnpc) = (id_0)
+        kill (id_0);kill (id_0)
         pty 占比(percent)，切换目标：张三丰
-    [else if] (id) == (id_bang)
+    [else if] "(id)" == "(id_0)"
         ($MPnpc) = null
         $stoppfm
         pty 张三丰已满，我先撤
@@ -55,16 +55,16 @@
 [else if] (:room) == 华山派-客厅 && (:combating) == true
     ($id_1) = {r华山派长老}?
     ($id_2) = {r华山派长老}?# obj.id == "(id_1)" #
-    ($id_bang) = {r岳不群}?
-    [if] (id) != (id_1) && (id) != (id_bang)
+    ($id_0) = {r岳不群}?
+    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
         ($MPnpc) = (id_1)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
-    [else if] (id) == (id_1)
-        ($MPnpc) = (id_bang)
-        kill (id_bang);kill (id_bang)
+    [else if] "(id)" == "(id_1)"
+        ($MPnpc) = (id_0)
+        kill (id_0);kill (id_0)
         pty 占比(percent)，切换目标：岳不群
-    [else if] (id) == (id_bang)
+    [else if] "(id)" == "(id_0)"
         ($MPnpc) = null
         $stoppfm
         pty 岳不群已满，我先撤
@@ -77,16 +77,16 @@
             @await 500
         $startpfm
 [else if] (:room) == 逍遥派-地下石室 && (:combating) == true
-    ($id_bang) = {r逍遥子}?
-    [if] (id) != (id_1) && (id) != (id_bang)
+    ($id_0) = {r逍遥子}?
+    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
         ($MPnpc) = (id_1)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
-    [else if] (id) == (id_1)
-        ($MPnpc) = (id_bang)
-        kill (id_bang);kill (id_bang)
+    [else if] "(id)" == "(id_1)"
+        ($MPnpc) = (id_0)
+        kill (id_0);kill (id_0)
         pty 占比(percent)，切换目标：逍遥子
-    [else if] (id) == (id_bang)
+    [else if] "(id)" == "(id_0)"
         ($MPnpc) = null
         $stoppfm
         pty 逍遥子已满，我先撤
@@ -101,16 +101,16 @@
 [else if] (:room) == 少林派-方丈楼 && (:combating) == true
     ($id_1) = {r长老}?
     ($id_2) = {r长老}?# obj.id == "(id_1)" #
-    ($id_bang) = {r玄难}?
-    [if] (id) != (id_1) && (id) != (id_bang)
+    ($id_0) = {r玄难}?
+    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
         ($MPnpc) = (id_1)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
-    [else if] (id) == (id_1)
-        ($MPnpc) = (id_bang)
-        kill (id_bang);kill (id_bang)
+    [else if] "(id)" == "(id_1)"
+        ($MPnpc) = (id_0)
+        kill (id_0);kill (id_0)
         pty 占比(percent)，切换目标：玄难
-    [else if] (id) == (id_bang)
+    [else if] "(id)" == "(id_0)"
         ($MPnpc) = null
         $stoppfm
         pty 玄难已满，我先撤
@@ -123,16 +123,16 @@
             @await 500
         $startpfm
 [else if] (:room) == 峨眉派-清修洞 && (:combating) == true
-    ($id_bang) = {r灭绝}?
-    [if] (id) != (id_1) && (id) != (id_bang)
+    ($id_0) = {r灭绝}?
+    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
         ($MPnpc) = (id_1)
         kill (id_1);kill (id_1)
         pty 占比(percent)，切换目标：第一个橙
-    [else if] (id) == (id_1)
-        ($MPnpc) = (id_bang)
-        kill (id_bang);kill (id_bang)
+    [else if] "(id)" == "(id_1)"
+        ($MPnpc) = (id_0)
+        kill (id_0);kill (id_0)
         pty 占比(percent)，切换目标：灭绝
-    [else if] (id) == (id_bang)
+    [else if] "(id)" == "(id_0)"
         ($MPnpc) = null
         $stoppfm
         pty 灭绝已满，我先撤
