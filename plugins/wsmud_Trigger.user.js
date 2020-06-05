@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name            wsmud_Trigger
 // @namespace       cqv3
-// @version         0.0.37
+// @version         0.0.38
 // @date            03/03/2019
-// @modified        04/06/2020
+// @modified        05/06/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
 // @description     武神传说 MUD
-// @author          Bob.cn, 初心, 白三三
+// @author          Bob.cn, 白三三
 // @match           http://*.wsmud.com/*
 // @run-at          document-end
 // @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
@@ -1145,7 +1145,7 @@
 
     $(document).ready(function () {
         __init__();
-        if (!WG || !ToRaid) {
+        if (WG == undefined || WG == null || ToRaid == undefined || ToRaid == null) {
             setTimeout(__init__, 300);
         }
     });
@@ -1157,7 +1157,7 @@
         messageClear = unsafeWindow.messageClear;
         ToRaid = unsafeWindow.ToRaid;
 
-        if (!WG || !ToRaid) {
+        if (WG == undefined || WG == null || ToRaid == undefined || ToRaid == null) {
             setTimeout(()=>{__init__()}, 300);
             return;
         }
