@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.87
+// @version      0.0.32.93
 // @date         01/07/2018
-// @modified     02/05/2020
+// @modified     30/05/2020
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -2372,12 +2372,14 @@
                                 WG.Send("eq " + data.id);
                                 WG.go("扬州城-矿山");
                                 WG.Send("wa");
+                                WG.zdwk("remove",false);
                                 return;
                             }
                         } else if (data.items) {
                             if (data.eqs[0] && data.eqs[0].name.indexOf("铁镐") > -1) {
                                 WG.go("扬州城-矿山");
                                 WG.Send("wa");
+                                WG.zdwk("remove",false);
                                 return;
                             } else {
                                 for (let i = 0; i < data.items.length; i++) {
@@ -2391,7 +2393,7 @@
                                     WG.Send("eq " + tiegao_id);
                                     WG.go("扬州城-矿山");
                                     WG.Send("wa");
-                                    WG.zdwk("remove");
+                                    WG.zdwk("remove",false);
                                     return;
                                 } else {
                                     WG.go("扬州城-打铁铺");
@@ -2407,7 +2409,7 @@
                             WG.Send('list ' + id);
                         } else {
                             messageAppend("<hio>自动挖矿</hio>未发现铁匠");
-                            WG.zdwk("remove");
+                            WG.zdwk("remove",false);
                         }
                     } else if (data.type == 'text') {
                         if (data.msg == '你挥着铁镐开始认真挖矿。') WG.zdwk("remove");
@@ -2433,7 +2435,7 @@
                             WG.Send('buy 1 ' + item_id + ' from ' + tiejiang_id);
                         } else {
                             messageAppend("<hio>自动挖矿</hio>无法购买<wht>铁镐</wht>");
-                            WG.zdwk("remove");
+                            WG.zdwk("remove",false);
                         }
                     }
                 });
@@ -2660,6 +2662,9 @@
                     getskilljson: function () {
                         WG.getPlayerSkill();
                     },
+                    autoAddLianxi: function () {
+                        WG.selectLowKongfu();
+                    },
                     onekeydaily: function () {
                         WG.SendCmd("$daily");
                     },
@@ -2671,10 +2676,10 @@
                         // 自命令类型选 Raidjs流程
                         // 四区白三三
                         ($f_ss)={"name":"三三懒人包","source":"http://wsmud-cdn.if404.com/三三懒人包.flow.txt","finder":"根文件夹"}
-                        @js var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+                        @js var time=Date.parse(new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
                         @awiat 2000
                         tm 【三三懒人包】流程已导入，如果曾用早期版本的懒人包导入过流程，请先删除这些流程后再使用。`;
-                        
+
                         if (unsafeWindow && unsafeWindow.ToRaid) {
                             ToRaid.perform(mlh);
                         }else{
@@ -4977,6 +4982,64 @@
             WG.SendCmd("$to 扬州城-广场;$wait 100;$to 扬州城-当铺;$wait 200;list %唐楠%");
 
         },
+
+        selectLowKongfu: function(){
+
+            WG.gpSkill_hook = WG.add_hook("dialog", (data) => {
+                if ((data.dialog && data.dialog == 'skills') && data.items && data.items != null) {
+
+                    var lianxiCodeStart = "jh fam 0 start,go west,go west,go north,go enter,go west,";
+                    var lianxiCode = "";
+                    var lianxiCodeMin = "";
+                    var lianxiCodeEnd ="wakuang";
+                    if (G.level.indexOf('武帝') >= 0||G.level.indexOf('武神') >= 0) {
+                        lianxiCodeEnd="xiulian";
+                    }
+                    var __skillNameList=[];
+                    var __skillMinNameList=[];
+                        var maxSkill = data.limit;
+                        var nowCount =0 ;
+                        var __enaSkill = [];
+                        for(let item of data.items){
+                            if (nowCount>5){
+                                break;
+                            }
+                            if (item.enable_skill){
+                                __enaSkill.push(item.enable_skill);
+                            }
+
+
+                            if (WG.inArray(item.id, __enaSkill) || item.name.indexOf("基本") >= 0){
+                                if (parseInt(item.level) < parseInt(maxSkill)) {
+                                    lianxiCode = lianxiCode + `lianxi ${item.id} ${maxSkill},`
+                                    if (nowCount<4){
+                                        lianxiCodeMin = lianxiCodeMin + `lianxi ${item.id} ${maxSkill},`
+                                        __skillMinNameList.push(item.name);
+                                    }
+                                    __skillNameList.push(item.name);
+                                    nowCount++;
+                                }
+                            }
+
+                        }
+                    var __code = `setting auto_work ${lianxiCodeStart}${lianxiCode}${lianxiCodeEnd}`
+                    if(__code.length<=200){
+                        WG.Send(`setting auto_work ${lianxiCodeStart}${lianxiCode}${lianxiCodeEnd}`);
+                        messageAppend(`添加`+__skillNameList.join(",")+`到${maxSkill}`);
+                    }else{
+                        WG.Send(`setting auto_work ${lianxiCodeStart}${lianxiCodeMin}${lianxiCodeEnd}`);
+                        messageAppend(`添加` +__skillMinNameList.join(",")+`到${maxSkill}`);
+                    }
+                    messageAppend("添加成功,数据刷新后显示");
+
+                    WG.remove_hook(WG.gpSkill_hook);
+                    WG.gpSkill_hook = undefined;
+                }
+            });
+            KEY.do_command("skills");
+            KEY.do_command("skills");
+            WG.Send("cha");
+        },
         hooks: [],
         hook_index: 0,
         add_hook: function (types, fn) {
@@ -5623,6 +5686,10 @@
             cmds = T.recmd(idx, cmds);
             WG.tnBuy();
             WG.SendCmd(cmds);
+        }, atlx: function (idx, n, cmds) {
+            cmds = T.recmd(idx, cmds);
+            WG.selectLowKongfu();
+            WG.SendCmd(cmds);
         },
         addfenjieid: function (idx, n, cmds) {
             cmds = T.recmd(idx, cmds);
@@ -5993,6 +6060,7 @@
                 <span @click='lxjs_btn'>练习时间及潜能计算</span>
                 <span @click='khjs_btn'>开花计算</span>
                 <span  @click='getskilljson'>提取技能属性(可用于苏轻模拟器)</span>
+                <span  @click='autoAddLianxi'>自动将最低等级技能添加到离线练习</span>
             </div>
             <div class="item-commands">
                 <span  @click='onekeydaily'>一键日常</span>
@@ -6992,7 +7060,7 @@
             } catch (error) {
                 console.log("Run at message");
             }
-            
+
             if (data === '挖矿' || data === '修炼') {
                 WG.zdwk();
             } else if (data === '日常') {
