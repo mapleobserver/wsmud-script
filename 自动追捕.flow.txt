@@ -19,13 +19,14 @@
 <-recordGains
 stopstate
 @cmdDelay 1000
+@toolbar jh
 @toolbar tasks
 @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
 
 [while](currentN) < 20
    @renew
    @until (:status xuruo) == false
-   
+
    [if](comboN)>=(ZBMax)
       $to 扬州城-衙门正厅
       ask1 {程药发}
@@ -39,7 +40,7 @@ stopstate
    ($olddir2) = (dir2)
    @print (olddir1)
    ($escapee) = null
-   
+
    [while] (escapee) == null
       ask1 {程药发}
       @toolbar tasks
@@ -71,7 +72,7 @@ stopstate
                  ($tb)=(start_h)*60-(:hour)*60-(start_m)+(:minute)
                  //@print 已耗时(tb)
                  [if](tb)>10
-                    [break]               
+                    [break]
           --->
           @cmdDelay 300
           $to (dir1)-(dir2)
@@ -139,7 +140,7 @@ stopstate
               go east;go north
               go west
               go east;go north
-              go north   
+              go north
           [else if] (dir1) == 峨眉派
               [if](dir2) == 走廊
                   go north
