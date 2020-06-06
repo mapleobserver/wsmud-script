@@ -25,6 +25,7 @@
     ($fbcr) = cihang/shanmen 1
 stopstate
 ($_i) = 0
+@cmdDelay 500
 [while] (_i) < (_repeat)
     cr (fbcr) 0;cr over
     ($_i) = (_i) + 1
