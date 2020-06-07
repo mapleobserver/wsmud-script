@@ -36,15 +36,15 @@ liaoshang
     @print 已比试
     go north
     [if] (succes) != null
-        [if] (id_fight) == (id_2)
+        [if] "(id_fight)" == "(id_2)"
             ($id_fight) = (id_1)
             @print 3号下武器成功，准备下一个
             pty 3号下武器成功，准备下一个
-        [else if] (id_fight) == (id_1)
+        [else if] "(id_fight)" == "(id_1)"
             ($id_fight) = (id_bang)
             @print 2号下武器成功，准备下一个
             pty 2号下武器成功，准备下一个
-        [else if] (id_fight) == (id_bang)
+        [else if] "(id_fight)" == "(id_bang)"
             [break]
     [else]
         @print 下武器失败，准备重试

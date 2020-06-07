@@ -10,9 +10,9 @@
     ($bang) = {r张三丰}?
     ($id_1) = {r武当派长老}?
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
-    [if] (oid) == (id_1) || (oid) == (id_2)
+    [if] "(oid)" == "(id_1)" || "(oid)" == "(id_2)"
         @until (:hp (oid)) >= 15000000
-    [else if] (oid) == (bang)
+    [else if] "(oid)" == "(bang)"
         @until (:hp (oid)) >= 40000000
     [else]
         tm 未找到对应橙，无法昏迷
