@@ -1,0 +1,54 @@
+($go) = 'east','west','south','north'
+($qiku) = '老','病','死','爱别离','怨憎会','求不得'
+($num1) = 0
+[if] (:room) == 慈航静斋-山门(副本区域)
+    go south
+[else if] (:room) == 慈航静斋-帝踏峰(副本区域)
+    go south[2]
+@cmdDelay 200
+[while] (num1) < 6
+    @js ($ku) = [(qiku)][(num1)]
+    //@print (ku)
+    ($num2) = 0
+    [while] true
+        [if] (map) != null && (retry) == true
+            (map)
+            @await 500
+        @js ($fx) = [(go)][(num2)]
+        [if] (fx) == null
+            @print <ord>自动寻路失败，请回到山门重新运行！</ord>
+            [exit]
+        go (fx)
+        [if] (:room) == 慈航静斋-七重门(副本区域)
+            @js ($ku_now) = $(".room_desc").text().match("，是名([^%]+)苦。")[1]
+            //@print (ku) - (ku_now)
+            [if] (ku) != (ku_now)
+                [while] true
+                    go west
+                    [if] (:room) == 慈航静斋-七重门(副本区域)
+                        @js ($dir_gc) = $("text:contains('广场')").attr("dir")
+                    [if] (dir_gc) == south
+                        go south
+                    @await 200
+                    [if] (:room) == 慈航静斋-山门(副本区域)
+                        [break]
+                    [else if] (:room) == 慈航静斋-广场(副本区域)
+                        @print <hiy>已走出七重门！</hiy>
+                        //@print <hiy>路线：(map)</hiy>
+                        [exit]
+                go south
+                ($num2) = (num2) + 1
+                ($retry) = true
+            [else]
+                [if] (map) == null
+                    ($map) = go (fx)
+                [else]
+                    ($map) = (map);go (fx)
+                ($retry) = false
+                [break]
+        [else if] (:room) == 慈航静斋-广场(副本区域)
+            @print <hiy>已走出七重门！</hiy>
+            [exit]
+    ($num1) = (num1) + 1
+    //@print <hiy>路线：(map)</hiy>
+go south
