@@ -1,7 +1,6 @@
 // raid.flow
 // 四区白三三
-// 2020.05.09 - 重构精确练习，不再每练一级判断一次。增加补飞翼功能。
-// 2020.05.11 - 1.增加练完一个技能后的房间判断，解决受系统设置影响跑出练习房间的问题。2.修复@tip对同一信息重复生效的问题。
+// 2020.06.22 - 修复技能找不到时重复查找功能的判断bug
 @toolbar jh
 @toolbar skills
 //级别上限
@@ -53,7 +52,7 @@ stopstate
 ($endless)=0
 ($tip_done) = start
 [while](num) < (skill_num)
-    [if] (tip_done) != null || (tip_limit) != null || (tip_base) != null
+    [if] (tip_done) != null || (tip_limit) != null || (tip_base) != null || (endless) > 0
         ($tip_done) = null
         ($tip_limit) = null
         ($tip_base) = null
