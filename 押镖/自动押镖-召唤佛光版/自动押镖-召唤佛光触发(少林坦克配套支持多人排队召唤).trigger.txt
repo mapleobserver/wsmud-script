@@ -1,0 +1,74 @@
+// 配合流程【自动押镖（佛光版）】使用，该触发支持多人排队，坦克会按顺序对召唤人员上佛光buff
+// 触发类型：新聊天信息
+// 人名关键字：填写允许召唤坦克的角色名，不然所有人都可以召唤容易被干扰。
+// 关键字：召唤佛光
+// 四区白三三
+// 2020.05.26 - 优化判断
+[if] (content) != 召唤佛光
+    [exit]
+[if] (channel) == 世界
+    ($cl)=chat
+[else]
+    ($cl)=pty
+@cmdDelay 500
+[if] (:room) == 武当派-后山小院 || (:room) == 华山派-客厅 || (:room) == 丐帮-林间小屋
+    [if] (:combating)
+        (cl) 帮战中，暂停召唤
+        [exit]
+@js ($fbroom)='(:room)'.indexOf('副本区域')
+[if] (fbroom) != -1
+    (cl) 副本中，暂停召唤
+    [exit]
+[if] (FGqueue)==null
+    ($FGqueue)=0
+($FGqueue)=(FGqueue)+1
+($q)=(FGqueue)
+[if] (FGnow)==null
+    ($FGnow)=1
+@print (FGqueue),(FGnow)
+@until (FGnow)==(q)
+(cl) 请[(name)]到武庙门口等待
+team out
+@await 3000
+stopstate;$to 扬州城-武庙
+($l_force) = (:kf_nei)
+enable force yijinjing2
+@cd force.foguang
+go east
+@until {r(name)}? != null
+@await 1000
+[while] true
+    team add {r(name)}?
+    @tip 加入队伍|无法($team)你的请求
+    [if] (team) != null
+        (cl) [(name)]已在队伍中，请先退出队伍再召唤，告辞。
+    [else]
+        @perform force.foguang
+        @js ($l)=[(FGlist)].length
+        ($num)=0
+        [while] (num)<(l)
+            @js ($fgname)=[(FGlist)][(num)]
+            [if] (fgname)==(name)
+                @js ($fgnum)=[(FGcount)][(num)] + 1
+                [break]
+            [else]
+                ($num)=(num)+1
+        [if] (fgname)!=(name)
+            [if] (FGlist) == null
+                ($FGlist)=(name)
+                ($FGcount)=1
+            [else]
+                ($FGlist)=(FGlist),'(name)'
+                ($FGcount)=(FGcount),1
+            ($fgnum)=1
+        [else]
+            @js ($FGcount) = var c=[(FGcount)];c.splice((num),1,(fgnum));c.join()
+        @await 2000
+        (cl) (:hour):(:minute):(:second) - [(name)]第 (fgnum) 次召唤佛光已完成。坦克已累计被召唤 (FGnow) 次。
+    [break]
+team out
+enable force (l_force)
+$to 扬州城-武庙
+dazuo
+@await 5000
+($FGnow)=(FGnow)+1
