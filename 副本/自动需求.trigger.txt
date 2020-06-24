@@ -1,0 +1,6 @@
+// 新提示信息：尸体里拿出来
+// 组队副本中自动点需求按钮避免忘记
+// 四区白三三
+@js ($g) = "(text)".match("尸体里拿出来.*<.*>(.*)<")[1]
+@js $(".warn-dialog").children(":contains('(g)')").next().children(":first").click()
+@print 自动需求 => (g)
