@@ -25,7 +25,7 @@
 ($q)=(FGqueue)
 [if] (FGnow)==null
     ($FGnow)=1
-@print (FGqueue),(FGnow)
+@print 队伍总数(FGqueue),当前编号(FGnow)
 @until (FGnow)==(q)
 (cl) 请[(name)]到武庙门口等待
 team out
@@ -55,7 +55,7 @@ go east
                 ($num)=(num)+1
         [if] (fgname)!=(name)
             [if] (FGlist) == null
-                ($FGlist)=(name)
+                ($FGlist)='(name)'
                 ($FGcount)=1
             [else]
                 ($FGlist)=(FGlist),'(name)'
