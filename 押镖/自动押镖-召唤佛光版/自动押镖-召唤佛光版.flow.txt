@@ -109,16 +109,16 @@ stopstate
                         tm 遭遇九阳劫匪！
                 relive
                 relive
-                [if] (WDXuruo) == 打开
-                    [if] (:status xuruo) ==true
-                        jh fam 9 start
-                        go enter
-                        kill {r武道}
-                        @until (:combating) == false
-                    [while] (:room) != 扬州城-武庙
-                        $to 扬州城-武庙
-                    @renew
+                [if] (:status xuruo) ==true && (WDXuruo) == 打开
+                    jh fam 9 start
+                    go enter
+                    kill {r武道}
+                    @until (:combating) == false
+                [while] (:room) != 扬州城-武庙
+                    $to 扬州城-武庙
+                @renew
                 @cd
+                @until (:status xuruo) == false
                 [if] (jiuyang) != null && (EscortShenzhao) == 是
                     [if] (:kf_quan) != shenzhaojing
                         ($quanjiao) = (:kf_quan)
