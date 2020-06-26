@@ -10,11 +10,14 @@
 #select ($flowTDFB)=[偷渡副本]快进快出副本积累次数,导入|跳过,跳过
 #select ($flowYJSG)=[一键收割]收割、安排随从(可自动组队随从去花园),导入|跳过,跳过
 #select ($flowZDCBT)=[自动藏宝图]自动使用藏宝图挖宝,导入|跳过,跳过
+#select ($flowLXDM)=[练习代码生成器]自动生成练习代码并填入系统设置,导入|跳过,跳过
 #select ($flowYJXX)=[一键学习]自动学习门派技能,导入|跳过,跳过
 #select ($flowJQLX)=[精确练习]自动练习技能,导入|跳过,跳过
 #select ($flowMPJJ)=[门派进阶]门派武功自动进阶,导入|跳过,跳过
 #select ($flowYZDY)=[研制丹药]自动研制绿蓝黄紫橙丹药和突破丹,导入|跳过,跳过
 #input ($info2)=👇以下是触发👇,愉快游戏🎮
+#select ($triggerBX)=[续冰心]练习自动续冰心丹,导入|跳过,跳过
+#select ($triggerFY)=[续飞翼]练习自动续飞翼buff,导入|跳过,跳过
 #select ($triggerXWZZ)=[卸武自装]被下武器后自动重新装备,导入|跳过,跳过
 #select ($triggerCMS)=[帮战橙满伤]满伤停止出招自动脱战,导入|跳过,跳过
 #select ($triggerXYJS)=[襄阳叫杀]襄阳自动叫杀蒙古夫长蒙哥,导入|跳过,跳过
@@ -30,6 +33,7 @@
 ($f_tdfb)={"name":"偷渡副本","source":"http://wsmud-cdn.if404.com/副本/偷渡副本.flow.txt","finder":"根文件夹"}
 ($f_yjsg)={"name":"一键收割","source":"http://wsmud-cdn.if404.com/杂务/一键收割.flow.txt","finder":"杂务"}
 ($f_zdcbt)={"name":"自动藏宝图","source":"http://wsmud-cdn.if404.com/杂务/自动藏宝图.flow.txt","finder":"杂务"}
+($f_lxdm)={"name":"练习代码生成器","source":"http://wsmud-cdn.if404.com/提升/练习代码生成器.flow.txt","finder":"提升"}
 ($f_yjxx)={"name":"一键学习","source":"http://wsmud-cdn.if404.com/提升/一键学习.flow.txt","finder":"提升"}
 ($f_jqlx)={"name":"精确练习","source":"http://wsmud-cdn.if404.com/提升/精确练习.flow.txt","finder":"提升"}
 ($f_mpjj)={"name":"门派进阶","source":"http://wsmud-cdn.if404.com/提升/门派进阶.flow.txt","finder":"提升"}
@@ -62,6 +66,9 @@
 [if] (flowZDCBT)==导入
     @js WorkflowConfig.createFinder("杂务")
     ($f_list)=(f_list),(f_zdcbt)
+[if] (flowLXDM)==导入
+    @js WorkflowConfig.createFinder("提升")
+    ($f_list)=(f_list),(f_lxdm)
 [if] (flowYJXX)==导入
     @js WorkflowConfig.createFinder("提升")
     ($f_list)=(f_list),(f_yjxx)
@@ -83,6 +90,12 @@
         ($num)=(num)+1
 
 //触发
+[if] (triggerBX)==导入
+    @print 导入 <hic>续冰心</hic> 触发
+    @js Server.importTrigger("白三三@续冰心·触发@1593169670804")
+[if] (triggerFY)==导入
+    @print 导入 <hic>续飞翼</hic> 触发
+    @js Server.importTrigger("白三三@续飞翼·触发@1593169530864")
 [if] (triggerXWZZ)==导入
     @print 导入 <hic>卸武自装</hic> 触发
     @js Server.importTrigger("白三三@卸武自装·触发@1592962948619")
