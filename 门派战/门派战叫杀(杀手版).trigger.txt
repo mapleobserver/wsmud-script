@@ -42,7 +42,7 @@
         [while] (:room) != (mpplace)
             $to (mpplace)
             @await 500
-        [if] {r(mpname)}? != null
+        [if] {r(zmname)}? != null
             kill {r(zmname)}?
         @await 1000
         @until (:combating) == false && (:status faint) == false && (:status busy) == false && (:free) == true

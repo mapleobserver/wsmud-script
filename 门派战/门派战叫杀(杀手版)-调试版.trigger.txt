@@ -42,7 +42,7 @@
         [while] (:room) != (mpplace)
             $to (mpplace)
             @await 500
-        [if] {r(mpname)}? != null
+        [if] {r(zmname)}? != null
             kill {r(zmname)}?;tm (:hour):(:minute):(:second) - (zmname)：{r(zmname)}?
             @print (:hour):(:minute):(:second) - (zmname)：{r(zmname)}?
         @await 1000
