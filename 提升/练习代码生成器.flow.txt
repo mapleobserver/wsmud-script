@@ -1,7 +1,7 @@
 // raid.flow
 // 生成练习代码，自动填入系统设置中，代码长度最多200。
 // 四区白三三
-// 2020.06.26
+// 2020.06.27 - 修复bug
 @toolbar jh
 //获取境界
 [while] (jj) == null
@@ -20,6 +20,7 @@
 [while] true
   [if] (len) != null && (len) > 200
     ($len) = 0
+    ($list) = null
     #input ($info) = <ord>练习代码太长无法保存，请重新选择</ord>,👇👇👇
   //判断是否在副本中
   @js ($fb) = '(:room)'.indexOf('副本区域')
