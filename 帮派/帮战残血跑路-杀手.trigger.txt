@@ -15,7 +15,9 @@
 relive
 $to 扬州城-武庙
 @liaoshang
-$to 武当派-后山小院
+[while]  (:room) != 武当派-后山小院
+    $to 武当派-后山小院
+    @await 500
 $getall
 @until  (:status xuruo) == false
 ($id_1) = {r武当派长老}?
