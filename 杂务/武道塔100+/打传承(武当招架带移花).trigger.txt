@@ -6,4 +6,4 @@
 use {b玄灵丹y}?;$waitpfm sword.chan
 @until (:status dodge,(id_wd)) == false
 @perform force.cui,parry.yi,unarmed.liu,sword.lian,throwing.jiang
-//$startpfm
+$startpfm
