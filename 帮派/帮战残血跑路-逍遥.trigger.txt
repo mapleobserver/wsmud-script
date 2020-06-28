@@ -1,7 +1,18 @@
 // 触发气血低于一定百分比，人名关键词填自己的角色名
 // 四区白三三
 @cmdDelay 100
+($id_1) = {r武当派长老}?
+($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+($id_bang) = {r张三丰}?
+[if] (MPnpc) == null
+    [if] (id_2) != null
+        ($MPnpc) = (id_2)
+    [else if] (id_2) == null && (id_1) != null
+        ($MPnpc) = (id_1)
+    [else]
+        ($MPnpc) = (id_bang)
 @perform dodge.lingbo
+@until (:status dodge) == true || (:status faint,(MPnpc)) == true
 [while]  (:room) == 武当派-后山小院 && (:living) == true
     go south
     @await 500
