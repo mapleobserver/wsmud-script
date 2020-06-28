@@ -6,5 +6,6 @@
 @off 禅宗九阴缠
 @on 躺尸躲僧人
 go south;go south;go northwest
+jumpdown
 @cd
 enable sword tangshijianfa

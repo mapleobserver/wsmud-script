@@ -1,3 +1,4 @@
 // 触发：技能冷却
 // 技能id：sword.lian
+@until (:status force) == true
 @perform sword.lian
