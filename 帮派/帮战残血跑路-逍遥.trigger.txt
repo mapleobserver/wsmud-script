@@ -24,6 +24,7 @@ $to 扬州城-武庙
     $to 武当派-后山小院
     @await 500
 $getall
+@await 3000
 @until  (:status xuruo) == false
 ($id_1) = {r武当派长老}?
 ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
