@@ -1,7 +1,7 @@
 // raid.flow
 // 生成练习代码，自动填入系统设置中，代码长度最多200。
 // 四区白三三
-// 2020.06.27 - 修复bug
+// 2020.07.03 - 修复不加练习房间时存在的bug
 @toolbar jh
 //获取境界
 [while] (jj) == null
@@ -89,7 +89,10 @@
         @js ($map) = 'jh fam 0 start,go west,go west,go north,go enter,go west,'
       [else]
         @js ($map) = 'jh fam 0 start,go south,go south,go east,go east,go east,go north,'
-    @js ($list) = '(map)'+'(list)'
+    [else]
+      ($map) = null
+    [if] (map) != null
+      @js ($list) = '(map)'+'(list)'
     //添加练习结束后命令
     [if] (lx_after) != 不加
       [(lx_after)==闭关]($after)=xiulian
