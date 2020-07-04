@@ -7,42 +7,43 @@
 <-stopSSAuto
 stopstate
 <---
-[if] (:hpPer) < 0.9
+[if] (:hpPer) < 0.5
     @liaoshang
 --->
 cr huashan/yihua/shandao 2 0
-go south[5]
-go south[5]
-go south[5]
-@wait 10000
-//@until {r花月奴}? == null
+[while] (:room) != 移花宫-宫门(副本区域)
+    go south
+    @await 200
+//@wait 10000
+@until {r花月奴的尸体}? != null
 go south;go south
-//@until {r移花宫女弟子}? == null
-@wait 10000
+@until {r移花宫女弟子的尸体}? != null
+//@wait 10000
 go south
-//@until {r移花宫女弟子}? == null
-@wait 10000
+@until {r移花宫女弟子的尸体}? != null
+//@wait 10000
 go southeast
 @until {r涟星的尸体}? != null
-select {r涟星的尸体}?
-get all from {r涟星的尸体}?
+$getall
 @await 500
 [if] {r邀月}? != null
     @until {r邀月的尸体}? != null
-    select {r邀月的尸体}?
-    get all from {r邀月的尸体}?
+    $getall
     @await 500
 @until {r(FBDHPlayer)}? == null
 @wait 5000
-go southwest
+go northwest;go southwest
+[if] {r邀月} != null
+    @until {r邀月的尸体}? != null
+    $getall
+go southeast
 @wait 1000
 @until {r(FBDHPlayer)}? != null
 @until {r(FBDHPlayer)}? == null
 @wait 1000
 go down;go west
 @until {r花无缺的尸体}? != null
-select {r花无缺的尸体}?
-get all from {r花无缺的尸体}?
+$getall
 @await 500
 look xia;open xia
 @await 1000
