@@ -1,6 +1,7 @@
 //raid.flow
 //整合了之前的几个相关流程，一键收割、安排随从工作
 //收割过程中包满了会自动清包再继续，不过有概率卡住。
+//2020.07.08 - 给随从鱼饵会先取出随从身上的，再按从橙到绿的顺序给随从
 //四区白三三
 [if] (SC_1) == null
     ($SC_1) = 王语嫣
@@ -168,13 +169,37 @@ team out
         ($w) = (SCWork_2)
     [else]
         ($w) = (SCWork_3)
-    dc {r(s)}? stopstate;select {r(s)}?;trade {r(s)}?;
+    dc {r(s)}? stopstate;pack {r(s)}?;
+    @dialog
+    ($cmd) = null
+    [if] {d鱼饵o}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵o#}? {d鱼饵o}?
+    [if] {d鱼饵p}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵p#}? {d鱼饵p}?
+    [if] {d鱼饵y}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵y#}? {d鱼饵y}?
+    [if] {d鱼饵b}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵b#}? {d鱼饵b}?
+    [if] {d鱼饵g}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵g#}? {d鱼饵g}?
+    [if] (cmd) != null
+        (cmd)
+    @await 2000
+    dc {r(s)}? stopstate;trade {r(s)}?;
     @await 500
-    give {r(s)}? {b鱼饵g#}? {b鱼饵g}?
-    give {r(s)}? {b鱼饵b#}? {b鱼饵b}?
-    give {r(s)}? {b鱼饵y#}? {b鱼饵y}?
-    give {r(s)}? {b鱼饵p#}? {b鱼饵p}?
-    give {r(s)}? {b鱼饵o#}? {b鱼饵o}?
+    ($cmd) = null
+    [if] {b鱼饵o}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵o#}? {b鱼饵o}?
+    [if] {b鱼饵p}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵p#}? {b鱼饵p}?
+    [if] {b鱼饵y}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵y#}? {b鱼饵y}?
+    [if] {b鱼饵b}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵b#}? {b鱼饵b}?
+    [if] {b鱼饵g}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵g#}? {b鱼饵g}?
+    [if] (cmd) != null
+        (cmd)
     [if] (w) == 采药
         dc {r(s)} cai
     [else]
