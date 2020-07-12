@@ -66,10 +66,10 @@ go out;look bi
     [else]
         [if] (Skill_before) != null
             $waitpfm (Skill_before)
-    @tip 帮他一把
+    //@tip 帮他一把
+    @await 500
     helpshi {r石破天}?
     @tip 一道劲气破空而去
-    @tip 石破天的痛色渐去，全身内力汇流成河
     @tip 你帮助石破天领悟太玄功
 cr;cr over
 $zdwk
