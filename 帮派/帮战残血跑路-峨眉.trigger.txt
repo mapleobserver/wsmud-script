@@ -4,7 +4,7 @@
 @cmdDelay 100
 ($id_1) = {r武当派长老}?
 ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
-[if] (id_1) != null
+[if] "(id_1)" != "null"
     ($id_pl) = (id_1)
 [else]
     ($id_pl) = {r张三丰}?
@@ -27,8 +27,8 @@ $getall
 ($id_1) = {r武当派长老}?
 ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
 ($id_bang) = {r张三丰}?
-[if] (MPnpc) != null
-    [if] (MPnpc) == (id_2) || (MPnpc) == (id_1)
+[if] "(MPnpc)" != "null"
+    [if] "(MPnpc)" == "(id_2)" || "(MPnpc)" == "(id_1)"
         kill (MPnpc);kill (MPnpc)
     [else]
         kill (id_bang);kill (id_bang)

@@ -4,10 +4,10 @@
 ($id_1) = {r武当派长老}?
 ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
 ($id_bang) = {r张三丰}?
-[if] (MPnpc) == null
-    [if] (id_2) != null
+[if] "(MPnpc)" == "null"
+    [if] "(id_2)" != "null"
         ($MPnpc) = (id_2)
-    [else if] (id_2) == null && (id_1) != null
+    [else if] "(id_2)" == "null" && "(id_1)" != "null"
         ($MPnpc) = (id_1)
     [else]
         ($MPnpc) = (id_bang)
@@ -26,11 +26,12 @@ $to 扬州城-武庙
 $getall
 @await 3000
 @until  (:status xuruo) == false
+//@cd dodge.lingbo
 ($id_1) = {r武当派长老}?
 ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
 ($id_bang) = {r张三丰}?
-[if] (MPnpc) != null
-    [if] (MPnpc) == (id_2) || (MPnpc) == (id_1)
+[if] "(MPnpc)" != "null"
+    [if] "(MPnpc)" == "(id_2)" || "(MPnpc)" == "(id_1)"
         kill (MPnpc);kill (MPnpc)
     [else]
         kill (id_bang);kill (id_bang)
