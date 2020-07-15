@@ -64,6 +64,7 @@ team out
             stopstate;jh fam 0 start;go west;go west;go north;go enter;go northeast
             select {r(s)}?;pack {r(s)}?
             @dialog
+            (cmd)
     --->
     [if] {d鲢鱼}? != null
         dc {r(s)}? give (:id) {d鲢鱼#} {d鲢鱼}
