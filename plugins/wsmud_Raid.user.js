@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.19
+// @version         2.4.20
 // @date            23/12/2018
-// @modified        05/06/2020
+// @modified        15/07/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1584,7 +1584,7 @@
                         __ConfigPanelInits.forEach(init => { init(); });
                         for (const node of layero[0].children) {
                             if (node.className != "layui-layer-content") continue;
-                            node.setAttribute("style", "max-height: 370px");
+                            node.setAttribute("style", "max-height: 370px;color: rgb(0, 128, 0);");
                         }
                     },
                     end: function() {
