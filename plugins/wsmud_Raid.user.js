@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.20
+// @version         2.4.21
 // @date            23/12/2018
-// @modified        15/07/2020
+// @modified        19/07/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4045,6 +4045,7 @@ look men;open men
     go east
     ok {丫鬟}
     go west;go south;go south
+    ok {丫鬟}?
     go north;go north;go west
     select {财主女儿 崔莺莺};ask {财主女儿 崔莺莺} about 东厢
 [else]
@@ -4071,6 +4072,7 @@ look men;open men
     go east
     ok {丫鬟}
     go west;go south;go south
+    ok {丫鬟}?
     go north;go north;go west
     select {财主女儿 崔莺莺};ask {财主女儿 崔莺莺} about 东厢
 [else]
