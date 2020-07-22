@@ -3,8 +3,10 @@
 // 武馆需要先交学费，其他门派自动拜师
 // 基于@andyfos的版本修改
 // 四区白三三
+// 2020.07.22 - 1.优化师门信息获取。2.修复个别bug。
 @toolbar jh
-@toolbar score
+@js $(`span[command=score]`).click()
+@js $(`span[for=0]`).click()
 @js ($MyMP) = $(`span[data-prop=family]`).text()
 @js ($MySF) = $(`span[data-prop=master]`).text()
 [if] (MyMP) == 无门无派
@@ -106,8 +108,8 @@ $to (Xxdd)
 @wait 300
 select {r(MySF)}?
 @wait 300
-@liaoshang
-@dazuo
+//@liaoshang
+//@dazuo
 
 @toolbar jh
 @toolbar skills
@@ -380,7 +382,7 @@ select {r(MySF)}?
                 [if] (beginner) == true
                     stopstate
                     enable sword huashanjianfa
-        [if] (MySF) == 封不平
+        [if] (MySF) == 封不平 || (MySF) == 风清扬
             ($Lastcmd) = kuangfengkuaijian
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
@@ -390,7 +392,7 @@ select {r(MySF)}?
             [if] (beginner) == true
                 stopstate
                 enable sword (Lastcmd);enable dodge (Lastcmd)
-        [if] (MySF) == 岳不群
+        [if] (MySF) == 岳不群 || (MySF) == 风清扬
             ($Lastcmd) = zixiashengong
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
