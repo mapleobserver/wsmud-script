@@ -794,7 +794,9 @@ select {r(MySF)}?
                 stopstate
                 enable throwing (Lastcmd)
 $zdwk
+@await 1000
 stopstate
+$to 住房-练功房
 dazuo
 @recoverSSAuto
 [if] (ts) != null
