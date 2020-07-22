@@ -1,0 +1,9 @@
+//buff变化：移除
+//buffid:fy
+//对象：自己
+//要先手动开一次飞翼
+@cmdDelay 200
+[if] (:state) == 练习
+    stopstate
+    use (:eq0)
+    dazuo
