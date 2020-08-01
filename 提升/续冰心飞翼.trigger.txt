@@ -10,6 +10,8 @@
     ($cmd) = dazuo
 [if] (:state) == 领悟 || (Renew_buff) == true
     ($cmd) = lingwu continue
+[if] (cmd) == null
+    [exit]
 ($Renew_buff) = true
 [if] (sid) == food && {b冰心丹}? != null
     ($item) = {b冰心丹}
