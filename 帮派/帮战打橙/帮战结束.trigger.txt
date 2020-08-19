@@ -4,7 +4,13 @@
 // 关键字：获得了最终胜利|全部成员撤退
 // 目前只暂定了武当、华山和丐帮的帮战，打其他门派的话可以自己添加房间检测条件。
 [if] (:room) == 武当派-后山小院 || (:room) == 华山派-客厅 || (:room) == 丐帮-林间小屋
-    relive;relive
+    [if] (:living)==false
+        ($place)=(:room)
+        relive;relive
+        @await 1000
+        $to (place)
+        @await 2000
+        $getall
     stopstate
     ($MPnpc) = null
     @wait 5000
