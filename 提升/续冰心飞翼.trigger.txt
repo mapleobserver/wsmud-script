@@ -7,9 +7,9 @@
 ($cmd) = null
 ($item) = null
 [if] (:state) == 练习 || (Renew_buff) == true
-    ($cmd) = dazuo
+    [(cmd)==null]($cmd) = dazuo
 [if] (:state) == 领悟 || (Renew_buff) == true
-    ($cmd) = lingwu continue
+    [(cmd)==null]($cmd) = lingwu continue
 [if] (cmd) == null
     [exit]
 ($Renew_buff) = true
