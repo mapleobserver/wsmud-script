@@ -299,7 +299,7 @@ select {r(MySF)}?
                 dazuo
                 @tip 已经没有办法再增加内力
                 stopstate
-        [if] (MySF) == 玄难
+        [if] (MySF) == 澄净 || (MySF) == 玄难
             ($Lastcmd) = yijinjing
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
