@@ -92,19 +92,19 @@
 //触发
 [if] (triggerBX)==导入
     @print 导入 <hic>续冰心</hic> 触发
-    @js Server.importTrigger("白三三@续冰心·触发@1593169670804")
+    @js Server.importTrigger("白三三·触发@5f965268d660e9ae81f7694362329498")
 [if] (triggerFY)==导入
     @print 导入 <hic>续飞翼</hic> 触发
-    @js Server.importTrigger("白三三@续飞翼·触发@1593169530864")
+    @js Server.importTrigger("白三三·触发@658be20bc57ce107f47d801069be96c5")
 [if] (triggerXWZZ)==导入
     @print 导入 <hic>卸武自装</hic> 触发
-    @js Server.importTrigger("白三三@卸武自装·触发@1592962948619")
+    @js Server.importTrigger("白三三·触发@c2b92a1bdeb171cd0577ee3f5dcce26e")
 [if] (triggerCMS)==导入
     @print 导入 <hic>帮战橙满伤</hic> 触发
-    @js Server.importTrigger("白三三@橙满伤·触发@1591358391505")
+    @js Server.importTrigger("白三三·触发@ac447c50e42c38d4553977f598c83350")
 [if] (triggerXYJS)==导入
     @print 导入 <hic>襄阳叫杀</hic> 触发
-    @js Server.importTrigger("白三三@襄阳叫杀·触发@1587006710095")
+    @js Server.importTrigger("白三三·触发@0b2616c7c2d44a84a0c77e02789451af")
 [if] (triggerXYMJG)==导入
     @print 导入 <hic>襄阳满军功</hic> 触发
-    @js Server.importTrigger("白三三@襄阳满·触发@1587006992747")
+    @js Server.importTrigger("白三三·触发@68476d5f2bf4abe1f26d508502cf4137")
