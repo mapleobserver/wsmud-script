@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.21
+// @version         2.4.22
 // @date            23/12/2018
-// @modified        19/07/2020
+// @modified        21/08/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4261,7 +4261,7 @@ look men;open men
             });
         },
 
-        _address: "wsmud.bobcn.me:8080/wsmud",
+        _address: "wsmud.ii74.com/S/",
         _async(uri, params, success, fail) {
             this._get(true, uri, params, success, fail);
         },
@@ -4271,7 +4271,7 @@ look men;open men
         _get(async, uri, params, success, fail) {
             $.ajax({
                 type: "post",
-                url: `http://${Server._address}/${uri}`,
+                url: `https://${Server._address}/${uri}`,
                 data: params,
                 async: async,
                 success: function(data) {
@@ -5366,10 +5366,11 @@ look men;open men
             UI._shareData = value;
             let source = `
             [if] (__FormUserName) == null
-                (__FormUserName) = 论坛账号
-            #input ($__FormUserName)=论坛账号,(__FormUserName)
-            #input ($password)=论坛密码,
+                (__FormUserName) = (:name)
+            #input ($__FormUserName)=当前角色名,(:name)
             #config
+            ($__FormUserName)=(:name)
+            ($password)=233
             @js Server.shareFlowTrigger("(__FormUserName)", "(password)", "${type}", UI._shareData);
             `
             const p = new Performer(`分享${type}`, source);
