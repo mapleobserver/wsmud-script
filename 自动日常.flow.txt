@@ -140,6 +140,7 @@ use {养精丹g}[5]
     [else]
         use {b潜灵果g}[10]
 //追捕
+@await 2000
 @toolbar jh
 @toolbar tasks
 @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
