@@ -1,0 +1,30 @@
+[if] (:room) == 武当派-后山小院 || (:room) == 华山派-客厅 || (:room) == 丐帮-林间小屋
+    [if] (:living)==false
+        ($place)=(:room)
+        relive;relive
+        @await 1000
+        $to (place)
+        @await 1000
+        $getall
+    @off 自爆
+    @off 红满伤
+    @on 血刀九阴
+    @off 帮战起手
+    @await 5000
+    $startpfm
+    stopstate
+    @renew
+    @tidyBag
+    @await 2000
+    $to 住房-练功房
+    dazuo
+    @await 11000
+    [if] (:state)==练习
+        stopstate
+        $usezml 悟装
+        @await 4000
+        [(:status food) == false && {b冰心丹}? != null]use {b冰心丹}?
+        [(:status fy) == false]use (:eq0)
+        dazuo
+    [else]
+        $zdwk
