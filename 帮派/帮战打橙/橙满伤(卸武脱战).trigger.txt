@@ -28,6 +28,8 @@
             go down
             @await 500
         @until (:combating) == false
+        go up
+        @await 500
         [while] (:room) != 丐帮-林间小屋
             $to 丐帮-林间小屋
             @await 500
@@ -55,6 +57,8 @@
             go south
             @await 500
         @until (:combating) == false
+        go north
+        @await 500
         [while] (:room) != 武当派-后山小院
             $to 武当派-后山小院
             @await 500
@@ -82,6 +86,8 @@
             go south
             @await 500
         @until (:combating) == false
+        go north
+        @await 500
         [while] (:room) != 华山派-客厅
             $to 华山派-客厅
             @await 500
