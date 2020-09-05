@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.7
+// @version     0.1.1.8
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
-// @description 基于 wsmud_funny_mobile 修改
+// @description 基于 wsmud_funny 修改
 // @run-at      document-start
 // @require     https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js
 // @grant       unsafeWindow
@@ -163,7 +163,7 @@
             funny.data_login += 1;
             $(".content-message pre").append(`${data}\n`);
             if (funny.data_login === 1) {
-                $(".content-message pre").append(`wsmud_mo_simple ${funny.version} 祝您挖矿愉快！\n`);
+                $(".content-message pre").append(`wsmud_mo_simple ${funny.version}(基于funny修改)\n`);
                 getScore();
             }
             async function getScore() {
@@ -185,11 +185,17 @@
                 await fn.sleep(1000);
                 $(".dialog-close").click();
             };
-        } else if (/数息后只留下一堆玄色石头/.test(data)) {
-            if (data.includes("你")) {
-                let a = data.match(/只见(.*)发出一阵白光/);
-                $(".content-message pre").append(`你分解了 => ${a[1]}\n`)
-            } else {}
+        } else if (/只留下一堆玄色石头/.test(data) && data.includes("你")) {
+            let a = data.match(/只见(.*)发出一阵白光/);
+            $(".content-message pre").append(`你分解了 => ${a[1]}\n`)
+        } else if (/你从武道秘籍中领悟到了/.test(message.text)) {
+            //fn.beep();//武道书读完的提示音
+        } else if (/你身上东西太多了|你拿不下那么多东西。/.test(message.text)) {
+            $(".content-message pre").append(`<hir>友情提示：请检查是否背包已满！</hir>`);
+            fn.send(`tm 友情提示：请检查是否背包已满！`);
+            //fn.beep();
+        } else if (/你身上没有挖矿工具。/.test(message.text)) {
+            // fn.send([]);//小号没有铁镐的情况
         } else if (/你的最大内力增加了/.test(data)) {
             funny.onmessage_fn.apply(this, arguments);
             let a = data.match(/你的最大内力增加了(.*)点。/);
@@ -222,10 +228,10 @@
                         wd2 = b[4];
                         /可以重置/.test(b[2]) ? wd3 = "<hig>可以重置</hig>" : wd3 = "已经重置";
                         wd = wd1+"/"+wd2+" "+wd3
-                    }else {wd = "已设置只打塔主"}
+                    }else {wd = "只打塔主"}
                     if (c) {
                         /已经/.test(c[1]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
-                    }else {qa = "武神无需请安"}
+                    }else {qa = "无需请安"}
                 } else if (item.id === "sm") {
                     let a = item.desc.match(/目前完成(.*)\/20个，共连续完成(.*)个。/);
                     (parseInt(a[1]) < 20) ? sm1 = `<hig>${a[1]}</hig>` : sm1 = a[1];
@@ -301,7 +307,7 @@
                     $(".remove_lx").remove();
                     // 练习每一跳的消耗公式＝（先天悟性＋后天悟性）×（1＋练习效率%－先天悟性%）
                     $(".content-message pre").append(`练习${name}消耗了${parseInt(qianneng / time / 12)}点潜能。\n`);
-                    $(".content-message pre").append(`<span class="remove_lx">角色悟性: ${xtwx}＋${htwx}\n练习效率: ${lxxl}%\n等级上限: ${djsx}级\n需要潜能: ${qianneng}\n需要时间: ${timeString}\n</span>`);
+                    $(".content-message pre").append(`<span class="remove_lx">悟性: ${xtwx}＋${htwx} 效率: ${lxxl}%\n等级上限: ${djsx}级\n需要潜能: ${qianneng}\n需要时间: ${timeString}\n</span>`);
                     fn.scroll(".content-message");
                 // } else if (funny.state.search(/读书|学习/) != -1) {
                 //     // 学习每一跳的消耗公式＝（先天悟性＋后天悟性）×（1＋学习效率%－先天悟性%）×3
@@ -319,11 +325,14 @@
     listener.addListener("dialog", function(data) {
         if (data.dialog === "pack") {
 
-            if (data.can_use == 1 && /养精丹|朱果|潜灵果/.test(data.name)) {
-                let count = data.count > 10 ? 10 : data.count;
-                let cmd = [];
+            if (data.can_use == 1 && /养精丹|朱果|潜灵果|背包扩充石|小箱子|师门补给包|随从礼包/.test(data.name)) {
+                let cmd = ["stopstate"];
+                let count = data.count;
+                let zl = "use";
+                if (/<hig>养精丹<\/hig>/.test(data.name)) count = count > 10 ? 10 : count;
+                if (/小箱子|师门补给包|随从礼包/.test(data.name)) zl = "open";
                 for (let i = 0; i < count; i ++) {
-                    cmd.push(`use ${data.id}`);
+                    cmd.push(zl + " " + data.id);
                     cmd.push(500);
                 }
                 $(".content-message pre").append(
@@ -335,14 +344,14 @@
                 );
             }
 
-            if (data.name) {
-                if (/<hig>大宋(.*)<\/hig>|<hig>蒙古(.*)<\/hig>|<hig>笠子帽<\/hig>|<hic>大宋(.*)<\/hic>|<hic>蒙古(.*)<\/hic>|<hic>笠子帽<\/hic>|<hiy>大宋(.*)<\/hiy>|<hiy>蒙古(.*)<\/hiy>|<hiy>笠子帽<\/hiy>/.test(data.name)) {
-                    fn.send(`fenjie ${data.id}`);
-                }
-            }
+            // if (data.name) {
+            //     if (/<hig>大宋(.*)<\/hig>|<hig>蒙古(.*)<\/hig>|<hig>笠子帽<\/hig>|<hic>大宋(.*)<\/hic>|<hic>蒙古(.*)<\/hic>|<hic>笠子帽<\/hic>|<hiy>大宋(.*)<\/hiy>|<hiy>蒙古(.*)<\/hiy>|<hiy>笠子帽<\/hiy>/.test(data.name)) {
+            //         fn.send(`fenjie ${data.id}`);
+            //     }
+            // }
 
             if (data.jldesc) {
-                let jl = data.jldesc.match(/<hio>(.*)<\/hio><br\/>精炼<(hig|hic|hiy|hiz|ord)>＋(.*)\s</);
+                let jl = data.jldesc.match(/<hio>(.*)<\/hio><br\/>精炼<(hig|hic|hiy|hiz|ord)>＋(.*)\s</i);
                 if (jl) {
                     let n = "<hio>" + jl[1] + "</hio>";
                     let j = parseInt(jl[3]);
@@ -365,20 +374,58 @@
         }
     });
 
-    listener.addListener("room", function(message, data) {
-        if (/cmd cmd=|span cmd=/.test(data.desc)) {
-            data.desc = data.desc.replace("<hig>椅子</hig>", "椅子");
-            data.desc = data.desc.replace(/span/g, "cmd");//房间描述中<span>标签的命令改为<cmd>
-            data.desc = data.desc.replace(/"/g, "'"); // "" => ''
-            data.desc = data.desc.replace(/\((.*?)\)/g, "");//去除括号和里面的英文单词
-            let a = data.desc.match(/<cmd cmd='([^']+)'>([^<]+)<\/cmd>/g);
-            a.forEach(desc => data.desc = `<hic>${desc}</hic>　${data.desc}`);
-            let mask = fn.deepCopy(message);
-            mask.data = JSON.stringify(data);
-            funny.onmessage_fn.apply(this, [mask]);
-        } else {
-            funny.onmessage_fn.apply(this, [message]);
+    let room = new Proxy({ str: "a-b", name1: "a", name2: "b", path: "a/b/c", items: [] }, {
+        set: function (room, key, value) {
+          room[key] = value;
+          return true;
+        },
+        get: function (room, key) {
+          return room[key];
         }
+    });
+    listener.addListener("room", function(message, data) {
+        room.str = data.name.replace("(副本区域)", "");
+        let x = room.str.match(/(.*)-(.*)/);
+        room.name1 = x[1];
+        room.name2 = x[2];
+        room.path = data.path;
+        room.desc = data.desc;
+        if (room.desc.length > 20) {
+            let desc0 = room.desc.replace(/<([^<]+)>/g, "");
+            let desc1 = desc0.substr(0, 20);
+            let desc2 = desc0.substr(20);
+            data.desc = `${desc1}<span id="show"> <hic>»»»</hic></span><span id="more" style="display:none">${desc2}</span><span id="hide" style="display:none"> <hic>«««</hic></span>`;
+        }
+        if (room.desc.includes("cmd")) {
+            room.desc = room.desc.replace("<hig>椅子</hig>", "椅子");
+            room.desc = room.desc.replace("<CMD cmd='look men'>门(men)<CMD>", "<cmd cmd='look men'>门</cmd>");//兵营副本的门
+            room.desc = room.desc.replace(/span/g, "cmd");//房间描述中<span>标签的命令改为<cmd>
+            room.desc = room.desc.replace(/"/g, "'"); // "" => ''
+            room.desc = room.desc.replace(/\((.*?)\)/g, "");//去除括号和里面的英文单词
+            console.log(room.desc);
+            // let c = `◆`;
+            let cmds = room.desc.match(/<cmd cmd='([^']+)'>([^<]+)<\/cmd>/g);
+            console.log(cmds);
+            cmds.forEach(cmd => {
+                let x = cmd.match(/<cmd cmd='(.*)'>(.*)<\/cmd>/);
+                data.commands.unshift({ cmd: x[1], name: `<hic>${x[2]}</hic>` });
+            });
+            //room.desc = room.desc.replace(/<([^<]+)>/g, "");
+            cmds.forEach(desc => data.desc = `<hic>${desc}</hic>　${data.desc}`);
+        }
+        let mask = fn.deepCopy(message);
+        mask.data = JSON.stringify(data);
+        funny.onmessage_fn.apply(this, [mask]);
+        $("#show").click(() => {
+            $("#more").show();
+            $("#show").hide();
+            $("#hide").show();
+        });
+        $("#hide").click(() => {
+            $("#more").hide();
+            $("#show").show();
+            $("#hide").hide();
+        });
     });
     listener.addListener("state", function(message, data) {
         if (data.desc && data.desc.length > 0) {
