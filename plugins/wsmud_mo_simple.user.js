@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.8
+// @version     0.1.1.9
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -351,7 +351,7 @@
             // }
 
             if (data.jldesc) {
-                let jl = data.jldesc.match(/<hio>(.*)<\/hio><br\/>精炼<(hig|hic|hiy|hiz|ord)>＋(.*)\s</i);
+                let jl = data.jldesc.match(/<hio>(.*)<\/hio><br\/>精炼<(hig|hic|hiy|hiz|hio|ord)>＋(.*)\s</i);
                 if (jl) {
                     let n = "<hio>" + jl[1] + "</hio>";
                     let j = parseInt(jl[3]);
