@@ -34,7 +34,7 @@
             $to 丐帮-林间小屋
             @await 500
         $startpfm
-        eq (weapon)
+        @eq (weapon)
 [else if] (:room) == 武当派-后山小院 && (:combating) == true
     ($id_1) = {r武当派长老}?
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
@@ -63,35 +63,6 @@
             $to 武当派-后山小院
             @await 500
         $startpfm
-        eq (weapon)
-[else if] (:room) == 华山派-客厅 && (:combating) == true
-    ($id_1) = {r华山派长老}?
-    ($id_2) = {r华山派长老}?# obj.id == "(id_1)" #
-    ($id_0) = {r岳不群}?
-    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
-        ($MPnpc) = (id_1)
-        kill (id_1);kill (id_1)
-        pty 占比(percent)，切换目标：第一个橙
-    [else if] "(id)" == "(id_1)"
-        ($MPnpc) = (id_0)
-        kill (id_0);kill (id_0)
-        pty 占比(percent)，切换目标：岳不群
-    [else if] "(id)" == "(id_0)"
-        ($MPnpc) = null
-        $stoppfm
-        pty 岳不群已满，我先撤
-        [while] (:eq0) != null
-            uneq (weapon)
-        [while] (:room) == 华山派-客厅
-            go south
-            @await 500
-        @until (:combating) == false
-        go north
-        @await 500
-        [while] (:room) != 华山派-客厅
-            $to 华山派-客厅
-            @await 500
-        $startpfm
-        eq (weapon)
+        @eq (weapon)
 [else]
     $startpfm
