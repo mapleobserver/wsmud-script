@@ -1,7 +1,7 @@
 //raid.flow
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-//2020.05.20 - 1.增加武道塔选项，可选择正常肝塔或者跳过只打塔主；2.优化师门任务状态判断
+//2020.09.21 - 1.优化吃养精丹等物品的过程。2.修复自动副本之前执行命令的错误判断。
 
 // 师门任务
 @toolbar jh
@@ -124,23 +124,26 @@ list {r平一指}
 buy (count) {d养精丹g} from {r平一指}
 use {养精丹g}[5]
 use {养精丹g}[5]
+@await 2000
 [if] {b养精丹b}? != null
     [if] {b养精丹b#} <= 10
         use {b养精丹b}[{b养精丹b#}]
     [else]
         use {b养精丹b}[10]
+    @await 2000
 [if] {b朱果g}? != null
     [if] {b朱果g#} <= 10
         use {b朱果g}[{b朱果g#}]
     [else]
         use {b朱果g}[10]
+    @await 2000
 [if] {b潜灵果g}? != null
     [if] {b潜灵果g#} <= 10
         use {b潜灵果g}[{b潜灵果g#}]
     [else]
         use {b潜灵果g}[10]
+    @await 2000
 //追捕
-@await 2000
 @toolbar jh
 @toolbar tasks
 @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
@@ -192,10 +195,6 @@ use {养精丹g}[5]
         @print <hiy>当日副本次数已完成(fb_com)次。</hiy>
     [else]
         ($fb_num) = 20 - (fb_com)
-        @print 等待技能冷却
-        @cd
-        (FBBefore)
-        @wait 5000
         [if] (FBName) == 财主家(简单)
             ($fbcr) = cr yz/cuifu/caizhu 0
         [else if] (FBName) == 财主家(困难)
@@ -312,8 +311,7 @@ use {养精丹g}[5]
         [else if] (FBWay) == 自动
             //脚本自动模式
             stopstate
-            @renew
-            (WudaoBefore)
+            (FBBefore)
             @wait 5000
             [if] (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
                 ($tdnum) = 0
