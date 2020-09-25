@@ -1,7 +1,15 @@
 //raid.flow
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-//2020.09.21 - 1.优化吃养精丹等物品的过程。2.修复自动副本之前执行命令的错误判断。
+//2020.09.26 - 1.新增开始流程时的状态检测。2.优化武道塔起始判断。
+//检测状态
+@js ($fbroom)='(:room)'.indexOf('副本区域')
+[if] (fbroom) != -1 || (:state)==推演 || (:state)==领悟
+    ($alarm) = 正在(:state)，停止自动日常！
+    [(fbroom) != -1]($alarm) = 正在副本中，停止自动日常！
+    @js WG.SendCmd("tm (alarm)")
+    @print <ord>(alarm)</ord>
+    [exit]
 
 // 师门任务
 @toolbar jh
@@ -167,7 +175,7 @@ use {养精丹g}[5]
     @toolbar jh
     @toolbar tasks
     @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
-    [if] (reset) == 已 && (currentN) == (finalN)
+    [if] (reset) == 已 && (currentN) == (finalN) && (finalN) != 0
         @print <hiy>当日武道塔已完成。</hiy>
     [else]
         stopstate
