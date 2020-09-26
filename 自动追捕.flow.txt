@@ -66,7 +66,10 @@ stopstate
           ask2 {程药发}
       [break]
     [if] (DieToReset) == 已关闭
-      ($tb) = (:hour)*60+(:minute)-(start_h)*60-(start_m)
+      [if] (:hour) == 0 && (start_h) != 0
+        ($tb) = 24*60+(:minute)-(start_h)*60-(start_m)
+      [else]
+        ($tb) = (:hour)*60+(:minute)-(start_h)*60-(start_m)
       @print 已耗时(tb)分钟
       [if] (tb) >= 10 || (tb) < 0
         [break]
