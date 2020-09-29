@@ -1,5 +1,6 @@
 // raid.flow
 // 基于 auto_zhuibu v2.1，四区白三三修改
+// 2020.09.30 - 优化判断
 [if] (ZBWaitCD) == null
   ($ZBWaitCD) = 31
 [if] (ZBMax) == null
@@ -42,7 +43,8 @@ stopstate
     ask1 {程药发}
     @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯
     [if] (zbing) != null
-      @await 500
+      @await 1000
+      //@toolbar jh
       @toolbar tasks
       @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
       ($zbing) = null
@@ -70,11 +72,11 @@ stopstate
         ($tb) = 24*60+(:minute)-(start_h)*60-(start_m)
       [else]
         ($tb) = (:hour)*60+(:minute)-(start_h)*60-(start_m)
-      @print 已耗时(tb)分钟
+      @print <hiy>已耗时(tb)分钟</hiy>
       [if] (tb) >= 10 || (tb) < 0
         [break]
     --->
-    @cmdDelay 300
+    @cmdDelay 1000
     $to (dir1)-(dir2)
     [if] (dir1) == 武当派
       [if](dir2) == 林间小径
