@@ -14,18 +14,18 @@
 [if] (thisroom) != -1
     ($lianxi_map) = 原地不动
     ($LXAfter) = stopstate;$tts 练习结束，请手动进行后续操作;$wait 5000;$music
-[if] (chiyao) == null
-    ($chiyao) = 否
-[if] (feiyi) == null
-    ($feiyi) = 否
+[if] (Chiyao) == null
+    ($Chiyao) = 否
+[if] (Feiyi) == null
+    ($Feiyi) = 否
 [if] (LXAfter) == null
     ($LXAfter) = $zdwk
 #input ($Skill)=技能列表(请用英文单引号和逗号隔开要练习的技能),(Skill)
 #input ($target_level)=目标技能等级,(level)
 #input ($LXBefore)=练习前执行命令(用英文;隔开),(LXBefore)
 #select ($lianxi_map)=练习地点,住房-练功房|帮会-练功房|原地不动,(lianxi_map)
-#select ($chiyao)=是否吃冰心丹,是|否,(chiyao)
-#select ($feiyi)=是否补飞翼(请事先装备飞翼剑),是|否,(feiyi)
+#select ($Chiyao)=是否吃冰心丹,是|否,(Chiyao)
+#select ($Feiyi)=是否补飞翼(请事先装备飞翼剑),是|否,(Feiyi)
 #input ($LXAfter)=练习结束后执行命令(用英文;隔开，默认请填$zdwk),(LXAfter)
 #config
 [if] (arg0) != null
@@ -33,9 +33,9 @@
 [if] (arg1) != null
     ($lianxi_map) = (arg1)
 [if] (arg2) != null
-    ($chiyao) = (arg2)
+    ($Chiyao) = (arg2)
 [if] (arg3) != null
-    ($feiyi) = (arg3)
+    ($Feiyi) = (arg3)
 <-stopSSAuto
 //获取技能数量
 @js ($skill_num) = [(Skill)].length
@@ -96,12 +96,12 @@ stopstate
     @tip 缺乏($tip_limit)经验|已经练习($tip_done)了|练习($tip_done)毕|你的($tip_base)功火候未到|等级($levelup)了|提升到($levelup)级|你的($tip_qn)不够
     [if] (levelup) != null
         //判断是否吃药
-        [if] (:status food) == false && (chiyao) == 是 && {b冰心丹}? != null
+        [if] (:status food) == false && (Chiyao) == 是 && {b冰心丹}? != null
             stopstate
             use {b冰心丹}?
             @await 1000
         //判断是否用飞翼
-        [if] (:status fy) == false && (feiyi) == 是
+        [if] (:status fy) == false && (Feiyi) == 是
             stopstate
             use (:eq0)
             @await 1000
