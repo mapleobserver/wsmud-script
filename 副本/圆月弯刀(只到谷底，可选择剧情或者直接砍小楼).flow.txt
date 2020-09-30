@@ -8,7 +8,7 @@
             ($TodayNum) = 0
             ($TodayDate) = (:date)
 [else]
-    ($TodayNum) == 0
+    ($TodayNum) = 0
 #select ($YYType) = 最后操作,剧情模式|直接砍小楼,(YYType)
 #input ($TodayNum) = 今天已完成次数(如果不清楚就不要改),(TodayNum)
 #input ($introduce01) = 圆月弯刀副本流程，青城山路线，会自动残血进入青城山，跑地图，跟随青青，采忘忧草，挡刀被青青救醒。,节
@@ -64,8 +64,15 @@ answer s1
 cai cao
 @tip 杀了他
 answer s3
+@await 2000
 [if] (:living) == true
-    [if] (YYType) == 剧情模式 || (YYType) == null
+    [if] {r骑鹰老头的尸体}? != null
+        ($fail) = true
+        go south
+        ofb
+        @tip 当天进入次数($yynum)/10
+        ofb ok
+    [else if] (YYType) == 剧情模式 || (YYType) == null
         @tip 青青看了你一眼转身跟了过去
         go west
         @print <ord>已进入山谷，请手动进行后续剧情</ord>
@@ -82,16 +89,22 @@ answer s3
         [if] (dijiao) != null
             @until {r仇小楼}? == null
             go down
+            $tts (:name)已进入地窖，请手动进行后续剧情
             @print <ord>已进入地窖，请手动进行后续剧情</ord>
         [else]
             go south[4]
             ofb
             @tip 当天进入次数($yynum)/10
             ofb ok
-            @wait 2000
-            @renew
-            $zdwk
-            @recoverSSAuto
+[else]
+    ($dead) = true
+    relive
+@js ($yyfb)='(:room)'.indexOf('忧愁谷')
+[if] (yyfb) == -1
+    @wait 2000
+    @renew
+    $zdwk
+    @recoverSSAuto
 // 当天次数记录
 ($TodayDate) = (:date)
 [if] (yynum) != null
@@ -101,7 +114,13 @@ answer s3
         ($TodayNum) = 1
     [else]
         ($TodayNum) = (TodayNum) + 1
-@print <ord>今日已完成 (TodayNum) 次。</ord>
+[(fail)==true]($info) = 砍死了骑鹰老头，本次副本失败！
+[(dead)==true]($info) = 被骑鹰老头打死，本次副本失败！
+[if] (info) != null
+    ($info) = (info)今日已完成 (TodayNum) 次。
+[else]
+    ($info) = 今日已完成 (TodayNum) 次。
+@print <ord>(info)</ord>
 //以下为参考代码，暂时无用
 //@wait 600000
 //stopstate
