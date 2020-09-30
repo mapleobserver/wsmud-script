@@ -89,7 +89,7 @@
   @js Server.importTrigger("白三三·续药飞翼·触发@053fa14d0921f690128f38d10941b3d6")
 [if] (triggerXWZZ)==导入
   @print 导入 <hic>卸武自装</hic> 触发
-  @js Server.importTrigger("白三三·触发@c2b92a1bdeb171cd0577ee3f5dcce26e")
+  @js Server.importTrigger("白三三·卸武自装·触发@33b0009ff0108c92a34841c7174b876a")
 [if] (triggerCMS)==导入
   @print 导入 <hic>帮战橙满伤</hic> 触发
   @js Server.importTrigger("白三三·触发@ac447c50e42c38d4553977f598c83350")
