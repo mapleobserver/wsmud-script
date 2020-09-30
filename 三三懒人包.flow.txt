@@ -41,61 +41,61 @@
 ($f_yzdy)={"name":"研制绿丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制绿丹.flow.txt","finder":"研制丹药"},{"name":"研制蓝丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制蓝丹.flow.txt","finder":"研制丹药"},{"name":"研制黄丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制黄丹.flow.txt","finder":"研制丹药"},{"name":"研制紫丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制紫丹.flow.txt","finder":"研制丹药"},{"name":"研制橙丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制橙丹.flow.txt","finder":"研制丹药"},{"name":"研制突破","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制突破.flow.txt","finder":"研制丹药"}
 
 [if] (flowZDRC)==导入
-    ($f_list)=(f_list),(f_zdrc)
+  ($f_list)=(f_list),(f_zdrc)
 [if] (flowZDZB)==导入
-    ($f_list)=(f_list),(f_zdzb)
+  ($f_list)=(f_list),(f_zdzb)
 [if] (flowZDWD)==导入
-    ($f_list)=(f_list),(f_zdwd)
+  ($f_list)=(f_list),(f_zdwd)
 [if] (flowKSWD)==导入
-    ($f_list)=(f_list),(f_kswd)
+  ($f_list)=(f_list),(f_kswd)
 [if] (flowKSSD)==导入
-    ($f_list)=(f_list),(f_kssd)
+  ($f_list)=(f_list),(f_kssd)
 [if] (flowTDFB)==导入
-    ($f_list)=(f_list),(f_tdfb)
+  ($f_list)=(f_list),(f_tdfb)
 [if] (flowJRRC)==导入
-    ($f_list)=(f_list),(f_jrrc)
+  ($f_list)=(f_list),(f_jrrc)
 [if] (flowYJSG)==导入
-    @js WorkflowConfig.createFinder("杂务")
-    ($f_list)=(f_list),(f_yjsg)
+  @js WorkflowConfig.createFinder("杂务")
+  ($f_list)=(f_list),(f_yjsg)
 [if] (flowZDCBT)==导入
-    @js WorkflowConfig.createFinder("杂务")
-    ($f_list)=(f_list),(f_zdcbt)
+  @js WorkflowConfig.createFinder("杂务")
+  ($f_list)=(f_list),(f_zdcbt)
 [if] (flowLXDM)==导入
-    @js WorkflowConfig.createFinder("提升")
-    ($f_list)=(f_list),(f_lxdm)
+  @js WorkflowConfig.createFinder("提升")
+  ($f_list)=(f_list),(f_lxdm)
 [if] (flowYJXX)==导入
-    @js WorkflowConfig.createFinder("提升")
-    ($f_list)=(f_list),(f_yjxx)
+  @js WorkflowConfig.createFinder("提升")
+  ($f_list)=(f_list),(f_yjxx)
 [if] (flowJQLX)==导入
-    @js WorkflowConfig.createFinder("提升")
-    ($f_list)=(f_list),(f_jqlx)
+  @js WorkflowConfig.createFinder("提升")
+  ($f_list)=(f_list),(f_jqlx)
 [if] (flowMPJJ)==导入
-    @js WorkflowConfig.createFinder("提升")
-    ($f_list)=(f_list),(f_mpjj)
+  @js WorkflowConfig.createFinder("提升")
+  ($f_list)=(f_list),(f_mpjj)
 [if] (flowYZDY)==导入
-    @js WorkflowConfig.createFinder("研制丹药")
-    ($f_list)=(f_list),(f_yzdy)
+  @js WorkflowConfig.createFinder("研制丹药")
+  ($f_list)=(f_list),(f_yzdy)
 //开始导入
 ($num)=1
 [if] (f_list) != null
-    @js ($l) = [(f_list)].length
-    [while] (num)<(l)
-        @js var time = Date.parse( new Date());var f=[(f_list)];var n=f[(num)]["name"];var s=f[(num)]["source"];var fd=f[(num)]["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @js ($l) = [(f_list)].length
+  [while] (num)<(l)
+    @js var time = Date.parse( new Date());var f=[(f_list)];var n=f[(num)]["name"];var s=f[(num)]["source"];var fd=f[(num)]["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
         ($num)=(num)+1
 
 //触发
 [if] (triggerFoodFy)==导入
-    @print 导入 <hic>续药飞翼</hic> 触发
-    @js Server.importTrigger("白三三·续药飞翼·触发@053fa14d0921f690128f38d10941b3d6")
+  @print 导入 <hic>续药飞翼</hic> 触发
+  @js Server.importTrigger("白三三·续药飞翼·触发@053fa14d0921f690128f38d10941b3d6")
 [if] (triggerXWZZ)==导入
-    @print 导入 <hic>卸武自装</hic> 触发
-    @js Server.importTrigger("白三三·触发@c2b92a1bdeb171cd0577ee3f5dcce26e")
+  @print 导入 <hic>卸武自装</hic> 触发
+  @js Server.importTrigger("白三三·触发@c2b92a1bdeb171cd0577ee3f5dcce26e")
 [if] (triggerCMS)==导入
-    @print 导入 <hic>帮战橙满伤</hic> 触发
-    @js Server.importTrigger("白三三·触发@ac447c50e42c38d4553977f598c83350")
+  @print 导入 <hic>帮战橙满伤</hic> 触发
+  @js Server.importTrigger("白三三·触发@ac447c50e42c38d4553977f598c83350")
 [if] (triggerXYJS)==导入
-    @print 导入 <hic>襄阳叫杀</hic> 触发
-    @js Server.importTrigger("白三三·触发@0b2616c7c2d44a84a0c77e02789451af")
+  @print 导入 <hic>襄阳叫杀</hic> 触发
+  @js Server.importTrigger("白三三·触发@0b2616c7c2d44a84a0c77e02789451af")
 [if] (triggerXYMJG)==导入
-    @print 导入 <hic>襄阳满军功</hic> 触发
-    @js Server.importTrigger("白三三·触发@68476d5f2bf4abe1f26d508502cf4137")
+  @print 导入 <hic>襄阳满军功</hic> 触发
+  @js Server.importTrigger("白三三·触发@68476d5f2bf4abe1f26d508502cf4137")
