@@ -1,61 +1,93 @@
-// raid.flow
-// 自动武道重构版2，可判断是否需要重置，由于不需要打一层就回一次武道塔，速度会比早期版本快点。
+// 武道塔融合版
 // 四区：白三三
-// 2020.05.29 - 减少叫杀后出现往上走导致忙乱的情况
+// 2020.09.24 优化重置后的层数判断
+[if] (WudaoMode) == null || (WudaoMode) = 正常肝塔
+  ($WudaoMode) = 正常模式
 [if] (WudaoWaitCDLevel) == null
-    ($WudaoWaitCDLevel) = 75
-[if] (WudaoWaitCDExp) == null
-    ($WudaoWaitCDExp) = ^none
+  ($WudaoWaitCDLevel) = 30
 [if] (WudaoManualMaxLevel) == null
-    ($WudaoManualMaxLevel) = 84
-[if] (WudaoRenew) == null
-    ($WudaoRenew) = 打开
+  ($WudaoManualMaxLevel) = 84
+[if] (WudaoWaitCDExp) == null
+  ($WudaoWaitCDExp) = ^none
+[if] (WudaoBefore) == null
+  ($WudaoBefore) = $eq 1
+
+#select ($WudaoMode)=武道塔模式<ord>(快速模式建议至少已有血刀九阴)</ord>,正常模式|快速模式|只打塔主,(WudaoMode)
+#input ($WudaoBefore)=打塔前执行命令(用英文;隔开),(WudaoBefore)
 #input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
 #input ($WudaoWaitCDExp)=等待以下技能冷却,(WudaoWaitCDExp)
 #input ($WudaoManualMaxLevel)=从此层开始扫荡符扫荡,(WudaoManualMaxLevel)
 #config
+
 <-stopSSAuto
 <-recordGains
+@cmdDelay
 stopstate
+@tidyBag
+@await 5000
+(WudaoBefore)
+@await 5000
 @renew
+[if] (WudaoMode) == 快速模式
+  @cmdDelay 500
 jh fam 9 start
 @toolbar jh
 @toolbar tasks
 @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
-//@print (currentN)/(finalN)
-@wait 3000
-($manualMax) = (WudaoManualMaxLevel) - 1
+@print 当前武道塔进度：(currentN)/(finalN)
+@await 2000
 [if] (currentN) == (finalN)
-    ask1 {r守门人}
-    @tip 从头开始挑战|已经重置
+  ask1 {r守门人}
+  @tip 从头开始挑战|已经重置
+  @await 2000
+[while] (wdlevel) == null
+  jh fam 9 start
+  @await 500
+  @tip 你目前可以直接去挑战第($wdlevel)层
+@print 开始挑战第(wdlevel)层
 go enter
 [while] true
-    @await 500
-    @toolbar tasks
-    @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
-    [if] (currentN) >= (manualMax)
-        [break]
-    [if] (currentN) >= (WudaoWaitCDLevel)
-        @cd (WudaoWaitCDExp)
-    kill {r武道塔守护者}?
-    @await 500
-    //@until {r武道塔守护者}? == null || (:combating) == true
-    @until {r武道塔守护者}? == null || (:combating) == false
+  [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
+    [break]
+  [if] (WudaoMode) == 正常模式
     [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
-        @renew
-        jh fam 9 start;go enter
+      @renew
+      jh fam 9 start;go enter
+    [if] (wdlevel) >= (WudaoManualMaxLevel)
+      [break]
+    [if] (wdlevel) >= (WudaoWaitCDLevel)
+      @cd (WudaoWaitCDExp)
+  [else if] (WudaoMode) == 快速模式
+    [while] (:mpPer) <= 0.1
+      dazuo
+      @await 5000
+    stopstate
+    [if] (:hpPer) <= 0.01
+      @js var jy='(:room)'.indexOf('第七十');if(jy!=-1){WG.SendCmd('liaoshang;$wait 10000;stopstate')}
+      @await 100
+      @until (:state) != 疗伤
+  kill {r武道塔守护者}?
+  [if] (WudaoMode) == 正常模式
+    @await 500
+  @until (:combating) == false && (:free) == true && (:status faint) == false && (:status miss) == false
+  [if] {r武道塔守护者}? != null
+    [continue]
+  [else]
+    ($wdlevel) = (wdlevel) + 1
     go up
-($num)=0
-jh fam 9 start
-ask2 {r守门人}
-@tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
-[if] (num) > 0
+[if] (WudaoMode) == 正常模式
+  ($num)=0
+  jh fam 9 start
+  ask2 {r守门人}
+  @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
+  [if] (num) > 0
     [if] {b扫荡符#}? < (num) || {b扫荡符}? == null
-        shop 0 (num)
-ask2 {r守门人};ask3 {r守门人}
-@tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
+      shop 0 (num)
+  ask2 {r守门人};ask3 {r守门人}
+  @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
 recordGains->
 stopSSAuto->
+@cmdDelay
 stopstate
 @tidyBag
 @renew

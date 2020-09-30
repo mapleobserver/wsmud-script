@@ -1,13 +1,14 @@
 // raid.flow
 // 四区白三三
-// 2020.06.05 - 更新橙满伤触发
-#input ($info1)=👉第一次使用前，如已有同名流程，请先手动删除👈,挖矿愉快😊
+// 2020.09.30 - 更新自动日常、追捕、武道塔、节日版日常等流程
+#input ($info1)=👉<hiz>第一次使用前，如已有同名流程，请先手动删除</hiz>👈,挖矿愉快😊
 #select ($flowZDRC)=[自动日常]师门、养精、追捕、打塔、副本、请安,导入|跳过,跳过
-#select ($flowZDZB)=[自动追捕]自动寻路追捕逃犯,导入|跳过,跳过
-#select ($flowZDWD)=[自动武道]正常打武道塔版本,导入|跳过,跳过
-#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
+#select ($flowZDZB)=[自动追捕]自动寻路追捕逃犯<hiz>(自动日常已包含)</hiz>,导入|跳过,跳过
+#select ($flowZDWD)=[自动武道]自动打武道塔<hiz>(自动日常已包含)</hiz>,导入|跳过,跳过
+//#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
 #select ($flowKSSD)=[快速扫荡]批量扫荡副本,导入|跳过,跳过
 #select ($flowTDFB)=[偷渡副本]快进快出副本积累次数,导入|跳过,跳过
+#select ($flowJRRC)=[节日日常]自动日常免费扫荡版<ord>(有免费扫荡活动才用)</ord>,导入|跳过,跳过
 #select ($flowYJSG)=[一键收割]收割、安排随从(可自动组队随从去花园),导入|跳过,跳过
 #select ($flowZDCBT)=[自动藏宝图]自动使用藏宝图挖宝,导入|跳过,跳过
 #select ($flowLXDM)=[练习代码生成器]自动生成练习代码并填入系统设置,导入|跳过,跳过
@@ -15,15 +16,14 @@
 #select ($flowJQLX)=[精确练习]自动练习技能,导入|跳过,跳过
 #select ($flowMPJJ)=[门派进阶]门派武功自动进阶,导入|跳过,跳过
 #select ($flowYZDY)=[研制丹药]自动研制绿蓝黄紫橙丹药和突破丹,导入|跳过,跳过
-#input ($info2)=👇以下是触发👇,愉快游戏🎮
-#select ($triggerBX)=[续冰心]练习自动续冰心丹,导入|跳过,跳过
-#select ($triggerFY)=[续飞翼]练习自动续飞翼buff,导入|跳过,跳过
+#input ($info2)=👇<hiz>以下是触发</hiz>👇,愉快游戏🎮
+#select ($triggerFoodFy)=[续药飞翼]古墓打坐续蕴象，练习领悟续冰心飞翼,导入|跳过,跳过
 #select ($triggerXWZZ)=[卸武自装]被下武器后自动重新装备,导入|跳过,跳过
 #select ($triggerCMS)=[帮战橙满伤]满伤停止出招自动脱战,导入|跳过,跳过
 #select ($triggerXYJS)=[襄阳叫杀]襄阳自动叫杀蒙古夫长蒙哥,导入|跳过,跳过
 #select ($triggerXYMJG)=[襄阳满军功]襄阳打满500军功后自动清包撤离(可自己删减是否等蒙哥),导入|跳过,跳过
 #config
-
+($USE_kswd)=null
 //流程
 ($f_zdrc)={"name":"自动日常","source":"http://wsmud-cdn.if404.com/自动日常.flow.txt","finder":"根文件夹"}
 ($f_zdzb)={"name":"自动追捕","source":"http://wsmud-cdn.if404.com/自动追捕.flow.txt","finder":"根文件夹"}
@@ -31,6 +31,7 @@
 ($f_kswd)={"name":"自动武道","source":"http://wsmud-cdn.if404.com/自动武道(九阴血刀快速版).flow.txt","finder":"根文件夹"}
 ($f_kssd)={"name":"快速扫荡","source":"http://wsmud-cdn.if404.com/副本/快速扫荡.flow.txt","finder":"根文件夹"}
 ($f_tdfb)={"name":"偷渡副本","source":"http://wsmud-cdn.if404.com/副本/偷渡副本.flow.txt","finder":"根文件夹"}
+($f_jrrc)={"name":"节日日常","source":"http://wsmud-cdn.if404.com/节日日常(免费扫荡版).flow.txt","finder":"根文件夹"}
 ($f_yjsg)={"name":"一键收割","source":"http://wsmud-cdn.if404.com/杂务/一键收割.flow.txt","finder":"杂务"}
 ($f_zdcbt)={"name":"自动藏宝图","source":"http://wsmud-cdn.if404.com/杂务/自动藏宝图.flow.txt","finder":"杂务"}
 ($f_lxdm)={"name":"练习代码生成器","source":"http://wsmud-cdn.if404.com/提升/练习代码生成器.flow.txt","finder":"提升"}
@@ -40,26 +41,19 @@
 ($f_yzdy)={"name":"研制绿丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制绿丹.flow.txt","finder":"研制丹药"},{"name":"研制蓝丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制蓝丹.flow.txt","finder":"研制丹药"},{"name":"研制黄丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制黄丹.flow.txt","finder":"研制丹药"},{"name":"研制紫丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制紫丹.flow.txt","finder":"研制丹药"},{"name":"研制橙丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制橙丹.flow.txt","finder":"研制丹药"},{"name":"研制突破","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制突破.flow.txt","finder":"研制丹药"}
 
 [if] (flowZDRC)==导入
-    ($flowZDZB)=导入
-    [if] (USE_kswd)==true || (flowKSWD)==导入
-        ($flowKSWD)=导入
-        ($flowZDWD)=跳过
-    [else]
-        ($flowZDWD)=导入
-    ($flow_l)=(flow_l),自动日常
     ($f_list)=(f_list),(f_zdrc)
 [if] (flowZDZB)==导入
     ($f_list)=(f_list),(f_zdzb)
 [if] (flowZDWD)==导入
-    ($USE_kswd)=null
     ($f_list)=(f_list),(f_zdwd)
 [if] (flowKSWD)==导入
-    ($USE_kswd)=true
     ($f_list)=(f_list),(f_kswd)
 [if] (flowKSSD)==导入
     ($f_list)=(f_list),(f_kssd)
 [if] (flowTDFB)==导入
     ($f_list)=(f_list),(f_tdfb)
+[if] (flowJRRC)==导入
+    ($f_list)=(f_list),(f_jrrc)
 [if] (flowYJSG)==导入
     @js WorkflowConfig.createFinder("杂务")
     ($f_list)=(f_list),(f_yjsg)
@@ -90,12 +84,9 @@
         ($num)=(num)+1
 
 //触发
-[if] (triggerBX)==导入
-    @print 导入 <hic>续冰心</hic> 触发
-    @js Server.importTrigger("白三三·触发@5f965268d660e9ae81f7694362329498")
-[if] (triggerFY)==导入
-    @print 导入 <hic>续飞翼</hic> 触发
-    @js Server.importTrigger("白三三·触发@658be20bc57ce107f47d801069be96c5")
+[if] (triggerFoodFy)==导入
+    @print 导入 <hic>续药飞翼</hic> 触发
+    @js Server.importTrigger("白三三·续药飞翼·触发@053fa14d0921f690128f38d10941b3d6")
 [if] (triggerXWZZ)==导入
     @print 导入 <hic>卸武自装</hic> 触发
     @js Server.importTrigger("白三三·触发@c2b92a1bdeb171cd0577ee3f5dcce26e")

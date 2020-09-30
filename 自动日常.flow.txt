@@ -1,75 +1,89 @@
-//raid.flow
+//自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-//2020.09.26 - 1.新增开始流程时的状态检测。2.优化武道塔起始判断。
+//2020.09.29 优化副本判断
+
 //检测状态
-@js ($fbroom)='(:room)'.indexOf('副本区域')
+@js ($fbroom) = '(:room)'.indexOf('副本区域')
 [if] (fbroom) != -1 || (:state)==推演 || (:state)==领悟
-    ($alarm) = 正在(:state)，停止自动日常！
-    [(fbroom) != -1]($alarm) = 正在副本中，停止自动日常！
-    @js WG.SendCmd("tm (alarm)")
-    @print <ord>(alarm)</ord>
-    [exit]
+  ($alert_start) = 正在(:state)，停止自动日常！
+  [(fbroom) != -1]($alert_start) = 正在副本中，停止自动日常！
+  @js WG.SendCmd("tm (alarm)")
+  @print <ord>(alert_start)</ord>
+  [exit]
+
+// 是否统计收益
+[if] (RecordG) == null
+  ($RecordG) = 是
+#select ($RecordG) = 是否显示统计收益,是|否,(RecordG)
 
 // 师门任务
 @toolbar jh
 @toolbar tasks
 @task 师门委托目前完成($smnum)/20个，共连续完成($smComboN)个|师门委托你去寻找($smtype)，共连续完成($smComboN)个
 [if] (SMtasks) == null
-    ($SMtasks) = 正常进行
+  ($SMtasks) = 正常进行
 [if] (smComboN) >= 100
-    [if] (:hour) <5 || (:hour) >= 20
-        #select ($SMtasks)=处于抢首席时段，师门任务可正常进行,正常进行|跳过,正常进行
-    [else]
-        #select ($SMtasks)=师门已连(smComboN)次，是否先跳过等晚上抢首席,正常进行|跳过,跳过
+  [if] (:hour) <5 || (:hour) >= 20
+    #select ($SMtasks) = <ord>处于抢首席时段</ord>，师门任务可正常进行,正常进行|跳过,正常进行
+  [else]
+    #select ($SMtasks) = 师门已连(smComboN)次，<ord>是否先跳过</ord>等晚上抢首席,正常进行|跳过,跳过
 [else if] (smComboN) < 10
-    #select ($SMtasks)=师门任务正常进行或跳过(抢首席),正常进行|跳过,正常进行
+  #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,正常进行
 [else]
-    #select ($SMtasks)=师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
+  #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
+
+// 追捕自定义参数
+[if] (ZByes) == null
+  ($ZByes) = 是
+[if] (ZBWaitCD) == null
+  ($ZBWaitCD) = 30
+[if] (ZBMax) == null
+  ($ZBMax) = 9999999
+[if] (ZBcdskill) == null
+  ($ZBcdskill) = ^none
+[if] (ZBBefore) == null
+  ($ZBBefore) = $eq 1
+[if] (DieToReset) == null
+  ($DieToReset) = 已关闭
+#select ($ZByes) = 是否进行追捕(百姓选跳过),是|跳过,(ZByes)
+#input ($ZBBefore) = 追捕前执行命令(用英文;隔开),(ZBBefore)
+#input ($ZBWaitCD) = 从此次追捕开始，等待技能冷却,(ZBWaitCD)
+#input ($ZBcdskill) = 需要cd的技能使用英文逗号隔开或^不需要cd的技能,(ZBcdskill)
+#input ($ZBMax) = 最高连续追捕数达到后自动放弃,(ZBMax)
+#select ($DieToReset) = 死亡自动重置,已开启|已关闭,(DieToReset)
 
 // 武道自定义参数
-[if] (WudaoMode) == null
-    ($WudaoMode) = 正常肝塔
+[if] (WudaoMode) == null || (WudaoMode) = 正常肝塔
+  ($WudaoMode) = 正常模式
 [if] (WudaoWaitCDLevel) == null
-    ($WudaoWaitCDLevel) = 30
+  ($WudaoWaitCDLevel) = 30
 [if] (WudaoManualMaxLevel) == null
-    ($WudaoManualMaxLevel) = 84
+  ($WudaoManualMaxLevel) = 84
 [if] (WudaoWaitCDExp) == null
-    ($WudaoWaitCDExp) = ^none
+  ($WudaoWaitCDExp) = ^none
 [if] (WudaoBefore) == null
-    ($WudaoBefore) = $eq 1
-#select ($WudaoMode)=正常肝塔或跳过只打塔主,正常肝塔|只打塔主,(WudaoMode)
+  ($WudaoBefore) = $eq 1
+#select ($WudaoMode)=武道塔模式<ord>(快速模式建议至少已有血刀九阴)</ord>,正常模式|快速模式|只打塔主,(WudaoMode)
 #input ($WudaoBefore)=打塔前执行命令(用英文;隔开),(WudaoBefore)
 #input ($WudaoWaitCDExp)=打塔等待以下技能冷却,(WudaoWaitCDExp)
 #input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
 #input ($WudaoManualMaxLevel)=从此层开始快速扫荡,(WudaoManualMaxLevel)
 
-// 追捕自定义参数
-[if] (ZBWaitCD) == null
-    ($ZBWaitCD) = 30
-[if] (ZBMax) == null
-    ($ZBMax) = 9999999
-[if] (ZBcdskill) == null
-    ($ZBcdskill) = ^none
-[if] (ZBBefore) == null
-    ($ZBBefore) = $eq 1
-#input ($ZBBefore)=追捕前执行命令(用英文;隔开),(ZBBefore)
-#input ($ZBWaitCD) = 从此次追捕开始，等待技能冷却,(ZBWaitCD)
-#input ($ZBcdskill) = 需要cd的技能使用英文逗号隔开或^不需要cd的技能,(ZBcdskill)
-#input ($ZBMax) = 最高连续追捕数达到后自动放弃,(ZBMax)
-#select ($DieToReset) = 死亡自动重置,已开启|已关闭,已关闭
-
-// 副本
+// 副本自定义参数
 [if] (FBBefore) == null
-    ($FBBefore) = $eq 1
+  ($FBBefore) = $eq 1
+[if] (FBnum) == null
+  ($FBnum) = 20
 [if] (DungeonHpThreshold) == null
-    ($DungeonHpThreshold) = 50
+  ($DungeonHpThreshold) = 50
 [if] (DungeonWaitSkillCD) == null
-    ($DungeonWaitSkillCD) = 打开
+  ($DungeonWaitSkillCD) = 打开
 [if] (DungeonBagCleanWay) == null
-    ($DungeonBagCleanWay) = 存仓及售卖
+  ($DungeonBagCleanWay) = 存仓及售卖
 #input ($FBBefore)=副本前执行命令(用英文;隔开),(FBBefore)
 #select ($FBName) = 副本,财主家(简单)|财主家(困难)|丽春院|流氓巷|流氓巷(组队)|兵营|庄府|鳌拜府|天地会|神龙教|神龙教(组队)|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBName)
+#input ($FBnum) = <ord>需要完成的次数</ord>,(FBnum)
 #select ($FBWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡|跳过副本,(FBWay)
 #select ($DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(DungeonHpThreshold)
 #select ($DungeonWaitSkillCD) = Boss战前等待技能冷却,打开|关闭,(DungeonWaitSkillCD)
@@ -77,300 +91,551 @@
 
 // 请安
 [if] (RC_qingan) == null
-    ($RC_qingan) = 请安
+  ($RC_qingan) = 请安
 #select ($RC_qingan) = 是否给首席请安,请安|跳过,(RC_qingan)
 
 // 日常结束后动作
 [if](RCAfter_action) == null
-    ($RCAfter_action) = $zdwk
+  ($RCAfter_action) = $zdwk
 #input ($RCAfter_action) = 日常结束后命令(用英文;隔开),(RCAfter_action)
 
 // 语音播报
 [if] (TTSover) == null
-    ($TTSover) = 播报
+  ($TTSover) = 播报
 #select ($TTSover) = 日常结束后语音播报提醒,播报|不播报,(TTSover)
 
 #config
 
+// 获取角色名
 [if] (TTSover) == 播报
-    ($myName) = (:name)
-    [if] (myName) == null
-        stopstate
-        @await 1000
-        @toolbar jh
-        @toolbar score
-        @js $(`span[for=0]`).click()
-        @js ($myName) = $(".dialog-title").text().split(/\s+/).pop()
-    $tts 开始(myName)的自动日常。
+  ($myName) = (:name)
+  [if] (myName) == null
+    stopstate
+    @await 1000
+    @toolbar jh
+    @toolbar score
+    @js $(`span[for=0]`).click()
+    @js ($myName) = $(".dialog-title").text().split(/\s+/).pop()
+  $tts 开始(myName)的自动日常。
 
+// 停止，清包
 @stopSSAuto
-//停止，清包
 stopstate
 @tidyBag
-@wait 2000
+@await 2000
 
-//师门
+// 师门
 [if] (SMtasks) == 正常进行
-    $sm
-    @tip 你先去休息一下吧
+  $sm
+  @tip 你先去休息一下吧
 [else]
-    ($alert_sm) = 根据设置，已跳过师门任务。
-    @js WG.SendCmd("tm (alert_sm)")
+  ($alert_sm) = 根据设置，已跳过师门任务。
+  @js WG.SendCmd("tm (alert_sm)")
 
-// 买十个养精丹吃+吃师门的养精丹，蓝养精丹一次最多吃10个，以防太快被游戏强制下线。
+// 吃养精丹和潜能丹药
 stopstate
 @await 500
-$to 扬州城-药铺
-select {r平一指}
-list {r平一指}
-@dialog
-($count) = {b养精丹g#}?
-[if] (count) == null
-    ($count) = 10
-[else]
-    ($count) = 10 - (count)
-buy (count) {d养精丹g} from {r平一指}
-use {养精丹g}[5]
-use {养精丹g}[5]
+($yjd) = {b养精丹g#}?
+[if] (yjd) == null || (yjd) < 10
+  $to 扬州城-药铺
+  select {r平一指}
+  list {r平一指}
+  @dialog
+  [if] (yjd) == null
+    ($yjd) = 10
+  [else]
+    ($yjd) = 10 - (yjd)
+  buy (yjd) {d养精丹g}? from {r平一指}
+use {b养精丹g}?[5]
+use {b养精丹g}?[5]
 @await 2000
 [if] {b养精丹b}? != null
-    [if] {b养精丹b#} <= 10
-        use {b养精丹b}[{b养精丹b#}]
-    [else]
-        use {b养精丹b}[10]
-    @await 2000
+  [if] {b养精丹b#} <= 10
+    use {b养精丹b}[{b养精丹b#}]
+  [else]
+    use {b养精丹b}[10]
+  @await 2000
 [if] {b朱果g}? != null
-    [if] {b朱果g#} <= 10
-        use {b朱果g}[{b朱果g#}]
-    [else]
-        use {b朱果g}[10]
-    @await 2000
+  [if] {b朱果g#} <= 10
+    use {b朱果g}[{b朱果g#}]
+  [else]
+    use {b朱果g}[10]
+  @await 2000
 [if] {b潜灵果g}? != null
-    [if] {b潜灵果g#} <= 10
-        use {b潜灵果g}[{b潜灵果g#}]
-    [else]
-        use {b潜灵果g}[10]
-    @await 2000
-//追捕
+  [if] {b潜灵果g#} <= 10
+    use {b潜灵果g}[{b潜灵果g#}]
+  [else]
+    use {b潜灵果g}[10]
+  @await 2000
+
+// 开始统计收益
+[if] (RecordG) == 是
+  <-recordGains
+
+// 追捕
 @toolbar jh
-@toolbar tasks
-@task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
-[if] (currentN) == 20
-    @print <hiy>当日追捕已完成。</hiy>
+($currentN) = null
+[while] (currentN) == null
+  @await 500
+  @toolbar tasks
+  @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
+[if] (currentN) < 20 && (ZByes) == 是
+  @print 开始自动追捕
+  @cd
+  stopstate
+  (ZBBefore)
+  @await 5000
+  @tidyBag
+  @await 2000
+  [while](currentN) < 20
+    ($zb) = true
+    @renew
+    @until (:status xuruo) == false
+    [if](comboN)>=(ZBMax)
+      $to 扬州城-衙门正厅
+      ask1 {程药发}
+      ask2 {程药发}
+      ($comboN) = 0
+    [if](comboN)>=(ZBWaitCD)
+      @cd (ZBcdskill)
+    $to 扬州城-衙门正厅
+    ($olddir1) = (dir1)
+    ($olddir2) = (dir2)
+    @print (olddir1)
+    ($escapee) = null
+    [while] (escapee) == null
+      ask1 {程药发}
+      @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯
+      [if] (zbing) != null
+        @await 1000
+        @toolbar tasks
+        @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
+        ($zbing) = null
+    [if](olddir1) != (dir1) && (olddir2) != (dir2)
+      ($start_h) = (:hour)
+      ($start_m) = (:minute)
+    @await 500
+    [while] {r(escapee)}? == null
+      <---
+      [if] (zb) == true
+        @cmdDelay 1000
+        [if] {r(escapee)}? != null
+          ($type1) = null
+          kill {r(escapee)}?
+          @until {(escapee)的尸体}? != null || {r(escapee)}? ==  null || (:combating) == false || (:living) == false
+          @tip 你的追捕任务完成了，目前完成($currentN)/20个，已连续完成($comboN)个。|你($type1)死了($type2)|你要攻击谁|追捕任务失败了
+          relive
+          [if] (type1) != null
+            relive
+            [if] (DieToReset) == 已开启
+              $to 扬州城-衙门正厅
+              ask2 {程药发}
+          //@cmdDelay 500
+          [break]
+        [if] (DieToReset) == 已关闭
+          [if] (:hour) == 0 && (start_h) != 0
+            ($tb) = 24*60+(:minute)-(start_h)*60-(start_m)
+          [else]
+            ($tb) = (:hour)*60+(:minute)-(start_h)*60-(start_m)
+          @print <hiy>已耗时(tb)分钟</hiy>
+          [if] (tb) >= 10 || (tb) < 0
+            @cmdDelay 500
+            [break]
+        //@cmdDelay 500
+      --->
+      @cmdDelay 1000
+      $to (dir1)-(dir2)
+      [if] (dir1) == 武当派
+        [if](dir2) == 林间小径
+          go south
+        jh fam 1 start
+        go north
+        go south;go west
+        go west
+        go east;go northup
+        go north
+        go east
+        go west;go west
+        go northup
+        go northup
+        go northup
+        go north
+        go north
+        go north
+        go north
+        go north
+        go north
+      [else if] (dir1) == 华山派
+        jh fam 3 start
+        go eastup
+        go southup
+        jumpdown
+        go southup
+        go south
+        go east
+        jh fam 3 start
+        go westup
+        go north
+        go east
+        go west;go north
+        go east
+        go west;go north
+        go south[3];go west
+        go east;go south
+        go southup
+        go southup
+        look bi;break bi;go enter
+        go westup
+        go westup
+        jumpup
+      [else if] (dir1) == 少林派
+        [if](dir2) == 竹林
+          go south
+        jh fam 2 start
+        go north
+        go west
+        go east;go east
+        go west;go north
+        go northup
+        go southdown;go northeast
+        go northwest
+        go southwest
+        go northeast;go north
+        go east
+        go west;go west
+        go east;go north
+        go east
+        go west;go west
+        go east;go north
+        go west
+        go east;go north
+        go north
+      [else if] (dir1) == 峨眉派
+        [if](dir2) == 走廊
+          go north
+          go south[2]
+          go north;go east[2]
+        jh fam 4 start
+        go northup
+        go east
+        go west;go southdown;go west
+        go south
+        go east
+        go east
+        go west;go south
+        go north;go west;go south
+        go north;go west
+        go south
+        go south
+        go north;go north;go west
+        go east;go north
+        go north
+      [else if] (dir1) == 逍遥派
+        [if](dir2) == 林间小道
+          go west;go north
+          go south;go west
+          go east;go south
+        [else if](dir2) == 木屋
+          go south[4]
+        [else if](dir2) == 地下石室
+          go up
+        jh fam 5 start
+        go north
+        go north
+        jh fam 5 start;go east
+        go north
+        go south;go south
+        go south
+        jh fam 5 start;go west
+        go south
+        jh fam 5 start;go south
+        go south
+        jh fam 5 start;go down
+        go down
+      [else if] (dir1) == 丐帮
+        [if](dir2) == 暗道
+          go east
+          go east[2]
+          go east
+        jh fam 6 start
+        go down
+        go east
+        go east
+        go east
+        go up
+        go down;go east
+        go east
+        go up
+($zb) = false
+@cmdDelay
+@await 2000
+@tidyBag
+@await 2000
+
+// 武道塔
+($currentN) = null
+[if] (WudaoMode) == 只打塔主
+  ($wd) = false
+[if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式
+  @toolbar jh
+  @toolbar tasks
+  @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
+[if] (reset) == 已 && (currentN) == (finalN) && (finalN) != 0 && (wd) != false
+  @print <hiy>当日武道塔已完成。</hiy>
 [else]
-    stopstate
-    @cd
-    @print 开始自动追捕
-    @tidyBag
-    @wait 10000
-    (ZBBefore)
-    @wait 5000
-    @call 自动追捕
-    @stopSSAuto
-    stopstate
-    @wait 5000
-
-//武道塔
-[if] (WudaoMode) == 正常肝塔
-    @toolbar jh
-    @toolbar tasks
-    @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
-    [if] (reset) == 已 && (currentN) == (finalN) && (finalN) != 0
-        @print <hiy>当日武道塔已完成。</hiy>
+  stopstate
+  @cd
+  @print 开始自动武道塔
+  @tidyBag
+  @await 2000
+  (WudaoBefore)
+  @await 5000
+  @renew
+  [if] (WudaoMode) == 快速模式
+    @cmdDelay 500
+  jh fam 9 start
+  @toolbar jh
+  @toolbar tasks
+  @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
+  @print 当前武道塔进度：(currentN)/(finalN)
+  @await 2000
+  [if] (currentN) == (finalN)
+    ask1 {r守门人}
+    @tip 从头开始挑战|已经重置
+    @await 2000
+  [while] (wdlevel) == null
+    jh fam 9 start
+    @await 500
+    @tip 你目前可以直接去挑战第($wdlevel)层
+  @print 开始挑战第(wdlevel)层
+  go enter
+  [while] true
+    [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
+      [break]
+    [if] (WudaoMode) == 正常模式
+      [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
+        @renew
+        jh fam 9 start;go enter
+      [if] (wdlevel) >= (WudaoManualMaxLevel)
+        [break]
+      [if] (wdlevel) >= (WudaoWaitCDLevel)
+        @cd (WudaoWaitCDExp)
+    [else if] (WudaoMode) == 快速模式
+      [while] (:mpPer) <= 0.1
+        dazuo
+        @await 5000
+      stopstate
+      [if] (:hpPer) <= 0.01
+        @js var jy='(:room)'.indexOf('第七十');if(jy!=-1){WG.SendCmd('liaoshang;$wait 10000;stopstate')}
+        @await 100
+        @until (:state) != 疗伤
+    kill {r武道塔守护者}?
+    [if] (WudaoMode) == 正常模式
+      @await 500
+    @until (:combating) == false && (:free) == true && (:status faint) == false && (:status miss) == false
+    [if] {r武道塔守护者}? != null
+      [continue]
     [else]
-        stopstate
-        @cd
-        @print 开始自动武道塔
-        @tidyBag
-        @wait 10000
-        (WudaoBefore)
-        @wait 5000
-        @call 自动武道
-        @stopSSAuto
-        stopstate
-        @tidyBag
-        @wait 5000
+      ($wdlevel) = (wdlevel) + 1
+      go up
+  [if] (WudaoMode) == 正常模式
+    ($num)=0
+    jh fam 9 start
+    ask2 {r守门人}
+    @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
+    [if] (num) > 0
+      [if] {b扫荡符#}? < (num) || {b扫荡符}? == null
+        shop 0 (num)
+    ask2 {r守门人};ask3 {r守门人}
+    @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
+  @cmdDelay
+  stopstate
+  @tidyBag
+  @renew
 
-//副本
+// 副本
 [if] (FBWay) == 跳过副本
-    ($alert_fb) = 跳过副本部分，请自己手动完成想要的副本。
+  ($alert_fb) = 跳过副本部分，请自己手动完成想要的副本。
 [else]
-    stopstate
-    @toolbar jh
-    @toolbar tasks
-    @task 副本：($tag2)>($fb_com)/20
-    [if] (fb_com) >=20
-        @print <hiy>当日副本次数已完成(fb_com)次。</hiy>
-    [else]
-        ($fb_num) = 20 - (fb_com)
-        [if] (FBName) == 财主家(简单)
-            ($fbcr) = cr yz/cuifu/caizhu 0
-        [else if] (FBName) == 财主家(困难)
-            ($fbcr) = cr yz/cuifu/caizhu 1
-        [else if] (FBName) == 丽春院
-            ($fbcr) = cr yz/lcy/dating 0
-        [else if] (FBName) == 流氓巷
-            ($fbcr) = cr yz/lmw/xiangzi1 0
-        [else if] (FBName) == 兵营
-            ($fbcr) = cr yz/by/damen 0
-        [else if] (FBName) == 庄府
-            ($fbcr) = cr bj/zhuang/xiaolu 0
-        [else if] (FBName) == 鳌拜府
-            ($fbcr) = cr bj/ao/damen 0
-        [else if] (FBName) == 天地会
-            ($fbcr) = cr bj/tdh/hct 0
-        [else if] (FBName) == 神龙教
-            ($fbcr) = cr bj/shenlong/haitan 0
-        [else if] (FBName) == 关外
-            ($fbcr) = cr bj/guanwai/damen 0
-        [else if] (FBName) == 温府
-            ($fbcr) = cr cd/wen/damen 0
-        [else if] (FBName) == 五毒教
-            ($fbcr) = cr cd/wudu/damen 0
-        [else if] (FBName) == 恒山
-            ($fbcr) = cr wuyue/hengshan/daziling 0
-        [else if] (FBName) == 青城山
-            ($fbcr) = cr wuyue/qingcheng/shanlu 0
-        [else if] (FBName) == 衡山
-            ($fbcr) = cr wuyue/henshan/hengyang 0
-        [else if] (FBName) == 嵩山
-            ($fbcr) = cr wuyue/songshan/taishi 0
-        [else if] (FBName) == 云梦沼泽
-            ($fbcr) = cr cd/yunmeng/senlin 0
-        [else if] (FBName) == 桃花岛(简单)
-            ($fbcr) = cr taohua/haitan 0
-        [else if] (FBName) == 桃花岛(困难)
-            ($fbcr) = cr taohua/haitan 1
-        [else if] (FBName) == 白驼山
-            ($fbcr) = cr baituo/damen 0
-        [else if] (FBName) == 星宿海
-            ($fbcr) = cr xingxiu/xxh6 0
-        [else if] (FBName) == 冰火岛(简单)
-            ($fbcr) = cr mj/bhd/haibian 1
-        [else if] (FBName) == 冰火岛(困难)
-            ($fbcr) = cr mj/bhd/haibian 1
-        [else if] (FBName) == 冰火岛(偷渡)
-            ($fbcr) = cr mj/bhd/haibian 1
-        [else if] (FBName) == 移花宫(简单)
-            ($fbcr) = cr huashan/yihua/shandao 0
-        [else if] (FBName) == 移花宫(困难)
-            ($fbcr) = cr huashan/yihua/shandao 1
-        [else if] (FBName) == 移花宫(偷渡)
-            ($fbcr) = cr huashan/yihua/shandao 1
-        [else if] (FBName) == 燕子坞(简单)
-            ($fbcr) = cr murong/anbian 0
-        [else if] (FBName) == 燕子坞(困难)
-            ($fbcr) = cr murong/anbian 1
-        [else if] (FBName) == 黑木崖(简单)
-            ($fbcr) = cr heimuya/shangu 0
-        [else if] (FBName) == 黑木崖(困难)
-            ($fbcr) = cr heimuya/shangu 1
-        [else if] (FBName) == 缥缈峰(困难)
-            ($fbcr) = cr lingjiu/shanjiao 1
-        [else if] (FBName) == 缥缈峰(偷渡)
-            ($fbcr) = cr lingjiu/shanjiao 1
-        [else if] (FBName) == 光明顶
-            ($fbcr) = cr mj/shanmen 0
-        [else if] (FBName) == 光明顶(偷渡)
-            ($fbcr) = cr mj/shanmen 0
-        [else if] (FBName) == 天龙寺(困难)
-            ($fbcr) = cr tianlong/damen 1
-        [else if] (FBName) == 天龙寺(偷渡)
-            ($fbcr) = cr tianlong/damen 1
-        [else if] (FBName) == 血刀门
-            ($fbcr) = cr xuedao/shankou 0
-        [else if] (FBName) == 古墓派(简单)
-            ($fbcr) = cr gumu/gumukou 0
-        [else if] (FBName) == 古墓派(困难)
-            ($fbcr) = cr gumu/gumukou 1
-        [else if] (FBName) == 古墓派(困难偷渡)
-            ($fbcr) = cr gumu/gumukou 1
-        [else if] (FBName) == 华山论剑
-            ($fbcr) = cr huashan/lunjian/leitaixia 0
-        [else if] (FBName) == 侠客岛
-            ($fbcr) = cr xkd/shimen 0
-        [else if] (FBName) == 净念禅宗(简单)
-            ($fbcr) = cr chanzong/shanmen 0
-        [else if] (FBName) == 净念禅宗(困难)
-            ($fbcr) = cr chanzong/shanmen 1
-        [else if] (FBName) == 慈航静斋(简单)
-            ($fbcr) = cr cihang/shanmen 0
-        [else if] (FBName) == 慈航静斋(困难)
-            ($fbcr) = cr cihang/shanmen 1
-        [else if] (FBName) == 阴阳谷
-            ($fbcr) = cr yyg/ya 0
-        [else if] (FBName) == 战神殿(简单)
-            ($fbcr) = cr zsd/damen 0
-        [else if] (FBName) == 战神殿(困难)
-            ($fbcr) = cr zsd/damen 1
-        [if] (FBWay) == 扫荡
-            //扫荡模式
-            [if] (FBName) == 流氓巷(组队) || (FBName) == 神龙教(组队) || (FBName) == 五毒教(组队) || (FBName) == 云梦沼泽(组队) || (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
-                ($alert_fb) = (FBName)无法扫荡！
-            [else]
-                team out
-                [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
-                    shop 0 (fb_num)
-                <-recordGains
-                (fbcr) (fb_num)
-                @wait 10000
-                @tidyBag
-                @wait 10000
-                recordGains->
-        [else if] (FBWay) == 自动
-            //脚本自动模式
-            stopstate
-            (FBBefore)
-            @wait 5000
-            [if] (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
-                ($tdnum) = 0
-                [while] (tdnum) < (fb_num)
-                    (fbcr) 0;cr over
-                    ($tdnum) = (tdnum) + 1
-            [else]
-                @js ($fbexist) = if(GetDungeonFlow(`(FBName)`)!=null){true}else{false}
-                [if] (fbexist) == true
-                    @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_repeat)=(fb_num)\n'))
-                    @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门
-                [else]
-                    ($alert_fb) = (FBName)没有自动脚本！
+  stopstate
+  @toolbar jh
+  @toolbar tasks
+  @task 副本：($tag2)>($fb_com)/20
+  [if] (fb_com) >=(FBnum)
+    @print <hiy>当日副本次数已完成(fb_com)次。</hiy>
+  [else]
+    ($fb_num) = (FBnum) - (fb_com)
+    [if] (FBName) == 财主家(简单)
+      ($fbcr) = cr yz/cuifu/caizhu 0
+    [else if] (FBName) == 财主家(困难)
+      ($fbcr) = cr yz/cuifu/caizhu 1
+    [else if] (FBName) == 丽春院
+     ($fbcr) = cr yz/lcy/dating 0
+    [else if] (FBName) == 流氓巷
+      ($fbcr) = cr yz/lmw/xiangzi1 0
+    [else if] (FBName) == 兵营
+      ($fbcr) = cr yz/by/damen 0
+    [else if] (FBName) == 庄府
+      ($fbcr) = cr bj/zhuang/xiaolu 0
+    [else if] (FBName) == 鳌拜府
+      ($fbcr) = cr bj/ao/damen 0
+    [else if] (FBName) == 天地会
+      ($fbcr) = cr bj/tdh/hct 0
+    [else if] (FBName) == 神龙教
+      ($fbcr) = cr bj/shenlong/haitan 0
+    [else if] (FBName) == 关外
+      ($fbcr) = cr bj/guanwai/damen 0
+    [else if] (FBName) == 温府
+      ($fbcr) = cr cd/wen/damen 0
+    [else if] (FBName) == 五毒教
+      ($fbcr) = cr cd/wudu/damen 0
+    [else if] (FBName) == 恒山
+      ($fbcr) = cr wuyue/hengshan/daziling 0
+    [else if] (FBName) == 青城山
+      ($fbcr) = cr wuyue/qingcheng/shanlu 0
+    [else if] (FBName) == 衡山
+      ($fbcr) = cr wuyue/henshan/hengyang 0
+    [else if] (FBName) == 嵩山
+      ($fbcr) = cr wuyue/songshan/taishi 0
+    [else if] (FBName) == 云梦沼泽
+      ($fbcr) = cr cd/yunmeng/senlin 0
+    [else if] (FBName) == 桃花岛(简单)
+      ($fbcr) = cr taohua/haitan 0
+    [else if] (FBName) == 桃花岛(困难)
+      ($fbcr) = cr taohua/haitan 1
+    [else if] (FBName) == 白驼山
+      ($fbcr) = cr baituo/damen 0
+    [else if] (FBName) == 星宿海
+      ($fbcr) = cr xingxiu/xxh6 0
+    [else if] (FBName) == 冰火岛(简单)
+      ($fbcr) = cr mj/bhd/haibian 1
+    [else if] (FBName) == 冰火岛(困难)
+      ($fbcr) = cr mj/bhd/haibian 1
+    [else if] (FBName) == 冰火岛(偷渡)
+      ($fbcr) = cr mj/bhd/haibian 1
+    [else if] (FBName) == 移花宫(简单)
+      ($fbcr) = cr huashan/yihua/shandao 0
+    [else if] (FBName) == 移花宫(困难)
+      ($fbcr) = cr huashan/yihua/shandao 1
+    [else if] (FBName) == 移花宫(偷渡)
+      ($fbcr) = cr huashan/yihua/shandao 1
+    [else if] (FBName) == 燕子坞(简单)
+      ($fbcr) = cr murong/anbian 0
+    [else if] (FBName) == 燕子坞(困难)
+      ($fbcr) = cr murong/anbian 1
+    [else if] (FBName) == 黑木崖(简单)
+      ($fbcr) = cr heimuya/shangu 0
+    [else if] (FBName) == 黑木崖(困难)
+      ($fbcr) = cr heimuya/shangu 1
+    [else if] (FBName) == 缥缈峰(困难)
+      ($fbcr) = cr lingjiu/shanjiao 1
+    [else if] (FBName) == 缥缈峰(偷渡)
+      ($fbcr) = cr lingjiu/shanjiao 1
+    [else if] (FBName) == 光明顶
+      ($fbcr) = cr mj/shanmen 0
+    [else if] (FBName) == 光明顶(偷渡)
+      ($fbcr) = cr mj/shanmen 0
+    [else if] (FBName) == 天龙寺(困难)
+      ($fbcr) = cr tianlong/damen 1
+    [else if] (FBName) == 天龙寺(偷渡)
+      ($fbcr) = cr tianlong/damen 1
+    [else if] (FBName) == 血刀门
+      ($fbcr) = cr xuedao/shankou 0
+    [else if] (FBName) == 古墓派(简单)
+      ($fbcr) = cr gumu/gumukou 0
+    [else if] (FBName) == 古墓派(困难)
+      ($fbcr) = cr gumu/gumukou 1
+    [else if] (FBName) == 古墓派(困难偷渡)
+      ($fbcr) = cr gumu/gumukou 1
+    [else if] (FBName) == 华山论剑
+      ($fbcr) = cr huashan/lunjian/leitaixia 0
+    [else if] (FBName) == 侠客岛
+      ($fbcr) = cr xkd/shimen 0
+    [else if] (FBName) == 净念禅宗(简单)
+      ($fbcr) = cr chanzong/shanmen 0
+    [else if] (FBName) == 净念禅宗(困难)
+      ($fbcr) = cr chanzong/shanmen 1
+    [else if] (FBName) == 慈航静斋(简单)
+      ($fbcr) = cr cihang/shanmen 0
+    [else if] (FBName) == 慈航静斋(困难)
+      ($fbcr) = cr cihang/shanmen 1
+    [else if] (FBName) == 阴阳谷
+      ($fbcr) = cr yyg/ya 0
+    [else if] (FBName) == 战神殿(简单)
+      ($fbcr) = cr zsd/damen 0
+    [else if] (FBName) == 战神殿(困难)
+      ($fbcr) = cr zsd/damen 1
+    [if] (FBWay) == 扫荡
+      //扫荡模式
+      [if] (FBName) == 流氓巷(组队) || (FBName) == 神龙教(组队) || (FBName) == 五毒教(组队) || (FBName) == 云梦沼泽(组队) || (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
+        ($alert_fb) = (FBName)无法扫荡！
+      [else]
+        //team out
+        [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
+          shop 0 (fb_num)
+        (fbcr) (fb_num)
+        @await 10000
+        @tidyBag
+        @await 2000
+    [else if] (FBWay) == 自动
+      //脚本自动模式
+      stopstate
+      (FBBefore)
+      @await 5000
+      [if] (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
+        ($tdnum) = 0
+        [while] (tdnum) < (fb_num)
+          (fbcr) 0;cr over
+          ($tdnum) = (tdnum) + 1
+      [else]
+        @js ($fbexist) = if(GetDungeonFlow(`(FBName)`)!=null){true}else{false}
+        [if] (fbexist) == true
+          [if] (FBName) != 白驼山(组队)
+            team out
+          @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_repeat)=(fb_num)\n'))
+          @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门
+        [else]
+          ($alert_fb) = (FBName)没有自动脚本！
 
-//当铺
+// 当铺购买
 stopstate
 $tnbuy
 @await 3000
 
-//请安
+// 请安
 greet master
 [if] (RC_qingan) == 请安
-    @wait 2000
-    @js WG.oneKeyQA()
-    @await 5000
+  @await 2000
+  @js WG.oneKeyQA()
+  @await 5000
 [else]
-    ($alert_qa) = 根据设置，已跳过请安。
+  ($alert_qa) = 根据设置，已跳过请安。
 
-//领取签到奖励
+// 领取签到奖励
 stopstate
 taskover signin;taskover zz1;taskover zz2
-@wait 2000
+@await 2000
 taskover signin;taskover zz1;taskover zz2
-@wait 10000
+@await 2000
+[if] (RecordG) == 是
+  recordGains->
 @recoverSSAuto
-//日常结束后
+
+// 日常结束后
 (RCAfter_action)
 @print <hiy>自动日常结束！</hiy>
 [if] (alert_sm) != null
-    @print <hir>(alert_sm)</hir>
+  @print <hir>(alert_sm)</hir>
 [if] (alert_fb) != null
-    @print <hir>(alert_fb)</hir>
+  @print <hir>(alert_fb)</hir>
 [if] (alert_qa) != null
-    @print <hir>(alert_qa)</hir>
+  @print <hir>(alert_qa)</hir>
 [if] (TTSover) == 播报
-    ($bobao) = (myName)，自动日常结束！
-    [if] (alert_sm) != null
-        ($bobao) = (bobao)(alert_sm)
-    [if] (alert_fb) != null
-        ($bobao) = (bobao)(alert_fb)
-    [if] (alert_qa) != null
-        ($bobao) = (bobao)(alert_qa)
-    $tts (bobao)
+  ($bobao) = (myName)，自动日常结束！
+  [if] (alert_sm) != null
+    ($bobao) = (bobao)(alert_sm)
+  [if] (alert_fb) != null
+    ($bobao) = (bobao)(alert_fb)
+  [if] (alert_qa) != null
+    ($bobao) = (bobao)(alert_qa)
+  $tts (bobao)

@@ -1,0 +1,24 @@
+//buff变化：移除
+//buffid:food|fy
+//对象：自己
+//要先手动吃一颗或使用一次飞翼
+@cmdDelay 500
+[if] (:room) == 古墓派-卧室(副本区域) && (:state) == 打坐 && {b蕴象丸}? != null
+  stopstate;use {b蕴象丸}?;dazuo
+@js ($fbroom)='(:room)'.indexOf('副本区域')
+[if] (fbroom) != -1
+  [exit]
+($cmd) = null
+($item) = null
+[if] (:state) == 练习 || (:state) == 打坐
+  ($cmd) = dazuo;
+[if] (:state) == 领悟
+  ($cmd) = lingwu continue;
+[if] (cmd)==null
+  [exit]
+[if] (sid) == food && {b冰心丹}? != null
+  ($item) = {b冰心丹}
+[if] (sid) == fy
+  ($item) = (:eq0)
+[if] (item) != null
+  stopstate;use (item);(cmd)
