@@ -71,13 +71,12 @@ look cao
 @tip 你小心点
 answer s1
 cai cao
+$stoppfm
 @tip 他的剑已出鞘闪电刺向青青
-@await 500
 answer s3
 @await 2000
 [if] (:living) == true
-    @until {r青青}? == null || (:status faint) == true
-    [if] {r青青}? == null
+    [if] {r骑鹰老头的尸体}? != null
         ($fail) = true
         go south
         ofb
@@ -93,6 +92,7 @@ answer s3
         @until (:room) == 忧愁谷-小楼
         liaoshang
         $wait 5000
+        $startpfm
         stopstate
         @cd
         kill {r仇小楼}?
@@ -113,6 +113,7 @@ answer s3
 @await 2000
 @js ($yyfb)='(:room)'.indexOf('忧愁谷')
 [if] (yyfb) == -1
+    $startpfm
     @renew
     $zdwk
     @recoverSSAuto
