@@ -75,7 +75,8 @@ cai cao
 answer s3
 @await 2000
 [if] (:living) == true
-    [if] {r骑鹰老头的尸体}? != null
+    @until {r青青}? == null || (:status faint) == true
+    [if] {r青青}? == null
         ($fail) = true
         go south
         ofb
