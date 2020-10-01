@@ -71,7 +71,8 @@ look cao
 @tip 你小心点
 answer s1
 cai cao
-@tip 杀了他
+@tip 他的剑已出鞘闪电刺向青青
+@await 500
 answer s3
 @await 2000
 [if] (:living) == true
