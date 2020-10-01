@@ -2,7 +2,7 @@
 //节日版日常，自动师门、请安、买吃养精，副本、追捕(如果已达到最大次数请先放弃一次或者手动追捕)、武道塔自动免费扫荡，签到领取礼包。
 #input ($info) = <ord>节日版日常，自动师门、买吃养精，副本、追捕(如果已达到最大次数请先放弃一次或者手动追捕)、武道塔自动免费扫荡，请安签到领取礼包。</ord>,节日快乐！
 //@tip 你的追捕连续次数大于你的最大连续次数|你的追捕任务完成了
-//2020.10.01 - 修复莫名的bug；补充师门选项。
+//2020.10.02 - 优先判断；补充武道塔选项。
 
 //检测状态
 @js ($fbroom) = '(:room)'.indexOf('副本区域')
@@ -33,6 +33,11 @@
   #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,正常进行
 [else]
   #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
+
+// 武道自定义参数
+[if] (WudaoMode) == null || (WudaoMode) = 正常肝塔
+  ($WudaoMode) = 正常模式
+#select ($WudaoMode)=武道塔模式<ord>(设置只打塔主的请选择【只打塔主】跳过武道塔)</ord>,正常模式|快速模式|只打塔主,(WudaoMode)
 
 // 副本自定义参数
 [if] (FBBefore) == null
@@ -150,28 +155,29 @@ ask3 {程药发}
 @await 5000
 
 //武道塔
-stopstate
-@print 开始自动武道塔
-@tidyBag
-@await 2000
-jh fam 9 start
-@toolbar jh
-@toolbar tasks
-@task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
-@print 当前武道塔进度：(currentN)/(finalN)
-@await 2000
-[if] (currentN) == (finalN)
-  ask1 {r守门人}
-  @tip 从头开始挑战|已经重置
+[if] (WudaoMode) != 只打塔主
+  stopstate
+  @print 开始自动武道塔
+  @tidyBag
   @await 2000
-($num)=0
-jh fam 9 start
-ask2 {r守门人}
-@tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
-ask2 {r守门人};ask3 {r守门人}
-@tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
-@tidyBag
-@await 2000
+  jh fam 9 start
+  @toolbar jh
+  @toolbar tasks
+  @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
+  @print 当前武道塔进度：(currentN)/(finalN)
+  @await 2000
+  [if] (currentN) == (finalN)
+    ask1 {r守门人}
+    @tip 从头开始挑战|已经重置
+    @await 2000
+  ($num)=0
+  jh fam 9 start
+  ask2 {r守门人}
+  @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
+  ask2 {r守门人};ask3 {r守门人}
+  @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
+  @tidyBag
+  @await 2000
 
 // 副本
 [if] (FBWay) == 跳过副本
@@ -349,6 +355,8 @@ taskover signin;taskover zz1;taskover zz2
   @print <hir>(alert_fb)</hir>
 [if] (alert_qa) != null
   @print <hir>(alert_qa)</hir>
+[if] (speed) != null
+  @print <ord>追捕到达上限，无法快速完成，请先放弃一次追捕或者正常追捕！</ord>
 [if] (TTSover) == 播报
   ($bobao) = (myName)，自动日常结束！
   [if] (alert_sm) != null
@@ -357,4 +365,6 @@ taskover signin;taskover zz1;taskover zz2
     ($bobao) = (bobao)(alert_fb)
   [if] (alert_qa) != null
     ($bobao) = (bobao)(alert_qa)
+  [if] (speed) != null
+    ($bobao) = (bobao)(speed)
   $tts (bobao)
