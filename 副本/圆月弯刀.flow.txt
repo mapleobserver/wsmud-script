@@ -1,7 +1,7 @@
-// raid.flow
 // 四区白三三
 // 圆月弯刀副本流程，青城山路线，自动进入青城山，跟随青青，采忘忧草，到挡刀被青青救醒，后续剧情（离开、结婚或者砍仇小楼）请手动操作。
 // 会自动卸掉、装上当前内功
+// 2020.10.01 - 优化判断
 [if] (TodayNum) != null
     [if] (:date) != (TodayDate)
         [if] (:hour) > 4
@@ -46,10 +46,19 @@ answer s9
 @tip 去看看
 answer s10
 [while] true
-    @tip 青青往($direction)方走去|无边无际的黑暗中($goout)
+    @tip 青青往($direction)方走去|无边无际的黑暗中($goout)|青青走的太快，你已经($lost)她的身影了
     [if] (goout) != null
         @print (goout)
         [break]
+    [if] (lost) != null
+        @print <ord>跟丢了，可能设备反应太慢或网络不稳定，建议换个时间再试。</ord>
+        tm 跟丢了，可能设备反应太慢或网络不稳定，建议换个时间再试。
+        ofb
+        @tip 当天进入次数($yynum)/10
+        ofb ok
+        ($TodayNum) = (yynum)
+        $zdwk
+        [exit]
     [if] (direction) == 东
         go east
     [if] (direction) == 西
@@ -99,9 +108,9 @@ answer s3
 [else]
     ($dead) = true
     relive
+@await 2000
 @js ($yyfb)='(:room)'.indexOf('忧愁谷')
 [if] (yyfb) == -1
-    @wait 2000
     @renew
     $zdwk
     @recoverSSAuto
