@@ -21,6 +21,7 @@
 // 触发
 #input ($info2)=👇<hiz>以下是触发</hiz>👇,愉快游戏🎮
 #select ($triggerFoodFy)=[续药飞翼]古墓打坐续蕴象，练习领悟续冰心飞翼,导入|跳过,跳过
+#select ($triggerFoodFyHz)=[续药飞翼徽章]增加续徽章功能，使用方法看触发内说明。
 #select ($triggerXWZZ)=[卸武自装]被下武器后自动重新装备,导入|跳过,跳过
 #select ($triggerCMS)=[帮战橙满伤]满伤停止出招自动脱战,导入|跳过,跳过
 #select ($triggerXYJS)=[襄阳叫杀]襄阳自动叫杀蒙古夫长蒙哥,导入|跳过,跳过
@@ -107,6 +108,11 @@
 [if] (triggerFoodFy)==导入
   @print 导入 <hic>续药飞翼</hic> 触发
   @js Server.importTrigger("白三三·续药飞翼·触发@053fa14d0921f690128f38d10941b3d6")
+[if] (triggerFoodFyHz)==导入
+  @print 导入 <hic>续药飞翼徽章</hic> 触发
+  @print <hiy>【续药飞翼徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。</hiy>
+  @js Server.importTrigger("白三三·续药飞翼徽章·触发@504bdb2338581a26acb062229af82324")
+  tm 【续药飞翼徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。
 [if] (triggerXWZZ)==导入
   @print 导入 <hic>卸武自装</hic> 触发
   @js Server.importTrigger("白三三·卸武自装·触发@33b0009ff0108c92a34841c7174b876a")
