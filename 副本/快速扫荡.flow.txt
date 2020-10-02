@@ -1,11 +1,16 @@
 // raid.flow
 // 四区：白三三
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
-// 2020.05.21 - 修复可能停不下来的bug
+// 2020.10.02 - 增加扫荡次数上限和提示信息。
+#input ($info) = <ord>扫荡开始后无法中止，为避免意外，次数限定最高2000次。</ord>,👇🏻仔细填写👇🏻
 #select ($AutoBuy) = 自动补充扫荡符(免费扫荡期间选不购买),购买|不购买,(AutoBuy)
 #select ($FBNameQ) = 副本,财主家(困难)|丽春院|鳌拜府|天地会|神龙教|关外|温府|五毒教|恒山|青城山|衡山|嵩山|云梦沼泽|桃花岛(简单)|桃花岛(困难)|白驼山|星宿海|冰火岛(困难)|移花宫(简单)|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|光明顶|光明顶(组队)|天龙寺(困难)|血刀门|古墓派(简单)|古墓派(困难)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBNameQ)
 #input ($repeat) = 扫荡副本次数,1
 #config
+[if] (repeat) > 2000
+    tm 所填次数(repeat)超出本流程2000次上限，请重新填写！
+    @print <ord>所填次数(repeat)超出本流程2000次上限，请重新填写！</ord>
+    [exit]
 <-stopSSAuto
 stopstate
 [if] (FBNameQ) == 财主家(困难)
@@ -105,10 +110,18 @@ stopstate
 [if] (fbcr) == null
     @print <ord>副本代码无效，请重新选择！</ord>
 [else]
+    tm 根据设置，开始扫荡【(FBNameQ)】(repeat)次。
     (fbcr) (repeat)
-@tip 扫荡完成|扫荡符($lack)继续扫荡
+@tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
 [if] (lack) != null
-    @print <ord>扫荡符不足，已停止</ord>
+    @print <ord>扫荡符不足，已停止。</ord>
+    tm 扫荡符不足，已停止。
+[else if] (jingli) != null
+    @print <ord>精力不足，已停止。</ord>
+    tm 精力不足，已停止。
+[else]
+    @print <ord>扫荡【(FBNameQ)】(repeat)次已完成。</ord>
+    tm 扫荡【(FBNameQ)】(repeat)次已完成。
 recordGains->
 @tidyBag
 @wait 3000
