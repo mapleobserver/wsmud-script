@@ -30,43 +30,45 @@ stopstate
     go south[5]
     go south[5]
     go south[5]
-    //@until {r(FBBTSPlayerName)} != null
+    //@until {r(FBBTSPlayerName)}? != null
     @kill 花月奴
+    $getall
     go south;go south
-    //@until {r(FBBTSPlayerName)} != null
+    //@until {r(FBBTSPlayerName)}? != null
     @kill 移花宫女弟子,移花宫女弟子
+    $getall
     go south
-    //@until {r(FBBTSPlayerName)} != null
+    //@until {r(FBBTSPlayerName)}? != null
     @kill 移花宫女弟子,移花宫女弟子
+    $getall
     [if] (_DungeonWaitSkillCD) == 打开
         @cd
     go southeast
-    @until {r(FBBTSPlayerName)} != null
+    @until {r(FBBTSPlayerName)}? != null
     @kill 涟星
     [if] {r邀月}? != null
         @kill 邀月
-    ($deadyaoyue) = true
-    [if] {邀月的尸体}? == null
-        ($deadyaoyue) = false
+    [if] {r邀月的尸体}? == null
         [if] (_DungeonWaitSkillCD) == 打开
             @cd
     go northwest;go southwest
-    [if] ($deadyaoyue) == false
-        @until {r(FBBTSPlayerName)} != null
+    @until {r(FBBTSPlayerName)}? != null
+    [if] {r邀月}? != null
         @kill 邀月
     look hua
     @tip 你数了下大概有($number)朵花
     go southeast
-    @until {r(FBBTSPlayerName)} != null
+    @until {r(FBBTSPlayerName)}? != null
     look bed;pushstart bed;pushleft bed[(number)]
     pushright bed[8]
     go down;fire;go west
-    @until {r(FBBTSPlayerName)} != null
+    @until {r(FBBTSPlayerName)}? != null
     @kill 花无缺
     look xia;open xia
-    @until {r(FBBTSPlayerName)} == null
+    @until {r(FBBTSPlayerName)}? == null
     cr;cr over
     $wait 3000
+    @tidyBag
     ($_i) = (_i) + 1
 setting auto_get 1
 $to 住房-练功房;dazuo

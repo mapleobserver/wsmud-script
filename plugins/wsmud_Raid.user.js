@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.14
+// @version         2.4.22
 // @date            23/12/2018
-// @modified        15/04/2020
+// @modified        21/08/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -50,8 +50,8 @@
     }
 
     /**
-     * @param {Array} list 
-     * @param {*} value 
+     * @param {Array} list
+     * @param {*} value
      * @param {Function} assert function(previous, current)
      */
     const SortInsert = function(list, value, assert) {
@@ -225,8 +225,8 @@
         }
 
         /**
-         * @param {string[]} cmds 
-         * @param {number} start block 首句在的 index 
+         * @param {string[]} cmds
+         * @param {number} start block 首句在的 index
          * @param {number} loopStart 最邻近的 while 的首句索引
          */
         _handleBlock(cmds, start, loopStart) {
@@ -295,7 +295,7 @@
                 default:
                 throw "未知的控制关键字: " + r.type;
             }
-        
+
             var cmdsLength = cmds.length;
             var i = 1;
             while (i < cmdsLength) {
@@ -328,7 +328,7 @@
                     i += 1;
                 }
             }
-        
+
             callback();
             return {type: r.type, cmds: result};
         }
@@ -725,7 +725,7 @@
     class AssertWrapper {
         /**
          * @param {Function} assert1 function(string)->Bool
-         * @param {string} text 
+         * @param {string} text
          */
         constructor(assert1) {
             var theSelf = this;
@@ -760,7 +760,7 @@
             this._assertHolders.push(holder);
         },
         /**
-         * @param {string} expression 
+         * @param {string} expression
          * @returns {Function} assert: function()
          */
         get: function(expression) {
@@ -1441,7 +1441,7 @@
     \***********************************************************************************/
 
     /**
-     * @param {String} source 
+     * @param {String} source
      * @param {Function} callback function(resolve)->void
      */
     function PerformerPromise(source, callback, log) {
@@ -1584,7 +1584,7 @@
                         __ConfigPanelInits.forEach(init => { init(); });
                         for (const node of layero[0].children) {
                             if (node.className != "layui-layer-content") continue;
-                            node.setAttribute("style", "max-height: 370px");
+                            node.setAttribute("style", "max-height: 370px;color: rgb(0, 128, 0);");
                         }
                     },
                     end: function() {
@@ -1641,11 +1641,15 @@
         lianxi: "练习",
         xuexi: "学习",
         biguan: "闭关",
-        lianyao: "炼药"
+        lianyao: "炼药",
+        lingwu: "领悟",
+        dushu: "读书",
+        juhun: "聚魂",
+        tuiyan: "推演"
     };
 
     /**
-     * @param {string} itemName 
+     * @param {string} itemName
      * @param {Boolean} blurry
      * @param {string} [quality] white(w), green(g), blue(b), yellow(y), purple(p), orange(o), red(r)
      */
@@ -1719,7 +1723,7 @@
             WG.add_hook("login", function(data) {
                 Role.id = data.id;
                 Role.status = [];
-                setTimeout(function() { 
+                setTimeout(function() {
                     $("span[command=skills]").click();
                     setTimeout(_ => { $(".glyphicon-remove-circle").click(); }, 500);
                 }, 2000); // 查看装备技能
@@ -2096,7 +2100,7 @@
                     Role.kongfu.bian = value; break;
                     case "throwing":
                     Role.kongfu.an = value; break;
-                    default: 
+                    default:
                     break;
                 }
             };
@@ -2461,6 +2465,7 @@
     VariableStore.register(_ => {
         return {
             ":id": Role.id,
+            ":name": Role.name,
             ":hp": Role.hp,
             ":maxHp": Role.maxHp,
             ":hpPer": Role.hp/Role.maxHp,    // 0-1
@@ -2468,7 +2473,7 @@
             ":maxMp": Role.maxMp,
             ":mpPer": Role.mp/Role.maxMp,    // 0-1
             ":living": Role.living,          // true/false
-            ":state": Role.state,            // RoleState 
+            ":state": Role.state,            // RoleState
             ":combating": Role.combating,    // true/false
             ":free": Role.isFree,
 
@@ -3180,6 +3185,8 @@ stopstate
 --->
 <-recordGains
 ($_i) = 0
+[if] (_repeat) == null
+    ($_repeat) = 1
 [while] (_i) < (_repeat)
     @renew
     [if] (_DungeonBagCleanWay) == 售卖
@@ -3352,22 +3359,24 @@ go southeast
 @kill 涟星
 [if] {r邀月}? != null
     @kill 邀月
-($deadyaoyue) = true
 [if] {邀月的尸体}? == null
-    ($deadyaoyue) = false
     [if] (_DungeonWaitSkillCD) == 打开
         @cd
 go northwest;go southwest
-[if] ($deadyaoyue) == false
+[if] {r邀月}? != null
     @kill 邀月
-look hua
-@tip 你数了下大概有($number)朵花
-go southeast
-look bed;pushstart bed;pushleft bed[(number)]
-pushright bed[8]
-go down;fire;go west
-@kill 花无缺
-look xia;open xia`
+[if] {b火折子g}? != null
+    look hua
+    @tip 你数了下大概有($number)朵花
+    go southeast
+    look bed;pushstart bed
+    pushleft bed[(number)]
+    @await 1000
+    pushright bed[8]
+    @await 1000
+    go down;fire;go west
+    @kill 花无缺
+    look xia;open xia`
         },
         {
             name: "移花宫(简单)",
@@ -3389,14 +3398,18 @@ go southeast
     @cd
 go northwest;go southwest
 @kill 邀月
-look hua
-@tip 你数了下大概有($number)朵花
-go southeast
-look bed;pushstart bed;pushleft bed[(number)]
-pushright bed[8]
-go down;fire;go west
-@kill 花无缺
-look xia;open xia`
+[if] {b火折子g}? != null
+    look hua
+    @tip 你数了下大概有($number)朵花
+    go southeast
+    look bed;pushstart bed
+    pushleft bed[(number)]
+    @await 1000
+    pushright bed[8]
+    @await 1000
+    go down;fire;go west
+    @kill 花无缺
+    look xia;open xia`
         },
         {
             name: "冰火岛(困难)",
@@ -3716,7 +3729,7 @@ go north
 go east
 @kill 潘秀达,岑其斯,齐云敖
 [if](_DungeonWaitSkillCD) == 打开
-    @cd   
+    @cd
 go east
 @kill 何红药
 [if](_DungeonWaitSkillCD) == 打开
@@ -3746,7 +3759,7 @@ go north
 go east
 @kill 潘秀达,岑其斯,齐云敖
 [if](_DungeonWaitSkillCD) == 打开
-    @cd   
+    @cd
 go east
 @kill 何红药
 [if](_DungeonWaitSkillCD) == 打开
@@ -4032,6 +4045,7 @@ look men;open men
     go east
     ok {丫鬟}
     go west;go south;go south
+    ok {丫鬟}?
     go north;go north;go west
     select {财主女儿 崔莺莺};ask {财主女儿 崔莺莺} about 东厢
 [else]
@@ -4040,8 +4054,8 @@ look men;open men
 [if] (open) == 打开
     go east;go east;look gui;search gui`
         },
-        { 
-            name: "财主家(简单)", 
+        {
+            name: "财主家(简单)",
             source: `
 jh fb 1 start1;cr yz/cuifu/caizhu
 @kill 大狼狗,大狼狗
@@ -4058,6 +4072,7 @@ look men;open men
     go east
     ok {丫鬟}
     go west;go south;go south
+    ok {丫鬟}?
     go north;go north;go west
     select {财主女儿 崔莺莺};ask {财主女儿 崔莺莺} about 东厢
 [else]
@@ -4190,7 +4205,7 @@ look men;open men
                 }
             });
         },
-        
+
         shareFlowTrigger: function (username, password, type, data) {
             let value = data;
             value["author"] = username;
@@ -4246,7 +4261,7 @@ look men;open men
             });
         },
 
-        _address: "wsmud.bobcn.me:8080/wsmud",
+        _address: "wsmud.ii74.com/S/",
         _async(uri, params, success, fail) {
             this._get(true, uri, params, success, fail);
         },
@@ -4256,7 +4271,7 @@ look men;open men
         _get(async, uri, params, success, fail) {
             $.ajax({
                 type: "post",
-                url: `http://${Server._address}/${uri}`,
+                url: `https://${Server._address}/${uri}`,
                 data: params,
                 async: async,
                 success: function(data) {
@@ -4405,17 +4420,17 @@ look men;open men
             return workflow;
         },
         /**
-         * @param {string} name 
-         * @param {{ id: string, repeat: number }[]} cmdGroupInfos 
+         * @param {string} name
+         * @param {{ id: string, repeat: number }[]} cmdGroupInfos
          */
         createWorkflowConfig: function(name, cmdGroupInfos) {
             var id = new Date().getTime();
             return this.updateWorkflowConfig(id, name, cmdGroupInfos);
         },
         /**
-         * @param {number} id 
-         * @param {string} name 
-         * @param {{ id: string, repeat: number }[]} cmdGroupInfos 
+         * @param {number} id
+         * @param {string} name
+         * @param {{ id: string, repeat: number }[]} cmdGroupInfos
          */
         updateWorkflowConfig: function(id, name, cmdGroupInfos) {
             if (name == null || !/\S+/g.test(name)) {
@@ -4437,7 +4452,7 @@ look men;open men
         removeWorkflowConfig: function(id) {
             GM_deleteValue(this._key(id));
         },
-        
+
         _prefix: "workflow@",
         _isMyKey: function(key) {
             return key.indexOf(this._prefix + Role.id) == 0;
@@ -4476,7 +4491,7 @@ look men;open men
                 const source = `($_i) = 0\n[while] (_i) < (arg0)\n${cmdsTextHasHeader}\n${header}($_i) = (_i) + 1`;
                 WorkflowConfig.createWorkflow(g.name, source, "原命令组");
             });
-            
+
             allWorkflow.forEach(f => {
                 const infos = WorkflowConfigManager.getCmdGroupInfos(f.id);
                 let source = "";
@@ -4745,7 +4760,7 @@ look men;open men
             const key = `key${this._counter}`;
             this._counter += 1;
             this._performers[key] = p;
-            p.start(_ => { 
+            p.start(_ => {
                 delete ManagedPerformerCenter._performers[key];
                 if (ManagedPerformerCenter.getAll().length == 0) {
                     $("#workflows-button").css("border-color", "inherit");
@@ -5165,13 +5180,13 @@ look men;open men
                 methods: {
                     createSpan: function(createElement, item) {
                         let style = {
-                            width: "120px", 
+                            width: "120px",
                             "background-color": "#12e4a0",
                             border: "solid 1px rgb(107, 255, 70)",
                             color: "#000dd4"
                         };
                         if (item.type == "finder") {
-                            style = { 
+                            style = {
                                 width: "120px",
                                 "background-color": "#0359c3",
                                 border: "solid 1px rgb(107, 203, 255)",
@@ -5197,7 +5212,7 @@ look men;open men
                             }
                         };
                         const leftProperties = {
-                            style: { 
+                            style: {
                                 width: "30px",
                                 float: "left",
                                 "background-color": "#ffffff4f",
@@ -5280,7 +5295,7 @@ look men;open men
                 methods: {
                     createSpan: function(createElement, flow) {
                         let style = {
-                            width: "120px", 
+                            width: "120px",
                             "background-color": "#05b77d",
                             border: "solid 1px rgb(107, 255, 70)",
                             color: "white"
@@ -5306,7 +5321,7 @@ look men;open men
                             }
                         };
                         const leftProperties = {
-                            style: { 
+                            style: {
                                 width: "30px",
                                 float: "left",
                                 "background-color": "#ffffff4f",
@@ -5351,10 +5366,11 @@ look men;open men
             UI._shareData = value;
             let source = `
             [if] (__FormUserName) == null
-                (__FormUserName) = 论坛账号
-            #input ($__FormUserName)=论坛账号,(__FormUserName)
-            #input ($password)=论坛密码,
+                (__FormUserName) = (:name)
+            #input ($__FormUserName)=当前角色名,(:name)
             #config
+            ($__FormUserName)=(:name)
+            ($password)=233
             @js Server.shareFlowTrigger("(__FormUserName)", "(password)", "${type}", UI._shareData);
             `
             const p = new Performer(`分享${type}`, source);
@@ -5733,7 +5749,7 @@ look men;open men
         Ready
     \***********************************************************************************/
 
-    const ToRaid = { 
+    const ToRaid = {
         menu :UI.showToolbar,
 
         perform: function(content, name, log) {
@@ -5751,9 +5767,20 @@ look men;open men
     };
 
     $(document).ready(function () {
+        __init__();
+        if (WG == undefined || WG == null) {
+            setTimeout(__init__,300);
+        }
+    });
+
+    function __init__(){
         WG = unsafeWindow.WG;
-        messageAppend  = unsafeWindow.messageAppend;
-        messageClear =  unsafeWindow.messageClear;
+        if(WG == undefined || WG == null){
+            setTimeout(()=>{__init__()}, 300);
+            return;
+        }
+        messageAppend = unsafeWindow.messageAppend;
+        messageClear = unsafeWindow.messageClear;
         T = unsafeWindow.T;
         L = unsafeWindow.L;
 
@@ -5766,5 +5793,5 @@ look men;open men
         DialogList.init();
         TaskList.init();
         Xiangyang.init();
-    });
+    }
 })();

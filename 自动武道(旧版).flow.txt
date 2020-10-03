@@ -1,6 +1,7 @@
 // raid.flow
 // 自动武道重构版2，可判断是否需要重置，由于不需要打一层就回一次武道塔，速度会比早期版本快点。
 // 四区：白三三
+// 2020.05.29 - 减少叫杀后出现往上走导致忙乱的情况
 [if] (WudaoWaitCDLevel) == null
     ($WudaoWaitCDLevel) = 75
 [if] (WudaoWaitCDExp) == null
@@ -37,19 +38,20 @@ go enter
     [if] (currentN) >= (WudaoWaitCDLevel)
         @cd (WudaoWaitCDExp)
     kill {r武道塔守护者}?
+    @await 500
     //@until {r武道塔守护者}? == null || (:combating) == true
     @until {r武道塔守护者}? == null || (:combating) == false
     [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
         @renew
         jh fam 9 start;go enter
-    //@liaoshang
     go up
 ($num)=0
 jh fam 9 start
 ask2 {r守门人}
 @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
 [if] (num) > 0
-    shop 0 (num)
+    [if] {b扫荡符#}? < (num) || {b扫荡符}? == null
+        shop 0 (num)
 ask2 {r守门人};ask3 {r守门人}
 @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
 recordGains->

@@ -3,8 +3,10 @@
 // 武馆需要先交学费，其他门派自动拜师
 // 基于@andyfos的版本修改
 // 四区白三三
+// 2020.07.22 - 1.优化师门信息获取。2.修复个别bug。
 @toolbar jh
-@toolbar score
+@js $(`span[command=score]`).click()
+@js $(`span[for=0]`).click()
 @js ($MyMP) = $(`span[data-prop=family]`).text()
 @js ($MySF) = $(`span[data-prop=master]`).text()
 [if] (MyMP) == 无门无派
@@ -15,7 +17,7 @@
     ($Xsm) = 两者皆学
 [if] (Dazuo) == null
     ($Dazuo) = 否
-#select ($MySF) = 师傅姓名,谷虚道长|宋远桥|张三丰|清乐比丘|道绝禅师|慧合尊者|澄净|玄难|高根明|岳不群|封不平|风清扬|苏梦清|静心|周芷若|灭绝|薛慕华|苏星河|逍遥子|左全|简长老|鲁有脚|洪七公|何小二|李四|雾中楼|武馆教习,(MySF)
+#select ($MySF) = 师傅姓名,谷虚道长|宋远桥|张三丰|清乐比丘|道觉禅师|慧合尊者|澄净|玄难|高根明|岳不群|封不平|风清扬|苏梦清|静心|周芷若|灭绝|薛慕华|苏星河|逍遥子|左全|简长老|鲁有脚|洪七公|何小二|李四|雾中楼|武馆教习,(MySF)
 #select ($Xsm) = 学习何种技能,基本技能|门派技能|两者皆学,(Xsm)
 #select ($Dazuo) = 学完门派内功后是否先打坐(低于10W内力),是|否,(Dazuo)
 #config
@@ -23,54 +25,79 @@
 @stopSSAuto
 [if] (MySF) == 谷虚道长 || (MySF) == 宋远桥
     ($Xxdd) = 武当派-三清殿
+    ($MyMP) = 武当派
 [if] (MySF) == 张三丰
     ($Xxdd) = 武当派-后山小院
+    ($MyMP) = 武当派
 [if] (MySF) == 清乐比丘
     ($Xxdd) = 少林派-广场
-[if] (MySF) == 道绝禅师
+    ($MyMP) = 少林派
+[if] (MySF) == 道觉禅师
     ($Xxdd) = 少林派-天王殿
+    ($MyMP) = 少林派
 [if] (MySF) == 慧合尊者
     ($Xxdd) = 少林派-般若堂
+    ($MyMP) = 少林派
 [if] (MySF) == 澄净
     ($Xxdd) = 少林派-罗汉堂
+    ($MyMP) = 少林派
 [if] (MySF) == 玄难
     ($Xxdd) = 少林派-方丈楼
+    ($MyMP) = 少林派
 [if] (MySF) == 高根明
     ($Xxdd) = 华山派-镇岳宫
+    ($MyMP) = 华山派
 [if] (MySF) == 岳不群
     ($Xxdd) = 华山派-客厅
+    ($MyMP) = 华山派
 [if] (MySF) == 封不平
     ($Xxdd) = 华山派-林间小屋
+    ($MyMP) = 华山派
 [if] (MySF) == 风清扬
     ($Xxdd) = 华山派-落雁峰
+    ($MyMP) = 华山派
 [if] (MySF) == 苏梦清
     ($Xxdd) = 峨眉派-庙门
+    ($MyMP) = 峨眉派
 [if] (MySF) == 静心
     ($Xxdd) = 峨眉派-大殿
+    ($MyMP) = 峨眉派
 [if] (MySF) == 周芷若
     ($Xxdd) = 峨眉派-小屋
+    ($MyMP) = 峨眉派
 [if] (MySF) == 灭绝
     ($Xxdd) = 峨眉派-清修洞
+    ($MyMP) = 峨眉派
 [if] (MySF) == 薛慕华
     ($Xxdd) = 逍遥派-木屋
+    ($MyMP) = 逍遥派
 [if] (MySF) == 苏星河
     ($Xxdd) = 逍遥派-青草坪
+    ($MyMP) = 逍遥派
 [if] (MySF) == 逍遥子
     ($Xxdd) = 逍遥派-地下石室
+    ($MyMP) = 逍遥派
 [if] (MySF) == 左全
     ($Xxdd) = 丐帮-树洞下
+    ($MyMP) = 丐帮
 [if] (MySF) == 简长老
     ($Xxdd) = 丐帮-土地庙
+    ($MyMP) = 丐帮
 [if] (MySF) == 鲁有脚
     ($Xxdd) = 丐帮-林间小屋
+    ($MyMP) = 丐帮
 [if] (MySF) == 洪七公
     ($Xxdd) = 丐帮-林间小屋
+    ($MyMP) = 丐帮
 [if] (MySF) == 何小二
     ($Xxdd) = 杀手楼-大厅
+    ($MyMP) = 杀手楼
 [if] (MySF) == 李四
     ($Xxdd) = 杀手楼-银楼
+    ($MyMP) = 杀手楼
 [if] (MySF) == 雾中楼
     ($Xxdd) = 杀手楼-书房
+    ($MyMP) = 杀手楼
 [if] (MySF) == 武馆教习
     ($Xxdd) = 扬州城-扬州武馆
 
@@ -81,13 +108,13 @@ $to (Xxdd)
 @wait 300
 select {r(MySF)}?
 @wait 300
-@liaoshang
-@dazuo
+//@liaoshang
+//@dazuo
 
 @toolbar jh
 @toolbar skills
 @js ($skill_level) = /\d+/.exec($("[skid=force]").children(".skill-level").text())['0']
-[if] (skill_level) < 1000
+[if] (skill_level) < 800
     ($beginner) = true
 
 <===
@@ -97,20 +124,20 @@ select {r(MySF)}?
         @renew
     [if] (:room) != (Xxdd)
         stopstate
-        @wait 300
+        @await 300
         $to (Xxdd)
         [if] (MySF) == 鲁有脚
             go down
-        @wait 300
+        @await 300
     [if] {r(MySF)}? != null && (:state) != 学习
         [if] (:state) != 打坐
             stopstate
             bai {r(MySF)}?
-            @wait 300
+            @await 300
             select {r(MySF)}?
-            @wait 300
+            @await 300
             xue (Lastcmd) from {r(MySF)}?
-    @wait 60000
+    @await 60000
 ===>
 
 [if] (Xsm) == 基本技能 || (Xsm) == 两者皆学
@@ -183,9 +210,11 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
-            [if] (Dazuo) == 是 && (:maxMp) < 100000
+            [if] (beginner) == true
                 stopstate
                 enable force (Lastcmd)
+            [if] (Dazuo) == 是 && (:maxMp) < 100000
+                stopstate
                 dazuo
                 @tip 已经没有办法再增加内力
                 stopstate
@@ -210,9 +239,11 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
-            [if] (Dazuo) == 是 && (:maxMp) < 100000
+            [if] (beginner) == true
                 stopstate
                 enable force (Lastcmd)
+            [if] (Dazuo) == 是 && (:maxMp) < 100000
+                stopstate
                 dazuo
                 @tip 已经没有办法再增加内力
                 stopstate
@@ -259,13 +290,16 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (Dazuo) == 是 && (:maxMp) < 100000
                 stopstate
                 enable force (Lastcmd)
                 dazuo
                 @tip 已经没有办法再增加内力
                 stopstate
-        [if] (MySF) == 玄难
+        [if] (MySF) == 澄净 || (MySF) == 玄难
             ($Lastcmd) = yijinjing
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
@@ -320,6 +354,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (Dazuo) == 是 && (:maxMp) < 100000
                 stopstate
                 enable force (Lastcmd)
@@ -345,7 +382,7 @@ select {r(MySF)}?
                 [if] (beginner) == true
                     stopstate
                     enable sword huashanjianfa
-        [if] (MySF) == 封不平
+        [if] (MySF) == 封不平 || (MySF) == 风清扬
             ($Lastcmd) = kuangfengkuaijian
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
@@ -355,13 +392,16 @@ select {r(MySF)}?
             [if] (beginner) == true
                 stopstate
                 enable sword (Lastcmd);enable dodge (Lastcmd)
-        [if] (MySF) == 岳不群
+        [if] (MySF) == 岳不群 || (MySF) == 风清扬
             ($Lastcmd) = zixiashengong
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (nl) != null
                 ($ts) == 由于你的内力不够，部分技能未能学习
             [if] (gx) != null
@@ -407,6 +447,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (Dazuo) == 是 && (:maxMp) < 100000
                 stopstate
                 enable force (Lastcmd)
@@ -443,6 +486,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (nl) != null
                 stopstate
                 dazuo
@@ -499,6 +545,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够|你对本门的($gx)还
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (nl) != null
                 ($ts) == 由于你的内力不够，部分技能未能学习
             [if] (gx) != null
@@ -516,6 +565,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能|你的($nl)不够
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (nl) != null
                 stopstate
                 dazuo
@@ -580,6 +632,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (Dazuo) == 是 && (:maxMp) < 100000
                 stopstate
                 enable force (Lastcmd)
@@ -602,6 +657,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (Dazuo) == 是 && (:maxMp) < 100000
                 stopstate
                 enable force (Lastcmd)
@@ -661,6 +719,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (Dazuo) == 是 && (:maxMp) < 100000
                 stopstate
                 enable force (Lastcmd)
@@ -697,6 +758,9 @@ select {r(MySF)}?
             xue (Lastcmd) from {r(MySF)}?
             @wait 300
             @tip 讲解总是无法领会|这项技能你的程度已经不输你师父|你的潜能不够|不会这个技能
+            [if] (beginner) == true
+                stopstate
+                enable force (Lastcmd)
             [if] (Dazuo) == 是 && (:maxMp) < 100000
                 stopstate
                 enable force (Lastcmd)
@@ -730,7 +794,9 @@ select {r(MySF)}?
                 stopstate
                 enable throwing (Lastcmd)
 $zdwk
+@await 1000
 stopstate
+$to 住房-练功房
 dazuo
 @recoverSSAuto
 [if] (ts) != null

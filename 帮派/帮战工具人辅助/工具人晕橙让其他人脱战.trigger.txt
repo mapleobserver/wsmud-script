@@ -1,0 +1,34 @@
+// 新提示信息：转身想跑
+// 适用于武当。触发名字建议为【晕橙脱战】，方便下面代码判断开关
+// 四区白三三
+// 2020.06.21
+@off 晕橙脱战
+[if] (:room) != 武当派-后山小院
+    @on 晕橙脱战
+    [exit]
+@js ($bname) = "(text)".match("<cyn>([^%]+)转身想跑")[1]
+@js ($oname) = "(text)".match("转身想跑，([^%]+)一把拦住")[1]
+@print (bname),(oname)
+//tm (bname),(oname)
+($oid)={r(oname)}?
+[if] (oid) != null && (:status faint,(oid)) == false && (:combating) == true
+    ($bang) = {r张三丰}?
+    ($id_1) = {r武当派长老}?
+    ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+    [if] "(oid)" == "(id_1)" || "(oid)" == "(id_2)"
+        @until (:hp (oid)) >= 15000000
+    [else if] "(oid)" == "(bang)"
+        @until (:hp (oid)) >= 40000000
+    [else]
+        tm 未找到对应橙，无法昏迷
+        @on 晕橙脱战
+        [exit]
+    kill (oid);kill (oid)
+    [if] (:kf_quan) == jiuyinbaiguzhao2
+        $waitpfm unarmed.duo
+    [else if] (:kf_quan) == liumaishenjian
+        $waitpfm unarmed.qi
+    @until (:status faint,(oid)) == true
+    kill (MPnpc);kill (MPnpc)
+    pty 【(bname)】尝试脱战 => 已昏迷【(oname)】
+@on 晕橙脱战

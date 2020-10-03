@@ -1,8 +1,17 @@
 // raid.flow
 // 新提示信息：内部有些异响
 // 四区白三三
+@cmdDelay 0
 go north;go northwest
 @tip 一个黑影扑向
 go southeast;go north;go north
 @until (:room) == 净念禅宗-铜殿内部(副本区域)
 kill {r徐子陵}?;kill {r徐子陵}?
+@until {r徐子陵的尸体}? != null
+@off 补玄灵
+@off 禅宗九阴缠
+@on 躺尸躲僧人
+go south;go south;go northwest
+jumpdown
+@cd
+enable sword tangshijianfa

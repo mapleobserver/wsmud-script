@@ -1,0 +1,10 @@
+//进入战斗
+//镇守的九阳快结束前叫杀，缠住。招架带乾坤用来反阳焰。刀类武器id自己修改。该触发会自动在九阳结束后嗜血九阴出招。无形剑气能晕到镇守，等忙乱快结束时自己手动释放无形剑气。
+//四区白三三
+@cmdDelay 0
+($id_wd) = {r武道镇守者}?
+@perform sword.chan,parry.dao
+@eq 刀类武器id
+@until (:status force,(id_wd)) == false
+@perform blade.shi,force.cui,unarmed.liu,throwing.jiang
+$startpfm

@@ -1,6 +1,7 @@
 // raid.flow
 // 四区：白三三
 // 自动领悟门派进阶书籍
+// 2020.07.22 - 修复小无相功代码错误。
 [if] (lianxi_map) == null
     ($lianxi_map) = 住房-练功房
 [if] (chiyao) == null
@@ -33,7 +34,7 @@ stopstate
     ($mpbooks_name) = '一指禅进阶秘籍','一苇渡江进阶秘籍','燃木刀法进阶秘籍','金刚不坏体进阶秘籍'
 [if] (MPJJname) == 逍遥派
     ($mpskills_name) = '北冥神功','天山六阳掌','凌波微步','小无相功'
-    ($mpskills_id) = 'beimingshengong','liuyangzhang','lingboweibu','xianwuxianggong'
+    ($mpskills_id) = 'beimingshengong','liuyangzhang','lingboweibu','xiaowuxianggong'
     ($mpbooks_name) = '北冥神功进阶秘籍','天山六阳掌进阶秘籍','凌波微步进阶秘籍','小无相功进阶秘籍'
 [if] (MPJJname) == 杀手楼
     ($mpskills_name) = '穿心掌','杀生决','踏雪寻梅','漫天花雨'
@@ -54,9 +55,9 @@ $to (lianxi_map)
         [if] (:status food) == false && (chiyao) == 是 && {b清心丹}? != null
             stopstate
             use {b清心丹}
-        use {b(skill_book)}
-        @tip 恭喜你领悟了
-    [else]
-        ($num) = (num) + 1
+        [if] {b(skill_book)}? != null
+            use {b(skill_book)}
+            @tip 恭喜你领悟了
+    ($num) = (num) + 1
 @recoverSSAuto
 dazuo

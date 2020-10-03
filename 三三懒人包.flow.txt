@@ -1,0 +1,127 @@
+// raid.flow
+// 四区白三三
+// 2020.10.02 - 新增续药飞翼徽章触发
+// 常用流程
+#input ($info1)=👉<hiz>第一次使用前，如已有同名流程，请先手动删除</hiz>👈,挖矿愉快😊
+#select ($flowZDRC)=[自动日常]师门、养精、追捕、打塔、副本、请安,导入|跳过,跳过
+#select ($flowZDZB)=[自动追捕]自动寻路追捕逃犯<hiz>(自动日常已包含)</hiz>,导入|跳过,跳过
+#select ($flowZDWD)=[自动武道]自动打武道塔<hiz>(自动日常已包含)</hiz>,导入|跳过,跳过
+//#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
+#select ($flowKSSD)=[快速扫荡]批量扫荡副本,导入|跳过,跳过
+#select ($flowTDFB)=[偷渡副本]快进快出副本积累次数,导入|跳过,跳过
+#select ($flowJRRC)=[节日日常]自动日常免费扫荡版<ord>(有免费扫荡活动才用)</ord>,导入|跳过,跳过
+#select ($flowYJSG)=[一键收割]收割、安排随从(可自动组队随从去花园),导入|跳过,跳过
+#select ($flowZDCBT)=[自动藏宝图]自动使用藏宝图挖宝,导入|跳过,跳过
+#select ($flowLXDM)=[练习代码生成器]自动生成练习代码并填入系统设置,导入|跳过,跳过
+#select ($flowYJXX)=[一键学习]自动学习门派技能,导入|跳过,跳过
+#select ($flowJQLX)=[精确练习]自动练习技能,导入|跳过,跳过
+#select ($flowMPJJ)=[门派进阶]门派武功自动进阶,导入|跳过,跳过
+#select ($flowYZDY)=[研制丹药]自动研制绿蓝黄紫橙丹药和突破丹,导入|跳过,跳过
+
+// 触发
+#input ($info2)=👇<hiz>以下是触发</hiz>👇,愉快游戏🎮
+#select ($triggerFoodFy)=[续药飞翼]古墓打坐续蕴象，练习领悟续冰心飞翼,导入|跳过,跳过
+#select ($triggerFoodFyHz)=[续药飞翼徽章]在续药飞翼基础上，增加续徽章功能，使用方法看触发内说明,导入|跳过,跳过
+#select ($triggerXWZZ)=[卸武自装]被下武器后自动重新装备,导入|跳过,跳过
+#select ($triggerCMS)=[帮战橙满伤]满伤停止出招自动脱战,导入|跳过,跳过
+#select ($triggerXYJS)=[襄阳叫杀]襄阳自动叫杀蒙古夫长蒙哥,导入|跳过,跳过
+#select ($triggerXYMJG)=[襄阳满军功]襄阳打满500军功后自动清包撤离(可自己删减是否等蒙哥),导入|跳过,跳过
+
+// 特殊流程
+#input ($info3)=👇<hiz>以下是特殊流程</hiz>👇,愉快游戏🎮
+#select ($flowYYWD)=[圆月弯刀]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
+#select ($flowCHQCM)=[慈航七重门]自动走七重门,导入|跳过,跳过
+#select ($flowZSDJM)=[战神殿解谜]战神殿解谜进门,导入|跳过,跳过
+
+#config
+($USE_kswd)=null
+// 流程
+($f_zdrc)={"name":"自动日常","source":"http://wsmud-cdn.if404.com/自动日常.flow.txt","finder":"根文件夹"}
+($f_zdzb)={"name":"自动追捕","source":"http://wsmud-cdn.if404.com/自动追捕.flow.txt","finder":"根文件夹"}
+($f_zdwd)={"name":"自动武道","source":"http://wsmud-cdn.if404.com/自动武道.flow.txt","finder":"根文件夹"}
+($f_kssd)={"name":"快速扫荡","source":"http://wsmud-cdn.if404.com/副本/快速扫荡.flow.txt","finder":"根文件夹"}
+($f_tdfb)={"name":"偷渡副本","source":"http://wsmud-cdn.if404.com/副本/偷渡副本.flow.txt","finder":"根文件夹"}
+($f_jrrc)={"name":"节日日常","source":"http://wsmud-cdn.if404.com/节日日常(免费扫荡版).flow.txt","finder":"根文件夹"}
+($f_yjsg)={"name":"一键收割","source":"http://wsmud-cdn.if404.com/杂务/一键收割.flow.txt","finder":"杂务"}
+($f_zdcbt)={"name":"自动藏宝图","source":"http://wsmud-cdn.if404.com/杂务/自动藏宝图.flow.txt","finder":"杂务"}
+($f_lxdm)={"name":"练习代码生成器","source":"http://wsmud-cdn.if404.com/提升/练习代码生成器.flow.txt","finder":"提升"}
+($f_yjxx)={"name":"一键学习","source":"http://wsmud-cdn.if404.com/提升/一键学习.flow.txt","finder":"提升"}
+($f_jqlx)={"name":"精确练习","source":"http://wsmud-cdn.if404.com/提升/精确练习.flow.txt","finder":"提升"}
+($f_mpjj)={"name":"门派进阶","source":"http://wsmud-cdn.if404.com/提升/门派进阶.flow.txt","finder":"提升"}
+($f_yzdy)={"name":"研制绿丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制绿丹.flow.txt","finder":"研制丹药"},{"name":"研制蓝丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制蓝丹.flow.txt","finder":"研制丹药"},{"name":"研制黄丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制黄丹.flow.txt","finder":"研制丹药"},{"name":"研制紫丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制紫丹.flow.txt","finder":"研制丹药"},{"name":"研制橙丹","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制橙丹.flow.txt","finder":"研制丹药"},{"name":"研制突破","source":"http://wsmud-cdn.if404.com/杂务/研制丹药/研制突破.flow.txt","finder":"研制丹药"}
+($f_yywd)={"name":"圆月弯刀","source":"http://wsmud-cdn.if404.com/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
+($f_chqcm)={"name":"慈航七重门","source":"http://wsmud-cdn.if404.com/副本/慈航七重门.flow.txt","finder":"根文件夹"}
+($f_zsdjm)={"name":"战神殿解谜","source":"http://wsmud-cdn.if404.com/副本/战神殿解谜.flow.txt","finder":"根文件夹"}
+
+
+[if] (flowZDRC)==导入
+  ($f_list)=(f_list),(f_zdrc)
+[if] (flowZDZB)==导入
+  ($f_list)=(f_list),(f_zdzb)
+[if] (flowZDWD)==导入
+  ($f_list)=(f_list),(f_zdwd)
+[if] (flowKSWD)==导入
+  ($f_list)=(f_list),(f_kswd)
+[if] (flowKSSD)==导入
+  ($f_list)=(f_list),(f_kssd)
+[if] (flowTDFB)==导入
+  ($f_list)=(f_list),(f_tdfb)
+[if] (flowJRRC)==导入
+  ($f_list)=(f_list),(f_jrrc)
+[if] (flowYJSG)==导入
+  @js WorkflowConfig.createFinder("杂务")
+  ($f_list)=(f_list),(f_yjsg)
+[if] (flowZDCBT)==导入
+  @js WorkflowConfig.createFinder("杂务")
+  ($f_list)=(f_list),(f_zdcbt)
+[if] (flowLXDM)==导入
+  @js WorkflowConfig.createFinder("提升")
+  ($f_list)=(f_list),(f_lxdm)
+[if] (flowYJXX)==导入
+  @js WorkflowConfig.createFinder("提升")
+  ($f_list)=(f_list),(f_yjxx)
+[if] (flowJQLX)==导入
+  @js WorkflowConfig.createFinder("提升")
+  ($f_list)=(f_list),(f_jqlx)
+[if] (flowMPJJ)==导入
+  @js WorkflowConfig.createFinder("提升")
+  ($f_list)=(f_list),(f_mpjj)
+[if] (flowYZDY)==导入
+  @js WorkflowConfig.createFinder("研制丹药")
+  ($f_list)=(f_list),(f_yzdy)
+[if] (flowYYWD)==导入
+  ($f_list)=(f_list),(f_yywd)
+[if] (flowCHQCM)==导入
+  ($f_list)=(f_list),(f_chqcm)
+[if] (flowZSDJM)==导入
+  ($f_list)=(f_list),(f_zsdjm)
+
+// 开始导入
+($num)=1
+[if] (f_list) != null
+  @js ($l) = [(f_list)].length
+  [while] (num)<(l)
+    @js var time = Date.parse( new Date());var f=[(f_list)];var n=f[(num)]["name"];var s=f[(num)]["source"];var fd=f[(num)]["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+        ($num)=(num)+1
+
+//触发
+[if] (triggerFoodFy)==导入
+  @print 导入 <hic>续药飞翼</hic> 触发
+  @js Server.importTrigger("白三三·续药飞翼·触发@053fa14d0921f690128f38d10941b3d6")
+[if] (triggerFoodFyHz)==导入
+  @print 导入 <hic>续药飞翼徽章</hic> 触发
+  @print <hiy>【续药飞翼徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。</hiy>
+  @js Server.importTrigger("白三三·续药飞翼徽章·触发@46d841c44f5e0c42e9718a25a388001e")
+  tm 【续药飞翼徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。
+[if] (triggerXWZZ)==导入
+  @print 导入 <hic>卸武自装</hic> 触发
+  @js Server.importTrigger("白三三·卸武自装·触发@33b0009ff0108c92a34841c7174b876a")
+[if] (triggerCMS)==导入
+  @print 导入 <hic>帮战橙满伤</hic> 触发
+  @js Server.importTrigger("白三三·触发@ac447c50e42c38d4553977f598c83350")
+[if] (triggerXYJS)==导入
+  @print 导入 <hic>襄阳叫杀</hic> 触发
+  @js Server.importTrigger("白三三·触发@0b2616c7c2d44a84a0c77e02789451af")
+[if] (triggerXYMJG)==导入
+  @print 导入 <hic>襄阳满军功</hic> 触发
+  @js Server.importTrigger("白三三·触发@68476d5f2bf4abe1f26d508502cf4137")

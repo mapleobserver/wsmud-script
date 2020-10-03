@@ -88,8 +88,7 @@ stopstate
             //@until {r蒙面大盗}? == null || (:combating) == true || (:living) == false
             //@tip 九阳神功($jiuyang)了|<hir>鲜血</hir>|<hir>死了</hir>|倒在地上,死了|挣扎了几下，
             [if] (EscortXuedao) == 打开
-                @tip 九阳神功($jiuyang)了|你获得了|没有东西|<HIR>死了</HIR>|你口中喷出几口<HIR>鲜血</HIR>，倒在地上,死了！|你现在是灵魂状态|朦胧中你好像听到有人在喊|一股阴冷的气息包围着你
-                //@print (jiuyang)
+                @tip 九阳神功($jiuyang)了|你获得了|没有东西|死了|你现在是灵魂状态，不能那么做
             @until {r蒙面大盗}? == null || (:combating) == false || (:living) == false
             [if] (:living) == true
                 ($jiuyang) = null
@@ -114,9 +113,14 @@ stopstate
                 select {林震南};biao {r林震南}
                 task yunbiao {r林震南} begin
         [else]
-            @tip 你推着镖银风尘仆仆地来到($map)，只要把镖银交给($name)就完成了。
-            select {(name)};task yunbiao {(name)} give
-            [break]
+            @await 100
+            [if] (:room) != 运镖-青石大道
+                @tip 你推着镖银风尘仆仆地来到($map)，只要把镖银交给($name)就完成了。
+                select {(name)};task yunbiao {(name)} give
+                @tip 这是你的报酬
+                [break]
+            [else]
+                [continue]
     ($num) = (num) + 1
     ($numJF) = 0
 recordGains->

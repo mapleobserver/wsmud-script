@@ -3,6 +3,8 @@
 //四区白三三
 #select ($ZBmp) = 请选择进攻门派,武当派|丐帮|华山派|峨眉派|少林派|逍遥派,(ZBmp)
 #config
+[if] (arg0) != null
+    ($ZBmp) = (arg0)
 stopstate
 @await 500
 $startpfm
@@ -29,10 +31,20 @@ $startpfm
     jh fam 5 start
 @wait 100
 <---
-[if] {r(bang)}? == null
-    [if] {r(red)}? == null
+($mpb) = {r(bang)}?
+($mpr) = {r(red)}?
+[if] "(mpb)" == "null"
+    [if] "(mpr)" == "null"
         @await 100
-        $killall
+        [while] true
+            ($mpc) = {r(ZBmp)}?
+            [if] "(mpc)" != "null"
+                [if] (:maxHp (mpc)) == 2000000 || (:maxHp (mpc)) == 200000 || (:maxHp (mpc)) == 40000 || (:maxHp (mpc)) == 2000
+                    kill (mpc)
+                [else]
+                    [break]
+            [else]
+                [break]
         @until (:combating) == false && (:status busy) == false
         @await 500
 [else if] {r岳不群}? != null

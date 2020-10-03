@@ -1,0 +1,14 @@
+// 死亡状态改变触发器
+// 类型：已经死亡
+// by silent
+relive
+@cmdDelay 50
+[if] (:cd force.cui) == false && (:kf_nei) == jiuyinshengong
+    @await 2500
+    $to 华山派-客厅
+    @await 200
+    kill {r独孤败天};perform force.cui
+[else]
+    $to 华山派-客厅
+    @await 200
+    kill {r独孤败天}

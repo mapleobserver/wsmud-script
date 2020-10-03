@@ -1,6 +1,7 @@
 //raid.flow
 //整合了之前的几个相关流程，一键收割、安排随从工作
 //如果掉线导致随从都在院子发呆，会自动组队去花园工作
+//2020.07.08 - 给随从鱼饵会先取出随从身上的，再按从橙到绿的顺序给随从
 //四区白三三
 [if] (SC_1) == null
     ($SC_1) = 王语嫣
@@ -36,6 +37,7 @@ team out
 ($sc) = '(SC_1)','(SC_2)','(SC_3)'
 ($work) = '(SCWork_1)','(SCWork_2)','(SCWork_3)'
 ($num) = 0
+@cmdDelay 500
 [while] (num) < 3
     @js ($s) = [(sc)][(num)]
     @js ($w) = [(work)][(num)]
@@ -44,8 +46,8 @@ team out
         ($w) = cai
     [else]
         ($w) = diao
-    [if] (s) != null
-        dc {r(s)}? stopstate;select {r(s)}?;pack {r(s)}?
+    [if] (s) != null && {r(s)}? != null
+        dc {r(s)}? stopstate;select {r(s)}?;pack {r(s)}?;
     [else]
         ($num) = (num) + 1
         [continue]
@@ -68,6 +70,7 @@ team out
         ($cmd) = (cmd);dc {r(s)}? give (:id) {d鲂鱼#} {d鲂鱼}
     [if] (cmd) != null
         (cmd)
+    @await 2000
     ($cmd) = null
     [if] {d芦荟}? != null
         ($cmd) = (cmd);dc {r(s)}? give (:id) {d芦荟#} {d芦荟}
@@ -86,6 +89,7 @@ team out
         ($cmd) = (cmd);dc {r(s)}? give (:id) {d石楠叶#} {d石楠叶}
     [if] (cmd) != null
         (cmd)
+    @await 2000
     ($cmd) = null
     [if] (ItemQuality) == 绿
         dc {r(s)} (w)
@@ -108,6 +112,7 @@ team out
         ($cmd) = (cmd);dc {r(s)}? give (:id) {d熟地黄#} {d熟地黄}
     [if] (cmd) != null
         (cmd)
+    @await 2000
     ($cmd) = null
     [if] (ItemQuality) == 蓝
         dc {r(s)} (w)
@@ -130,6 +135,7 @@ team out
         ($cmd) = (cmd);dc {r(s)}? give (:id) {d九香虫#} {d九香虫}
     [if] (cmd) != null
         (cmd)
+    @await 2000
     ($cmd) = null
     [if] (ItemQuality) == 黄
         dc {r(s)} (w)
@@ -152,6 +158,7 @@ team out
         ($cmd) = (cmd);dc {r(s)}? give (:id) {d人参#} {d人参}
     [if] (cmd) != null
         (cmd)
+    @await 2000
     ($cmd) = null
     [if] (ItemQuality) == 紫
         dc {r(s)} (w)
@@ -174,6 +181,7 @@ team out
         ($cmd) = (cmd);dc {r(s)}? give (:id) {d盘龙参#} {d盘龙参}
     [if] (cmd) != null
         (cmd)
+    @await 2000
     ($cmd) = null
     dc {r(s)} (w)
     ($num) = (num) + 1
@@ -185,23 +193,42 @@ team out
         ($w) = (SCWork_2)
     [else]
         ($w) = (SCWork_3)
-    dc {r(s)}? stopstate;select {r(s)}?;trade {r(s)}?;
-    @await 500
-    [if] {b鱼饵g}? != null
-        ($cmd) = (cmd);give {r(s)}? {b鱼饵g#}? {b鱼饵g}?
-    [if] {b鱼饵b}? != null
-        ($cmd) = (cmd);give {r(s)}? {b鱼饵b#}? {b鱼饵b}?
-    [if] {b鱼饵y}? != null
-        ($cmd) = (cmd);give {r(s)}? {b鱼饵y#}? {b鱼饵y}?
-    [if] {b鱼饵p}? != null
-        ($cmd) = (cmd);give {r(s)}? {b鱼饵p#}? {b鱼饵p}?
+    dc {r(s)}? stopstate;pack {r(s)}?;
+    @dialog
+    ($cmd) = null
+    [if] {d鱼饵o}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵o#}? {d鱼饵o}?
+    [if] {d鱼饵p}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵p#}? {d鱼饵p}?
+    [if] {d鱼饵y}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵y#}? {d鱼饵y}?
+    [if] {d鱼饵b}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵b#}? {d鱼饵b}?
+    [if] {d鱼饵g}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵g#}? {d鱼饵g}?
+    [if] (cmd) != null
+        (cmd)
+    @await 2000
+    dc {r(s)}? stopstate;trade {r(s)}?;
+    @await 1000
+    ($cmd) = null
     [if] {b鱼饵o}? != null
         ($cmd) = (cmd);give {r(s)}? {b鱼饵o#}? {b鱼饵o}?
+    [if] {b鱼饵p}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵p#}? {b鱼饵p}?
+    [if] {b鱼饵y}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵y#}? {b鱼饵y}?
+    [if] {b鱼饵b}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵b#}? {b鱼饵b}?
+    [if] {b鱼饵g}? != null
+        ($cmd) = (cmd);give {r(s)}? {b鱼饵g#}? {b鱼饵g}?
     [if] (cmd) != null
         (cmd)
     [if] (w) == 采药
         dc {r(s)} cai
     [else]
         dc {r(s)} diao
+@await 2000
 @tidyBag
+@await 1000
 $zdwk

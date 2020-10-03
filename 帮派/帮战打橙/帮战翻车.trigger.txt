@@ -10,9 +10,9 @@
     ($id_1) = {r武当派长老}?
     ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
     ($id_bang) = {r张三丰}?
-    [if] (MPnpc) == (id_2) || (MPnpc) == (id_1) || (MPnpc) == (id_bang)
-        kill (MPnpc);kill (MPnpc)
-    [else if] (id_2) == null && (id_1) != null && (MPnpc) != (id_1) && (MPnpc) != (id_bang)
-        kill (id_1);kill (id_1)
-    [else if] (id_2) == null && (id_1) == null && (MPnpc) != null
+    [if] (id_2) == null && (id_1) == null && (MPnpc) != null
         kill {r张三丰}?
+    [else if] (id_2) == null && (id_1) != null && (MPnpc) != (id_1) && (MPnpc) != (id_bang) && (MPnpc) != null
+        kill (id_1);kill (id_1)
+    [else if] (MPnpc) == (id_2) || (MPnpc) == (id_1) || (MPnpc) == (id_bang)
+        kill (MPnpc);kill (MPnpc)

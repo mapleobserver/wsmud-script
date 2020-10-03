@@ -374,3 +374,4 @@ lianyao2 stop
 @tip 恭喜你研制成功|恭喜你炼制出
 @wait 1000
 stopSSAuto->
+$zdwk

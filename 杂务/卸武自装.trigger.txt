@@ -1,0 +1,6 @@
+//新提示信息：脱手而出
+//自己修改武器名字
+($weapon) = 粉红喵喵锤
+($wq) = {b(weapon)}?
+[if] (wq) != null && (:eq0) == null
+    @eq (wq)

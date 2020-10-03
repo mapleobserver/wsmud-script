@@ -1,0 +1,23 @@
+//buff变化：移除
+//buffid:food|fy
+//对象：自己
+//要先手动吃一颗或使用一次飞翼
+//2020.08.23 - 续冰心和飞翼合并版，会判断当前进程，避免续冰心过程中正好飞翼也结束，却因非练习状态导致不续飞翼。效果有待测试。
+@cmdDelay 0
+@js ($fbroom)='(:room)'.indexOf('副本区域')
+[if] (fbroom) != -1
+    [exit]
+($cmd) = null
+($item) = null
+[if] (:state) == 练习 || (:state) == 打坐
+    ($cmd) = dazuo;
+[if] (:state) == 领悟
+    ($cmd) = lingwu continue;
+[if] (cmd)==null
+    [exit]
+[if] (sid) == food && {b冰心丹}? != null
+    ($item) = {b冰心丹}
+[if] (sid) == fy
+    ($item) = (:eq0)
+[if] (item) != null
+    stopstate;use (item);(cmd)

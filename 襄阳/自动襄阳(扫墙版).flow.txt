@@ -62,6 +62,7 @@ go north[4]
     go north
     go north
     go north
+    go north
     //左上
     go east
     go east

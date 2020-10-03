@@ -1,0 +1,152 @@
+//raid.flow
+//帮战清号令
+//四区白三三
+#select ($ZBmp) = 请选择进攻门派,武当派|丐帮|华山派|峨眉派|少林派|逍遥派,(ZBmp)
+#config
+[if] (arg0) != null
+    ($ZBmp) = (arg0)
+stopstate
+@await 500
+$startpfm
+($red)=上古
+[if] (arg0) != null
+    ($ZBmp)=(arg0)
+[if] (ZBmp) == 丐帮
+    ($bang)=洪七公
+    jh fam 6 start
+[else if] (ZBmp) == 武当派
+    ($bang)=张三丰
+    jh fam 1 start
+[else if] (ZBmp) == 华山派
+    ($bang)=岳不群
+    jh fam 3 start
+[else if] (ZBmp) == 少林派
+    ($bang)=玄难
+    jh fam 2 start
+[else if] (ZBmp) == 峨眉派
+    ($bang)=灭绝
+    jh fam 4 start
+[else if] (ZBmp) == 逍遥派
+    ($bang)=逍遥子
+    jh fam 5 start
+@wait 100
+<---
+[if] {r(bang)}? == null
+    [if] {r(red)}? == null
+        @await 100
+        $killall
+        @until (:combating) == false && (:status busy) == false
+        @await 500
+[else if] {r岳不群}? != null
+    @await 500
+    [if] ($hsover) == true
+        [exit]
+[else]
+    [exit]
+--->
+@cmdDelay 500
+[if] (ZBmp) == 武当派
+    jh fam 1 start
+    go north
+    go south;go west
+    go west
+    go east;go northup
+    go north
+    go east
+    go west;go west
+    go northup
+    go northup
+    go northup
+    go north
+    go north
+    go north
+    go north
+    go north
+    go north
+[else if] (ZBmp) == 华山派
+    ($hsover) = false
+    jh fam 3 start
+    go eastup
+    go southup
+    jumpdown
+    go southup
+    go south
+    go east
+    jh fam 3 start
+    go westup
+    go north
+    go east
+    go west;go north
+    go east
+    go west;go north
+    go south[3]
+    go west
+    go east;go south
+    go southup
+    go southup
+    look bi;break bi;go enter
+    go westup
+    go westup
+    jumpup
+    ($hsover) = true
+    $to 华山派-客厅
+[else if] (ZBmp) == 少林派
+    jh fam 2 start
+    go north
+    go west
+    go east;go east
+    go west;go north
+    go northup
+    go southdown;go northeast
+    go northwest
+    go southwest
+    go northeast;go north
+    go east
+    go west;go west
+    go east;go north
+    go east
+    go west;go west
+    go east;go north
+    go west
+    go east;go north
+    go north
+[else if] (ZBmp) == 峨眉派
+    jh fam 4 start
+    go northup
+    go east
+    go west;go southdown;go west
+    go south
+    go east
+    go east
+    go west;go south
+    go north;go west;go south
+    go north;go west
+    go south
+    go south
+    go north;go north;go west
+    go east;go north
+    go north
+[else if] (ZBmp) == 逍遥派
+    jh fam 5 start
+    go north
+    go north
+    jh fam 5 start;go east
+    go north
+    go south;go south
+    go south
+    jh fam 5 start;go west
+    go south
+    jh fam 5 start;go south
+    go south
+    jh fam 5 start;go down
+    go down
+[else if] (ZBmp) == 丐帮
+    jh fam 6 start
+    go down
+    go east
+    go east
+    go east
+    go up
+    go down;go east
+    go east
+    go up

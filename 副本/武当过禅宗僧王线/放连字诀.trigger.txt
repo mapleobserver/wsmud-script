@@ -1,3 +1,9 @@
 // 触发：技能冷却
-// 技能id：sword.lian
-@perform sword.lian
+// 技能id：sword.lian|force.zhui
+[if] (id)==sword.lian
+  @until (:status force) == true
+  @perform sword.lian
+[else if] (id)==force.zhui
+  ($ts)={r天僧}?
+  @until (:status jiuyin,(ts))==true
+  @perform force.zhui

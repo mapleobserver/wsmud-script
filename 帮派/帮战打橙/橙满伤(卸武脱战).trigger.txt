@@ -1,0 +1,68 @@
+// raid.flow
+// author:四区白三三
+// 打满后卸掉武器脱战
+// 人名关键词：长老|副帮主|洪七公|张三丰|岳不群
+// 伤害百分比：11（武当只需要9）
+// 挡刀顺序：想打掌门：打第一个长老；想打第一个长老：打掌门；想打第二个长老：$killall
+@cmdDelay 0
+($weapon) = (:eq0)
+($id_1) = {r副帮主}?
+($id_2) = {r副帮主}?# obj.id == "(id_1)" #
+[if] (:room) == 丐帮-林间小屋 && (:combating) == true
+    ($id_0) = {r洪七公}?
+    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
+        ($MPnpc) = (id_1)
+        kill (id_1);kill (id_1)
+        pty 占比(percent)，切换目标：第一个橙
+    [else if] "(id)" == "(id_1)"
+        ($MPnpc) = (id_0)
+        kill (id_0);kill (id_0)
+        pty 占比(percent)，切换目标：洪七公
+    [else if] "(id)" == "(id_0)"
+        ($MPnpc) = null
+        $stoppfm
+        pty 洪七公已满，我先撤
+        [while] (:eq0) != null
+            uneq (weapon)
+        [while] (:room) == 丐帮-林间小屋
+            go down
+            @await 500
+        @until (:combating) == false
+        go up
+        @await 500
+        [while] (:room) != 丐帮-林间小屋
+            $to 丐帮-林间小屋
+            @await 500
+        $startpfm
+        @eq (weapon)
+[else if] (:room) == 武当派-后山小院 && (:combating) == true
+    ($id_1) = {r武当派长老}?
+    ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
+    ($id_0) = {r张三丰}?
+    [if] "(id)" != "(id_1)" && "(id)" != "(id_0)"
+        ($MPnpc) = (id_1)
+        kill (id_1);kill (id_1)
+        pty 占比(percent)，切换目标：第一个橙
+    [else if] "(id)" == "(id_1)"
+        ($MPnpc) = (id_0)
+        kill (id_0);kill (id_0)
+        pty 占比(percent)，切换目标：张三丰
+    [else if] "(id)" == "(id_0)"
+        ($MPnpc) = null
+        $stoppfm
+        pty 张三丰已满，我先撤
+        [while] (:eq0) != null
+            uneq (weapon)
+        [while] (:room) == 武当派-后山小院
+            go south
+            @await 500
+        @until (:combating) == false
+        go north
+        @await 500
+        [while] (:room) != 武当派-后山小院
+            $to 武当派-后山小院
+            @await 500
+        $startpfm
+        @eq (weapon)
+[else]
+    $startpfm

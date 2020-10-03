@@ -1,0 +1,35 @@
+// 帮战技能监控
+// 四区白三三
+// 新提示信息：缠字决|绵绵而上,使出一招“金蛇狂舞|突然金芒大盛|中指一按|冷笑数声|双掌不断拍出
+@js ($pass) = '(text)'.indexOf('这里填要忽略的工具人名字')
+//忽略工具人
+[if] (pass) == -1
+    @js ($s_chan) = "(text)".indexOf("使出太极剑【缠字决】")
+    [if] (s_chan) != -1
+        @js ($name) = "(text)".match("<mag>([^%]+)使出太极剑【缠字决】")[1]
+        ($skill) = 缠字诀
+    @js ($s_wu) = "(text)".indexOf("绵绵而上,使出一招“金蛇狂舞")
+    [if] (s_wu) != -1
+        @js ($name) = "(text)".match("<hiy>([^%]+)身随剑走，绵绵而上,使出一招“金蛇狂舞")[1]
+        ($skill) = 金蛇狂舞
+    @js ($s_hun) = "(text)".indexOf("突然金芒大盛，一道金光破空直袭")
+    [if] (s_hun) != -1
+        @js ($name) = "(text)".match("<hiy>([^%]+)手中.*突然金芒大盛")[1]
+        ($skill) = 金蛇追魂
+    @js ($s_liu) = "(text)".indexOf("中指一按，一股凌厉无伦")
+    [if] (s_liu) != -1
+        @js ($name) = "(text)".match("<hiy>([^%]+)中指一按，一股凌厉无伦")[1]
+        ($skill) = 无形剑气
+    @js ($s_song) = "(text)".indexOf("双掌不断拍出")
+    [if] (s_song) != -1
+        @js ($name) = "(text)".match("<hic>([^%]+)双掌不断拍出")[1]
+        ($skill) = 无影掌
+    @js ($s_duo) = "(text)".indexOf("冷笑数声，手指微微弯曲成爪")
+    [if] (s_duo) != -1
+        @js ($name) = "(text)".match("<hiy>([^%]+)冷笑数声，手指微微弯曲成爪")[1]
+        ($skill) = 夺魄
+    [if] (skill) != null
+        ($info) = (:hour):(:minute):(:second) (name) => (skill)
+        pty (info)
+        @print (info)
+        ($BPZLog) = (BPZLog)|(info)

@@ -42,10 +42,10 @@ $wait 5000
     @wait (waitkill)
 ($id_1) = {r武当派长老}?
 ($id_2) = {r武当派长老}?# obj.id == "(id_1)" #
-[if] (id_2) != null
+[if] "(id_2)" != "null"
     kill (id_2);kill (id_2)
     ($MPnpc) = (id_2)
-[else if] (id_2) == null && (id_1) != null
+[else if] "(id_2)" == "null" && "(id_1)" != "null"
     kill (id_1);kill (id_1)
     ($MPnpc) = (id_1)
 [else]

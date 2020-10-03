@@ -1,0 +1,112 @@
+// raid.flow
+// 生成练习代码，自动填入系统设置中，代码长度最多200。
+// 四区白三三
+// 2020.07.03 - 修复不加练习房间时存在的bug
+@toolbar jh
+//获取境界
+[while] (jj) == null
+  @toolbar score
+  @js ($jj) = $(`span[data-prop=level]`).text()
+//获取等级上限
+[while] (level) == null
+  @toolbar skills
+  @js ($level) = /\d+/.exec($(".obj-money").text())['0']
+
+//选择练习方式
+[(LXtype)==null]($LXtype)=练至上限
+#select ($LXtype) = 练习方式,指定等级|练至上限,(LXtype)
+#config
+($reset) = true
+[while] true
+  [if] (len) != null && (len) > 200
+    ($len) = 0
+    ($list) = null
+    #input ($info) = <ord>练习代码太长无法保存，请重新选择</ord>,👇👇👇
+  //判断是否在副本中
+  @js ($fb) = '(:room)'.indexOf('副本区域')
+  //选择是否添加房间代码
+  [(lx_map)==null]($lx_map)=住房-练功房
+  [(fb)!=-1]($lx_map)=不加
+  #select ($lx_map) = 是否添加前往房间的代码,不加|住房-练功房|帮会-练功房,(lx_map)
+  //选择练习结束后动作
+  [(lx_after)==null]($lx_after)=挖矿
+  [if] (jj) == 武帝 || (jj) == 武神
+    ($lx_after) = 闭关
+  [(fb)!=-1]($lx_after)=不加
+  #select ($lx_after) = 是否添加练习结束后命令,不加|闭关|挖矿,(lx_after)
+  //选择需要练习的技能
+  #input ($target_level) = 当前技能上限,(level)
+  ($_i) = 0
+  [while] (_i) < 60
+    @js ($s(_i)) = $(".skill-item").eq('(_i)').attr('skid')
+    [if] (s(_i)) == null
+      [break]
+    @js ($n(_i)) = $(".skill-item").eq('(_i)').html().match(/[^\d]*/)
+    @js ($n(_i)) = '(n(_i))'.replace(/span class="skill-level"/,'')
+    @js ($n(_i)) = '(n(_i))'.replace(/<>/, '')
+    //@js ($n(_i)) = '(n(_i))'.replace(/✔/, '')
+    @js ($ln(_i)) = $(".skill-item").eq('(_i)').text().match(/[0-9]+/)
+    [if] (s(_i)) != literate && (s(_i)) != lianyao
+      [if] (LXtype) == 指定等级
+        #input ($l(_i)) = (n(_i))当前等级(ln(_i)),(ln(_i))
+      [else]
+        #select ($k(_i)) = (n(_i))当前等级(ln(_i)),练习|跳过,跳过
+    ($_i) = (_i) + 1
+  #config
+
+  // 生成代码
+  ($_j) = 0
+  @print (s(_j)),(l(_j))
+  [while] (_j) < (_i)
+    [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
+      ($type) = base
+    [else]
+      ($type) = skill
+    [if] (LXtype) == 指定等级
+      [if] (l(_j)) != null && (l(_j)) > (ln(_j))
+        [if] (list) != null
+          [if] (type) == base
+            @js ($list) = 'lianxi '+'(s(_j))'+' '+'(l(_j))'+','+'(list)'
+          [else]
+            @js ($list) = '(list)'+',lianxi '+'(s(_j))'+' '+'(l(_j))'
+        [else]
+          ($list) = lianxi (s(_j)) (l(_j))
+    [else]
+      [if] (k(_j)) != 跳过 && (k(_j)) != null
+        [if] (list) != null
+          [if] (type) == base
+            @js ($list) = 'lianxi '+'(s(_j))'+','+'(list)'
+          [else]
+            @js ($list) = '(list)'+',lianxi '+'(s(_j))'
+        [else]
+          ($list) = lianxi (s(_j))
+    ($_j) = (_j)+1
+  [if] (list) != null
+    //添加地图命令
+    [(fb)!=-1](lx_map)=不加
+    [if] (lx_map) != 不加
+      [if] (lx_map) == 住房-练功房
+        @js ($map) = 'jh fam 0 start,go west,go west,go north,go enter,go west,'
+      [else]
+        @js ($map) = 'jh fam 0 start,go south,go south,go east,go east,go east,go north,'
+    [else]
+      ($map) = null
+    [if] (map) != null
+      @js ($list) = '(map)'+'(list)'
+    //添加练习结束后命令
+    [if] (lx_after) != 不加
+      [(lx_after)==闭关]($after)=xiulian
+      [(lx_after)==挖矿]($after)=wakuang
+      @js ($list) = '(list)'+','+'(after)'
+    @print (list)
+    @js ($len) = '(list)'.length
+    [if] (len) > 200
+      [continue]
+    [else]
+      setting auto_work (list);
+      @print <ord>新练习代码已生效：</ord>
+      @print <hiy>(list)</hiy>
+      @print <ord>打坐即可按照新代码开始练习，系统设置显示内容需刷新网页才能看见。</ord>
+  [else]
+    @print <ord>未设定任何技能！</ord>
+  [break]

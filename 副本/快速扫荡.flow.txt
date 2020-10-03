@@ -1,116 +1,131 @@
 // raid.flow
 // 四区：白三三
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
+// 2020.10.02 - 增加扫荡次数上限和提示信息。
+#input ($info) = <ord>扫荡开始后无法中止，为避免意外，次数限定最高2000次。</ord>,👇🏻仔细填写👇🏻
 #select ($AutoBuy) = 自动补充扫荡符(免费扫荡期间选不购买),购买|不购买,(AutoBuy)
-#select ($FBName) = 副本,财主家(困难)|丽春院|鳌拜府|天地会|神龙教|关外|温府|五毒教|恒山|青城山|衡山|嵩山|云梦沼泽|桃花岛(简单)|桃花岛(困难)|白驼山|星宿海|冰火岛(简单)|冰火岛(困难)|移花宫(简单)|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|光明顶|光明顶(组队)|天龙寺(困难)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBName)
-#input ($_repeat) = 扫荡副本次数,1
-#input ($Num_tidy) = 每扫荡 N 次后清包,(Num_tidy)
+#select ($FBNameQ) = 副本,财主家(困难)|丽春院|鳌拜府|天地会|神龙教|关外|温府|五毒教|恒山|青城山|衡山|嵩山|云梦沼泽|桃花岛(简单)|桃花岛(困难)|白驼山|星宿海|冰火岛(困难)|移花宫(简单)|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|光明顶|光明顶(组队)|天龙寺(困难)|血刀门|古墓派(简单)|古墓派(困难)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBNameQ)
+#input ($repeat) = 扫荡副本次数,1
 #config
+[if] (repeat) > 2000
+    tm 所填次数(repeat)超出本流程2000次上限，请重新填写！
+    @print <ord>所填次数(repeat)超出本流程2000次上限，请重新填写！</ord>
+    [exit]
 <-stopSSAuto
 stopstate
-[if] (FBName) == 财主家(困难)
+[if] (FBNameQ) == 财主家(困难)
     ($fbcr) = cr yz/cuifu/caizhu 1
-[else if] (FBName) == 丽春院
+[else if] (FBNameQ) == 丽春院
     ($fbcr) = cr yz/lcy/dating 0
-[else if] (FBName) == 鳌拜府
+[else if] (FBNameQ) == 鳌拜府
     ($fbcr) = cr bj/ao/damen 0
-[else if] (FBName) == 天地会
+[else if] (FBNameQ) == 天地会
     ($fbcr) = cr bj/tdh/hct 0
-[else if] (FBName) == 神龙教
+[else if] (FBNameQ) == 神龙教
     ($fbcr) = cr bj/shenlong/haitan 0
-[else if] (FBName) == 关外
+[else if] (FBNameQ) == 关外
     ($fbcr) = cr bj/guanwai/damen 0
-[else if] (FBName) == 温府
+[else if] (FBNameQ) == 温府
     ($fbcr) = cr cd/wen/damen 0
-[else if] (FBName) == 五毒教
+[else if] (FBNameQ) == 五毒教
     ($fbcr) = cr cd/wudu/damen 0
-[else if] (FBName) == 恒山
+[else if] (FBNameQ) == 恒山
     ($fbcr) = cr wuyue/hengshan/daziling 0
-[else if] (FBName) == 青城山
+[else if] (FBNameQ) == 青城山
     ($fbcr) = cr wuyue/qingcheng/shanlu 0
-[else if] (FBName) == 衡山
+[else if] (FBNameQ) == 衡山
     ($fbcr) = cr wuyue/henshan/hengyang 0
-[else if] (FBName) == 嵩山
+[else if] (FBNameQ) == 嵩山
     ($fbcr) = cr wuyue/songshan/taishi 0
-[else if] (FBName) == 云梦沼泽
+[else if] (FBNameQ) == 云梦沼泽
     ($fbcr) = cr cd/yunmeng/senlin 0
-[else if] (FBName) == 桃花岛(简单)
+[else if] (FBNameQ) == 桃花岛(简单)
     ($fbcr) = cr taohua/haitan 0
-[else if] (FBName) == 桃花岛(困难)
+[else if] (FBNameQ) == 桃花岛(困难)
     ($fbcr) = cr taohua/haitan 1
-[else if] (FBName) == 白驼山
+[else if] (FBNameQ) == 白驼山
     ($fbcr) = cr baituo/damen 0
-[else if] (FBName) == 星宿海
+[else if] (FBNameQ) == 星宿海
     ($fbcr) = cr xingxiu/xxh6 0
-[else if] (FBName) == 冰火岛(简单)
+[else if] (FBNameQ) == 冰火岛(困难)
     ($fbcr) = cr mj/bhd/haibian 1
-[else if] (FBName) == 冰火岛(困难)
-    ($fbcr) = cr mj/bhd/haibian 1
-[else if] (FBName) == 移花宫(简单)
+[else if] (FBNameQ) == 移花宫(简单)
     ($fbcr) = cr huashan/yihua/shandao 0
-[else if] (FBName) == 移花宫(困难)
+[else if] (FBNameQ) == 移花宫(困难)
     ($fbcr) = cr huashan/yihua/shandao 1
-[else if] (FBName) == 燕子坞(简单)
+[else if] (FBNameQ) == 燕子坞(简单)
     ($fbcr) = cr murong/anbian 0
-[else if] (FBName) == 燕子坞(困难)
+[else if] (FBNameQ) == 燕子坞(困难)
     ($fbcr) = cr murong/anbian 1
-[else if] (FBName) == 黑木崖(简单)
+[else if] (FBNameQ) == 黑木崖(简单)
     ($fbcr) = cr heimuya/shangu 0
-[else if] (FBName) == 黑木崖(困难)
+[else if] (FBNameQ) == 黑木崖(困难)
     ($fbcr) = cr heimuya/shangu 1
-[else if] (FBName) == 缥缈峰(困难)
+[else if] (FBNameQ) == 缥缈峰(困难)
     ($fbcr) = cr lingjiu/shanjiao 1
-[else if] (FBName) == 光明顶
+[else if] (FBNameQ) == 光明顶
     ($fbcr) = cr mj/shanmen 0
-[else if] (FBName) == 天龙寺(困难)
+[else if] (FBNameQ) == 天龙寺(困难)
     ($fbcr) = cr tianlong/damen 1
-[else if] (FBName) == 血刀门
+[else if] (FBNameQ) == 血刀门
     ($fbcr) = cr xuedao/shankou 0
-[else if] (FBName) == 古墓派(简单)
+[else if] (FBNameQ) == 古墓派(简单)
     ($fbcr) = cr gumu/gumukou 0
-[else if] (FBName) == 古墓派(困难)
+[else if] (FBNameQ) == 古墓派(困难)
     ($fbcr) = cr gumu/gumukou 1
-[else if] (FBName) == 华山论剑
+[else if] (FBNameQ) == 华山论剑
     ($fbcr) = cr huashan/lunjian/leitaixia 0
-[else if] (FBName) == 侠客岛
+[else if] (FBNameQ) == 侠客岛
     ($fbcr) = cr xkd/shimen 0
-[else if] (FBName) == 净念禅宗(普通)
+[else if] (FBNameQ) == 净念禅宗(简单)
     ($fbcr) = cr chanzong/shanmen 0
-[else if] (FBName) == 净念禅宗(困难)
+[else if] (FBNameQ) == 净念禅宗(困难)
     ($fbcr) = cr chanzong/shanmen 1
-[else if] (FBName) == 慈航静斋(简单)
+[else if] (FBNameQ) == 慈航静斋(简单)
     ($fbcr) = cr cihang/shanmen 0
-[else if] (FBName) == 慈航静斋(困难)
+[else if] (FBNameQ) == 慈航静斋(困难)
     ($fbcr) = cr cihang/shanmen 1
-[else if] (FBName) == 阴阳谷
+[else if] (FBNameQ) == 阴阳谷
     ($fbcr) = cr yyg/ya 0
-[else if] (FBName) == 战神殿(简单)
+[else if] (FBNameQ) == 战神殿(简单)
     ($fbcr) = cr zsd/damen 0
-[else if] (FBName) == 战神殿(困难)
+[else if] (FBNameQ) == 战神殿(困难)
     ($fbcr) = cr zsd/damen 1
 [else]
     @print <ord>没有找到对应副本，请重新选择！</ord>
+    ($FBNameQ) = null
+    ($fbcr) = null
+    [exit]
+[if] (repeat) == null
+    @print <ord>扫荡次数错误，请重新填写！</ord>
     [exit]
 //是否补充扫荡符
 [if] (AutoBuy) == 购买
-    [if] {b扫荡符#}? != null && {b扫荡符#}? < (_repeat)
-        ($num) = (_repeat) - {b扫荡符#}
+    [if] {b扫荡符#}? != null && {b扫荡符#}? < (repeat)
+        ($num) = (repeat) - {b扫荡符#}
         shop 0 (num)
     [else if] {b扫荡符#}? == null
-        shop 0 (_repeat)
+        shop 0 (repeat)
 <-recordGains
-[while] (_repeat) > 0
-    [if] (_repeat) >= (Num_tidy)
-        (fbcr) (Num_tidy)
-    [else]
-        (fbcr) (_repeat)
-    @tip 扫荡完成|扫荡符($lack)继续扫荡
-    [if] (lack) != null
-        @print <ord>扫荡符不足，已停止</ord>
-        [exit]
-    @tidyBag
-    @wait 5000
-    ($_repeat) = (_repeat) - (Num_tidy)
+[if] (fbcr) == null
+    @print <ord>副本代码无效，请重新选择！</ord>
+[else]
+    tm 根据设置，开始扫荡【(FBNameQ)】(repeat)次。
+    (fbcr) (repeat)
+@tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
+[if] (lack) != null
+    @print <ord>扫荡符不足，已停止。</ord>
+    tm 扫荡符不足，已停止。
+[else if] (jingli) != null
+    @print <ord>精力不足，已停止。</ord>
+    tm 精力不足，已停止。
+[else]
+    @print <ord>扫荡【(FBNameQ)】(repeat)次已完成。</ord>
+    tm 扫荡【(FBNameQ)】(repeat)次已完成。
 recordGains->
+@tidyBag
+@wait 3000
+$cleanall
+@await 3000
 stopSSAuto->
 $zdwk

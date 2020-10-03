@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name            wsmud_Trigger
 // @namespace       cqv3
-// @version         0.0.35
+// @version         0.0.38
 // @date            03/03/2019
-// @modified        04/03/2019
+// @modified        05/06/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
 // @description     武神传说 MUD
-// @author          Bob.cn
+// @author          Bob.cn, 初心, 白三三
 // @match           http://*.wsmud.com/*
 // @run-at          document-end
 // @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
@@ -54,7 +54,7 @@
             delete this._observers[index];
         },
         /**
-         * @param {Notification} notification 
+         * @param {Notification} notification
          */
         post: function(notification) {
             for (const key in this._observers) {
@@ -156,7 +156,7 @@
     class InputFilter extends Filter {
         /**
          * @param {String} name
-         * @param {InputFilterFormat} format 
+         * @param {InputFilterFormat} format
          * @param {*} defaultValue
          */
         constructor(name, format, defaultValue, assert) {
@@ -297,7 +297,7 @@
         modify: function(originalName, name, conditions, source) {
             const trigger = this._triggers[originalName];
             if (trigger == null) return "修改不存在的触发器？";
-            
+
             const event = trigger.event();
             if (originalName == name) {
                 const data = new TriggerData(name, event, conditions, source, trigger.active());
@@ -454,10 +454,10 @@
     //---------------------------------------------------------------------------
 
     (function() {
-        const chanel = new SelectFilter(
-            "频道", 
+        const channel = new SelectFilter(
+            "频道",
             ["全部", "世界", "队伍", "门派", "全区", "帮派", "谣言", "系统"],
-            0, 
+            0,
             function(fromUser, fromGame) {
                 if (fromUser == "全部") return true;
                 return fromUser == fromGame;
@@ -465,10 +465,11 @@
         );
         const talker = new InputFilter("发言人", InputFilterFormat.text, "", ContainAssert);
         const key = new InputFilter("关键字", InputFilterFormat.text, "", KeyAssert);
-        let filters = [chanel, talker, key];
+        let filters = [channel, talker, key];
         const intro = `// 新聊天信息触发器
 // 聊天信息内容：(content)
-// 发言人：(name)`;
+// 发言人：(name)
+// 频道：(channel)`;
         const t = new TriggerTemplate("新聊天信息", filters, intro);
         TriggerTemplateCenter.add(t);
 
@@ -484,16 +485,17 @@
                     "rumor": "谣言",
                     "sys": "系统"
                 };
-                const chanel = types[data.ch];
-                if (chanel == null) return;
+                const channel = types[data.ch];
+                if (channel == null) return;
                 const name = data.name == null ? "无" : data.name;
                 let params = {
-                    "频道": chanel,
+                    "频道": channel,
                     "发言人": name,
                     "关键字": data.content
                 };
                 params["content"] = data.content;
                 params["name"] = name;
+                params["channel"] = channel;
                 const n = new Notification("新聊天信息", params);
                 NotificationCenter.post(n);
             });
@@ -670,13 +672,13 @@
 
     (function() {
         const hours = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
             20, 21, 22, 23
         ];
         const minutes = [
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+            10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
             20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
             30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
             40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
@@ -978,7 +980,7 @@
                     editTrigger: UI.editTrigger,
                     activeStyle: function(t) {
                         if (t.active()) {
-                            return { 
+                            return {
                                 "background-color": "#a0e6e0",
                                 "border": "1px solid #7284ff",
                                 "color": "#001bff"
@@ -1142,22 +1144,35 @@
     let Running = false;
 
     $(document).ready(function () {
+        __init__();
+        if (WG == undefined || WG == null || ToRaid == undefined || ToRaid == null) {
+            setTimeout(__init__, 300);
+        }
+    });
+
+    function __init__(){
         WG = unsafeWindow.WG;
-        messageAppend  = unsafeWindow.messageAppend;
-        messageClear =  unsafeWindow.messageClear;
+
+        messageAppend = unsafeWindow.messageAppend;
+        messageClear = unsafeWindow.messageClear;
         ToRaid = unsafeWindow.ToRaid;
+
+        if (WG == undefined || WG == null || ToRaid == undefined || ToRaid == null) {
+            setTimeout(()=>{__init__()}, 300);
+            return;
+        }
         Role = unsafeWindow.Role;
 
         unsafeWindow.TriggerUI = UI;
         unsafeWindow.TriggerConfig = TriggerConfig;
         unsafeWindow.TriggerCenter = TriggerCenter;
 
-        WG.add_hook("login", function(data) {
+        WG.add_hook("login", function (data) {
             if (Running) return;
             Running = true;
 
             TriggerCenter.run();
             MonitorCenter.run();
         });
-    });
+    }
 })();
