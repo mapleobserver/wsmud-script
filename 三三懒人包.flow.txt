@@ -111,7 +111,7 @@
 [if] (triggerFoodFyHz)==导入
   @print 导入 <hic>续药飞翼徽章</hic> 触发
   @print <hiy>【续药飞翼徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。</hiy>
-  @js Server.importTrigger("白三三·续药飞翼徽章·触发@46d841c44f5e0c42e9718a25a388001e")
+  @js Server.importTrigger("白三三·续药飞翼徽章·触发@ff33c44a11c7a0233ba7efb80bc380ee")
   tm 【续药飞翼徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。
 [if] (triggerXWZZ)==导入
   @print 导入 <hic>卸武自装</hic> 触发
