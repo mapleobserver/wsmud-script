@@ -4,6 +4,9 @@
   @until (:status force) == true
   @perform sword.lian
 [else if] (id)==force.zhui
-  ($ts)={r天僧}?
-  @until (:status jiuyin,(ts))==true
+  [if] {r天僧}? != null
+    ($cid)={r天僧}?
+  [else if] {r徐子陵}? != null
+    ($cid)={r徐子陵}?
+  @until (:status jiuyin,(cid))==true
   @perform force.zhui
