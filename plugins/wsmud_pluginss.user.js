@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.109
+// @version      0.0.32.110
 // @date         01/07/2018
-// @modified     07/08/2020
+// @modified     07/10/2020
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -450,15 +450,27 @@
             "sales": "铁匠铺老板 铁匠",
             "place": "扬州城-打铁铺"
         },
-        "金创药": {
+        "hig金创药": {
             "id": null,
             "type": "hig",
             "sales": "药铺老板 平一指",
             "place": "扬州城-药铺"
         },
-        "引气丹": {
+        "hig引气丹": {
             "id": null,
             "type": "hig",
+            "sales": "药铺老板 平一指",
+            "place": "扬州城-药铺"
+        },
+        "hic金创药": {
+            "id": null,
+            "type": "hic",
+            "sales": "药铺老板 平一指",
+            "place": "扬州城-药铺"
+        },
+        "hic引气丹": {
+            "id": null,
+            "type": "hic",
             "sales": "药铺老板 平一指",
             "place": "扬州城-药铺"
         },
@@ -1393,14 +1405,33 @@
             var lists = $(".dialog-list > .obj-list:first");
             var id;
             var name;
+            var gtype;
             if (lists.length) {
                 messageAppend("检测到商品清单");
                 for (var a of lists.children()) {
                     a = $(a);
                     id = a.attr("obj");
                     name = $(a.children()[0]).html();
-                    goods[name].id = id;
-                    messageAppend(name + ":" + id);
+
+                    gtype = a.children()[0].localName;
+                    if(name=="金创药"||name=="引气丹"){
+                        if(goods[gtype+name]){
+                       goods[gtype+name].id = id;
+                        }else{
+                           goods[gtype+name] =   {
+                               "id": id,
+                               "type":gtype,
+                               "sales": "药铺老板 平一指",
+                               "place": "扬州城-药铺"
+                           }
+
+                        }
+
+                    }
+                    else{
+                     goods[name].id = id;
+                    }
+                    messageAppend(`<${gtype}>${name}</${gtype}>:${id}`);
                 }
                 GM_setValue("goods", goods);
                 return true;
@@ -1706,7 +1737,9 @@
                         return;
                     };
                     var itemName = item.html();
+                     let _gtype = item[0].localName;
                     item = item[0].outerHTML;
+
                     if (WG.ungetStore) {
                         if (mysm_loser == "开") {
                             $("span[cmd$='giveup']:last").click();
@@ -1735,7 +1768,12 @@
                         }
                     }
                     //不能上交自动购买
-                    WG.sm_item = goods[itemName];
+                    if(itemName=="金创药"||itemName=="引气丹"){
+                        WG.sm_item = goods[_gtype+itemName];
+                    }else{
+                        WG.sm_item = goods[itemName];
+                    }
+
                     if (item != undefined && WG.inArray(item, store_list) && sm_getstore == "开") {
                         if (item.indexOf("hiz") >= 0 || item.indexOf("hio") >= 0) {
                             sm_any = GM_getValue(role + "_sm_any", sm_any);
@@ -6706,8 +6744,12 @@
                     if (data.selllist) {
                         for (let item of data.selllist) {
                             let realname = item.name.replace(/<[^>]+>/g, ""); //去尖括号
+                            let _gtype = /<([^<>]*)>/.exec(item.name)[1]
                             if (goods[realname] != undefined) {
                                 goods[realname].id = item.id;
+                            }
+                            if (goods[_gtype+realname] != undefined) {
+                                goods[_gtype+realname].id = item.id;
                             }
                         }
                         GM_setValue("goods", goods);
