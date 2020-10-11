@@ -1,6 +1,25 @@
-// raid.flow
+// 挂机自动练习
 // 四区白三三
-// 2020.06.22 - 修复技能找不到时重复查找功能的判断bug
+($localVer) = 2020062201
+($changeLog) = 修复技能找不到时重复查找功能的判断bug
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.jqlx
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前精确练习版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"精确练习","source":"http://wsmud-cdn.if404.com/提升/精确练习.flow.txt","finder":"提升"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 精确练习已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行精确练习，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
 @toolbar jh
 @toolbar skills
 //级别上限

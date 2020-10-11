@@ -1,37 +1,57 @@
-// raid.flow
-// 四区白三三
-// 2020.10.02 - 新增续药飞翼徽章触发
 // 常用流程
+// 四区白三三
+($localVer) = 2020101107
+($changeLog) = 实现懒人包自动更新；更新橙满伤；新增鼓舞续药飞翼
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.lrb
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前懒人包版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"三三懒人包","source":"http://wsmud-cdn.if404.com/三三懒人包.flow.txt","finder":"根文件夹"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 懒人包已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行懒人包，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
+#input ($info0)=👉<hiz>当前流程版本为(localVer)，以下有♻️标志的流程有自更新功能</hiz>👈,自动更新🚀
 #input ($info1)=👉<hiz>第一次使用前，如已有同名流程，请先手动删除</hiz>👈,挖矿愉快😊
-#select ($flowZDRC)=[自动日常]师门、养精、追捕、打塔、副本、请安,导入|跳过,跳过
-#select ($flowZDZB)=[自动追捕]自动寻路追捕逃犯<hiz>(自动日常已包含)</hiz>,导入|跳过,跳过
-#select ($flowZDWD)=[自动武道]自动打武道塔<hiz>(自动日常已包含)</hiz>,导入|跳过,跳过
+#select ($flowZDRC)=[♻️<hiz>自动日常</hiz>]师门、养精、追捕、打塔、副本、请安,导入|跳过,跳过
+#select ($flowZDZB)=[♻️<hiz>自动追捕</hiz>]自动寻路追捕逃犯<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
+#select ($flowZDWD)=[♻️<hiz>自动武道</hiz>]自动打武道塔<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
-#select ($flowKSSD)=[快速扫荡]批量扫荡副本,导入|跳过,跳过
-#select ($flowTDFB)=[偷渡副本]快进快出副本积累次数,导入|跳过,跳过
-#select ($flowJRRC)=[节日日常]自动日常免费扫荡版<ord>(有免费扫荡活动才用)</ord>,导入|跳过,跳过
-#select ($flowYJSG)=[一键收割]收割、安排随从(可自动组队随从去花园),导入|跳过,跳过
-#select ($flowZDCBT)=[自动藏宝图]自动使用藏宝图挖宝,导入|跳过,跳过
-#select ($flowLXDM)=[练习代码生成器]自动生成练习代码并填入系统设置,导入|跳过,跳过
-#select ($flowYJXX)=[一键学习]自动学习门派技能,导入|跳过,跳过
-#select ($flowJQLX)=[精确练习]自动练习技能,导入|跳过,跳过
-#select ($flowMPJJ)=[门派进阶]门派武功自动进阶,导入|跳过,跳过
-#select ($flowYZDY)=[研制丹药]自动研制绿蓝黄紫橙丹药和突破丹,导入|跳过,跳过
+#select ($flowKSSD)=[♻️<hiz>快速扫荡</hiz>]批量扫荡副本,导入|跳过,跳过
+#select ($flowTDFB)=[<hiz>偷渡副本</hiz>]快进快出副本积累次数,导入|跳过,跳过
+//#select ($flowJRRC)=[♻️<hiz>节日日常</hiz>]自动日常免费扫荡版<ord>(有免费扫荡活动才用)</ord>,导入|跳过,跳过
+#select ($flowYJSG)=[♻️<hiz>一键收割</hiz>]收割、安排随从(可自动组队随从去花园),导入|跳过,跳过
+#select ($flowZDCBT)=[<hiz>自动藏宝图</hiz>]自动使用藏宝图挖宝,导入|跳过,跳过
+#select ($flowLXDM)=[♻️<hiz>练习代码生成器</hiz>]自动生成练习代码并填入系统设置,导入|跳过,跳过
+#select ($flowYJXX)=[♻️<hiz>一键学习</hiz>]自动学习门派技能,导入|跳过,跳过
+#select ($flowJQLX)=[♻️<hiz>精确练习</hiz>]自动练习技能,导入|跳过,跳过
+#select ($flowMPJJ)=[♻️<hiz>门派进阶</hiz>]门派武功自动进阶,导入|跳过,跳过
+#select ($flowYZDY)=[<hiz>研制丹药</hiz>]自动研制绿蓝黄紫橙丹药和突破丹,导入|跳过,跳过
 
 // 触发
 #input ($info2)=👇<hiz>以下是触发</hiz>👇,愉快游戏🎮
-#select ($triggerFoodFy)=[续药飞翼]古墓打坐续蕴象，练习领悟续冰心飞翼,导入|跳过,跳过
-#select ($triggerFoodFyHz)=[续药飞翼徽章]在续药飞翼基础上，增加续徽章功能，使用方法看触发内说明,导入|跳过,跳过
-#select ($triggerXWZZ)=[卸武自装]被下武器后自动重新装备,导入|跳过,跳过
-#select ($triggerCMS)=[帮战橙满伤]满伤停止出招自动脱战,导入|跳过,跳过
-#select ($triggerXYJS)=[襄阳叫杀]襄阳自动叫杀蒙古夫长蒙哥,导入|跳过,跳过
-#select ($triggerXYMJG)=[襄阳满军功]襄阳打满500军功后自动清包撤离(可自己删减是否等蒙哥),导入|跳过,跳过
+#select ($triggerFoodFy)=[<hiz>续药飞翼</hiz>]古墓打坐续蕴象，练习领悟续冰心飞翼,导入|跳过,跳过
+#select ($triggerGwFoodFyHz)=[<hiz>鼓舞续药飞翼</hiz>]无鼓舞buff时会停止练习去闭关,导入|跳过,跳过
+#select ($triggerFoodFyHz)=[<hiz>续药飞翼徽章</hiz>]在续药飞翼基础上，增加续徽章功能，使用方法看触发内说明,导入|跳过,跳过
+#select ($triggerXWZZ)=[<hiz>卸武自装</hiz>]被下武器后自动重新装备,导入|跳过,跳过
+#select ($triggerCMS)=[<hiz>帮战橙满伤</hiz>]满伤停止出招自动脱战(精简版只保留丐帮武当),导入|跳过,跳过
+#select ($triggerXYJS)=[<hiz>襄阳叫杀</hiz>]襄阳自动叫杀蒙古夫长蒙哥,导入|跳过,跳过
+#select ($triggerXYMJG)=[<hiz>襄阳满军功</hiz>]襄阳打满500军功后自动清包撤离(可自己删减是否等蒙哥),导入|跳过,跳过
 
 // 特殊流程
 #input ($info3)=👇<hiz>以下是特殊流程</hiz>👇,愉快游戏🎮
-#select ($flowYYWD)=[圆月弯刀]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
-#select ($flowCHQCM)=[慈航七重门]自动走七重门,导入|跳过,跳过
-#select ($flowZSDJM)=[战神殿解谜]战神殿解谜进门,导入|跳过,跳过
+//#select ($flowYYWD)=[<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
+#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
+#select ($flowZSDJM)=[<hiz>战神殿解谜</hiz>]战神殿解谜进门,导入|跳过,跳过
 
 #config
 ($USE_kswd)=null
@@ -41,7 +61,7 @@
 ($f_zdwd)={"name":"自动武道","source":"http://wsmud-cdn.if404.com/自动武道.flow.txt","finder":"根文件夹"}
 ($f_kssd)={"name":"快速扫荡","source":"http://wsmud-cdn.if404.com/副本/快速扫荡.flow.txt","finder":"根文件夹"}
 ($f_tdfb)={"name":"偷渡副本","source":"http://wsmud-cdn.if404.com/副本/偷渡副本.flow.txt","finder":"根文件夹"}
-($f_jrrc)={"name":"节日日常","source":"http://wsmud-cdn.if404.com/节日日常(免费扫荡版).flow.txt","finder":"根文件夹"}
+($f_jrrc)={"name":"节日日常","source":"http://wsmud-cdn.if404.com/节日日常.flow.txt","finder":"根文件夹"}
 ($f_yjsg)={"name":"一键收割","source":"http://wsmud-cdn.if404.com/杂务/一键收割.flow.txt","finder":"杂务"}
 ($f_zdcbt)={"name":"自动藏宝图","source":"http://wsmud-cdn.if404.com/杂务/自动藏宝图.flow.txt","finder":"杂务"}
 ($f_lxdm)={"name":"练习代码生成器","source":"http://wsmud-cdn.if404.com/提升/练习代码生成器.flow.txt","finder":"提升"}
@@ -108,17 +128,21 @@
 [if] (triggerFoodFy)==导入
   @print 导入 <hic>续药飞翼</hic> 触发
   @js Server.importTrigger("白三三·续药飞翼·触发@053fa14d0921f690128f38d10941b3d6")
+[if] (triggerGwFoodFyHz)==导入
+  @print 导入 <hic>鼓舞续药飞翼</hic> 触发
+  @js Server.importTrigger("白三三·鼓舞续药飞翼·触发@93907c5f08a32aff847efc5005be6dcc")
 [if] (triggerFoodFyHz)==导入
   @print 导入 <hic>续药飞翼徽章</hic> 触发
   @print <hiy>【续药飞翼徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。</hiy>
-  @js Server.importTrigger("白三三·续药飞翼徽章·触发@ff33c44a11c7a0233ba7efb80bc380ee")
+  @js Server.importTrigger("白三三·续药飞翼徽章·触发@f7851c6655b3c9f049128d2719f5fb2c")
   tm 【续药飞翼徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。
 [if] (triggerXWZZ)==导入
   @print 导入 <hic>卸武自装</hic> 触发
   @js Server.importTrigger("白三三·卸武自装·触发@33b0009ff0108c92a34841c7174b876a")
 [if] (triggerCMS)==导入
   @print 导入 <hic>帮战橙满伤</hic> 触发
-  @js Server.importTrigger("白三三·触发@ac447c50e42c38d4553977f598c83350")
+  @js Server.importTrigger("白三三·橙满伤·触发@92ae0deb0926f129d2fab09cd3b3ca0c")
+  @js WG.SendCmd("tm 如果满伤脱战过程不想卸武器，请在触发代码中按说明修改参数。")
 [if] (triggerXYJS)==导入
   @print 导入 <hic>襄阳叫杀</hic> 触发
   @js Server.importTrigger("白三三·触发@0b2616c7c2d44a84a0c77e02789451af")

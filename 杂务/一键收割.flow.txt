@@ -1,8 +1,27 @@
-//raid.flow
 //整合了之前的几个相关流程，一键收割、安排随从工作
 //收割过程中包满了会自动清包再继续，不过有概率卡住。
 //2020.07.08 - 给随从鱼饵会先取出随从身上的，再按从橙到绿的顺序给随从
 //四区白三三
+($localVer) = 2020070801
+($changeLog) = 给随从鱼饵会先取出随从身上的，再按从橙到绿的顺序给随从
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.yjsg
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前一键收割版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"一键收割","source":"http://wsmud-cdn.if404.com/杂务/一键收割.flow.txt","finder":"杂务"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 一键收割已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行一键收割，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
 [if] (SC_1) == null
     ($SC_1) = 王语嫣
     ($SCWork_1) = 采药

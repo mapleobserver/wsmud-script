@@ -1,7 +1,25 @@
-// raid.flow
-// 四区：白三三
 // 自动领悟门派进阶书籍
-// 2020.07.22 - 修复小无相功代码错误。
+// 四区白三三
+($localVer) = 2020072203
+($changeLog) = 修复小无相功代码错误。
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.mpjj
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前门派进阶版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"门派进阶","source":"http://wsmud-cdn.if404.com/提升/门派进阶.flow.txt","finder":"提升"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 门派进阶已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行门派进阶，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
 [if] (lianxi_map) == null
     ($lianxi_map) = 住房-练功房
 [if] (chiyao) == null

@@ -1,33 +1,35 @@
-// raid.flow
-// 四区：白三三
 // 偷渡副本
+// 四区：白三三
+($localVer) = 2020081101
+($changeLog) = 增减副本
+
 #select ($TDFBName) = 偷渡副本,星宿海|困难移花|困难缥缈|光明顶|困难天龙|困难古墓|困难禅宗|简单慈航|困难慈航,(TDFBName)
 #input ($_repeat) = 偷渡副本次数,1
 #config
 <-stopSSAuto
 [if] (TDFBName) == 星宿海
-    ($fbcr) = xingxiu/xxh6 0
+  ($fbcr) = xingxiu/xxh6 0
 [else if] (TDFBName) == 困难移花
-    ($fbcr) = huashan/yihua/shandao 1
+  ($fbcr) = huashan/yihua/shandao 1
 [else if] (TDFBName) == 困难缥缈
-    ($fbcr) = lingjiu/shanjiao 1
+  ($fbcr) = lingjiu/shanjiao 1
 [else if] (TDFBName) == 光明顶
-    ($fbcr) = mj/shanmen 0
+  ($fbcr) = mj/shanmen 0
 [else if] (TDFBName) == 困难天龙
-    ($fbcr) = tianlong/damen 1
+  ($fbcr) = tianlong/damen 1
 [else if] (TDFBName) == 困难古墓
-    ($fbcr) = gumu/gumukou 1
+  ($fbcr) = gumu/gumukou 1
 [else if] (TDFBName) == 困难禅宗
-    ($fbcr) = chanzong/shanmen 1
+  ($fbcr) = chanzong/shanmen 1
 [else if] (TDFBName) == 简单慈航
-    ($fbcr) = cihang/shanmen 0
+  ($fbcr) = cihang/shanmen 0
 [else if] (TDFBName) == 困难慈航
-    ($fbcr) = cihang/shanmen 1
+  ($fbcr) = cihang/shanmen 1
 stopstate
 ($_i) = 0
 @cmdDelay 500
 [while] (_i) < (_repeat)
-    cr (fbcr) 0;cr over
-    ($_i) = (_i) + 1
+  cr (fbcr) 0;cr over
+  ($_i) = (_i) + 1
 $zdwk
 stopSSAuto->

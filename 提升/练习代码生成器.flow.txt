@@ -1,7 +1,25 @@
-// raid.flow
 // 生成练习代码，自动填入系统设置中，代码长度最多200。
 // 四区白三三
-// 2020.07.03 - 修复不加练习房间时存在的bug
+($localVer) = 2020070302
+($changeLog) = 修复不加练习房间时存在的bug
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.lxdm
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前练习代码生成器版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"练习代码生成器","source":"http://wsmud-cdn.if404.com/提升/练习代码生成器.flow.txt","finder":"提升"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 练习代码生成器已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行练习代码生成器，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
 @toolbar jh
 //获取境界
 [while] (jj) == null

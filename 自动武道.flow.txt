@@ -1,6 +1,25 @@
 // 武道塔融合版
 // 四区：白三三
-// 2020.09.24 优化重置后的层数判断
+($localVer) = 2020092401
+($changeLog) = 优化重置后的层数判断
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.zdwd
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前自动武道版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"自动武道","source":"http://wsmud-cdn.if404.com/自动武道.flow.txt","finder":"根文件夹"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 自动武道已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行自动武道，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
 [if] (WudaoMode) == null || (WudaoMode) = 正常肝塔
   ($WudaoMode) = 正常模式
 [if] (WudaoWaitCDLevel) == null

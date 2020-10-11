@@ -1,7 +1,25 @@
-// raid.flow
-// 四区：白三三
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
-// 2020.10.05 - 优化扫荡频次，及时清包避免背包太满变废号。
+// 四区白三三
+($localVer) = 2020100501
+($changeLog) = 优化扫荡频次，及时清包避免背包太满变废号。
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.kssd
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前快速扫荡版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"快速扫荡","source":"http://wsmud-cdn.if404.com/副本/快速扫荡.flow.txt","finder":"根文件夹"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 快速扫荡已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行快速扫荡，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
 [if] (SDWay) == null
     ($SDWay) = 直接扫荡
 #input ($info1) = <ord>扫荡开始后无法中止，为避免意外，次数限定最高2000次。</ord>,👇🏻仔细填写👇🏻

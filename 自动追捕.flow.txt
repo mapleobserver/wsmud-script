@@ -1,6 +1,25 @@
 // raid.flow
 // 基于 auto_zhuibu v2.1，四区白三三修改
-// 2020.09.30 - 优化判断
+($localVer) = 2020101101
+($changeLog) = 优化追捕判断
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.zdzb
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前自动追捕版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"自动追捕","source":"http://wsmud-cdn.if404.com/自动追捕.flow.txt","finder":"根文件夹"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 自动追捕已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行自动追捕，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
 [if] (ZBWaitCD) == null
   ($ZBWaitCD) = 31
 [if] (ZBMax) == null
@@ -44,10 +63,11 @@ stopstate
     @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯
     [if] (zbing) != null
       @await 1000
-      //@toolbar jh
+      @toolbar jh
       @toolbar tasks
       @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
       ($zbing) = null
+      @print <hiy>追捕目标：(escapee) 目标地点：(dir1)-(dir2)</hiy>
   [if](olddir1) != (dir1) && (olddir2) != (dir2)
     ($start_h) = (:hour)
     ($start_m) = (:minute)

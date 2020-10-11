@@ -1,6 +1,8 @@
-// raid.flow
 // 基于论坛 WanJiaQi 大佬版本修改。
 // 四区白三三
+($localVer) = 2020070602
+($changeLog) = 优化流程
+
 [if] {b藏宝图}? == null
     tm 背包中无藏宝图，取消本次寻宝。
     [exit]
@@ -79,7 +81,7 @@ stopstate
             [else if] (pos) == 在你的西方
                 go westup
                 go west
-            [else if] (pos) == 在你东方 
+            [else if] (pos) == 在你东方
                 go eastup
             [else if] (pos) == 在你的东南方向
                 go eastup;go southup
@@ -160,7 +162,7 @@ stopstate
 
     [else if] (number)<6
         ($number) = (number) + 1
-    [else] 
+    [else]
         ($number)=1
 //结束后自动挖矿或者闭关
 $wait 1000

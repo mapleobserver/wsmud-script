@@ -1,9 +1,27 @@
-// raid.flow
 // 一键学习
 // 武馆需要先交学费，其他门派自动拜师
 // 基于@andyfos的版本修改
 // 四区白三三
-// 2020.07.22 - 1.优化师门信息获取。2.修复个别bug。
+($localVer) = 2020072202
+($changeLog) = 1.优化师门信息获取。2.修复个别bug。
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.yjxx
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前一键学习版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"一键学习","source":"http://wsmud-cdn.if404.com/提升/一键学习.flow.txt","finder":"提升"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 一键学习已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行一键学习，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
 @toolbar jh
 @js $(`span[command=score]`).click()
 @js $(`span[for=0]`).click()

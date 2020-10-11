@@ -1,8 +1,26 @@
-//四区白三三
 //节日版日常，自动师门、请安、买吃养精，副本、追捕(如果已达到最大次数请先放弃一次或者手动追捕)、武道塔自动免费扫荡，签到领取礼包。
-#input ($info) = <ord>节日版日常，自动师门、买吃养精，副本、追捕(如果已达到最大次数请先放弃一次或者手动追捕)、武道塔自动免费扫荡，请安签到领取礼包。</ord>,节日快乐！
-//2020.10.02 - 追捕到达上限无法快速追捕时，是否先自动放弃减少环数，再进行快速追捕
+//四区白三三
+($localVer) = 2020100202
+($changeLog) = 追捕到达上限无法快速追捕时，是否先自动放弃减少环数，再进行快速追捕
+@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.jrrc
+[if] (localVer) != (remoteVer)
+  @js WG.SendCmd("tm 当前节日日常版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"节日日常","source":"http://wsmud-cdn.if404.com/节日日常.flow.txt","finder":"根文件夹"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1000
+  ($log) = 节日日常已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  ($log) = 开始运行节日日常，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
 
+#input ($info) = <ord>节日版日常，自动师门、买吃养精，副本、追捕(如果已达到最大次数请先放弃一次或者手动追捕)、武道塔自动免费扫荡，请安签到领取礼包。</ord>,节日快乐！
 //检测状态
 @js ($fbroom) = '(:room)'.indexOf('副本区域')
 [if] (fbroom) != -1 || (:state)==推演 || (:state)==领悟
