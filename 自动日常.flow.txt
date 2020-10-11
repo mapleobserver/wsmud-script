@@ -1,8 +1,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020101102
-($changeLog) = 优化追捕判断
+($localVer) = 2020101201
+($changeLog) = 取消吃养精丹
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -11,7 +11,7 @@
   ($f_ss)={"name":"自动日常","source":"http://wsmud-cdn.if404.com/自动日常.flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1000
-  ($log) = 自动日常已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  ($log) = 自动日常已更新至最新版【(remoteVer)】，即将自动运行。
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
   @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
@@ -154,26 +154,26 @@ stopstate
 // 吃养精丹和潜能丹药
 stopstate
 @await 500
-($yjd) = {b养精丹g#}?
-[if] (yjd) == null || (yjd) < 10
-  $to 扬州城-药铺
-  select {r平一指}
-  list {r平一指}
-  @dialog
-  [if] (yjd) == null
-    ($yjd) = 10
-  [else]
-    ($yjd) = 10 - (yjd)
-  buy (yjd) {d养精丹g}? from {r平一指}
-use {b养精丹g}?[5]
-use {b养精丹g}?[5]
-@await 2000
-[if] {b养精丹b}? != null
-  [if] {b养精丹b#} <= 10
-    use {b养精丹b}[{b养精丹b#}]
-  [else]
-    use {b养精丹b}[10]
-  @await 2000
+// ($yjd) = {b养精丹g#}?
+// [if] (yjd) == null || (yjd) < 10
+// $to 扬州城-药铺
+// select {r平一指}
+// list {r平一指}
+// @dialog
+// [if] (yjd) == null
+//   ($yjd) = 10
+// [else]
+//   ($yjd) = 10 - (yjd)
+//   buy (yjd) {d养精丹g}? from {r平一指}
+// use {b养精丹g}?[5]
+// use {b养精丹g}?[5]
+// @await 2000
+// [if] {b养精丹b}? != null
+//   [if] {b养精丹b#} <= 10
+//     use {b养精丹b}[{b养精丹b#}]
+//   [else]
+//     use {b养精丹b}[10]
+//   @await 2000
 [if] {b朱果g}? != null
   [if] {b朱果g#} <= 10
     use {b朱果g}[{b朱果g#}]
