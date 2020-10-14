@@ -1,8 +1,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020101201
-($changeLog) = 取消吃养精丹
+($localVer) = 2020101401
+($changeLog) = 修复只打塔主时的判断bug
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -401,7 +401,10 @@ stopstate
   @toolbar jh
   @toolbar tasks
   @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
-[if] (reset) == 已 && (currentN) == (finalN) && (finalN) != 0 && (wd) != false
+[if] (wd) == false
+  @print <hiy>已设置只打塔主，跳过武道塔。</hiy>
+  tm 已设置只打塔主，跳过武道塔。
+[else if] (reset) == 已 && (currentN) == (finalN) && (finalN) != 0 && (wd) != false
   @print <hiy>当日武道塔已完成。</hiy>
 [else]
   stopstate
