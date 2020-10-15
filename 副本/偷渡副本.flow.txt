@@ -1,9 +1,9 @@
 // 偷渡副本
 // 四区：白三三
-($localVer) = 2020081101
-($changeLog) = 增减副本
+($localVer) = 2020101501
+($changeLog) = 增加阴阳谷、简单战神、困难战神
 
-#select ($TDFBName) = 偷渡副本,星宿海|困难移花|困难缥缈|光明顶|困难天龙|困难古墓|困难禅宗|简单慈航|困难慈航,(TDFBName)
+#select ($TDFBName) = 偷渡副本,星宿海|困难移花|困难缥缈|光明顶|困难天龙|困难古墓|困难禅宗|简单慈航|困难慈航|阴阳谷|简单战神|困难战神,(TDFBName)
 #input ($_repeat) = 偷渡副本次数,1
 #config
 <-stopSSAuto
@@ -25,6 +25,12 @@
   ($fbcr) = cihang/shanmen 0
 [else if] (TDFBName) == 困难慈航
   ($fbcr) = cihang/shanmen 1
+[else if] (TDFBName) == 阴阳谷
+  ($fbcr) = cr yyg/ya 0
+[else if] (TDFBName) == 简单战神
+  ($fbcr) = cr zsd/damen 0
+[else if] (TDFBName) == 困难战神
+  ($fbcr) = cr zsd/damen 1
 stopstate
 ($_i) = 0
 @cmdDelay 500
