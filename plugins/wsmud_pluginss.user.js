@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.114
+// @version      0.0.32.115
 // @date         01/07/2018
-// @modified     12/10/2020
+// @modified     16/10/2020
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -17,6 +17,7 @@
 // @grant        GM_addStyle
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM_listValues
 // @grant        GM_setClipboard
 
 // ==/UserScript==
@@ -4520,55 +4521,16 @@
         },
         make_config: async function () {
             let _config = {};
-            _config.family = GM_getValue(role + "_family", family);
-            _config.automarry = GM_getValue(role + "_automarry", automarry);
-            _config.autoKsBoss = GM_getValue(role + "_autoKsBoss", autoKsBoss);
-            _config.ks_pfm = GM_getValue(role + "_ks_pfm", ks_pfm);
-            _config.ks_wait = GM_getValue(role + "_ks_wait", ks_wait);
-            _config.eqlist = GM_getValue(role + "_eqlist", eqlist);
-            _config.skilllist = GM_getValue(role + "_skilllist", skilllist);
-            _config.autoeq = GM_getValue(role + "_auto_eq", autoeq);
-            _config.wudao_pfm = GM_getValue(role + "_wudao_pfm", wudao_pfm);
-            _config.sm_loser = GM_getValue(role + "_sm_loser", sm_loser);
-            _config.sm_any = GM_getValue(role + "_sm_any", sm_any);
-            _config.sm_price = GM_getValue(role + "_sm_price", sm_price);
-            _config.sm_getstore = GM_getValue(role + "_sm_getstore", sm_getstore);
-            _config.unauto_pfm = GM_getValue(role + "_unauto_pfm", unauto_pfm);
-            _config.auto_pfmswitch = GM_getValue(role + "_auto_pfmswitch", auto_pfmswitch);
-            _config.auto_rewardgoto = GM_getValue(role + "_auto_rewardgoto", auto_rewardgoto);
-            _config.auto_updateStore = GM_getValue(role + "_auto_updateStore", auto_updateStore);
-            _config.auto_relogin = GM_getValue(role + "_auto_relogin", auto_relogin);
-            _config.zmlshowsetting = GM_getValue(role + "_zmlshowsetting", zmlshowsetting);
-            _config.blacklist = GM_getValue(role + "_blacklist", blacklist);
-            _config.getitemShow = GM_getValue(role + "_getitemShow", getitemShow);
-            _config.zml = GM_getValue(role + "_zml", zml);
-            _config.zdy_item_store = GM_getValue(role + "_zdy_item_store", zdy_item_store);
-            _config.zdy_item_store2 = GM_getValue(role + "_zdy_item_store2", zdy_item_store2);
-            _config.zdy_item_lock = GM_getValue(role + "_zdy_item_lock", zdy_item_lock);
-            _config.zdy_item_drop = GM_getValue(role + "_zdy_item_drop", zdy_item_drop);
-            _config.zdy_item_fenjie = GM_getValue(role + "_zdy_item_fenjie", zdy_item_fenjie);
-            _config.ztjk_item = GM_getValue(role + "_ztjk", ztjk_item);
-            _config.auto_command = GM_getValue(role + "_auto_command", auto_command);
-            _config.welcome = GM_getValue(role + "_welcome", welcome);
-            _config.shieldswitch = GM_getValue("_shieldswitch", shieldswitch);
-            _config.shield = GM_getValue("_shield", shield);
-            _config.shieldkey = GM_getValue("_shieldkey", shieldkey);
-            _config.statehml = GM_getValue(role + "_statehml", statehml);
-            _config.backimageurl = GM_getValue(role + "_backimageurl", backimageurl);
-            _config.loginhml = GM_getValue(role + "_loginhml", loginhml);
-            _config.timequestion = GM_getValue(role + "_timequestion", timequestion);
-            _config.silence = GM_getValue(role + "_silence", silence);
-            _config.dpssakada = GM_getValue(role + "_dpssakada", dpssakada);
-            _config.funnycalc = GM_getValue(role + "_funnycalc", funnycalc);
+            let keys = GM_listValues();
+            keys.forEach(key => {
+                if(key.indexOf(role)>=0){
+                 _config[key] = GM_getValue(key);
+                }
+            });
+            _config._shieldswitch = GM_getValue("_shieldswitch", shieldswitch);
+            _config._shield = GM_getValue("_shield", shield);
+            _config._shieldkey = GM_getValue("_shieldkey", shieldkey);
 
-            _config.zdy_btnlist = GM_getValue(role + "_zdy_btnlist", zdy_btnlist);
-            _config.auto_buylist = GM_getValue(role + "_auto_buylist", auto_buylist);
-
-
-
-            _config.zdyskills = GM_getValue(role + "_zdyskills", zdyskills);
-
-            _config.zdyskilllist = GM_getValue(role + "_zdyskilllist", zdyskilllist);
             S.uploadUserConfig(G.id, _config, (res) => {
                 if (res == "true") {
                     L.msg("已成功上传");
@@ -4579,54 +4541,11 @@
             S.getUserConfig(G.id, (res) => {
                 if (res != "") {
                     let _config = JSON.parse(res);
-                    GM_setValue(role + "_family", _config.family);
-                    GM_setValue(role + "_automarry", _config.automarry);
-                    GM_setValue(role + "_autoKsBoss", _config.autoKsBoss);
-                    GM_setValue(role + "_ks_pfm", _config.ks_pfm);
-                    GM_setValue(role + "_ks_wait", _config.ks_wait);
-                    GM_setValue(role + "_eqlist", _config.eqlist);
-                    GM_setValue(role + "_skilllist", _config.skilllist);
-                    GM_setValue(role + "_auto_eq", _config.autoeq);
-                    GM_setValue(role + "_wudao_pfm", _config.wudao_pfm);
-                    GM_setValue(role + "_sm_loser", _config.sm_loser);
-                    GM_setValue(role + "_sm_any", _config.sm_any);
-                    GM_setValue(role + "_sm_price", _config.sm_price);
-                    GM_setValue(role + "_sm_getstore", _config.sm_getstore);
-                    GM_setValue(role + "_unauto_pfm", _config.unauto_pfm);
-                    GM_setValue(role + "_auto_pfmswitch", _config.auto_pfmswitch);
-                    GM_setValue(role + "_auto_rewardgoto", _config.auto_rewardgoto);
-                    GM_setValue(role + "_auto_updateStore", _config.auto_updateStore);
-                    GM_setValue(role + "_auto_relogin", _config.auto_relogin);
-                    GM_setValue(role + "_zmlshowsetting", _config.zmlshowsetting);
-                    GM_setValue(role + "_blacklist", _config.blacklist);
-                    GM_setValue(role + "_getitemShow", _config.getitemShow);
-                    GM_setValue(role + "_zml", _config.zml);
-                    GM_setValue(role + "_zdy_item_store", _config.zdy_item_store);
-                    GM_setValue(role + "_zdy_item_store2", _config.zdy_item_store2);
-                    GM_setValue(role + "_zdy_item_lock", _config.zdy_item_lock);
-                    GM_setValue(role + "_zdy_item_drop", _config.zdy_item_drop);
-                    GM_setValue(role + "_zdy_item_fenjie", _config.zdy_item_fenjie);
-                    GM_setValue(role + "_ztjk", _config.ztjk_item);
-                    GM_setValue(role + "_auto_command", _config.auto_command);
-                    GM_setValue(role + "_welcome", _config.welcome);
-                    GM_setValue("_shieldswitch", _config.shieldswitch);
-                    GM_setValue("_shield", _config.shield);
-                    GM_setValue("_shieldkey", _config.shieldkey);
-                    GM_setValue(role + "_statehml", _config.statehml);
-                    GM_setValue(role + "_backimageurl", _config.backimageurl);
-                    GM_setValue(role + "_loginhml", _config.loginhml);
-                    GM_setValue(role + "_timequestion", _config.timequestion);
-                    GM_setValue(role + "_silence", _config.silence);
-                    GM_setValue(role + "_dpssakada", _config.dpssakada);
-                    GM_setValue(role + "_funnycalc", _config.funnycalc);
-                    GM_setValue(role + "_zdyskills", _config.zdyskills);
-                    GM_setValue(role + "_zdyskilllist", _config.zdyskilllist);
-                    if (_config.zdy_btnlist) {
-                        GM_setValue(role + "_zdy_btnlist", _config.zdy_btnlist);
-                    }
-                    if (_config.auto_buylist) {
-                        GM_setValue(role + "_auto_buylist", _config.auto_buylist);
-                    }
+                     for (const key in _config) {
+                        GM_setValue(key, _config[key]);
+                     }
+
+
                     GI.configInit();
 
                     WG.setting();
