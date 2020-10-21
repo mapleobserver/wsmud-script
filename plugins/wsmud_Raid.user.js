@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.22
+// @version         2.4.23
 // @date            23/12/2018
-// @modified        21/08/2020
+// @modified        21/10/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -2642,7 +2642,8 @@
                 const header = /^\s*/.exec(cmd)[0];
                 let patt = /(\{[^\}]+\})([^\?]|$)/g;
                 let r = patt.exec(cmd);
-                while(r != null) {
+                let j = cmd.indexOf("@js")
+                while(r != null && j == -1) {
                     result.push(`${header}@until ${r[1]}? != null`);
                     r = patt.exec(cmd);
                 }
