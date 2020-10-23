@@ -1,9 +1,8 @@
 //整合了之前的几个相关流程，一键收割、安排随从工作
 //收割过程中包满了会自动清包再继续，不过有概率卡住。
-//2020.07.08 - 给随从鱼饵会先取出随从身上的，再按从橙到绿的顺序给随从
 //四区白三三
-($localVer) = 2020070801
-($changeLog) = 给随从鱼饵会先取出随从身上的，再按从橙到绿的顺序给随从
+($localVer) = 2020102301
+($changeLog) = 精确匹配材料，避免拿错
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.yjsg
@@ -85,98 +84,98 @@ team out
             @dialog
             (cmd)
     --->
-    [if] {d鲢鱼}? != null
-        dc {r(s)}? give (:id) {d鲢鱼#} {d鲢鱼}
-    [if] {d草鱼}? != null
-        dc {r(s)}? give (:id) {d草鱼#} {d草鱼}
-    [if] {d鲤鱼}? != null
-        dc {r(s)}? give (:id) {d鲤鱼#} {d鲤鱼}
-    [if] {d鲮鱼}? != null
-        dc {r(s)}? give (:id) {d鲮鱼#} {d鲮鱼}
-    [if] {d鳊鱼}? != null
-        dc {r(s)}? give (:id) {d鳊鱼#} {d鳊鱼}
-    [if] {d鲂鱼}? != null
-        dc {r(s)}? give (:id) {d鲂鱼#} {d鲂鱼}
-    [if] {d芦荟}? != null
-        dc {r(s)}? give (:id) {d芦荟#} {d芦荟}
-    [if] {d山楂叶}? != null
-        dc {r(s)}? give (:id) {d山楂叶#} {d山楂叶}
-    [if] {d当归}? != null
-        dc {r(s)}? give (:id) {d当归#} {d当归}
-    [if] {d柴胡}? != null
-        dc {r(s)}? give (:id) {d柴胡#} {d柴胡}
-    [if] {d金银花}? != null
-        dc {r(s)}? give (:id) {d金银花#} {d金银花}
-    [if] {d石楠叶}? != null
-        dc {r(s)}? give (:id) {d石楠叶#} {d石楠叶}
+    [if] {d鲢鱼w%}? != null
+        dc {r(s)}? give (:id) {d鲢鱼w%#} {d鲢鱼w%}
+    [if] {d草鱼w%}? != null
+        dc {r(s)}? give (:id) {d草鱼w%#} {d草鱼w%}
+    [if] {d鲤鱼w%}? != null
+        dc {r(s)}? give (:id) {d鲤鱼w%#} {d鲤鱼w%}
+    [if] {d鲮鱼g%}? != null
+        dc {r(s)}? give (:id) {d鲮鱼g%#} {d鲮鱼g%}
+    [if] {d鳊鱼g%}? != null
+        dc {r(s)}? give (:id) {d鳊鱼g%#} {d鳊鱼g%}
+    [if] {d鲂鱼g%}? != null
+        dc {r(s)}? give (:id) {d鲂鱼g%#} {d鲂鱼g%}
+    [if] {d芦荟w%}? != null
+        dc {r(s)}? give (:id) {d芦荟w%#} {d芦荟w%}
+    [if] {d山楂叶w%}? != null
+        dc {r(s)}? give (:id) {d山楂叶w%#} {d山楂叶w%}
+    [if] {d当归w%}? != null
+        dc {r(s)}? give (:id) {d当归w%#} {d当归w%}
+    [if] {d柴胡g%}? != null
+        dc {r(s)}? give (:id) {d柴胡g%#} {d柴胡g%}
+    [if] {d金银花g%}? != null
+        dc {r(s)}? give (:id) {d金银花g%#} {d金银花g%}
+    [if] {d石楠叶g%}? != null
+        dc {r(s)}? give (:id) {d石楠叶g%#} {d石楠叶g%}
     [if] (ItemQuality) == 绿
         ($get) = false
         dc {r(s)} (w)
         ($num) = (num) + 1
         [continue]
-    [if] {d太湖银鱼}? != null
-        dc {r(s)}? give (:id) {d太湖银鱼#} {d太湖银鱼}
-    [if] {d黄颡鱼}? != null
-        dc {r(s)}? give (:id) {d黄颡鱼#} {d黄颡鱼}
-    [if] {d黄金鳉}? != null
-        dc {r(s)}? give (:id) {d黄金鳉#} {d黄金鳉}
-    [if] {d茯苓}? != null
-        dc {r(s)}? give (:id) {d茯苓#} {d茯苓}
-    [if] {d沉香}? != null
-        dc {r(s)}? give (:id) {d沉香#} {d沉香}
-    [if] {d熟地黄}? != null
-        dc {r(s)}? give (:id) {d熟地黄#} {d熟地黄}
+    [if] {d太湖银鱼b%}? != null
+        dc {r(s)}? give (:id) {d太湖银鱼b%#} {d太湖银鱼b%}
+    [if] {d黄颡鱼b%}? != null
+        dc {r(s)}? give (:id) {d黄颡鱼b%#} {d黄颡鱼b%}
+    [if] {d黄金鳉b%}? != null
+        dc {r(s)}? give (:id) {d黄金鳉b%#} {d黄金鳉b%}
+    [if] {d茯苓b%}? != null
+        dc {r(s)}? give (:id) {d茯苓b%#} {d茯苓b%}
+    [if] {d沉香b%}? != null
+        dc {r(s)}? give (:id) {d沉香b%#} {d沉香b%}
+    [if] {d熟地黄b%}? != null
+        dc {r(s)}? give (:id) {d熟地黄b%#} {d熟地黄b%}
     [if] (ItemQuality) == 蓝
         ($get) = false
         dc {r(s)} (w)
         ($num) = (num) + 1
         [continue]
-    [if] {d虹鳟}? != null
-        dc {r(s)}? give (:id) {d虹鳟#} {d虹鳟}
-    [if] {d反天刀}? != null
-        dc {r(s)}? give (:id) {d反天刀#} {d反天刀}
-    [if] {d孔雀鱼}? != null
-        dc {r(s)}? give (:id) {d孔雀鱼#} {d孔雀鱼}
-    [if] {d冬虫夏草}? != null
-        dc {r(s)}? give (:id) {d冬虫夏草#} {d冬虫夏草}
-    [if] {d络石藤}? != null
-        dc {r(s)}? give (:id) {d络石藤#} {d络石藤}
-    [if] {d九香虫}? != null
-        dc {r(s)}? give (:id) {d九香虫#} {d九香虫}
+    [if] {d虹鳟y%}? != null
+        dc {r(s)}? give (:id) {d虹鳟y%#} {d虹鳟y%}
+    [if] {d反天刀y%}? != null
+        dc {r(s)}? give (:id) {d反天刀y%#} {d反天刀y%}
+    [if] {d孔雀鱼y%}? != null
+        dc {r(s)}? give (:id) {d孔雀鱼y%#} {d孔雀鱼y%}
+    [if] {d冬虫夏草y%}? != null
+        dc {r(s)}? give (:id) {d冬虫夏草y%#} {d冬虫夏草y%}
+    [if] {d络石藤y%}? != null
+        dc {r(s)}? give (:id) {d络石藤y%#} {d络石藤y%}
+    [if] {d九香虫y%}? != null
+        dc {r(s)}? give (:id) {d九香虫y%#} {d九香虫y%}
     [if] (ItemQuality) == 黄
         ($get) = false
         dc {r(s)} (w)
         ($num) = (num) + 1
         [continue]
-    [if] {d罗汉鱼}? != null
-        dc {r(s)}? give (:id) {d罗汉鱼#} {d罗汉鱼}
-    [if] {d银龙鱼}? != null
-        dc {r(s)}? give (:id) {d银龙鱼#} {d银龙鱼}
-    [if] {d黑龙鱼}? != null
-        dc {r(s)}? give (:id) {d黑龙鱼#} {d黑龙鱼}
-    [if] {d凌霄花}? != null
-        dc {r(s)}? give (:id) {d凌霄花#} {d凌霄花}
-    [if] {d何首乌}? != null
-        dc {r(s)}? give (:id) {d何首乌#} {d何首乌}
-    [if] {d人参}? != null
-        dc {r(s)}? give (:id) {d人参#} {d人参}
+    [if] {d罗汉鱼p%}? != null
+        dc {r(s)}? give (:id) {d罗汉鱼p%#} {d罗汉鱼p%}
+    [if] {d银龙鱼p%}? != null
+        dc {r(s)}? give (:id) {d银龙鱼p%#} {d银龙鱼p%}
+    [if] {d黑龙鱼p%}? != null
+        dc {r(s)}? give (:id) {d黑龙鱼p%#} {d黑龙鱼p%}
+    [if] {d凌霄花p%}? != null
+        dc {r(s)}? give (:id) {d凌霄花p%#} {d凌霄花p%}
+    [if] {d何首乌p%}? != null
+        dc {r(s)}? give (:id) {d何首乌p%#} {d何首乌p%}
+    [if] {d人参p%}? != null
+        dc {r(s)}? give (:id) {d人参p%#} {d人参p%}
     [if] (ItemQuality) == 紫
         ($get) = false
         dc {r(s)} (w)
         ($num) = (num) + 1
         [continue]
-    [if] {d巨骨舌鱼}? != null
-        dc {r(s)}? give (:id) {d巨骨舌鱼#} {d巨骨舌鱼}
-    [if] {d帝王老虎魟}? != null
-        dc {r(s)}? give (:id) {d帝王老虎魟#} {d帝王老虎魟}
-    [if] {d七星刀鱼}? != null
-        dc {r(s)}? give (:id) {d七星刀鱼#} {d七星刀鱼}
-    [if] {d灵芝}? != null
-        dc {r(s)}? give (:id) {d灵芝#} {d灵芝}
-    [if] {d天仙藤}? != null
-        dc {r(s)}? give (:id) {d天仙藤#} {d天仙藤}
-    [if] {d盘龙参}? != null
-        dc {r(s)}? give (:id) {d盘龙参#} {d盘龙参}
+    [if] {d巨骨舌鱼o%}? != null
+        dc {r(s)}? give (:id) {d巨骨舌鱼o%#} {d巨骨舌鱼o%}
+    [if] {d帝王老虎魟o%}? != null
+        dc {r(s)}? give (:id) {d帝王老虎魟o%#} {d帝王老虎魟o%}
+    [if] {d七星刀鱼o%}? != null
+        dc {r(s)}? give (:id) {d七星刀鱼o%#} {d七星刀鱼o%}
+    [if] {d灵芝o%}? != null
+        dc {r(s)}? give (:id) {d灵芝o%#} {d灵芝o%}
+    [if] {d天仙藤o%}? != null
+        dc {r(s)}? give (:id) {d天仙藤o%#} {d天仙藤o%}
+    [if] {d盘龙参o%}? != null
+        dc {r(s)}? give (:id) {d盘龙参o%#} {d盘龙参o%}
     ($get) = false
     dc {r(s)} (w)
     ($num) = (num) + 1
@@ -192,16 +191,16 @@ team out
     dc {r(s)}? stopstate;pack {r(s)}?;
     @dialog
     ($cmd) = null
-    [if] {d鱼饵o}? != null
-        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵o#}? {d鱼饵o}?
-    [if] {d鱼饵p}? != null
-        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵p#}? {d鱼饵p}?
-    [if] {d鱼饵y}? != null
-        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵y#}? {d鱼饵y}?
-    [if] {d鱼饵b}? != null
-        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵b#}? {d鱼饵b}?
-    [if] {d鱼饵g}? != null
-        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵g#}? {d鱼饵g}?
+    [if] {d鱼饵o%}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵o%#}? {d鱼饵o%}?
+    [if] {d鱼饵p%}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵p%#}? {d鱼饵p%}?
+    [if] {d鱼饵y%}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵y%#}? {d鱼饵y%}?
+    [if] {d鱼饵b%}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵b%#}? {d鱼饵b%}?
+    [if] {d鱼饵g%}? != null
+        ($cmd) = (cmd);dc {r(s)}? give (:id) {d鱼饵g%#}? {d鱼饵g%}?
     [if] (cmd) != null
         (cmd)
     @await 2000
