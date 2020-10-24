@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.1.9
+// @version     0.1.2.0
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
-// @description 基于 wsmud_funny 修改
+// @description 基于 wsmud_funny_mobile 修改
 // @run-at      document-start
 // @require     https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js
 // @grant       unsafeWindow
@@ -28,6 +28,9 @@
         state: "data.state",
         data_autokill_xy: true,
         layout_left: true,
+        Beep: function() {
+            document.getElementById("beep").play();
+        },
     };
     unsafeWindow.funny = funny;
     let fn = {
@@ -74,6 +77,14 @@
             h = h < 10 ? `0${h}` : `${h}`;
             m = m < 10 ? `0${m}` : `${m}`;
             return `${h}:${m}`;
+        },
+        addContent: function(element) {
+            $(".content-message pre").append(element);
+            fn.scroll(".content-message");
+            return false;
+        },
+        beep: function() {
+            document.getElementById("beep").play();
         },
     };
     unsafeWindow.fn = fn;
@@ -188,14 +199,12 @@
         } else if (/只留下一堆玄色石头/.test(data) && data.includes("你")) {
             let a = data.match(/只见(.*)发出一阵白光/);
             $(".content-message pre").append(`你分解了 => ${a[1]}\n`)
-        } else if (/你从武道秘籍中领悟到了/.test(message.text)) {
-            //fn.beep();//武道书读完的提示音
-        } else if (/你身上东西太多了|你拿不下那么多东西。/.test(message.text)) {
+        } else if (/你身上东西太多了|你拿不下那么多东西。/.test(data)) {
             $(".content-message pre").append(`<hir>友情提示：请检查是否背包已满！</hir>`);
             fn.send(`tm 友情提示：请检查是否背包已满！`);
-            //fn.beep();
-        } else if (/你身上没有挖矿工具。/.test(message.text)) {
-            // fn.send([]);//小号没有铁镐的情况
+            fn.beep();
+        } else if (/你身上没有挖矿工具。/.test(data)) {
+            // SendCommand([]);//小号没有铁镐的情况
         } else if (/你的最大内力增加了/.test(data)) {
             funny.onmessage_fn.apply(this, arguments);
             let a = data.match(/你的最大内力增加了(.*)点。/);
@@ -509,5 +518,8 @@
     $(document).ready(function() {
         //GM_addStyle(`.room_desc{overflow:hidden;white-space:nowrap;}`);
         GM_addStyle(`.content-bottom{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}`);
+        $("body").append(
+            $(`<audio id="beep" preload="auto"></audio>`).append(`<source src="http://47.102.126.255/wav/complete.wav">`)
+        );
     });
 })();
