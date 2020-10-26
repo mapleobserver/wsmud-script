@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.23
+// @version         2.4.24
 // @date            23/12/2018
-// @modified        21/10/2020
+// @modified        26/10/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -2507,6 +2507,13 @@
 
     VariableStore.register(_ => {
         return {
+            ":room ": function(param) {
+                const parts = param.split(",");
+                for (const part of parts) {
+                    if (Room.name.indexOf(part) != -1) return true;
+                }
+                return false;
+            },
             ":cd ": function(sid) {
                 return Role.coolingSkill(sid);
             },
