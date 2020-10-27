@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.115
+// @version      0.0.32.123
 // @date         01/07/2018
 // @modified     16/10/2020
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
@@ -19,6 +19,7 @@
 // @grant        GM_setValue
 // @grant        GM_listValues
 // @grant        GM_setClipboard
+// @grant        GM_registerMenuCommand
 
 // ==/UserScript==
 
@@ -114,6 +115,16 @@
         } else {
             return number;
         }
+    }
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
     }
     if (WebSocket) {
         console.log('插件可正常运行,Plugins can run normally');
@@ -1385,6 +1396,15 @@
 
 
             setTimeout(() => {
+                try{
+                    if(GM_registerMenuCommand){
+                        GM_registerMenuCommand("初始化",WG.update_id_all)
+                        GM_registerMenuCommand("设  置",WG.setting)
+                        GM_registerMenuCommand("调  试",WG.cmd_echo_button)
+                    }
+                }
+                catch(e){
+                }
                 role = role;
                 var logintext = '';
                 document.title = role + "-MUD游戏-武神传说";
@@ -1864,6 +1884,24 @@
                         }
                     }
                     if (WG.sm_item != undefined && item.indexOf(WG.sm_item.type) >= 0) {
+
+                        if(WG.smbuyNum == null){
+                            WG.smbuyNum = 0;
+                        }else if( WG.smbuyNum > 3){
+                            messageAppend("无法购买" + item);
+                            WG.smbuyNum = null;
+                            if (mysm_loser == "关") {
+                                WG.sm_state = -1;
+                                $(".sm_button").text("师门(Q)");
+                            } else if (mysm_loser == "开") {
+                                $("span[cmd$='giveup']:last").click();
+                                messageAppend("放弃任务");
+                                WG.sm_state = 0;
+                                setTimeout(WG.sm, 500);
+                                return;
+                            }
+                        }
+
                         WG.go(WG.sm_item.place);
                         messageAppend("自动购买" + item);
                         WG.sm_state = 3;
@@ -1908,6 +1946,7 @@
                             }
                             if (!_p) {
                                 messageAppend("没有牌子并且无法购买" + item);
+                                WG.smbuyNum = null;
                                 if (mysm_loser == "关") {
                                     WG.sm_state = -1;
                                     $(".sm_button").text("师门(Q)");
@@ -1921,6 +1960,7 @@
                             }
                         } else {
                             messageAppend("无法购买" + item);
+                            WG.smbuyNum = null;
                             if (mysm_loser == "关") {
                                 WG.sm_state = -1;
                                 $(".sm_button").text("师门(Q)");
@@ -1938,6 +1978,12 @@
                     WG.go(WG.sm_item.place);
                     if (WG.buy(WG.sm_item)) {
                         WG.sm_state = 0;
+                        if(WG.smbuyNum==0){
+                          WG.lastBuy = WG.sm_item
+                        }
+                        if( WG.lastBuy == WG.sm_item){
+                          WG.smbuyNum = WG.smbuyNum + 1;
+                        }
                     }
                     setTimeout(WG.sm, 500);
                     break;
@@ -7141,6 +7187,21 @@
                 $(".channel")[0].scrollTop = 99999;
             }, 320 * 1000);
         }, 2000);
+        setTimeout(() => {
+            let loginnum = getQueryVariable("login")
+            if(loginnum){
+                let userList = $('#role_panel > ul > li.content > ul >li');
+                for (let uidx =0;uidx<userList.length;uidx++) {
+                    if (loginnum==uidx+1) {
+                        $(userList[uidx]).addClass("select");
+                    } else {
+                        $(userList[uidx]).removeClass("select");
+                    }
+                }
+                $("li[command=SelectRole]").click()
+                return;
+            }
+        }, 5000);
 
         KEY.init();
         WG.init();
@@ -7156,6 +7217,9 @@
         unsafeWindow.MusicBox = MusicBox;
         unsafeWindow.FakerTTS = FakerTTS;
         unsafeWindow.WSStore = store;
+
+
+
         window.addEventListener("message", receiveMessage, false);
         function receiveMessage(event) {
             originWindow = event;
@@ -7183,26 +7247,27 @@
             } catch (error) {
                 console.log("Run at message");
             }
-
-            if (data === '挖矿' || data === '修炼') {
-                WG.zdwk();
-            } else if (data === '日常') {
-                WG.SendCmd("$daily");
-            } else if (data === '挂机') {
-                WG.SendCmd("stopstate");
-            } else {
-                if (data.split("\n")[0].indexOf("//") >= 0) {
-                    if (unsafeWindow && unsafeWindow.ToRaid) {
-                        ToRaid.perform(data);
-                    }
-                } else if (data.split("\n")[0].indexOf("#js") >= 0) {
-                    var jscode = data.split("\n");
-                    jscode.baoremove(0)
-                    eval(jscode.join(""));
+            if(typeof  data =='string'){
+                if (data === '挖矿' || data === '修炼') {
+                    WG.zdwk();
+                } else if (data === '日常') {
+                    WG.SendCmd("$daily");
+                } else if (data === '挂机') {
+                    WG.SendCmd("stopstate");
                 } else {
-                    WG.SendCmd(data);
+                    if (data.split("\n")[0].indexOf("//") >= 0) {
+                        if (unsafeWindow && unsafeWindow.ToRaid) {
+                            ToRaid.perform(data);
+                        }
+                    } else if (data.split("\n")[0].indexOf("#js") >= 0) {
+                        var jscode = data.split("\n");
+                        jscode.baoremove(0)
+                        eval(jscode.join(""));
+                    } else {
+                        WG.SendCmd(data);
+                    }
                 }
-            }
+               }
         }
         $('.room-name').on('click', (e) => {
             e.preventDefault();
