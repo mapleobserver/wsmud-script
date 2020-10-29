@@ -10,7 +10,7 @@
   ($f_ss)={"name":"自动追捕","source":"http://wsmud-cdn.if404.com/自动追捕.flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1000
-  ($log) = 自动追捕已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  ($log) = 自动追捕已更新至最新版【(remoteVer)】，即将自动运行。
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
   @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
