@@ -1,7 +1,7 @@
 // raid.flow
 // 基于 auto_zhuibu v2.1，四区白三三修改
-($localVer) = 2020101101
-($changeLog) = 优化追捕判断
+($localVer) = 2020102901
+($changeLog) = 优化追捕判断，动态显示追捕状态。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdzb
@@ -42,49 +42,68 @@ stopstate
 @toolbar jh
 @toolbar tasks
 @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
-
+@js $('#zb_prog').remove()
+@js $(`.state-bar`).before(`<div id=zb_prog>开始追捕</div>`)
 [while](currentN) < 20
   @renew
   @until (:status xuruo) == false
   [if](comboN)>=(ZBMax)
-    $to 扬州城-衙门正厅
+    [while] (:room) != 扬州城-衙门正厅
+      $to 扬州城-衙门正厅
+      @await 500
     ask1 {程药发}
     ask2 {程药发}
     ($comboN) = 0
   [if](comboN)>=(ZBWaitCD)
     @cd (ZBcdskill)
-  $to 扬州城-衙门正厅
+  [while] (:room) != 扬州城-衙门正厅
+    $to 扬州城-衙门正厅
+    @await 500
   ($olddir1) = (dir1)
   ($olddir2) = (dir2)
-  @print (olddir1)
+  //@print (olddir1)
   ($escapee) = null
   [while] (escapee) == null
+    ($zbing) = null
     ask1 {程药发}
     @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯
     [if] (zbing) != null
-      @await 1000
-      @toolbar jh
-      @toolbar tasks
-      @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
       ($zbing) = null
-      @print <hiy>追捕目标：(escapee) 目标地点：(dir1)-(dir2)</hiy>
+      [if] (dir1) == null || (dir2) == null || (escapee) == null
+        @await 1000
+        @toolbar jh
+        @toolbar tasks
+        @await 500
+        @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
+    @print <hiy>追捕目标：(escapee) 目标地点：(dir1)-(dir2)</hiy>
   [if](olddir1) != (dir1) && (olddir2) != (dir2)
     ($start_h) = (:hour)
     ($start_m) = (:minute)
   @await 500
   [while] {r(escapee)}? == null
+    [if] (tb) == null
+      ($tb) = 0
     <---
+    @js $('#zb_prog').html(`<hiy>已耗时(tb)分钟</hiy> <ord>追捕目标：(dir1)-(dir2) (escapee)</ord>`)
     @cmdDelay 1000
     [if] {r(escapee)}? != null
       ($type1) = null
+      ($hunmi) = null
       kill {r(escapee)}?
       @until {(escapee)的尸体}? != null || {r(escapee)}? ==  null || (:combating) == false || (:living) == false
-      @tip 你的追捕任务完成了，目前完成($currentN)/20个，已连续完成($comboN)个。|你($type1)死了($type2)|你要攻击谁|追捕任务失败了
+      @tip 你的追捕任务($done)了，目前完成($currentN)/20个，已连续完成($comboN)个。|你($type1)死了($type2)|你要攻击谁|追捕任务失败了|你又($hunmi)了知觉
+      [if] (done) != null
+        ($done) = null
+        @js $('#zb_prog').html(`<hiy>当前追捕任务已完成，进度 (currentN)/20</hiy>`)
+      [if] (hunmi) != null
+        ($hunmi) = null
       relive
       [if] (type1) != null
         relive
         [if] (DieToReset) == 已开启
-          $to 扬州城-衙门正厅
+          [while] (:room) != 扬州城-衙门正厅
+            $to 扬州城-衙门正厅
+            @await 500
           ask2 {程药发}
       [break]
     [if] (DieToReset) == 已关闭
@@ -92,11 +111,14 @@ stopstate
         ($tb) = 24*60+(:minute)-(start_h)*60-(start_m)
       [else]
         ($tb) = (:hour)*60+(:minute)-(start_h)*60-(start_m)
-      @print <hiy>已耗时(tb)分钟</hiy>
       [if] (tb) >= 10 || (tb) < 0
+        @print <hiy>追捕超时！</hiy>
+        ($dir1) = null
+        ($dir2) = null
+        ($tb) = null
         [break]
     --->
-    @cmdDelay 1000
+    //@cmdDelay 1000
     $to (dir1)-(dir2)
     [if] (dir1) == 武当派
       [if](dir2) == 林间小径
@@ -221,6 +243,7 @@ stopstate
       go up
 recordGains->
 stopSSAuto->
+@js $('#zb_prog').remove()
 @renew
 //追捕后复原
 @cmdDelay
