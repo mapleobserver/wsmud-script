@@ -1,12 +1,12 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020102901
-($changeLog) = 优化追捕判断，动态显示追捕状态。
+($localVer) = 2020103004
+($changeLog) = 优化追捕判断，动态显示追捕状态。优化远程版本获取时的判断。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
-[if] (localVer) != (remoteVer)
+[if] (localVer) != (remoteVer) && (remoteVer) != null
   @js WG.SendCmd("tm 当前自动日常版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
   ($f_ss)={"name":"自动日常","source":"http://wsmud-cdn.if404.com/自动日常.flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
@@ -17,7 +17,10 @@
   @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
   [exit]
 [else]
-  ($log) = 开始运行自动日常，当前版本【(remoteVer)】。更新内容：(changeLog)
+  [if] (remoteVer) == null
+    ($log) = 获取远程版本失败，维持当前版本不变。
+  [else]
+    ($log) = 开始运行自动日常，当前版本【(remoteVer)】。更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
@@ -112,6 +115,15 @@
 [if] (RC_qingan) == null
   ($RC_qingan) = 请安
 #select ($RC_qingan) = 是否给首席请安,请安|跳过,(RC_qingan)
+
+// 刷新鱼饵
+// 默认不开启，想开启的话，自己新建个流程运行一下这句：($OnYuer)=true
+($Yuer) = null
+[if] (OnYuer) == true
+  ($Yuer) = 是
+  @print 开启刷新鱼饵功能
+  #input ($SCdiao) = 钓鱼随从名字,(SCdiao)
+  #select ($Yuer) = 刷新紫橙鱼饵<ord>(请确保随从背包有空位)</ord>,是|否,(Yuer)
 
 // 日常结束后动作
 [if](RCAfter_action) == null
@@ -519,7 +531,7 @@ stopstate
     [else if] (FBName) == 财主家(困难)
       ($fbcr) = cr yz/cuifu/caizhu 1
     [else if] (FBName) == 丽春院
-     ($fbcr) = cr yz/lcy/dating 0
+      ($fbcr) = cr yz/lcy/dating 0
     [else if] (FBName) == 流氓巷
       ($fbcr) = cr yz/lmw/xiangzi1 0
     [else if] (FBName) == 兵营
@@ -664,8 +676,51 @@ greet master
 stopstate
 taskover signin;taskover zz1;taskover zz2
 @await 2000
-taskover signin;taskover zz1;taskover zz2
-@await 2000
+
+// 刷新随从身上鱼饵
+[if] (SCdiao) != null && (Yuer) == 是
+  stopstate
+  [while] (:room) != 住房-小花园
+    jh fam 0 start;go west;go west;go north;go enter;go northeast
+    @await 500
+  @await 1000
+  [if] {r(SCdiao)}? != null
+    dc {r(SCdiao)}? stopstate;pack {r(SCdiao)}?;
+    @dialog
+    ($yuP_sc) = 0
+    [if] {d鱼饵p%#}? != null
+      ($yuP_sc) = {d鱼饵p%#}?
+    ($yuP_my) = 0
+    [if] {b鱼饵p%#}? != null
+      ($yuP_my) = {b鱼饵p%#}?
+    ($yuP_num) = (yuP_sc) + (yuP_my) - 1
+    ($yuO_sc) = 0
+    [if] {d鱼饵o%#}? != null
+      ($yuO_sc) = {d鱼饵o%#}?
+    ($yuO_my) = 0
+    [if] {b鱼饵o%#}? != null
+      ($yuO_my) = {b鱼饵o%#}?
+    ($yuO_num) = (yuO_sc) + (yuO_my) - 1
+    [if] (yuP_num) > 0 || (yuO_num) > 0
+      ($cmd) = null
+      [if] (yuP_sc) > 0
+        ($cmd) = (cmd);dc {r(SCdiao)}? give (:id) {d鱼饵p%#}? {d鱼饵p%}?
+      [if] (yuO_sc) > 0
+        ($cmd) = (cmd);dc {r(SCdiao)}? give (:id) {d鱼饵o%#}? {d鱼饵o%}?
+      [if] (cmd) != null
+        (cmd)
+      @await 2000
+      dc {r(SCdiao)}? stopstate;trade {r(SCdiao)}?;
+      @await 500
+      ($cmd) = give {r(SCdiao)}? (yuO_num) {b鱼饵o}?;give {r(SCdiao)}? (yuP_num) {b鱼饵p}?;
+      (cmd)
+      dc {r(SCdiao)}? diao
+      [if] {b鱼饵p%}? != null && {b鱼饵p%#}? > 1
+        ($alert_sc) = 随从(SCdiao)背包已满，无法给鱼饵！
+      [else if] {b鱼饵o%}? != null && {b鱼饵p%#}? > 1
+        ($alert_sc) = 随从(SCdiao)背包已满，无法给鱼饵！
+
+// 结束收益统计
 [if] (RecordG) == 是
   recordGains->
 @recoverSSAuto
@@ -673,18 +728,19 @@ taskover signin;taskover zz1;taskover zz2
 // 日常结束后
 (RCAfter_action)
 @print <hiy>自动日常结束！</hiy>
+($bobao) = (myName)，自动日常结束！
 [if] (alert_sm) != null
-  @print <hir>(alert_sm)</hir>
+  @print <ord>(alert_sm)</ord>
+  ($bobao) = (bobao)(alert_sm)
 [if] (alert_fb) != null
-  @print <hir>(alert_fb)</hir>
+  @print <ord>(alert_fb)</ord>
+  ($bobao) = (bobao)(alert_fb)
 [if] (alert_qa) != null
-  @print <hir>(alert_qa)</hir>
+  @print <ord>(alert_qa)</ord>
+  ($bobao) = (bobao)(alert_qa)
+[if] (alert_sc) != null
+  tm (alert_sc)
+  @print <ord>(alert_sc)</ord>
+  ($bobao) = (bobao)(alert_sc)
 [if] (TTSover) == 播报
-  ($bobao) = (myName)，自动日常结束！
-  [if] (alert_sm) != null
-    ($bobao) = (bobao)(alert_sm)
-  [if] (alert_fb) != null
-    ($bobao) = (bobao)(alert_fb)
-  [if] (alert_qa) != null
-    ($bobao) = (bobao)(alert_qa)
   $tts (bobao)
