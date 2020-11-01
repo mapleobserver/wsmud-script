@@ -1,8 +1,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020103004
-($changeLog) = 优化追捕判断，动态显示追捕状态。优化远程版本获取时的判断。
+($localVer) = 2020110102
+($changeLog) = 精简副本路径获取方式。精简武道塔模块。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -104,7 +104,7 @@
 [if] (DungeonBagCleanWay) == null
   ($DungeonBagCleanWay) = 存仓及售卖
 #input ($FBBefore)=副本前执行命令(用英文;隔开),(FBBefore)
-#select ($FBName) = 副本,财主家(简单)|财主家(困难)|丽春院|流氓巷|流氓巷(组队)|兵营|庄府|鳌拜府|天地会|神龙教|神龙教(组队)|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBName)
+#select ($FBName) = 副本(上次所选:<ord>(FBName)</ord>),财主家(简单)|财主家(困难)|丽春院|流氓巷|流氓巷(组队)|兵营|庄府|鳌拜府|天地会|神龙教|神龙教(组队)|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBName)
 #input ($FBnum) = <ord>需要完成的次数</ord>,(FBnum)
 #select ($FBWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡|跳过副本,(FBWay)
 #select ($DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(DungeonHpThreshold)
@@ -429,90 +429,85 @@ stopstate
 
 // 武道塔
 ($currentN) = null
-[if] (WudaoMode) == 只打塔主
-  ($wd) = false
 [if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式
   @toolbar jh
   @toolbar tasks
   @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
-[if] (wd) == false
-  @print <hiy>已设置只打塔主，跳过武道塔。</hiy>
-  tm 已设置只打塔主，跳过武道塔。
-[else if] (reset) == 已 && (currentN) == (finalN) && (finalN) != 0 && (wd) != false
-  @print <hiy>当日武道塔已完成。</hiy>
-[else if] (wd) == false
-  @print <hiy>已设置只打塔主，跳过武道塔。</hiy>
-  tm 已设置只打塔主，跳过武道塔。
-[else]
-  stopstate
-  @cd
-  @print 开始自动武道塔
-  @tidyBag
-  @await 2000
-  (WudaoBefore)
-  @await 5000
-  @renew
-  [if] (WudaoMode) == 快速模式
-    @cmdDelay 500
-  jh fam 9 start
-  @toolbar jh
-  @toolbar tasks
-  @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
-  @print 当前武道塔进度：(currentN)/(finalN)
-  @await 2000
-  [if] (currentN) == (finalN)
-    ask1 {r守门人}
-    @tip 从头开始挑战|已经重置
+  [if] (reset) == 已 && (currentN) != null && (currentN) == (finalN) && (finalN) != 0
+    @print <hiy>当日武道塔已完成。</hiy>
+  [else]
+    stopstate
+    @cd
+    @print 开始自动武道塔
+    @tidyBag
     @await 2000
-  [while] (wdlevel) == null
+    (WudaoBefore)
+    @await 5000
+    @renew
+    [if] (WudaoMode) == 快速模式
+      @cmdDelay 500
     jh fam 9 start
-    @await 500
-    @tip 你目前可以直接去挑战第($wdlevel)层
-  @print 开始挑战第(wdlevel)层
-  go enter
-  [while] true
-    [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
-      [break]
-    [if] (WudaoMode) == 正常模式
-      [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
-        @renew
-        jh fam 9 start;go enter
-      [if] (wdlevel) >= (WudaoManualMaxLevel)
-        [break]
-      [if] (wdlevel) >= (WudaoWaitCDLevel)
-        @cd (WudaoWaitCDExp)
-    [else if] (WudaoMode) == 快速模式
-      [while] (:mpPer) <= 0.1
-        dazuo
-        @await 5000
-      stopstate
-      [if] (:hpPer) <= 0.01
-        @js var jy='(:room)'.indexOf('第七十');if(jy!=-1){WG.SendCmd('liaoshang;$wait 10000;stopstate')}
-        @await 100
-        @until (:state) != 疗伤
-    kill {r武道塔守护者}?
-    [if] (WudaoMode) == 正常模式
+    @toolbar jh
+    @toolbar tasks
+    @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
+    @print 当前武道塔进度：(currentN)/(finalN)
+    @await 2000
+    [if] (currentN) == (finalN)
+      ask1 {r守门人}
+      @tip 从头开始挑战|已经重置
+      @await 2000
+    [while] (wdlevel) == null
+      jh fam 9 start
       @await 500
-    @until (:combating) == false && (:free) == true && (:status faint) == false && (:status miss) == false
-    [if] {r武道塔守护者}? != null
-      [continue]
-    [else]
-      ($wdlevel) = (wdlevel) + 1
-      go up
-  [if] (WudaoMode) == 正常模式
-    ($num)=0
-    jh fam 9 start
-    ask2 {r守门人}
-    @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
-    [if] (num) > 0
-      [if] {b扫荡符#}? < (num) || {b扫荡符}? == null
-        shop 0 (num)
-    ask2 {r守门人};ask3 {r守门人}
-    @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
-  @cmdDelay
-  stopstate
-  @tidyBag
-  @renew
+      @tip 你目前可以直接去挑战第($wdlevel)层
+    @print 开始挑战第(wdlevel)层
+    go enter
+    [while] true
+      [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
+        [break]
+      [if] (WudaoMode) == 正常模式
+        [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
+          @renew
+          jh fam 9 start;go enter
+        [if] (wdlevel) >= (WudaoManualMaxLevel)
+          [break]
+        [if] (wdlevel) >= (WudaoWaitCDLevel)
+          @cd (WudaoWaitCDExp)
+      [else if] (WudaoMode) == 快速模式
+        [while] (:mpPer) <= 0.1
+          dazuo
+          @await 5000
+        stopstate
+        [if] (:hpPer) <= 0.01
+          @js var jy='(:room)'.indexOf('第七十');if(jy!=-1){WG.SendCmd('liaoshang;$wait 10000;stopstate')}
+          @await 100
+          @until (:state) != 疗伤
+      kill {r武道塔守护者}?
+      [if] (WudaoMode) == 正常模式
+        @await 500
+      @until (:combating) == false && (:free) == true && (:status faint) == false && (:status miss) == false
+      [if] {r武道塔守护者}? != null
+        [continue]
+      [else]
+        ($wdlevel) = (wdlevel) + 1
+        go up
+    [if] (WudaoMode) == 正常模式
+      ($num)=0
+      jh fam 9 start
+      ask2 {r守门人}
+      @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
+      [if] (num) > 0
+        [if] {b扫荡符#}? < (num) || {b扫荡符}? == null
+          shop 0 (num)
+      ask2 {r守门人};ask3 {r守门人}
+      @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
+    @cmdDelay
+    stopstate
+    @tidyBag
+    @renew
+[else if] (WudaoMode) == 只打塔主
+  @print <hiy>已设置只打塔主，跳过武道塔。</hiy>
+  tm 已设置只打塔主，跳过武道塔。
 
 // 副本
 [if] (FBWay) == 跳过副本
@@ -526,106 +521,9 @@ stopstate
     @print <hiy>当日副本次数已完成(fb_com)次。</hiy>
   [else]
     ($fb_num) = (FBnum) - (fb_com)
-    [if] (FBName) == 财主家(简单)
-      ($fbcr) = cr yz/cuifu/caizhu 0
-    [else if] (FBName) == 财主家(困难)
-      ($fbcr) = cr yz/cuifu/caizhu 1
-    [else if] (FBName) == 丽春院
-      ($fbcr) = cr yz/lcy/dating 0
-    [else if] (FBName) == 流氓巷
-      ($fbcr) = cr yz/lmw/xiangzi1 0
-    [else if] (FBName) == 兵营
-      ($fbcr) = cr yz/by/damen 0
-    [else if] (FBName) == 庄府
-      ($fbcr) = cr bj/zhuang/xiaolu 0
-    [else if] (FBName) == 鳌拜府
-      ($fbcr) = cr bj/ao/damen 0
-    [else if] (FBName) == 天地会
-      ($fbcr) = cr bj/tdh/hct 0
-    [else if] (FBName) == 神龙教
-      ($fbcr) = cr bj/shenlong/haitan 0
-    [else if] (FBName) == 关外
-      ($fbcr) = cr bj/guanwai/damen 0
-    [else if] (FBName) == 温府
-      ($fbcr) = cr cd/wen/damen 0
-    [else if] (FBName) == 五毒教
-      ($fbcr) = cr cd/wudu/damen 0
-    [else if] (FBName) == 恒山
-      ($fbcr) = cr wuyue/hengshan/daziling 0
-    [else if] (FBName) == 青城山
-      ($fbcr) = cr wuyue/qingcheng/shanlu 0
-    [else if] (FBName) == 衡山
-      ($fbcr) = cr wuyue/henshan/hengyang 0
-    [else if] (FBName) == 嵩山
-      ($fbcr) = cr wuyue/songshan/taishi 0
-    [else if] (FBName) == 云梦沼泽
-      ($fbcr) = cr cd/yunmeng/senlin 0
-    [else if] (FBName) == 桃花岛(简单)
-      ($fbcr) = cr taohua/haitan 0
-    [else if] (FBName) == 桃花岛(困难)
-      ($fbcr) = cr taohua/haitan 1
-    [else if] (FBName) == 白驼山
-      ($fbcr) = cr baituo/damen 0
-    [else if] (FBName) == 星宿海
-      ($fbcr) = cr xingxiu/xxh6 0
-    [else if] (FBName) == 冰火岛(简单)
-      ($fbcr) = cr mj/bhd/haibian 1
-    [else if] (FBName) == 冰火岛(困难)
-      ($fbcr) = cr mj/bhd/haibian 1
-    [else if] (FBName) == 冰火岛(偷渡)
-      ($fbcr) = cr mj/bhd/haibian 1
-    [else if] (FBName) == 移花宫(简单)
-      ($fbcr) = cr huashan/yihua/shandao 0
-    [else if] (FBName) == 移花宫(困难)
-      ($fbcr) = cr huashan/yihua/shandao 1
-    [else if] (FBName) == 移花宫(偷渡)
-      ($fbcr) = cr huashan/yihua/shandao 1
-    [else if] (FBName) == 燕子坞(简单)
-      ($fbcr) = cr murong/anbian 0
-    [else if] (FBName) == 燕子坞(困难)
-      ($fbcr) = cr murong/anbian 1
-    [else if] (FBName) == 黑木崖(简单)
-      ($fbcr) = cr heimuya/shangu 0
-    [else if] (FBName) == 黑木崖(困难)
-      ($fbcr) = cr heimuya/shangu 1
-    [else if] (FBName) == 缥缈峰(困难)
-      ($fbcr) = cr lingjiu/shanjiao 1
-    [else if] (FBName) == 缥缈峰(偷渡)
-      ($fbcr) = cr lingjiu/shanjiao 1
-    [else if] (FBName) == 光明顶
-      ($fbcr) = cr mj/shanmen 0
-    [else if] (FBName) == 光明顶(偷渡)
-      ($fbcr) = cr mj/shanmen 0
-    [else if] (FBName) == 天龙寺(困难)
-      ($fbcr) = cr tianlong/damen 1
-    [else if] (FBName) == 天龙寺(偷渡)
-      ($fbcr) = cr tianlong/damen 1
-    [else if] (FBName) == 血刀门
-      ($fbcr) = cr xuedao/shankou 0
-    [else if] (FBName) == 古墓派(简单)
-      ($fbcr) = cr gumu/gumukou 0
-    [else if] (FBName) == 古墓派(困难)
-      ($fbcr) = cr gumu/gumukou 1
-    [else if] (FBName) == 古墓派(困难偷渡)
-      ($fbcr) = cr gumu/gumukou 1
-    [else if] (FBName) == 华山论剑
-      ($fbcr) = cr huashan/lunjian/leitaixia 0
-    [else if] (FBName) == 侠客岛
-      ($fbcr) = cr xkd/shimen 0
-    [else if] (FBName) == 净念禅宗(简单)
-      ($fbcr) = cr chanzong/shanmen 0
-    [else if] (FBName) == 净念禅宗(困难)
-      ($fbcr) = cr chanzong/shanmen 1
-    [else if] (FBName) == 慈航静斋(简单)
-      ($fbcr) = cr cihang/shanmen 0
-    [else if] (FBName) == 慈航静斋(困难)
-      ($fbcr) = cr cihang/shanmen 1
-    [else if] (FBName) == 阴阳谷
-      ($fbcr) = cr yyg/ya 0
-    [else if] (FBName) == 战神殿(简单)
-      ($fbcr) = cr zsd/damen 0
-    [else if] (FBName) == 战神殿(困难)
-      ($fbcr) = cr zsd/damen 1
+    @js ($fbName) = "(FBName)".replace(/\(|\)/g,"")
+    ($fbdata) = "财主家简单":"cr yz/cuifu/caizhu 0","财主家困难":"cr yz/cuifu/caizhu 1","丽春院":"cr yz/lcy/dating 0","流氓巷":"cr yz/lmw/xiangzi1 0","兵营":"cr yz/by/damen 0","庄府":"cr bj/zhuang/xiaolu 0","鳌拜府":"cr bj/ao/damen 0","天地会":"cr bj/tdh/hct 0","神龙教":"cr bj/shenlong/haitan 0","关外":"cr bj/guanwai/damen 0","温府":"cr cd/wen/damen 0","五毒教":"cr cd/wudu/damen 0","恒山":"cr wuyue/hengshan/daziling 0","青城山":"cr wuyue/qingcheng/shanlu 0","衡山":"cr wuyue/henshan/hengyang 0","嵩山":"cr wuyue/songshan/taishi 0","云梦沼泽":"cr cd/yunmeng/senlin 0","桃花岛简单":"cr taohua/haitan 0","桃花岛困难":"cr taohua/haitan 1","白驼山":"cr baituo/damen 0","星宿海":"cr xingxiu/xxh6 0","冰火岛简单":"cr mj/bhd/haibian 1","冰火岛困难":"cr mj/bhd/haibian 1","冰火岛偷渡":"cr mj/bhd/haibian 1","移花宫简单":"cr huashan/yihua/shandao 0","移花宫困难":"cr huashan/yihua/shandao 1","移花宫偷渡":"cr huashan/yihua/shandao 1","燕子坞简单":"cr murong/anbian 0","燕子坞困难":"cr murong/anbian 1","黑木崖简单":"cr heimuya/shangu 0","黑木崖困难":"cr heimuya/shangu 1","缥缈峰困难":"cr lingjiu/shanjiao 1","缥缈峰偷渡":"cr lingjiu/shanjiao 1","光明顶":"cr mj/shanmen 0","光明顶偷渡":"cr mj/shanmen 0","天龙寺困难":"cr tianlong/damen 1","天龙寺偷渡":"cr tianlong/damen 1","血刀门":"cr xuedao/shankou 0","古墓派简单":"cr gumu/gumukou 0","古墓派困难":"cr gumu/gumukou 1","古墓派困难偷渡":"cr gumu/gumukou 1","华山论剑":"cr huashan/lunjian/leitaixia 0","侠客岛":"cr xkd/shimen 0","净念禅宗简单":"cr chanzong/shanmen 0","净念禅宗困难":"cr chanzong/shanmen 1","慈航静斋简单":"cr cihang/shanmen 0","慈航静斋困难":"cr cihang/shanmen 1","阴阳谷":"cr yyg/ya 0","战神殿简单":"cr zsd/damen 0","战神殿困难":"cr zsd/damen 1"
+    @js ($fbcr) = var fb={(fbdata)};fb.(fbName)
     [if] (FBWay) == 扫荡
       //扫荡模式
       [if] (FBName) == 流氓巷(组队) || (FBName) == 神龙教(组队) || (FBName) == 五毒教(组队) || (FBName) == 云梦沼泽(组队) || (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
@@ -685,40 +583,34 @@ taskover signin;taskover zz1;taskover zz2
     @await 500
   @await 1000
   [if] {r(SCdiao)}? != null
+    // 取出鱼饵
     dc {r(SCdiao)}? stopstate;pack {r(SCdiao)}?;
     @dialog
-    ($yuP_sc) = 0
-    [if] {d鱼饵p%#}? != null
-      ($yuP_sc) = {d鱼饵p%#}?
-    ($yuP_my) = 0
-    [if] {b鱼饵p%#}? != null
-      ($yuP_my) = {b鱼饵p%#}?
-    ($yuP_num) = (yuP_sc) + (yuP_my) - 1
-    ($yuO_sc) = 0
-    [if] {d鱼饵o%#}? != null
-      ($yuO_sc) = {d鱼饵o%#}?
-    ($yuO_my) = 0
-    [if] {b鱼饵o%#}? != null
-      ($yuO_my) = {b鱼饵o%#}?
-    ($yuO_num) = (yuO_sc) + (yuO_my) - 1
-    [if] (yuP_num) > 0 || (yuO_num) > 0
-      ($cmd) = null
-      [if] (yuP_sc) > 0
-        ($cmd) = (cmd);dc {r(SCdiao)}? give (:id) {d鱼饵p%#}? {d鱼饵p%}?
-      [if] (yuO_sc) > 0
-        ($cmd) = (cmd);dc {r(SCdiao)}? give (:id) {d鱼饵o%#}? {d鱼饵o%}?
-      [if] (cmd) != null
-        (cmd)
-      @await 2000
+    [{d鱼饵o%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵o%#}? {d鱼饵o%}?
+    [{d鱼饵p%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵p%#}? {d鱼饵p%}?
+    [{d鱼饵y%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵y%#}? {d鱼饵y%}?
+    [{d鱼饵b%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵b%#}? {d鱼饵b%}?
+    [{d鱼饵g%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵g%#}? {d鱼饵g%}?
+    @await 2000
+    // 给鱼饵
+    [if] {d鱼饵o%#}? != null || {d鱼饵p%#}? != null || {d鱼饵y%#}? != null || {d鱼饵b%#}? != null || {d鱼饵g%#}? != null
       dc {r(SCdiao)}? stopstate;trade {r(SCdiao)}?;
-      @await 500
-      ($cmd) = give {r(SCdiao)}? (yuO_num) {b鱼饵o}?;give {r(SCdiao)}? (yuP_num) {b鱼饵p}?;
-      (cmd)
-      dc {r(SCdiao)}? diao
-      [if] {b鱼饵p%}? != null && {b鱼饵p%#}? > 1
-        ($alert_sc) = 随从(SCdiao)背包已满，无法给鱼饵！
-      [else if] {b鱼饵o%}? != null && {b鱼饵p%#}? > 1
-        ($alert_sc) = 随从(SCdiao)背包已满，无法给鱼饵！
+      [{b鱼饵o%#}? != null]give {r(SCdiao)}? 1 {b鱼饵o%}?
+      [{b鱼饵p%#}? != null]give {r(SCdiao)}? 1 {b鱼饵p%}?
+      [{b鱼饵y%#}? != null]give {r(SCdiao)}? 1 {b鱼饵y%}?
+      [{b鱼饵b%#}? != null]give {r(SCdiao)}? 1 {b鱼饵b%}?
+      [{b鱼饵g%#}? != null]give {r(SCdiao)}? 1 {b鱼饵g%}?
+      @await 2000
+      [{b鱼饵o%#}? != null]give {r(SCdiao)}? {b鱼饵o%#}? {b鱼饵o%}?
+      [{b鱼饵p%#}? != null]give {r(SCdiao)}? {b鱼饵p%#}? {b鱼饵p%}?
+      [{b鱼饵y%#}? != null]give {r(SCdiao)}? {b鱼饵y%#}? {b鱼饵y%}?
+      [{b鱼饵b%#}? != null]give {r(SCdiao)}? {b鱼饵b%#}? {b鱼饵b%}?
+      [{b鱼饵g%#}? != null]give {r(SCdiao)}? {b鱼饵g%#}? {b鱼饵g%}?
+      @await 2000
+    dc {r(SCdiao)}? diao;go southwest
+    @await 1000
+    [if] {b鱼饵o%#}? != null || {b鱼饵p%#}? != null || {b鱼饵y%#}? != null || {b鱼饵b%#}? != null || {b鱼饵g%#}? != null
+      ($alert_sc) = 随从(SCdiao)背包已满，无法给鱼饵！
 
 // 结束收益统计
 [if] (RecordG) == 是
