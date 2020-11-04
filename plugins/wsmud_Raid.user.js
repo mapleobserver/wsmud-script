@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.25
+// @version         2.4.26
 // @date            23/12/2018
-// @modified        29/10/2020
+// @modified        4/11/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4275,7 +4275,7 @@ look men;open men
             });
         },
 
-        _address: "wsmud.ii74.com/S/",
+        _address: "47.97.192.189:5555",
         _async(uri, params, success, fail) {
             this._get(true, uri, params, success, fail);
         },
@@ -4285,7 +4285,7 @@ look men;open men
         _get(async, uri, params, success, fail) {
             $.ajax({
                 type: "post",
-                url: `https://${Server._address}/${uri}`,
+                url: `http://${Server._address}/${uri}`,
                 data: params,
                 async: async,
                 success: function(data) {
@@ -4922,7 +4922,7 @@ look men;open men
                 }, function(index){
                     layer.close(index);
                 }, function(){
-                    layer.prompt({ title: '输入角色流程获取码', formType: 1, shift: 2 }, function(pass, index){
+                    layer.prompt({ title: '输入角色流程获取码', formType: 0, shift: 2 }, function(pass, index){
                         layer.close(index);
                         Server.downloadFlows(pass);
                     });
@@ -4939,7 +4939,7 @@ look men;open men
                 }, function(index){
                     layer.close(index);
                 }, function(){
-                    layer.prompt({ title: '输入角色流程获取码', formType: 1, shift: 2 }, function(pass, index){
+                    layer.prompt({ title: '输入角色触发获取码', formType: 0, shift: 2 }, function(pass, index){
                         layer.close(index);
                         Server.downloadTriggers(pass);
                     });
