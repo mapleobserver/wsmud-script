@@ -1,7 +1,7 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020110102
+($localVer) = 2020110501
 ($changeLog) = 精简副本路径获取方式。精简武道塔模块。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -502,6 +502,7 @@ stopstate
       ask2 {r守门人};ask3 {r守门人}
       @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
     @cmdDelay
+    @await 2000
     stopstate
     @tidyBag
     @renew
@@ -530,6 +531,8 @@ stopstate
         ($alert_fb) = (FBName)无法扫荡！
       [else]
         //team out
+        @tidyBag
+        @await 2000
         [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
           shop 0 (fb_num)
         (fbcr) (fb_num)
