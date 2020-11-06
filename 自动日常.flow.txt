@@ -1,7 +1,7 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020110501
+($localVer) = 2020110601
 ($changeLog) = 精简副本路径获取方式。精简武道塔模块。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -115,15 +115,6 @@
 [if] (RC_qingan) == null
   ($RC_qingan) = 请安
 #select ($RC_qingan) = 是否给首席请安,请安|跳过,(RC_qingan)
-
-// 刷新鱼饵
-// 默认不开启，想开启的话，自己新建个流程运行一下这句：($OnYuer)=true
-($Yuer) = null
-[if] (OnYuer) == true
-  ($Yuer) = 是
-  @print 开启刷新鱼饵功能
-  #input ($SCdiao) = 钓鱼随从名字,(SCdiao)
-  #select ($Yuer) = 刷新紫橙鱼饵<ord>(请确保随从背包有空位)</ord>,是|否,(Yuer)
 
 // 日常结束后动作
 [if](RCAfter_action) == null
@@ -576,44 +567,6 @@ greet master
 // 领取签到奖励
 stopstate
 taskover signin;taskover zz1;taskover zz2
-@await 2000
-
-// 刷新随从身上鱼饵
-[if] (SCdiao) != null && (Yuer) == 是
-  stopstate
-  [while] (:room) != 住房-小花园
-    jh fam 0 start;go west;go west;go north;go enter;go northeast
-    @await 500
-  @await 1000
-  [if] {r(SCdiao)}? != null
-    // 取出鱼饵
-    dc {r(SCdiao)}? stopstate;pack {r(SCdiao)}?;
-    @dialog
-    [{d鱼饵o%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵o%#}? {d鱼饵o%}?
-    [{d鱼饵p%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵p%#}? {d鱼饵p%}?
-    [{d鱼饵y%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵y%#}? {d鱼饵y%}?
-    [{d鱼饵b%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵b%#}? {d鱼饵b%}?
-    [{d鱼饵g%#}? != null]dc {r(SCdiao)}? give (:id) {d鱼饵g%#}? {d鱼饵g%}?
-    @await 2000
-    // 给鱼饵
-    [if] {d鱼饵o%#}? != null || {d鱼饵p%#}? != null || {d鱼饵y%#}? != null || {d鱼饵b%#}? != null || {d鱼饵g%#}? != null
-      dc {r(SCdiao)}? stopstate;trade {r(SCdiao)}?;
-      [{b鱼饵o%#}? != null]give {r(SCdiao)}? 1 {b鱼饵o%}?
-      [{b鱼饵p%#}? != null]give {r(SCdiao)}? 1 {b鱼饵p%}?
-      [{b鱼饵y%#}? != null]give {r(SCdiao)}? 1 {b鱼饵y%}?
-      [{b鱼饵b%#}? != null]give {r(SCdiao)}? 1 {b鱼饵b%}?
-      [{b鱼饵g%#}? != null]give {r(SCdiao)}? 1 {b鱼饵g%}?
-      @await 2000
-      [{b鱼饵o%#}? != null]give {r(SCdiao)}? {b鱼饵o%#}? {b鱼饵o%}?
-      [{b鱼饵p%#}? != null]give {r(SCdiao)}? {b鱼饵p%#}? {b鱼饵p%}?
-      [{b鱼饵y%#}? != null]give {r(SCdiao)}? {b鱼饵y%#}? {b鱼饵y%}?
-      [{b鱼饵b%#}? != null]give {r(SCdiao)}? {b鱼饵b%#}? {b鱼饵b%}?
-      [{b鱼饵g%#}? != null]give {r(SCdiao)}? {b鱼饵g%#}? {b鱼饵g%}?
-      @await 2000
-    dc {r(SCdiao)}? diao;go southwest
-    @await 1000
-    [if] {b鱼饵o%#}? != null || {b鱼饵p%#}? != null || {b鱼饵y%#}? != null || {b鱼饵b%#}? != null || {b鱼饵g%#}? != null
-      ($alert_sc) = 随从(SCdiao)背包已满，无法给鱼饵！
 
 // 结束收益统计
 [if] (RecordG) == 是
