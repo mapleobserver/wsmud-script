@@ -1,7 +1,7 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020110801
+($localVer) = 2020110901
 ($changeLog) = 优化师门环数判断；调整追捕参数。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -51,6 +51,7 @@
   [else]
     #select ($SMtasks) = 师门已连(smComboN)次，<ord>是否先跳过</ord>等晚上抢首席,正常进行|跳过,跳过
 [else if] (smComboN) < 30
+  ($SMtasks) = 正常进行
   #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,正常进行
 [else]
   #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
