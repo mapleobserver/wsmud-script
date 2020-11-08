@@ -1,8 +1,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020110601
-($changeLog) = 精简副本路径获取方式。精简武道塔模块。
+($localVer) = 2020110801
+($changeLog) = 优化师门环数判断；调整追捕参数。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -50,7 +50,7 @@
     #select ($SMtasks) = <ord>处于抢首席时段</ord>，师门任务可正常进行,正常进行|跳过,正常进行
   [else]
     #select ($SMtasks) = 师门已连(smComboN)次，<ord>是否先跳过</ord>等晚上抢首席,正常进行|跳过,跳过
-[else if] (smComboN) < 10
+[else if] (smComboN) < 30
   #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,正常进行
 [else]
   #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
@@ -63,7 +63,7 @@
 [if] (ZBMax) == null
   ($ZBMax) = 9999999
 [if] (ZBcdskill) == null
-  ($ZBcdskill) = ^none
+  ($ZBcdskill) = null
 [if] (ZBBefore) == null
   ($ZBBefore) = $eq 1
 [if] (DieToReset) == null
@@ -71,7 +71,7 @@
 #select ($ZByes) = 是否进行追捕(百姓选跳过),是|跳过,(ZByes)
 #input ($ZBBefore) = 追捕前执行命令(用英文;隔开),(ZBBefore)
 #input ($ZBWaitCD) = 从此次追捕开始，等待技能冷却,(ZBWaitCD)
-#input ($ZBcdskill) = 需要cd的技能使用英文逗号隔开或^不需要cd的技能,(ZBcdskill)
+#input ($ZBcdskill) = 需要冷却的技能使用英文逗号隔开或以^开头过滤不需要的，填null全部不等冷却,(ZBcdskill)
 #input ($ZBMax) = 最高连续追捕数达到后自动放弃,(ZBMax)
 #select ($DieToReset) = 死亡自动重置,已开启|已关闭,(DieToReset)
 
