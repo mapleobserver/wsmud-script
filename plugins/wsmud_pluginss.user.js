@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.128
+// @version      0.0.32.139
 // @date         01/07/2018
-// @modified     30/10/2020
+// @modified     10/11/2020
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -127,7 +127,7 @@
     var CanUse = false;
     if (WebSocket) {
         console.log('插件可正常运行,Plugins can run normally');
-        CanUse =true;
+        CanUse = true;
         function show_msg(msg) {
             ws_on_message({
                 type: "text",
@@ -370,6 +370,7 @@
         "逍遥派-地下石室": ["go up"],
         "逍遥派-木屋": ["go south;go south;go south;go south"]
     };
+    var pgoods={};
     var goods = {
         "米饭": {
             "id": null,
@@ -808,6 +809,11 @@
     var pfmnum = 0;
     var pfmdps = 0;
     var dpssakada = '开'
+    var critical = 0;
+    var criticalnum = 0;
+    var dpslock = 0;
+    var battletime = 0;
+    var lastcri = 0, lastpfm = 0;
     //funny计算
     var funnycalc = '关'
     //自定义btn
@@ -1229,7 +1235,16 @@
     }
     var log_line = 0;
 
+    function imgShow(url,t=2000){
+
+        $('.container > .content-message').css('background', 'url('+url+') no-repeat center center')
+        setTimeout(() => {
+            $('.container > .content-message').css('background', '')
+        }, t);
+    }
     function messageAppend(m, t = 0, area = 0) {
+
+
         if (area) {
             var ap = m + "\n";
             if (t == 1) {
@@ -1238,6 +1253,8 @@
                 ap = "<hig>" + ap + "</hig>";
             } else if (t == 3) {
                 ap = "<hiw>" + ap + "</hiw>";
+            } else if (t == 4) {
+                ap = "<hir>" + ap + "</hir>";
             }
             $('.content-message pre').append(ap)
         } else {
@@ -1249,6 +1266,8 @@
                 ap = "<hig>" + ap + "</hig>";
             } else if (t == 3) {
                 ap = "<hiw>" + ap + "</hiw>";
+            } else if (t == 4) {
+                ap = "<hir>" + ap + "</hir>";
             }
             $(".WG_log pre").append(ap);
             log_line++;
@@ -1339,7 +1358,8 @@
                 margin-left: 0.4em;position: relative;padding-left: 0.4em;padding-right: 0.4em;line-height: 24px;}
                 .WG_log{flex: 1;overflow-y: auto;border: 1px solid #404000;max-height: 15em;width: calc(100% - 40px);}
                 .WG_log > pre{margin: 0px; white-space: pre-line;}
-                .WG_button { width: calc(100% - 40px);}
+                .WG_button { width: calc(100% - 40px); overflow-x: auto;display: block;line-height:2em;}
+                .WG_button > .zdy-item:active {background-color: gray;color:black;}
                 .item-plushp{display: inline-block;float: right;width: 100px;}
                 .item-dps{display: inline-block;float: right;width: 100px;}
                 .settingbox {margin-left: 0.625 em;border: 1px solid gray;background-color: transparent;color: unset;resize: none;width: 80% ;height: 3rem;}
@@ -1381,7 +1401,7 @@
             `;
             GM_addStyle(css);
             npcs = GM_getValue("npcs", npcs);
-            goods = GM_getValue("goods", goods);
+            pgoods = GM_getValue("goods", goods);
             equip = GM_getValue(role + "_equip", equip);
             //初始化角色配置
             GI.configInit();
@@ -1497,10 +1517,10 @@
 
                     gtype = a.children()[0].localName;
                     if (name == "金创药" || name == "引气丹") {
-                        if (goods[gtype + name]) {
-                            goods[gtype + name].id = id;
+                        if (pgoods[gtype + name]) {
+                            pgoods[gtype + name].id = id;
                         } else {
-                            goods[gtype + name] = {
+                            pgoods[gtype + name] = {
                                 "id": id,
                                 "type": gtype,
                                 "sales": "药铺老板 平一指",
@@ -1511,11 +1531,11 @@
 
                     }
                     else {
-                        goods[name].id = id;
+                        pgoods[name].id = id;
                     }
                     messageAppend(`<${gtype}>${name}</${gtype}>:${id}`);
                 }
-                GM_setValue("goods", goods);
+                GM_setValue("goods", pgoods);
                 return true;
             } else {
                 messageAppend("未检测到商品清单");
@@ -1544,11 +1564,13 @@
             GM_setValue("npcs", npcs);
         },
         update_id_all: function () {
+
+            GM_setValue("goods",goods);
             WG.SendCmd("stopstate")
             var t = [];
-            Object.keys(goods).forEach(function (key) {
-                if (t[goods[key].place] == undefined)
-                    t[goods[key].place] = goods[key].sales;
+            Object.keys(pgoods).forEach(function (key) {
+                if (t[pgoods[key].place] == undefined)
+                    t[pgoods[key].place] = pgoods[key].sales;
             });
             var keys = Object.keys(t);
             var i = 0;
@@ -1610,8 +1632,38 @@
             WG.SendCmd("$to 扬州城-广场;$to 扬州城-钱庄;look3 1");
         },
         clean_dps: function () {
-            pfmdps = 0;
-            pfmnum = 0;
+            if (dpslock) {
+                let allpfmnum = pfmnum + criticalnum;
+                let alldps = pfmdps + critical;
+                let battle_t = (new Date().getTime() - battletime.getTime()) / 1000;
+
+                let real_dps = alldps / battle_t;
+                let real_act = allpfmnum / battle_t;
+                if( battle_t < 1){
+                    real_dps = alldps;
+                    real_act = allpfmnum;
+                 }
+               setTimeout(() => {
+                   messageAppend(`⚔️战斗过程分析:
+                    ⏱️战斗时长:${battle_t}秒
+                    ⚔️普通攻击:${pfmnum}次
+                    ⚔️普通伤害:${addChineseUnit(pfmdps)}
+                    🌟暴击攻击:${criticalnum}次
+                    🌟暴击伤害:${addChineseUnit(critical)}
+                    ⚔️总计攻击:${(allpfmnum)}次
+                    ⚔️总计伤害:${addChineseUnit(alldps)}
+                    ⏱️每秒伤害:${addChineseUnit(real_dps)}
+                    ⏱️每秒攻击:${Math.round(real_act)}次`, 4);
+                   pfmdps = 0;
+                   pfmnum = 0;
+                   critical = 0;
+                   criticalnum = 0;
+                   dpslock = 0;
+               }, 100);
+
+
+
+            }
         },
         Send: async function (cmd) {
             if (CanUse) {
@@ -1710,9 +1762,9 @@
                     //商店 id解析
                     if (c.indexOf("*") >= 0) {
                         var rep = c.match("\\*([^%]+)\\*");
-                        if (goods[rep[1]] != undefined) {
+                        if (pgoods[rep[1]] != undefined) {
                             var subStr = new RegExp('\\*([^%]+)\\*');
-                            c = c.replace(subStr, goods[rep[1]].id);
+                            c = c.replace(subStr, pgoods[rep[1]].id);
                         }
                     }
 
@@ -1858,9 +1910,9 @@
                     }
                     //不能上交自动购买
                     if (itemName == "金创药" || itemName == "引气丹") {
-                        WG.sm_item = goods[_gtype + itemName];
+                        WG.sm_item = pgoods[_gtype + itemName];
                     } else {
-                        WG.sm_item = goods[itemName];
+                        WG.sm_item = pgoods[itemName];
                     }
 
                     if (item != undefined && WG.inArray(item, store_list) && sm_getstore == "开") {
@@ -2112,7 +2164,7 @@
                     }
                 })
                 callback(storestatus);
-            }, 1000);
+            }, 1500);
 
         },
         Give: function (items) {
@@ -2689,7 +2741,7 @@
                 if (WG.at("扬州城-矿山") && t == -1) {
                     //不能挖矿，自动买铁镐
                     WG.go("扬州城-打铁铺");
-                    WG.buy(goods["铁镐"]);
+                    WG.buy(pgoods["铁镐"]);
                     //买完等待下一次检查
                     messageAppend("自动买铁镐");
                     return;
@@ -2907,6 +2959,18 @@
                         @js var time=Date.parse(new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
                         @awiat 2000
                         tm 【三三懒人包】流程已导入，如果曾用早期版本的懒人包导入过流程，请先删除这些流程后再使用。`;
+
+                        if (unsafeWindow && unsafeWindow.ToRaid) {
+                            ToRaid.perform(mlh);
+                        } else {
+                            messageAppend("请先安装Raid.js");
+                        }
+                    }, onelddh: function () {
+                        let mlh = `//
+                        ($f_ss)={"name":"来点动画","source":"http://qjio0y33d.hb-bkt.clouddn.com/gif.txt","finder":"根文件夹"}
+                        @js var time=Date.parse(new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+                        @awiat 2000
+                        tm 来点动画已导入`;
 
                         if (unsafeWindow && unsafeWindow.ToRaid) {
                             ToRaid.perform(mlh);
@@ -3918,7 +3982,7 @@
                                 return;
                             }
                         }
-                        a.append("<span class=\"zdy-item act-item-zdy\">" + v.name + "</span>")
+                        a.append("<span class=\"zdy-item act-item-zdy act-item\">" + v.name + "</span>")
                         v.zmlShow = 1;
                         GM_setValue(role + "_zml", zml);
                         messageAppend("设置快速使用" + v.name, 0, 1);
@@ -3968,7 +4032,7 @@
 
                 if (zmlitem.zmlShow == 1) {
 
-                    a.append("<span class=\"zdy-item act-item-zdy\">" + zmlitem.name + "</span>")
+                    a.append("<span class=\"zdy-item act-item-zdy act-item\">" + zmlitem.name + "</span>")
                     messageAppend("设置快速使用" + zmlitem.name, 0, 1);
                     //绑定事件
                     $('.act-item-zdy').off('click');
@@ -4674,267 +4738,267 @@
                 $(".dialog-custom").prepend(a);
 
             }
-                $(".dialog-custom").off('click');
-                $("#family").off('change');
-                $('#wudao_pfm').off('focusout');
-                $(".savebtn").off('click')
-                $('.clear_skillJson').off('click')
-                $('.backup_btn').off('click')
-                $('.clean_dps').off('click')
-                $('.load_btn').off('click')
-                $(".update_store").off('click')
-                $(".update_id_all").off('click')
-                $('#autobuy').off('change')
-                $('#loginhml').off('change')
-                $('#backimageurl').off('change')
-                $('#statehml').off('change')
-                $('#shieldkey').off('focusout');
-                $('#shield').off('focusout');
-                $('#funnycalc').off('click')
-                $('#dpssakada').off('click')
-                $('#silence').off('click')
-                $('#zdyskilllist').off('change')
-                $('#zdyskillsswitch').off('click')
-                $('#shieldswitch').off('click')
-                $('#welcome').off('focusout');
-                $('#blacklist').off('change')
-                $('#auto_command').off('change')
-                $('#store_fenjie_info').off('change')
-                $('#store_drop_info').off('change')
-                $('#lock_info').off('change')
-                $('#store_info2').off('change')
-                $('#store_info').off('change')
-                $('#unauto_pfm').off('change')
-                $('#getitemShow').off('click')
-                $("#zmlshowsetting").off('change')
+            $(".dialog-custom").off('click');
+            $("#family").off('change');
+            $('#wudao_pfm').off('focusout');
+            $(".savebtn").off('click')
+            $('.clear_skillJson').off('click')
+            $('.backup_btn').off('click')
+            $('.clean_dps').off('click')
+            $('.load_btn').off('click')
+            $(".update_store").off('click')
+            $(".update_id_all").off('click')
+            $('#autobuy').off('change')
+            $('#loginhml').off('change')
+            $('#backimageurl').off('change')
+            $('#statehml').off('change')
+            $('#shieldkey').off('focusout');
+            $('#shield').off('focusout');
+            $('#funnycalc').off('click')
+            $('#dpssakada').off('click')
+            $('#silence').off('click')
+            $('#zdyskilllist').off('change')
+            $('#zdyskillsswitch').off('click')
+            $('#shieldswitch').off('click')
+            $('#welcome').off('focusout');
+            $('#blacklist').off('change')
+            $('#auto_command').off('change')
+            $('#store_fenjie_info').off('change')
+            $('#store_drop_info').off('change')
+            $('#lock_info').off('change')
+            $('#store_info2').off('change')
+            $('#store_info').off('change')
+            $('#unauto_pfm').off('change')
+            $('#getitemShow').off('click')
+            $("#zmlshowsetting").off('change')
 
-                $('#autorelogin').off('click')
-                $('#autoupdateStore').off('click')
-                $('#saveAddr').off('click')
-                $('#autorewardgoto').off('click')
-                $('#autopfmswitch').off('click')
-                $('#auto_eq').off('change')
-                $('#ks_Boss').off('click')
+            $('#autorelogin').off('click')
+            $('#autoupdateStore').off('click')
+            $('#saveAddr').off('click')
+            $('#autorewardgoto').off('click')
+            $('#autopfmswitch').off('click')
+            $('#auto_eq').off('change')
+            $('#ks_Boss').off('click')
 
-                $('#marry_kiss').off('click')
-                $('#ks_wait').off('focusout');
+            $('#marry_kiss').off('click')
+            $('#ks_wait').off('focusout');
 
-                $('#ks_pfm').off('focusout');
-                $('#sm_getstore').off('click')
+            $('#ks_pfm').off('focusout');
+            $('#sm_getstore').off('click')
 
-                $('#sm_price').off('click')
-                $('#sm_any').off('click')
-                $('#sm_loser').off('click')
+            $('#sm_price').off('click')
+            $('#sm_any').off('click')
+            $('#sm_loser').off('click')
 
 
-                $(".dialog-custom").on("click", ".switch2", UI.switchClick);
-                $("#family").change(function () {
-                    family = $("#family").val();
-                    GM_setValue(role + "_family", family);
-                });
-                $('#wudao_pfm').focusout(function () {
-                    wudao_pfm = $('#wudao_pfm').val();
-                    GM_setValue(role + "_wudao_pfm", wudao_pfm);
-                });
-                $('#sm_loser').click(function () {
-                    sm_loser = WG.switchReversal($(this));
-                    GM_setValue(role + "_sm_loser", sm_loser);
-                });
-                $('#sm_any').click(function () {
-                    sm_any = WG.switchReversal($(this));
-                    GM_setValue(role + "_sm_any", sm_any);
-                });
-                $('#sm_price').click(function () {
-                    sm_price = WG.switchReversal($(this));
-                    GM_setValue(role + "_sm_price", sm_price);
-                });
-                $('#sm_getstore').click(function () {
-                    sm_getstore = WG.switchReversal($(this));
-                    GM_setValue(role + "_sm_getstore", sm_getstore);
-                });
-                $('#ks_pfm').focusout(function () {
-                    ks_pfm = $('#ks_pfm').val();
-                    GM_setValue(role + "_ks_pfm", ks_pfm);
-                });
-                $('#ks_wait').focusout(function () {
-                    ks_wait = $('#ks_wait').val();
-                    GM_setValue(role + "_ks_wait", ks_wait);
-                });
-                $('#marry_kiss').click(function () {
-                    automarry = WG.switchReversal($(this));
-                    GM_setValue(role + "_automarry", automarry);
-                });
-                $('#ks_Boss').click(function () {
-                    autoKsBoss = WG.switchReversal($(this));
-                    GM_setValue(role + "_autoKsBoss", autoKsBoss);
-                });
-                $('#auto_eq').change(function () {
-                    autoeq = $('#auto_eq').val();
-                    GM_setValue(role + "_auto_eq", autoeq);
+            $(".dialog-custom").on("click", ".switch2", UI.switchClick);
+            $("#family").change(function () {
+                family = $("#family").val();
+                GM_setValue(role + "_family", family);
+            });
+            $('#wudao_pfm').focusout(function () {
+                wudao_pfm = $('#wudao_pfm').val();
+                GM_setValue(role + "_wudao_pfm", wudao_pfm);
+            });
+            $('#sm_loser').click(function () {
+                sm_loser = WG.switchReversal($(this));
+                GM_setValue(role + "_sm_loser", sm_loser);
+            });
+            $('#sm_any').click(function () {
+                sm_any = WG.switchReversal($(this));
+                GM_setValue(role + "_sm_any", sm_any);
+            });
+            $('#sm_price').click(function () {
+                sm_price = WG.switchReversal($(this));
+                GM_setValue(role + "_sm_price", sm_price);
+            });
+            $('#sm_getstore').click(function () {
+                sm_getstore = WG.switchReversal($(this));
+                GM_setValue(role + "_sm_getstore", sm_getstore);
+            });
+            $('#ks_pfm').focusout(function () {
+                ks_pfm = $('#ks_pfm').val();
+                GM_setValue(role + "_ks_pfm", ks_pfm);
+            });
+            $('#ks_wait').focusout(function () {
+                ks_wait = $('#ks_wait').val();
+                GM_setValue(role + "_ks_wait", ks_wait);
+            });
+            $('#marry_kiss').click(function () {
+                automarry = WG.switchReversal($(this));
+                GM_setValue(role + "_automarry", automarry);
+            });
+            $('#ks_Boss').click(function () {
+                autoKsBoss = WG.switchReversal($(this));
+                GM_setValue(role + "_autoKsBoss", autoKsBoss);
+            });
+            $('#auto_eq').change(function () {
+                autoeq = $('#auto_eq').val();
+                GM_setValue(role + "_auto_eq", autoeq);
 
-                });
-                $('#autopfmswitch').click(function () {
-                    auto_pfmswitch = WG.switchReversal($(this));
-                    GM_setValue(role + "_auto_pfmswitch", auto_pfmswitch);
-                    if (auto_pfmswitch == "开") {
-                        G.auto_preform = true;
-                    } else {
-                        G.auto_preform = false;
-                    }
-                });
-                $('#autorewardgoto').click(function () {
-                    auto_rewardgoto = WG.switchReversal($(this));
-                    GM_setValue(role + "_auto_rewardgoto", auto_rewardgoto);
-                });
-                $('#saveAddr').click(function () {
-                    saveAddr = WG.switchReversal($(this));
-                    GM_setValue(role + "_saveAddr", saveAddr);
-                });
+            });
+            $('#autopfmswitch').click(function () {
+                auto_pfmswitch = WG.switchReversal($(this));
+                GM_setValue(role + "_auto_pfmswitch", auto_pfmswitch);
+                if (auto_pfmswitch == "开") {
+                    G.auto_preform = true;
+                } else {
+                    G.auto_preform = false;
+                }
+            });
+            $('#autorewardgoto').click(function () {
+                auto_rewardgoto = WG.switchReversal($(this));
+                GM_setValue(role + "_auto_rewardgoto", auto_rewardgoto);
+            });
+            $('#saveAddr').click(function () {
+                saveAddr = WG.switchReversal($(this));
+                GM_setValue(role + "_saveAddr", saveAddr);
+            });
 
-                $('#autoupdateStore').click(function () {
-                    auto_updateStore = WG.switchReversal($(this));
-                    GM_setValue(role + "_auto_updateStore", auto_updateStore);
-                });
-                $('#autorelogin').click(function () {
-                    auto_relogin = WG.switchReversal($(this));
-                    GM_setValue(role + "_auto_relogin", auto_relogin);
-                });
-                $("#zmlshowsetting").change(function () {
-                    zmlshowsetting = $('#zmlshowsetting').val();
-                    GM_setValue(role + "_zmlshowsetting", zmlshowsetting);
-                    WG.zml_showp();
-                });
-                $('#getitemShow').click(function () {
-                    getitemShow = WG.switchReversal($(this));
-                    GM_setValue(role + "_getitemShow", getitemShow);
+            $('#autoupdateStore').click(function () {
+                auto_updateStore = WG.switchReversal($(this));
+                GM_setValue(role + "_auto_updateStore", auto_updateStore);
+            });
+            $('#autorelogin').click(function () {
+                auto_relogin = WG.switchReversal($(this));
+                GM_setValue(role + "_auto_relogin", auto_relogin);
+            });
+            $("#zmlshowsetting").change(function () {
+                zmlshowsetting = $('#zmlshowsetting').val();
+                GM_setValue(role + "_zmlshowsetting", zmlshowsetting);
+                WG.zml_showp();
+            });
+            $('#getitemShow').click(function () {
+                getitemShow = WG.switchReversal($(this));
+                GM_setValue(role + "_getitemShow", getitemShow);
 
-                    if (getitemShow == "开") {
-                        G.getitemShow = true;
-                    } else {
-                        G.getitemShow = false;
-                    }
-                });
-                $('#unauto_pfm').change(function () {
-                    unauto_pfm = $('#unauto_pfm').val();
-                    GM_setValue(role + "_unauto_pfm", unauto_pfm);
-                    var unpfm = unauto_pfm.split(',');
-                    blackpfm = [];
-                    for (var pfmname of unpfm) {
-                        if (pfmname)
-                            blackpfm.push(pfmname);
-                    }
-                });
-                $('#store_info').change(function () {
-                    zdy_item_store = $('#store_info').val();
-                    GM_setValue(role + "_zdy_item_store", zdy_item_store);
-                    store_list = zdy_item_store.split(",");
-                    store_list = store_list.concat(zdy_item_store2.split(","));
-                });
-                $('#store_info2').change(function () {
-                    zdy_item_store2 = $('#store_info2').val();
-                    GM_setValue(role + "_zdy_item_store2", zdy_item_store2);
-                    store_list = zdy_item_store2.split(",");
-                    store_list = store_list.concat(zdy_item_store.split(","));
-                });
-                $('#lock_info').change(function () {
-                    zdy_item_lock = $('#lock_info').val();
-                    GM_setValue(role + "_zdy_item_lock", zdy_item_lock);
-                    lock_list = zdy_item_lock.split(",");
-                });
-                $('#store_drop_info').change(function () {
-                    zdy_item_drop = $('#store_drop_info').val();
-                    GM_setValue(role + "_zdy_item_drop", zdy_item_drop);
-                    drop_list = zdy_item_drop.split(",");
-                });
-                $('#store_fenjie_info').change(function () {
-                    zdy_item_fenjie = $('#store_fenjie_info').val();
-                    GM_setValue(role + "_zdy_item_fenjie", zdy_item_fenjie);
-                    fenjie_list = zdy_item_fenjie.split(",");
-                });
-                $('#auto_command').change(function () {
-                    auto_command = $('#auto_command').val();
-                    GM_setValue(role + "_auto_command", auto_command);
-                });
-                $('#blacklist').change(function () {
-                    blacklist = $('#blacklist').val();
-                    GM_setValue(role + "_blacklist", blacklist);
-                });
-                $('#welcome').focusout(function () {
-                    welcome = $('#welcome').val();
-                    GM_setValue(role + "_welcome", welcome);
-                });
+                if (getitemShow == "开") {
+                    G.getitemShow = true;
+                } else {
+                    G.getitemShow = false;
+                }
+            });
+            $('#unauto_pfm').change(function () {
+                unauto_pfm = $('#unauto_pfm').val();
+                GM_setValue(role + "_unauto_pfm", unauto_pfm);
+                var unpfm = unauto_pfm.split(',');
+                blackpfm = [];
+                for (var pfmname of unpfm) {
+                    if (pfmname)
+                        blackpfm.push(pfmname);
+                }
+            });
+            $('#store_info').change(function () {
+                zdy_item_store = $('#store_info').val();
+                GM_setValue(role + "_zdy_item_store", zdy_item_store);
+                store_list = zdy_item_store.split(",");
+                store_list = store_list.concat(zdy_item_store2.split(","));
+            });
+            $('#store_info2').change(function () {
+                zdy_item_store2 = $('#store_info2').val();
+                GM_setValue(role + "_zdy_item_store2", zdy_item_store2);
+                store_list = zdy_item_store2.split(",");
+                store_list = store_list.concat(zdy_item_store.split(","));
+            });
+            $('#lock_info').change(function () {
+                zdy_item_lock = $('#lock_info').val();
+                GM_setValue(role + "_zdy_item_lock", zdy_item_lock);
+                lock_list = zdy_item_lock.split(",");
+            });
+            $('#store_drop_info').change(function () {
+                zdy_item_drop = $('#store_drop_info').val();
+                GM_setValue(role + "_zdy_item_drop", zdy_item_drop);
+                drop_list = zdy_item_drop.split(",");
+            });
+            $('#store_fenjie_info').change(function () {
+                zdy_item_fenjie = $('#store_fenjie_info').val();
+                GM_setValue(role + "_zdy_item_fenjie", zdy_item_fenjie);
+                fenjie_list = zdy_item_fenjie.split(",");
+            });
+            $('#auto_command').change(function () {
+                auto_command = $('#auto_command').val();
+                GM_setValue(role + "_auto_command", auto_command);
+            });
+            $('#blacklist').change(function () {
+                blacklist = $('#blacklist').val();
+                GM_setValue(role + "_blacklist", blacklist);
+            });
+            $('#welcome').focusout(function () {
+                welcome = $('#welcome').val();
+                GM_setValue(role + "_welcome", welcome);
+            });
 
-                $('#shieldswitch').click(function () {
+            $('#shieldswitch').click(function () {
 
-                    shieldswitch = WG.switchReversal($(this));
-                    GM_setValue("_shieldswitch", shieldswitch);
-                    if (shieldswitch == "开") {
-                        messageAppend('已注入屏蔽系统', 0, 1);
-                    }
-                });
-                $('#zdyskillsswitch').click(function () {
+                shieldswitch = WG.switchReversal($(this));
+                GM_setValue("_shieldswitch", shieldswitch);
+                if (shieldswitch == "开") {
+                    messageAppend('已注入屏蔽系统', 0, 1);
+                }
+            });
+            $('#zdyskillsswitch').click(function () {
 
-                    zdyskills = WG.switchReversal($(this));
-                    GM_setValue(role + "_zdyskills", zdyskills);
-                    if (zdyskills == "开") {
-                        messageAppend('已开启自定义技能顺序，填写顺序后，请刷新游戏生效', 0, 1);
-                    }
-                });
+                zdyskills = WG.switchReversal($(this));
+                GM_setValue(role + "_zdyskills", zdyskills);
+                if (zdyskills == "开") {
+                    messageAppend('已开启自定义技能顺序，填写顺序后，请刷新游戏生效', 0, 1);
+                }
+            });
 
-                $('#zdyskilllist').change(function () {
+            $('#zdyskilllist').change(function () {
 
-                    let x = JSON.parse($("#zdyskilllist").val());
-                    if (!typeof x instanceof Array) {
-                        alert("无效的输入")
-                        return false;
-                    } else {
-                        zdyskilllist = $("#zdyskilllist").val();
-                        GM_setValue(role + "_zdyskilllist", zdyskilllist);
-                    }
-                });
-                $('#silence').click(function () {
+                let x = JSON.parse($("#zdyskilllist").val());
+                if (!typeof x instanceof Array) {
+                    alert("无效的输入")
+                    return false;
+                } else {
+                    zdyskilllist = $("#zdyskilllist").val();
+                    GM_setValue(role + "_zdyskilllist", zdyskilllist);
+                }
+            });
+            $('#silence').click(function () {
 
-                    silence = WG.switchReversal($(this));
-                    GM_setValue(role + "_silence", silence);
-                    if (silence == "开") {
-                        messageAppend('已开启安静模式', 0, 1);
-                    }
-                });
-                $('#dpssakada').click(function () {
+                silence = WG.switchReversal($(this));
+                GM_setValue(role + "_silence", silence);
+                if (silence == "开") {
+                    messageAppend('已开启安静模式', 0, 1);
+                }
+            });
+            $('#dpssakada').click(function () {
 
-                    dpssakada = WG.switchReversal($(this));
-                    GM_setValue(role + "_dpssakada", dpssakada);
-                    if (dpssakada == "开") {
-                        messageAppend('已开启战斗统计', 0, 1);
-                    }
-                });
-                $('#funnycalc').click(function () {
+                dpssakada = WG.switchReversal($(this));
+                GM_setValue(role + "_dpssakada", dpssakada);
+                if (dpssakada == "开") {
+                    messageAppend('已开启战斗统计', 0, 1);
+                }
+            });
+            $('#funnycalc').click(function () {
 
-                    funnycalc = WG.switchReversal($(this));
-                    GM_setValue(role + "_funnycalc", funnycalc);
-                    if (funnycalc == "开") {
-                        messageAppend('已开启FUNNY计算', 0, 1);
-                    }
-                });
-                $('#shield').focusout(function () {
-                    shield = $('#shield').val();
-                    GM_setValue("_shield", shield);
-                });
-                $('#shieldkey').focusout(function () {
-                    shieldkey = $('#shieldkey').val();
-                    GM_setValue("_shieldkey", shieldkey);
-                });
+                funnycalc = WG.switchReversal($(this));
+                GM_setValue(role + "_funnycalc", funnycalc);
+                if (funnycalc == "开") {
+                    messageAppend('已开启FUNNY计算', 0, 1);
+                }
+            });
+            $('#shield').focusout(function () {
+                shield = $('#shield').val();
+                GM_setValue("_shield", shield);
+            });
+            $('#shieldkey').focusout(function () {
+                shieldkey = $('#shieldkey').val();
+                GM_setValue("_shieldkey", shieldkey);
+            });
 
-                $('#statehml').change(function () {
-                    statehml = $('#statehml').val();
-                    GM_setValue(role + "_statehml", statehml);
-                });
-                $('#backimageurl').change(function () {
-                    backimageurl = $('#backimageurl').val();
-                    GM_setValue(role + "_backimageurl", backimageurl);
-                    if (backimageurl != '') {
-                        WG.SendCmd("setting backcolor none");
-                        GM_addStyle(`body{
+            $('#statehml').change(function () {
+                statehml = $('#statehml').val();
+                GM_setValue(role + "_statehml", statehml);
+            });
+            $('#backimageurl').change(function () {
+                backimageurl = $('#backimageurl').val();
+                GM_setValue(role + "_backimageurl", backimageurl);
+                if (backimageurl != '') {
+                    WG.SendCmd("setting backcolor none");
+                    GM_addStyle(`body{
               background-color:rgb(0,0,0,.25)
                 }
                 div{
@@ -4948,52 +5012,52 @@
                 -moz-background-size:100% 100%;
             }
             `);
+                }
+            });
+            $('#loginhml').change(function () {
+                loginhml = $('#loginhml').val();
+                GM_setValue(role + "_loginhml", loginhml);
+            });
+            $('#autobuy').change(function () {
+                auto_buylist = $('#autobuy').val();
+                GM_setValue(role + "_auto_buylist", auto_buylist);
+            });
+            $(".update_id_all").on("click", WG.update_id_all);
+            $(".update_store").on("click", WG.update_store);
+            $('.backup_btn').on('click', WG.make_config);
+            $('.load_btn').on('click', WG.load_config);
+            $('.clean_dps').on('click', WG.clean_dps);
+
+            $('.clear_skillJson').on('click', () => {
+                zdyskilllist == "";
+                messageAppend("已关闭自定义，请刷新重新获取技能数据!");
+                zdyskills = "关";
+                GM_setValue(role + "_zdyskilllist", "");
+                GM_setValue(role + "_zdyskills", zdyskills);
+            });
+
+
+            $(".savebtn").on("click", function () {
+                let tmp = [];
+                for (let item of keyitem) {
+                    let zdybtnitem = {
+                        name: '无',
+                        send: ''
+                    };
+                    let pname = $(`#name${item}`).val();
+                    let psend = $(`#send${item}`).val();
+                    if (pname != '') {
+                        zdybtnitem.name = pname;
+                        zdybtnitem.send = psend;
                     }
-                });
-                $('#loginhml').change(function () {
-                    loginhml = $('#loginhml').val();
-                    GM_setValue(role + "_loginhml", loginhml);
-                });
-                $('#autobuy').change(function () {
-                    auto_buylist = $('#autobuy').val();
-                    GM_setValue(role + "_auto_buylist", auto_buylist);
-                });
-                $(".update_id_all").on("click", WG.update_id_all);
-                $(".update_store").on("click", WG.update_store);
-                $('.backup_btn').on('click', WG.make_config);
-                $('.load_btn').on('click', WG.load_config);
-                $('.clean_dps').on('click', WG.clean_dps);
 
-                $('.clear_skillJson').on('click', () => {
-                    zdyskilllist == "";
-                    messageAppend("已关闭自定义，请刷新重新获取技能数据!");
-                    zdyskills = "关";
-                    GM_setValue(role + "_zdyskilllist", "");
-                    GM_setValue(role + "_zdyskills", zdyskills);
-                });
-
-
-                $(".savebtn").on("click", function () {
-                    let tmp = [];
-                    for (let item of keyitem) {
-                        let zdybtnitem = {
-                            name: '无',
-                            send: ''
-                        };
-                        let pname = $(`#name${item}`).val();
-                        let psend = $(`#send${item}`).val();
-                        if (pname != '') {
-                            zdybtnitem.name = pname;
-                            zdybtnitem.send = psend;
-                        }
-
-                        tmp.push(zdybtnitem);
-                    }
-                    zdy_btnlist = tmp;
-                    GM_setValue(role + "_zdy_btnlist", zdy_btnlist);
-                    messageAppend("保存自定义按钮成功");
-                    WG.zdy_btnListInit();
-                });
+                    tmp.push(zdybtnitem);
+                }
+                zdy_btnlist = tmp;
+                GM_setValue(role + "_zdy_btnlist", zdy_btnlist);
+                messageAppend("保存自定义按钮成功");
+                WG.zdy_btnListInit();
+            });
 
 
             $('#family').val(family);
@@ -6285,6 +6349,7 @@
                 <span  @click='onekeydaily'>一键日常</span>
                 <span  @click='onekeypk'>自动比试</span>
                 <span  @click='onekeysansan'>导入白三三懒人包（依赖raid.js）</span>
+                <span  @click='onelddh'>来点动画（依赖raid.js）</span>
             </div>
             <div class="item-commands">
                 <span  @click="onekeystore">存仓及贩卖</span>
@@ -6665,6 +6730,7 @@
                     if (G.in_fight) {
                         G.in_fight = false;
                         WG.auto_preform("stop");
+                        WG.clean_dps();
                     }
 
 
@@ -6774,11 +6840,13 @@
                 } else if (data.type == "combat") {
                     if (data.start) {
                         G.in_fight = true;
+                        battletime = new Date();
                         WG.auto_preform();
                     }
                     if (data.end) {
                         G.in_fight = false;
                         WG.auto_preform("stop");
+                        WG.clean_dps();
                     }
                 } else if (data.type == "status") {
                     if (data.count != undefined) {
@@ -6873,14 +6941,14 @@
                         for (let item of data.selllist) {
                             let realname = item.name.replace(/<[^>]+>/g, ""); //去尖括号
                             let _gtype = /<([^<>]*)>/.exec(item.name)[1]
-                            if (goods[realname] != undefined) {
-                                goods[realname].id = item.id;
+                            if (pgoods[realname] != undefined) {
+                                pgoods[realname].id = item.id;
                             }
-                            if (goods[_gtype + realname] != undefined) {
-                                goods[_gtype + realname].id = item.id;
+                            if (pgoods[_gtype + realname] != undefined) {
+                                pgoods[_gtype + realname].id = item.id;
                             }
                         }
-                        GM_setValue("goods", goods);
+                        GM_setValue("goods", pgoods);
                     }
                 } else if (data.type == 'items') {
                     if (WG.at("扬州城-醉仙楼")) {
@@ -6980,10 +7048,12 @@
                         WG.auto_preform();
                     }, 200);
                 }
-                if (data.msg.indexOf("只能在战斗中使用。") >= 0) {
+                if (data.msg.indexOf("只能在战斗中使用。") >= 0 || data.msg.indexOf('这里不允许战斗') != -1 || data.msg.indexOf('没时间这么做') != -1) {
                     if (G.in_fight) {
                         G.in_fight = false;
                         WG.auto_preform("stop");
+                        WG.clean_dps();
+
                     }
                 }
                 if (data.msg.indexOf("加油，加油！！") >= 0) {
@@ -7014,6 +7084,7 @@
                             messageAppend("已屏蔽", 1, 1);
                         });
                     }
+
                     if (dpssakada == '开') {
 
                         if (/.*造成<.*>.*<\/.*>点.*/.test(data.msg)) {
@@ -7021,11 +7092,37 @@
                             let a = pdata.split(/.*造成<wht>|.*造成<hir>|<\/wht>点|<\/hir>点/);
                             let b = a[2].split(/伤害|\(|</);
                             if (b[2] != '你') {
-                                pfmdps = pfmdps + parseInt(a[1]);
-                                pfmnum = pfmnum + 1;
+                                if (b[0] == '暴击') {//判断关键字
+                                    //critical = critical + parseInt(a[1]);
+                                    lastcri = parseInt(a[1]);
 
-                                messageAppend(`你造成了${addChineseUnit(pfmdps)}伤害,共计${pfmnum}次。`, 1, 1);
+                                } else {
+                                    // pfmdps = pfmdps + parseInt(a[1]);
+                                    lastpfm = parseInt(a[1]);
+
+                                }
+                                dpslock = 1;
+                               // messageAppend(`你造成了${addChineseUnit(pfmdps)}伤害,共计${pfmnum}次。`, 1, 1);
                             }
+
+                        }
+                        let dd = data.msg.split(/看起来充满活力，一点也不累。|似乎有些疲惫，但是仍然十分有活力。|看起来可能有些累了。|动作似乎开始有点不太灵光，但是仍然有条不紊。|已经一副头重脚轻的模样，正在勉力支撑著不倒下去。|看起来已经力不从心了。|已经陷入半昏迷状态，随时都可能摔倒晕去。|似乎十分疲惫，看来需要好好休息了。|气喘嘘嘘，看起来状况并不太好。|摇头晃脑、歪歪斜斜地站都站不稳，眼看就要倒在地上。/);
+                        //console.log(dd);
+                        if (dd.length>=2){
+                            //console.log(data.msg)
+                            if(dd[0].indexOf("你")<0){
+                                if (lastcri>0){
+                                    critical = critical + lastcri;
+                                    criticalnum = criticalnum + 1;//暴击伤害和暴击次数增加
+                                }
+                                if (lastpfm > 0) {
+                                    pfmdps = pfmdps + lastpfm;
+                                    pfmnum = pfmnum + 1;
+                                }
+                            }
+
+                            lastcri = 0;
+                            lastpfm = 0;
                         }
                     }
                 }
@@ -7221,12 +7318,21 @@
     var FakerTTS = {
 
         playtts: function (text) {
-            var msg = new SpeechSynthesisUtterance(text);
-            msg.lang = 'zh';
-            msg.voice = speechSynthesis.getVoices().filter(function (voice) {
-                return voice.name == 'Whisper';
-            })[0];
-            speechSynthesis.speak(msg);
+            try{
+                var msg = new SpeechSynthesisUtterance(text);
+                msg.lang = 'zh';
+                msg.voice = speechSynthesis.getVoices().filter(function (voice) {
+                    return voice.name == 'Whisper';
+                })[0];
+                speechSynthesis.speak(msg);
+            }catch(e){
+                try{
+                    android.speak(text);
+                }catch(ex){
+                    console.log('这个真没有.')
+                }
+
+            }
         }
     }
     class MusicBox {
@@ -7341,6 +7447,7 @@
         unsafeWindow.MusicBox = MusicBox;
         unsafeWindow.FakerTTS = FakerTTS;
         unsafeWindow.WSStore = store;
+        unsafeWindow.imgShow = imgShow;
 
 
 
