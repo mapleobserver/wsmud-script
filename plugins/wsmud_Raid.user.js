@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.27
+// @version         2.4.28
 // @date            23/12/2018
 // @modified        11/11/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
@@ -1696,6 +1696,8 @@
         id: null,
         name: null,
         grade: null,
+        family: null,
+        money: 0,
 
         hp: 0,
         maxHp: 0,
@@ -1737,7 +1739,7 @@
             });
             $("li[command=SelectRole]").on("click", function () {
                 Role.name = $('.role-list .select').text().split(/\s+/).pop();
-                Role.grade = $('.role-list .select').text().split(/\s+/).slice(-2)[0];
+                //Role.grade = $('.role-list .select').text().split(/\s+/).slice(-2)[0];
             });
             Role._monitorHpMp();
             Role._monitorStatus();
@@ -1748,6 +1750,7 @@
             Role._monitorGains();
             Role._monitorItems();
             Role._monitorCombat();
+            Role._monitorInfo();
         },
 
         hasStatus: function(s) {
@@ -1983,6 +1986,19 @@
                 }
             });
         },
+        _monitorInfo: function() {
+            WG.add_hook("dialog", function (data) {
+                if (data.dialog == "score") {
+                    if (data.level != null) {
+                        var dd = data.level.replace(/<\/?.+?>/g, "");
+                        Role.grade = dd.replace(/ /g, "");
+                    }
+                    if (data.family != null) {
+                        Role.family = data.family;
+                    }
+                }
+            });
+        },
         _monitorItems: function() {
             WG.add_hook("dialog", function(data) {
                 if (data.dialog == null) return;
@@ -2019,6 +2035,9 @@
                         let item = Role.items[data.id];
                         Role.equipments[data.eq] = item;
                         delete Role.items[data.id];
+                    }
+                    if (data.money != null) {
+                        Role.money = data.money;
                     }
                 }
                 if (data.dialog == "list") {
@@ -2469,7 +2488,8 @@
             ":id": Role.id,
             ":name": Role.name,
             ":grade": Role.grade,
-            ":family": G.family,
+            ":family": Role.family,
+            ":money": Role.money,
             ":hp": Role.hp,
             ":maxHp": Role.maxHp,
             ":hpPer": Role.hp/Role.maxHp,    // 0-1
