@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.26
+// @version         2.4.27
 // @date            23/12/2018
-// @modified        4/11/2020
+// @modified        11/11/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1695,6 +1695,7 @@
     var Role = {
         id: null,
         name: null,
+        grade: null,
 
         hp: 0,
         maxHp: 0,
@@ -1736,6 +1737,7 @@
             });
             $("li[command=SelectRole]").on("click", function () {
                 Role.name = $('.role-list .select').text().split(/\s+/).pop();
+                Role.grade = $('.role-list .select').text().split(/\s+/).slice(-2)[0];
             });
             Role._monitorHpMp();
             Role._monitorStatus();
@@ -2466,6 +2468,8 @@
         return {
             ":id": Role.id,
             ":name": Role.name,
+            ":grade": Role.grade,
+            ":family": G.family,
             ":hp": Role.hp,
             ":maxHp": Role.maxHp,
             ":hpPer": Role.hp/Role.maxHp,    // 0-1
