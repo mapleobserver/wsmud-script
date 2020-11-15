@@ -1,8 +1,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020110901
-($changeLog) = 优化师门环数判断；调整追捕参数。
+($localVer) = 2020111501
+($changeLog) = 优化追捕逃犯信息的获取判断；增加快速追捕选项。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -57,8 +57,10 @@
   #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
 
 // 追捕自定义参数
-[if] (ZByes) == null
-  ($ZByes) = 是
+[if] (ZByes) == null || (ZByes) == 是
+  ($ZByes) = 正常模式
+[if] (ZBsx) == null
+  ($ZBsx) = 转为正常模式
 [if] (ZBWaitCD) == null
   ($ZBWaitCD) = 30
 [if] (ZBMax) == null
@@ -69,7 +71,8 @@
   ($ZBBefore) = $eq 1
 [if] (DieToReset) == null
   ($DieToReset) = 已关闭
-#select ($ZByes) = 是否进行追捕(百姓选跳过),是|跳过,(ZByes)
+#select ($ZByes) = 追捕方式(百姓选跳过),正常模式|快速扫荡|跳过,(ZByes)
+#select ($ZBsx) = 快速扫荡达到上限后处理方式,转为正常模式|自动放弃再扫荡,(ZBsx)
 #input ($ZBBefore) = 追捕前执行命令(用英文;隔开),(ZBBefore)
 #input ($ZBWaitCD) = 从此次追捕开始，等待技能冷却,(ZBWaitCD)
 #input ($ZBcdskill) = 需要冷却的技能使用英文逗号隔开或以^开头过滤不需要的，填null全部不等冷却,(ZBcdskill)
@@ -202,7 +205,43 @@ stopstate
   @await 500
   @toolbar tasks
   @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
-[if] (currentN) < 20 && (ZByes) == 是
+[if] (currentN) < 20 && (ZByes) == 快速扫荡
+  @print 开始快速追捕
+  stopstate
+  @tidyBag
+  @await 2000
+  [while] (:room) != 扬州城-衙门正厅
+    $to 扬州城-衙门正厅
+    @await 500
+  [while] true
+    [if] {b扫荡符#}? < 20 || {b扫荡符}? == null
+      shop 0 20
+    ask3 {程药发}
+    @tip 无法($speed)完成|目前完成20/20个|已经完成|你的($sdfnum)符不够
+    [if] (speed) != null || (sdfnum) != null
+      [if] (ZBsx) == 转为正常模式
+        ($alert_zb) = 追捕到达上限，无法快速扫荡，转为正常模式！
+        ($ZByes) = 正常模式
+      [else if] (ZBsx) == 自动放弃再扫荡
+        [if] (comboN) < 200
+          ($alert_zb) = 追捕到达上限，无法快速扫荡，环数低于200环，不自动放弃，转为正常模式！
+          ($ZByes) = 正常模式
+        [else if] (sdfnum) != null
+          ($alert_zb) = 买不起扫荡符，无法快速扫荡，转为正常模式！
+          ($ZByes) = 正常模式
+          ($sdfnum) = null
+        [else]
+          ($alert_zb) = 追捕到达上限，无法快速扫荡，自动放弃再扫荡！
+          ask1 {程药发}
+          ask2 {程药发}
+          ($speed) = null
+          @await 1000
+          [continue]
+    [break]
+  [if] (alert_zb) != null
+    @print <ord>(alert_zb)</ord>
+    tm (alert_zb)
+[if] (currentN) < 20 && (ZByes) == 正常模式
   @print 开始自动追捕
   @cd
   stopstate
@@ -235,7 +274,11 @@ stopstate
     [while] (escapee) == null
       ($zbing) = null
       ask1 {程药发}
-      @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯
+      @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯|你的($party)正在进攻
+      [if] (party) != null
+        ($party) = null
+        @print <ord>帮战未结束，获取逃犯信息失败，重试中。</ord>
+        [continue]
       [if] (zbing) != null
         ($zbing) = null
         [if] (dir1) == null || (dir2) == null || (escapee) == null
@@ -528,7 +571,11 @@ stopstate
         [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
           shop 0 (fb_num)
         (fbcr) (fb_num)
-        @await 10000
+        @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
+        [if] (lack) != null
+          ($alert_fb) = 扫荡符不足，无法完成对【(FBName)】副本的(fb_num)次扫荡！
+        [else if] (jingli) != null
+          ($alert_fb) = 精力不足，无法完成对【(FBName)】副本的(fb_num)次扫荡！
         @tidyBag
         @await 2000
     [else if] (FBWay) == 自动
