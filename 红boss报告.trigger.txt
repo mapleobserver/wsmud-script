@@ -1,0 +1,93 @@
+//~silent
+// 查询Boss
+// 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
+// 点击 参数设置 按钮可设置Boss类型
+[if] (BossModel) == null
+  ($BossModel) = 自动跳过天僧
+
+[if] (content)==boss || (content)==b
+  [if] (name)==(:name)
+    //@toolbar jh
+    //@toolbar tasks
+    @task 挑战武神BOSS($num)次|今日可领取
+    ($remain)=⚔️ 本周还可挑战(num)次
+    [if] (num)==null
+      ($BossInfo) = null
+      ($log) = ✅ 本周已打完5次Boss。\n⚙️ 当前Boss类型：(BossModel)
+      @js messageAppend("(log)",2,1);$('.content-message pre').append($(`<div class="item-commands"></div>`).append($(`<span>⚙️ 设置参数</span>`).click(() => {ToRaid.perform(`#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config`);}),));$('.content-message')[0].scrollTop = 99999;messageAppend("(log)",2);
+      [exit]
+    [if] (BossInfo) != null
+      @js ($info)=("\""+"(BossInfo)"+"\"").replace(/\|/g,"\"|\"").split("|")
+      @js ($i_date)=[(info)][0]
+      @js ($i_time)=[(info)][1]
+      @js ($bossName)=[(info)][2]
+      @js ($bossPlace)=[(info)][3]
+    [else]
+      ($i_date) = null
+    [if] (i_date) != (:date) || (bossName) == null || (bossPlace) == null
+      ($i_time)=null
+      [if] (i_date) == notime
+        ($log) = 🔍 已跳过或打过上一个Boss，前往客栈获取最新信息……
+      [else]
+        ($log) = 🔎 无今日数据，前往客栈获取……
+      @js messageAppend("(log)",1,1);$('.content-message')[0].scrollTop = 99999;messageAppend("(log)",1)
+      [if] (:state) == 推演 || (:room 副本区域) == true
+        [(:state) == 推演]($log) = ⚠️ 推演中，暂停前往客栈获取信息。
+        [(:room 副本区域) == true]($log) = ⚠️ 副本中，暂停前往客栈获取信息。
+        @js messageAppend("<ord>(log)</ord>",1,1);$('.content-message')[0].scrollTop = 99999;messageAppend("<ord>(log)</ord>")
+        [exit]
+      stopstate
+      [while] (:room) != 扬州城-有间客栈
+        $to 扬州城-有间客栈
+        @await 500
+      //dating {r店小二}?
+      give {r店小二}? 20000 money
+      @tip 这位客官，我最近听不少人说是在($bossPlace)见到过($bossName)。|这两天也($notime)什么消息|小的听到的消息($all)您老了
+    [if] (notime) != null || (all) != null
+      [if] (notime) != null
+        ($log) = ⏳ Boss尚未刷新，请稍后再试。\n⚙️ 当前Boss类型：(BossModel)\n(remain)</ord>
+      [else if] (all) != null
+        ($log) = <hig>✅ 本周已打完5次Boss。\n⚙️ 当前Boss类型：(BossModel)</hig>
+      @js messageAppend("(log)",1,1);$('.content-message pre').append($(`<div class="item-commands"></div>`).append($(`<span>⚙️ 设置参数</span>`).click(() => {ToRaid.perform(`#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config`);}),));$('.content-message')[0].scrollTop = 99999;messageAppend("(log)",1);
+      $zdwk
+      [exit]
+  [else]
+    [exit]
+// 谣言获取Boss
+[if] (channel)==谣言
+  @js ($bossName) = "(content)".match("听说([^%]+)出现在")[1]
+  @js ($bossPlace) = "(content)".match("出现在([^%]+)一带。")[1]
+  @task 挑战武神BOSS($num)次|今日可领取
+  ($remain)=⚔️ 本周还可挑战(num)次
+// 处理参数
+[if] (bossName) == 战神蚩尤
+  ($bossName) = 蚩尤
+[if] (bossPlace) != null && (bossName) != null
+  [if] (i_time) == null
+    ($BossInfo)=(:date)|(:hour):(:minute):(:second)|(bossName)|(bossPlace)
+  @js messageAppend("<ord>(BossInfo)\n(remain)</ord>");
+  ($fbdata) = "树林":"cr yz/lw/shangu 0","财主家":"cr yz/cuifu/caizhu 1","丽春院":"cr yz/lcy/dating 0","流氓巷":"cr yz/lmw/xiangzi1 0","兵营":"cr yz/by/damen 0","庄府":"cr bj/zhuang/xiaolu 0","鳌拜府":"cr bj/ao/damen 0","天地会":"cr bj/tdh/hct 0","神龙教":"cr bj/shenlong/haitan 0","关外":"cr bj/guanwai/damen 0","温府":"cr cd/wen/damen 0","五毒教":"cr cd/wudu/damen 0","恒山":"cr wuyue/hengshan/daziling 0","青城山":"cr wuyue/qingcheng/shanlu 0","衡山":"cr wuyue/henshan/hengyang 0","泰山":"cr wuyue/taishan/daizong 0","嵩山":"cr wuyue/songshan/taishi 0","云梦沼泽":"cr cd/yunmeng/senlin 0","桃花岛":"cr taohua/haitan 1","白驼山":"cr baituo/damen 0","星宿海":"cr xingxiu/xxh6 0","冰火岛":"cr mj/bhd/haibian 1","移花宫":"cr huashan/yihua/shandao 1","燕子坞":"cr murong/anbian 1","黑木崖":"cr heimuya/shangu 1","缥缈峰":"cr lingjiu/shanjiao 1","光明顶":"cr mj/shanmen 0","天龙寺":"cr tianlong/damen 1","血刀门":"cr xuedao/shankou 0","古墓派":"cr gumu/gumukou 1","华山论剑":"cr huashan/lunjian/leitaixia 0"
+  @js ($fbcr) = var fb={(fbdata)};fb.(bossPlace)
+// 生成快捷按钮
+[if] (fbcr) != null
+  [if] (:state) == 推演
+    ($log) = <ord>⚠️ 推演中，请注意操作！</ord>
+    @js messageAppend("(log)",1,1);$('.content-message')[0].scrollTop = 99999;messageAppend("(log)",1)
+  [if] (:state) == 闭关 || (:room) == 扬州城-有间客栈
+    [if] (bossName) != 浪翻云 && (BossModel) == 只打浪翻云
+      ($model) = true
+    [else if] (bossName) != 烛九阴 && (BossModel) == 只打烛九阴
+      ($model) = true
+    [else if] (bossName) != 蚩尤 && (BossModel) == 只打蚩尤
+      ($model) = true
+    [else if] (bossName) != 庞斑 && (BossModel) == 只打庞斑
+      ($model) = true
+    [else if] (bossName) == 天僧 && (BossModel) == 自动跳过天僧
+      ($model) = true
+    [if] (model) == true
+      ($log) = <ord>⚠️ 根据Boss类型【(BossModel)】，自动跳过当前Boss(bossName)\n(remain)</ord>
+      @js messageAppend("(log)",1,1);$('.content-message pre').append($(`<div class="item-commands"></div>`).append($(`<span>⚙️ 设置参数</span>`).click(() => {ToRaid.perform(`#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config`);}),));$('.content-message')[0].scrollTop = 99999;messageAppend("(log)",1);
+      stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk
+      ($BossInfo)=notime
+      [exit]
+  @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前Boss类型：(BossModel)\n(remain)</ord>",1,1);$('.content-message pre').append($(`<div class="item-commands"></div>`).append($(`<span>进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`).click(() => {ToRaid.perform(`stopstate;(fbcr) 0\n($BossInfo)=notime`);}),$(`<span>进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`).click(() => {ToRaid.perform(`stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk\n($BossInfo)=notime`);}),$(`<span>🙉 前往客栈刷新</span>`).click(() => {ToRaid.perform(`($BossInfo)=null\ntm b`);}),$(`<span>⚙️ 设置参数</span>`).click(() => {ToRaid.perform(`#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config\ntm b`);}),));$('.content-message')[0].scrollTop = 99999;
