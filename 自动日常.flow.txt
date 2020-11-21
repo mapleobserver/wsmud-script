@@ -1,8 +1,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020111501
-($changeLog) = 优化追捕逃犯信息的获取判断；增加快速追捕选项。
+($localVer) = 2020112101
+($changeLog) = 优化副本扫荡功能；日常未正常完成时将在底部出现提醒信息。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -306,7 +306,7 @@ stopstate
           @tip 你的追捕任务($done)了，目前完成($currentN)/20个，已连续完成($comboN)个。|你($type1)死了($type2)|你要攻击谁|追捕任务失败了|你又($hunmi)了知觉
           [if] (done) != null
             ($done) = null
-            @js $('#zb_prog').html(`<hiy>当前追捕任务已完成，进度 (currentN)/20`)
+            @js $('#zb_prog').html(`<hiy>当前追捕任务已完成，进度 (currentN)/20</hiy>`)
           //[if] (hunmi) != null
             //($hunmi) = null
           relive
@@ -568,16 +568,23 @@ stopstate
         //team out
         @tidyBag
         @await 2000
-        [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
-          shop 0 (fb_num)
-        (fbcr) (fb_num)
-        @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
-        [if] (lack) != null
-          ($alert_fb) = 扫荡符不足，无法完成对【(FBName)】副本的(fb_num)次扫荡！
-        [else if] (jingli) != null
-          ($alert_fb) = 精力不足，无法完成对【(FBName)】副本的(fb_num)次扫荡！
-        @tidyBag
-        @await 2000
+        [while] (fb_com) < (FBnum)
+          ($fb_num) = (FBnum) - (fb_com)
+          [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
+            shop 0 (fb_num)
+          (fbcr) (fb_num)
+          @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
+          [if] (lack) != null
+            ($alert_fb) = 扫荡符不足，无法完成对【(FBName)】副本的(FBnum)次扫荡！
+            [break]
+          [else if] (jingli) != null
+            ($alert_fb) = 精力不足，无法完成对【(FBName)】副本的(FBnum)次扫荡！
+            [break]
+          @tidyBag
+          @await 2000
+          @toolbar jh
+          @toolbar tasks
+          @task 副本：($tag2)>($fb_com)/20
     [else if] (FBWay) == 自动
       //脚本自动模式
       stopstate
@@ -625,18 +632,21 @@ taskover signin;taskover zz1;taskover zz2
 (RCAfter_action)
 @print <hiy>自动日常结束！</hiy>
 ($bobao) = (myName)，自动日常结束！
+($report) = 日常报告
 [if] (alert_sm) != null
   @print <ord>(alert_sm)</ord>
   ($bobao) = (bobao)(alert_sm)
+  ($report) = (report)⚠️(alert_sm)
 [if] (alert_fb) != null
   @print <ord>(alert_fb)</ord>
   ($bobao) = (bobao)(alert_fb)
+  ($report) = (report)⚠️(alert_fb)
 [if] (alert_qa) != null
   @print <ord>(alert_qa)</ord>
   ($bobao) = (bobao)(alert_qa)
-[if] (alert_sc) != null
-  tm (alert_sc)
-  @print <ord>(alert_sc)</ord>
-  ($bobao) = (bobao)(alert_sc)
+  ($report) = (report)⚠️(alert_qa)
+@js $('#report_prog').remove()
+[if] (report) != 日常报告
+  @js $(`.state-bar`).before(`<div id=report_prog><ord>(report)</ord></div>`)
 [if] (TTSover) == 播报
   $tts (bobao)
