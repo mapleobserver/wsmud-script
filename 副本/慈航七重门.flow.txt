@@ -5,7 +5,7 @@
     go south
 [else if] (:room) == 慈航静斋-帝踏峰(副本区域)
     go south[2]
-@cmdDelay 200
+@cmdDelay 500
 [while] (num1) < 6
     @js ($ku) = [(qiku)][(num1)]
     //@print (ku)
