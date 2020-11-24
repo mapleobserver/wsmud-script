@@ -1,3 +1,10 @@
+[if] (:room 慈航静斋) == false
+    @print 请先进入慈航副本再运行。
+    [exit]
+[else]
+    [if] (:room) != 慈航静斋-山门(副本区域) || (:room) != 慈航静斋-帝踏峰(副本区域)
+        @print 请在山门或帝踏峰运行。
+        [exit]
 ($go) = 'east','west','south','north'
 ($qiku) = '老','病','死','爱别离','怨憎会','求不得'
 ($num1) = 0
@@ -52,3 +59,5 @@
     ($num1) = (num1) + 1
     //@print <hiy>路线：(map)</hiy>
 go south
+[if] (:room) == 慈航静斋-广场(副本区域)
+    @print <hiy>已走出七重门！</hiy>
