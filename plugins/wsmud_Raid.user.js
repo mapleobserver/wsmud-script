@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.28
+// @version         2.4.29
 // @date            23/12/2018
-// @modified        11/11/2020
+// @modified        24/11/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4909,6 +4909,8 @@ look men;open men
             var content = `
             <span class = "zdy-item outMaze" style="width:120px"> 走出桃花林 </span>
             <span class = "zdy-item zhoubotong" style="width:120px"> 找到周伯通 </span>
+            <span class = "zdy-item cihang" style="width:120px"> 慈航七重门 </span>
+            <span class = "zdy-item zhanshendian" style="width:120px"> 战神殿解谜 </span>
             <span class = "zdy-item uploadConfig" style="width:120px"> 上传本地配置 </span>
             <span class = "zdy-item downloadConfig" style="width:120px"> 下载云端配置 </span>
             <span class = "zdy-item uploadFlows" style="width:120px"> 分享角色流程 </span>
@@ -4928,6 +4930,14 @@ look men;open men
             $(".zhoubotong").on('click', function () {
                 WG.SendCmd('stopstate');
                 THIsland.zhoubotong();
+            });
+            $(".cihang").on('click', function () {
+                WG.SendCmd('stopstate');
+                DungeonsShortcuts.cihang();
+            });
+            $(".zhanshendian").on('click', function () {
+                WG.SendCmd('stopstate');
+                DungeonsShortcuts.zhanshendian();
             });
             $(".uploadConfig").on('click', _ => {
                 Server.uploadConfig();
@@ -5782,6 +5792,127 @@ look men;open men
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
+
+    const DungeonsShortcuts = {
+        cihang: function() {
+            let source = `
+[if] (:room 慈航静斋) == false
+    @print <hiy>请先进入慈航副本再运行。</hiy>
+    [exit]
+[else]
+    [if] (:room) != 慈航静斋-山门(副本区域) && (:room) != 慈航静斋-帝踏峰(副本区域)
+        @print <hiy>请在山门或帝踏峰运行。</hiy>
+        [exit]
+($go) = 'east','west','south','north'
+($qiku) = '老','病','死','爱别离','怨憎会','求不得'
+($num1) = 0
+[if] (:room) == 慈航静斋-山门(副本区域)
+    go south
+[else if] (:room) == 慈航静斋-帝踏峰(副本区域)
+    go south[2]
+@print <hiy>开始自动寻路，寻路期间请勿点击地图……</hiy>
+@cmdDelay 500
+[while] (num1) < 6
+    @js ($ku) = [(qiku)][(num1)]
+    ($num2) = 0
+    [while] true
+        [if] (map) != null && (retry) == true
+            (map)
+            @await 500
+        @js ($fx) = [(go)][(num2)]
+        [if] (fx) == null
+            @print <hiy>自动寻路失败，请回到山门重新运行！</hiy>
+            [exit]
+        go (fx)
+        [if] (:room) == 慈航静斋-七重门(副本区域)
+            @js ($ku_now) = $(".room_desc").text().match("，是名([^%]+)苦。")[1]
+            [if] (ku) != (ku_now)
+                [while] true
+                    go west
+                    [if] (:room) == 慈航静斋-七重门(副本区域)
+                        @js ($dir_gc) = $("text:contains('广场')").attr("dir")
+                    [if] (dir_gc) == south
+                        go south
+                    @await 200
+                    [if] (:room) == 慈航静斋-山门(副本区域)
+                        [break]
+                    [else if] (:room) == 慈航静斋-广场(副本区域)
+                        @print <hiy>已走出七重门！</hiy>
+                        [exit]
+                go south
+                ($num2) = (num2) + 1
+                ($retry) = true
+            [else]
+                [if] (map) == null
+                    ($map) = go (fx)
+                [else]
+                    ($map) = (map);go (fx)
+                ($retry) = false
+                [break]
+        [else if] (:room) == 慈航静斋-广场(副本区域)
+            @print <hiy>已走出七重门！</hiy>
+            [exit]
+    ($num1) = (num1) + 1
+go south
+[if] (:room) == 慈航静斋-广场(副本区域)
+    @print <hiy>已走出七重门！</hiy>
+            `
+            const p = new Performer("慈航七重门", source);
+            p.log(false);
+            p.start();
+        },
+        zhanshendian: function() {
+            let source = `
+[if] (:room 战神殿) == false
+    @print <hiy>请先进入战神殿副本再运行。</hiy>
+    [exit]
+[if] (:room) != 战神殿-左雁翼(副本区域)
+    @print <hiy>请先手动向左走到左雁翼。</hiy>
+@until (:room) == 战神殿-左雁翼(副本区域)
+look shi
+@tip 和外面星空星宿位置一一对应，($star_0)，($star_1)，($star_2)，($star_3)，($star_4)，($star_5)，($star_6)，($star_7)这些星宿依次闪烁
+($stars) = "(star_0)","(star_1)","(star_2)","(star_3)","(star_4)","(star_5)","(star_6)","(star_7)"
+($dirs) = {"star":"角亢室","dir":1,"eswn":"东北↗︎","go":"northeast"},{"star":"氏房心","dir":0,"eswn":"东→","go":"east"},{"star":"尾箕轸","dir":2,"eswn":"东南↘︎","go":"southeast"},{"star":"井鬼参","dir":4,"eswn":"西南↙︎","go":"southwest"},{"star":"柳星张翼","dir":3,"eswn":"南↓","go":"south"},{"star":"奎娄斗牛","dir":6,"eswn":"西北↖︎","go":"northwest"},{"star":"胃昴毕觜","dir":5,"eswn":"西←","go":"west"},{"star":"女虚危壁","dir":7,"eswn":"北↑","go":"north"}
+@cmdDelay 100
+($num_1) = 0
+[while] (num_1) < 8
+    @js ($star) = [(stars)][(num_1)]
+    ($num_2) = 0
+    [while] (num_2) < 28
+        ($dir) = null
+        @js ($dir) = var d=[(dirs)];var s=d[(num_2)]["star"].indexOf("(star)");if(s>=0){d[(num_2)]["dir"]}
+        [if] (dir) != null
+            [break]
+        ($num_2) = (num_2) + 1
+    push (dir)
+    ($num_1) = (num_1) + 1
+look shi
+@tip 殿顶的星图依旧，却仅剩一颗($last)宿星孤零零的闪烁着
+($num_3) = 0
+[while] (num_3) < 28
+    ($dir_l) = null
+    ($go_l) = null
+    @js ($dir_l) = var d=[(dirs)];var s=d[(num_3)]["star"].indexOf("(last)");if(s>=0){d[(num_3)]["eswn"]}
+    @js ($go_l) = var d=[(dirs)];var s=d[(num_3)]["star"].indexOf("(last)");if(s>=0){d[(num_3)]["go"]}
+    [if] (dir_l) != null && (go_l) != null
+        [break]
+    ($num_3) = (num_3) + 1
+@print <hiy>(last)宿，最后一个方位是【(dir_l)】</hiy>
+tm (last)宿，最后一个方位是【(dir_l)】60秒倒计时已开始，请抓紧开打。
+@print <ord>打完右雁翼最后一波守卫后会自动进秘道【(go_l)】</ord>
+@until (:room) == 战神殿-右雁翼(副本区域) || (:room 副本区域) == false
+@until (:combating) == true || (:room 副本区域) == false
+@until (:combating) == false || (:room 副本区域) == false
+[if] (:room 副本区域) == false
+    [exit]
+[while] (:room) == 战神殿-右雁翼(副本区域) && (:living) == true
+    go (go_l);$wait 100
+            `
+            const p = new Performer("战神殿解谜", source);
+            p.log(false);
+            p.start();
+        },
+    };
 
     /***********************************************************************************\
         Ready
