@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Trigger
 // @namespace       cqv3
-// @version         0.0.38
+// @version         0.0.39
 // @date            03/03/2019
-// @modified        05/06/2020
+// @modified        23/11/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -469,6 +469,7 @@
         const intro = `// 新聊天信息触发器
 // 聊天信息内容：(content)
 // 发言人：(name)
+// 发言人id：(id)
 // 频道：(channel)`;
         const t = new TriggerTemplate("新聊天信息", filters, intro);
         TriggerTemplateCenter.add(t);
@@ -488,6 +489,7 @@
                 const channel = types[data.ch];
                 if (channel == null) return;
                 const name = data.name == null ? "无" : data.name;
+                const id = data.uid == null ? null : data.uid;
                 let params = {
                     "频道": channel,
                     "发言人": name,
@@ -495,6 +497,7 @@
                 };
                 params["content"] = data.content;
                 params["name"] = name;
+                params["id"] = id;
                 params["channel"] = channel;
                 const n = new Notification("新聊天信息", params);
                 NotificationCenter.post(n);
