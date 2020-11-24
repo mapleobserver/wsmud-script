@@ -1,0 +1,20 @@
+// 快速运镖，只有超过200环可用
+// 四区白三三
+stopstate
+$to 扬州城-镖局正厅
+ksyb {r林震南}
+@tip 最近暂时($done)委托，你先休息下吧|你需要支付($charges)黄金的雇佣费用|只有总镖头才($can)雇佣镖师|如果你不能把镖银($escort)送到|你不是($escort)运镖吗
+[if] (charges)!=null
+  <-recordGains
+  task yunbiao {r林震南} qkstart
+  @await 11000
+  @tidyBag
+  recordGains->
+[else if] (can)!=null
+  ($info) = 运镖环数不到200环，无法快速运镖。
+[else if] (escort)!=null
+  ($info) = 当前有未完成的运镖任务，无法快速运镖。
+[if] (info) != null
+  tm (info)
+  @print <ord>(info)</ord>
+$zdwk
