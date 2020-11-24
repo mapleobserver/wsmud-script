@@ -1,0 +1,54 @@
+//raid.flow
+//四区：白三三
+#input ($MHweapon)=摸红武器id,(MHweapon)
+#input ($Triggers)=关闭触发(多个触发名字用英文逗号隔开),(Triggers)
+#config
+
+@cmdDelay 500
+stopstate
+@stopSSAuto
+@toolbar jh
+@await 500
+// 隐藏玩家列表
+@js $(`span[command=setting]`).click();
+@await 200
+@js $(`span[for=setting]`).click();
+@await 200
+@js var i=$(`div[for=off_plist]`).find(`.switch-text`).text();if(i=='关'){$(`div[for=off_plist]`).find(`.switch-button`).click()};
+@await 200
+// 关闭自动出招
+@js $(`span[for=custom]`).click();
+@js var i=$(`div[for=auto_pfm]`).find(`.switch-text`).text();if(i=='开'){$(`div[for=auto_pfm]`).find(`.switch-button`).click()};
+$stoppfm
+//脱掉其他装备：鞋2、头3、披风4、项链6、饰品7、护腕8、腰带9
+uneq (:eq2);uneq (:eq3);uneq (:eq4);uneq (:eq6);uneq (:eq7);uneq (:eq8);uneq (:eq9)
+//换软猬甲（必需）、疤面（如果有）
+[if] {b软猬甲}? != null
+  eq {b软猬甲}?
+[if] {b疤面面具}? != null
+  eq {b疤面面具}?
+[if] {b曲洋的琴环}? != null
+  eq {b曲洋的琴环}?
+[if] {b赵敏的戒指}? != null
+  eq {b赵敏的戒指}?
+[if] {b阴阳环}? != null
+  eq {b阴阳环}？
+[if] {b冰魄银针}? != null
+  eq {b冰魄银针}?
+[if] {b逆鳞手环}? != null
+  eq {b逆鳞手环}?
+[if] {b彼岸花}? != null
+  eq {b彼岸花}?
+//换打红武器
+eq (MHweapon)
+@on 自爆
+@on 红满伤
+[if] (Triggers) != null
+  @js ($tgs)=var ts=("\""+"(Triggers)"+"\"").replace(/，/g,",");ts.replace(/,/g,"\",\"").split(",")
+  @js ($tl)=[(tgs)].length
+  ($num)=0
+  [while] (num)<(tl)
+    @js ($t)=[(tgs)][(num)]
+    @js ToRaid.perform(`@off (t)`);
+    ($num)=(num)+1
+//@await 3000
