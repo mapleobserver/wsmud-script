@@ -55,14 +55,18 @@ stopstate
                 ($go) = null
                 ($go1) = null
                 task yunbiao {r林震南} start ok
-                @tip 客户好像不见了|你现在就($go)吧|你精($finish)不足|如果你($go1)按时送到
+                @tip 客户好像不见了|你现在就($go)吧|你精($finish)不足|如果你($go1)按时送到|你精力不足，好好($jingli)下再来
                 [if] (go) == 出发
                     [break]
                 [if] (go1) == 不能把镖银
                     task yunbiao {r林震南} begin
                     [break]
-            [if] (finish) != null
-                [break]
+                [if] (finish) != null
+                    recordGains->
+                    $zdwk
+                    @print 精力不足，停止押镖。
+                    tm 精力不足，停止押镖。
+                    [exit]
     [while] true
         [if] (:hpPer) < (hpPer)
             @liaoshang
