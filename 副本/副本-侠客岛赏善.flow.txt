@@ -47,29 +47,34 @@ go out;look bi
     @tip 感到一阵眩晕
     stopstate;(out);go out
     (Fight_before)
-    @await 4000
+    @await 10000
     @liaoshang
     say 不知道
     @tip 看上去很好玩
     go enter;go north
     @tip 石破天的内息($type1)汹涌澎湃，顷刻间冲破了七八个窒滞之处||你眼见石破天($type2)，全身大汗淋漓
     @await 500
-    [if] (type1) != null
-        @liaoshang
-        [if] (Fight_yes) == 比试
+    @liaoshang
+    [if] (Fight_yes) == 比试
+        @cmdDelay 500
+        [while] (:combating) == false
             fight {r石破天}?
-            @until (:combating) == true
-            [if] (Fight_skill) != null
-                $waitpfm (Fight_skill)
-            @until (:combating) == false
-        @tip 你眼见石破天($type2)万分，全身大汗淋漓
-    [else]
-        [if] (Skill_before) != null
-            $waitpfm (Skill_before)
+        @until (:combating) == true
+        [if] (Fight_skill) != null
+            $waitpfm (Fight_skill)
+        @until (:combating) == false
+    @tip 你眼见石破天($type2)万分，全身大汗淋漓
+    [if] (Skill_before) != null
+        $waitpfm (Skill_before)
     //@tip 帮他一把
     @await 500
-    helpshi {r石破天}?
-    @tip 一道劲气破空而去
+    ($nohelp)=不需要
+    [while] (nohelp) != null
+      helpshi {r石破天}?
+      @tip 石破天($nohelp)你的帮助｜一道($tag)破空而去|全身内力($tag)成河|手中(tag)无剑
+      [if] (tag) != null
+        [break]
+//    @tip 一道劲气破空而去
     @tip 你帮助石破天领悟太玄功
 cr;cr over
 $zdwk
