@@ -1,7 +1,7 @@
 //整合了之前的几个相关流程，一键收割、安排随从工作
 //收割过程中包满了会自动清包再继续，不过有概率卡住。
 //四区白三三
-($localVer) = 2020102301
+($localVer) = 2020112501
 ($changeLog) = 精确匹配材料，避免拿错
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
