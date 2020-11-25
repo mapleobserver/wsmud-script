@@ -1,6 +1,7 @@
+//~silent
 // 武道塔融合版
 // 四区：白三三
-($localVer) = 2020092401
+($localVer) = 2020112501
 ($changeLog) = 优化重置后的层数判断
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)

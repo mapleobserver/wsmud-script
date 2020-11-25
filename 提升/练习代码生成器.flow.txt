@@ -1,6 +1,6 @@
 // 生成练习代码，自动填入系统设置中，代码长度最多200。
 // 四区白三三
-($localVer) = 2020070302
+($localVer) = 2020112501
 ($changeLog) = 修复不加练习房间时存在的bug
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)

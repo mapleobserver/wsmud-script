@@ -1,6 +1,7 @@
+//~silent
 //节日版日常，自动师门、请安、买吃养精，副本、追捕(如果已达到最大次数请先放弃一次或者手动追捕)、武道塔自动免费扫荡，签到领取礼包。
 //四区白三三
-($localVer) = 2020100202
+($localVer) = 2020112501
 ($changeLog) = 追捕到达上限无法快速追捕时，是否先自动放弃减少环数，再进行快速追捕
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)

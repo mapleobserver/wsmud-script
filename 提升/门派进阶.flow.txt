@@ -1,6 +1,7 @@
+//~silent
 // 自动领悟门派进阶书籍
 // 四区白三三
-($localVer) = 2020072203
+($localVer) = 2020112501
 ($changeLog) = 修复小无相功代码错误。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)

@@ -1,8 +1,9 @@
+//~silent
 // 一键学习
 // 武馆需要先交学费，其他门派自动拜师
 // 基于@andyfos的版本修改
 // 四区白三三
-($localVer) = 2020072202
+($localVer) = 2020112501
 ($changeLog) = 1.优化师门信息获取。2.修复个别bug。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)

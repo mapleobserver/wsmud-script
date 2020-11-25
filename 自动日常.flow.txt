@@ -1,7 +1,8 @@
+//~silent
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020112201
+($localVer) = 2020112501
 ($changeLog) = 优化副本扫荡功能；日常未正常完成时将在底部出现提醒信息。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)

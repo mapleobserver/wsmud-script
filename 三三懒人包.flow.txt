@@ -1,6 +1,7 @@
+//~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2020101107
+($localVer) = 2020112501
 ($changeLog) = 实现懒人包自动更新；更新橙满伤；新增鼓舞续药飞翼
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -48,10 +49,10 @@
 #select ($triggerXYMJG)=[<hiz>襄阳满军功</hiz>]襄阳打满500军功后自动清包撤离(可自己删减是否等蒙哥),导入|跳过,跳过
 
 // 特殊流程
-#input ($info3)=👇<hiz>以下是特殊流程</hiz>👇,愉快游戏🎮
+#input ($info3)=👇<hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz>👇,愉快游戏🎮
 //#select ($flowYYWD)=[<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
-#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
-#select ($flowZSDJM)=[<hiz>战神殿解谜</hiz>]战神殿解谜进门,导入|跳过,跳过
+//#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
+//#select ($flowZSDJM)=[<hiz>战神殿解谜</hiz>]战神殿解谜进门,导入|跳过,跳过
 
 #config
 ($USE_kswd)=null

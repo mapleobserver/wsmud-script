@@ -1,6 +1,7 @@
+//~silent
 // raid.flow
 // 基于 auto_zhuibu v2.1，四区白三三修改
-($localVer) = 2020102901
+($localVer) = 2020112501
 ($changeLog) = 优化追捕判断，动态显示追捕状态。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)

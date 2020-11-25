@@ -1,6 +1,7 @@
+//~silent
 // 挂机自动练习
 // 四区白三三
-($localVer) = 2020062201
+($localVer) = 2020112501
 ($changeLog) = 修复技能找不到时重复查找功能的判断bug
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)

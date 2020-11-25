@@ -1,6 +1,7 @@
+//~silent
 // 基于论坛 WanJiaQi 大佬版本修改。
 // 四区白三三
-($localVer) = 2020070602
+($localVer) = 2020112501
 ($changeLog) = 优化流程
 
 [if] {b藏宝图}? == null

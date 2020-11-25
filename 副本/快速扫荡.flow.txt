@@ -1,6 +1,7 @@
+//~silent
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
 // 四区白三三
-($localVer) = 2020100501
+($localVer) = 2020112501
 ($changeLog) = 优化扫荡频次，及时清包避免背包太满变废号。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
