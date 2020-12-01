@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020112501
-($changeLog) = 优化副本扫荡功能；日常未正常完成时将在底部出现提醒信息。
+($localVer) = 2020120101
+($changeLog) = 底部提醒信息点击可隐藏。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -650,6 +650,6 @@ taskover signin;taskover zz1;taskover zz2
   ($report) = (report)⚠️(alert_qa)
 @js $('#report_prog').remove()
 [if] (report) != 日常报告
-  @js $(`.state-bar`).before(`<div id=report_prog><ord>(report)</ord></div>`)
+  @js $(`.state-bar`).before($(`<div id=report_prog><ord>(report)</ord></div>`).click(() => $('#report_prog').remove()))
 [if] (TTSover) == 播报
   $tts (bobao)
