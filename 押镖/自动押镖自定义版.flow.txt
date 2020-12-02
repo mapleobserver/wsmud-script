@@ -70,13 +70,16 @@ stopstate
         @cd (EscortWaitCDExp)
         [if] (EscortJiuyin) == 打开 && (EscortXuedao) == 关闭
             [if] (:status force) == false
-                @cd force.cui
+                [(:kf_nei)==jiuyinshengong || (EscortForce)==自创九阴]@cd force.cui
+                [(:kf_nei)==cihangjiandian || (EscortForce)==自创慈航]@cd force.xin
         @until (:status xuruo) == false
         [if] (EscortTangshi) == 使用
             go east;$waitpfm sword.wu
-        [else]
-            [if] (EscortXuedao) == 打开 && (jiuyang) == null
-                enable force none;enable force jiuyinshengong
+        [else if] (EscortXuedao) == 打开 && (jiuyang) == null
+            [(:kf_nei)==jiuyinshengong || (EscortForce)==自创九阴]@cd force.cui
+            [(:kf_nei)==cihangjiandian || (EscortForce)==自创慈航]@cd force.xin
+            ($force) = (:kf_nei)
+            enable force none;enable force (force)
             go east
         [if] (:room) == 运镖-青石大道
             [if] (EscortTangshi) == 使用

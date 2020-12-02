@@ -3,33 +3,46 @@
 // 1.需要有坦克号支持。2.代码开头有说明使用方法，别问我怎么用。3.押镖常有各种问题，偶尔判断出错卡地图请手动操作。4.流程只是减少手动操作，实在打不过请自己想办法。5.大概率不会加新功能，有加也是以月为周期。6.随缘修bug。
 // 遇到九阳可召唤少林工具人组队上佛光，配合【召唤佛光】触发使用
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，请自己找出下面一句【pty 召唤佛光】改为【chat 召唤佛光】
-// 2020.05.26 - 加强交镖银时的npc判断
+// 2020.12.02 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化死亡次数判断。
 [if] (EscortHpThreshold) == null
     ($EscortHpThreshold) = 90
 [if] (EscortMpThreshold) == null
     ($EscortMpThreshold) = 70
 [if] (EscortTangshi) == null
     ($EscortTangshi) = 不使用
+[if] ($EscortForce) == null
+    ($EscortForce) = 九阴神功
 [if] (EscortJiuyin) == null
     ($EscortJiuyin) = 关闭
 [if] (EscortWaitCDExp) == null
     ($EscortWaitCDExp) = ^none
-[if] (EscortWeaponID) == null
-    ($EscortWeaponID) = ^none
+[if] (EscortWeaponID) == null || (EscortWeaponID) == ^none
+    ($EscortWeaponID) = null
 [if] (wmTime) == null
     ($wmTime) = 10000
 #select ($EscortHpThreshold) = 疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(EscortHpThreshold)
 #select ($EscortMpThreshold) = 打坐，当内力低于百分比,100|90|80|70|60|50|40|30|20|10,(EscortMpThreshold)
+#select ($EscortChangsheng) = 使用长生诀恢复气血内力,打开|关闭,(EscortChangsheng)
 #select ($EscortFoguang) = 遇到九阳召唤少林工具人加佛光,打开|关闭,(EscortFoguang)
 #input ($EscortFoguangName) = 少林工具人名字,(EscortFoguangName)
 #select ($EscortShenzhao) = 遇到九阳换神照,是|否,(EscortShenzhao)
+#select ($EscortCanXue) = 连死二次后残血叫杀(适用于血刀),是|否,(EscortCanXue)
+#select ($EscortXuantie) = 连死三次换玄铁,是|否,(EscortXuantie)
 #select ($WDXuruo) = 死亡后自动到武道塔一百层清除虚弱,打开|关闭,(WDXuruo)
-#select ($EscortJiuyin) = 有九阴buff时不等九阴CD(请修改需要等待CD的技能),打开|关闭,(EscortJiuyin)
+#select ($EscortXuedao) = 残血使用血刀九阴(不自动疗伤),打开|关闭,(EscortXuedao)
+#select ($EscortForce) = 押镖使用内功,九阴神功|慈航静斋|自创九阴|自创慈航,(EscortForce)
+#select ($EscortJiuyin) = 有九阴或剑心buff时不等九阴剑心CD(请修改需要等待CD的技能),打开|关闭,(EscortJiuyin)
 #input ($EscortWaitCDExp) = 等待CD的技能sid,(EscortWaitCDExp)
 #select ($EscortTangshi) = 唐诗剑法,使用|不使用,(EscortTangshi)
 #input ($EscortWeaponID) = 切换躺尸武器sid,(EscortWeaponID)
 #input ($repeat) = 重复次数,1
 #config
+[if] (EscortJiuyin) == 打开
+    ($EscortXuedao) = 关闭
+[if] (EscortWeaponID) == null
+    [if] (EscortXuantie)==是 || (EscortTangshi)==使用
+        @print <hiy>未设置剑类武器id，请重新设置！</hiy>
+        [exit]
 <-stopSSAuto
 <-recordGains
 stopstate
@@ -68,10 +81,21 @@ stopstate
                     tm 精力不足，停止押镖。
                     [exit]
     [while] true
-        [if] (:hpPer) < (hpPer)
-            @liaoshang
-        [if] (:mpPer) < (mpPer)
-            @dazuo
+        [if] (:hpPer) < (hpPer) || (:mpPer) < (mpPer)
+            [if] (EscortChangsheng) == 打开 && (EscortXuedao) == 关闭
+                ($eqforce)=(:kf_nei)
+                enable force changshengjue
+                @cd force.zhen
+                @perform force.zhen
+                @await 500
+                enable force (eqforce)
+            [else]
+                [if] (:hpPer) < (hpPer) && (EscortXuedao) == 关闭
+                    @liaoshang
+                [else if] (:mpPer) < (mpPer)
+                    dazuo
+                    @until (:mpPer) >= (mpPer)
+                    stopstate
         [if] (EscortTangshi) == 使用
             cha none;enable sword tangshijianfa;eq (EscortWeaponID)
             @wait 3000
@@ -82,10 +106,22 @@ stopstate
         @cd (EscortWaitCDExp)
         [if] (EscortJiuyin) == 打开
             [if] (:status force) == false
-                @cd force.cui
+                [(:kf_nei)==jiuyinshengong || (EscortForce)==自创九阴]@cd force.cui
+                [(:kf_nei)==cihangjiandian || (EscortForce)==自创慈航]@cd force.xin
         @until (:status xuruo) == false
         [if] (EscortTangshi) == 使用
             go east;$waitpfm sword.wu
+        [else if] (EscortCanXue) == 是 && (dead) == 2 && (jiuyang) == null
+            [if] (:kf_dao)==xuedao
+                ($force) = (:kf_nei)
+                enable force none;enable force (force)
+            go east
+        [else if] (EscortXuedao) == 打开 && (jiuyang) == null
+            [(:kf_nei)==jiuyinshengong || (EscortForce)==自创九阴]@cd force.cui
+            [(:kf_nei)==cihangjiandian || (EscortForce)==自创慈航]@cd force.xin
+            ($force) = (:kf_nei)
+            enable force none;enable force (force)
+            go east
         [else]
             go east
         [if] (:room) == 运镖-青石大道
@@ -95,20 +131,27 @@ stopstate
                 @wait 3000
                 @cd
                 kill {r蒙面大盗}?;$waitpfm unarmed.quan
-            //@tip 九阳神功($jiuyang)了|你获得了|没有东西|<HIR>死了</HIR>|你口中喷出几口<HIR>鲜血</HIR>，倒在地上,死了！|你现在是灵魂状态，不能那么做|阴冷的气息|你好像听到有人在喊
             @tip 九阳神功($jiuyang)了你的真元|你获得了|没有东西|死了|你现在是灵魂状态，不能那么做
             @until {r蒙面大盗}? == null || (:combating) == false || (:living) == false
             [if] (:living) == true
                 ($jiuyang) = null
+                ($dead) = null
                 [if] (EscortShenzhao) == 是 && (quanjiao) != null && (quanjiao) != shenzhaojing
                     enable unarmed (quanjiao)
                 ($numJF) = (numJF) + 1
                 @print 当前运镖流程已完成 <hiy>(num)/(repeat)</hiy> 次，本次已打死 <hiy>(numJF)</hiy> 个劫匪。
                 [continue]
             [if] (:living) == false
+                [(dead)== null]($dead)=0
+                ($dead) = (dead)+1
+                [(dead)>=5 && (EscortFoguang) == 打开]($jiuyang)=yes
+                @print <ord>累计死亡 (dead) 次！</ord>当前运镖流程已完成 <hiy>(num)/(repeat)</hiy> 次，本次已打死 <hiy>(numJF)</hiy> 个劫匪。
                 [if] (jiuyang) != null
                     [if] (EscortFoguang) == 打开
-                        tm 遭遇九阳劫匪，准备召唤佛光
+                        [if] (dead) >= 5
+                            tm 累计死亡 (dead) 次，准备召唤佛光
+                        [else]
+                            tm 遭遇九阳劫匪，准备召唤佛光
                     [else]
                         tm 遭遇九阳劫匪！
                 relive
@@ -116,12 +159,21 @@ stopstate
                 [if] (:status xuruo) ==true && (WDXuruo) == 打开
                     jh fam 9 start
                     go enter
+                    ($force) = (:kf_nei)
+                    enable force none
                     kill {r武道}
                     @until (:combating) == false
+                    enable force (force)
                 [while] (:room) != 扬州城-武庙
                     $to 扬州城-武庙
                 @renew
                 @cd
+                [if] (dead) >= 3 && (EscortXuantie) == 是
+                    [if] (:kf_jian) != xuantiejianfa
+                        enable sword xuantiejianfa
+                    [if] (EscortWeaponID) != null
+                        @eq (EscortWeaponID)
+                        @await 4000
                 @until (:status xuruo) == false
                 [if] (jiuyang) != null && (EscortShenzhao) == 是
                     [if] (:kf_quan) != shenzhaojing
@@ -145,16 +197,33 @@ stopstate
                 task yunbiao {r林震南} begin
         [else]
             @await 100
-            [if] (:room) != 运镖-青石大道
+            [if] (:room) != 运镖-青石大道 && (:room 武当派,少林派,华山派,峨眉派,逍遥派,丐帮,杀手楼)==true
                 @tip 你推着镖银风尘仆仆地来到($map)，只要把镖银交给($name)就完成了。
-                [if] (name) == 道童 && (map) == 武当派-广场
-                    ($name) = 武当派第四代弟子 道童
+                tm 名字是(name)
+                @await 500
                 [while] true
-                    select {(name)};task yunbiao {(name)} give
-                    @tip 这是你的报酬|这不是($no)镖银
-                    [if] (no) != null
+                    [if] (:room) == 华山派-练武场 || (:room) == 逍遥派-林间小道 || (:room) == 武当派-太子岩 || (:room) == 丐帮-破庙密室 || (:room) == 少林派-练武场 || (:room) == 峨眉派-广场 || (:room) == 杀手楼-练功房
+                        [if] (:room) == 华山派-练武场 || (:room) == 逍遥派-林间小道
+                            [if] (name) != 门派后勤管理员
+                                ($sxdz) = {r首席弟子}?
+                        [else if] (:room) == 武当派-太子岩 || (:room) == 丐帮-破庙密室
+                            ($sxdz) = {r首席弟子}?
+                        [else if] (:room) == 少林派-练武场
+                            ($sxdz) = {r少林派大师兄}?
+                        [else if] (:room) == 峨眉派-广场
+                            ($sxdz) = {r峨眉大师姐}?
+                        [else if] (:room) == 杀手楼-练功房
+                            ($sxdz) = {r金牌杀手}?
+                        [if] {r(name)}? != (sxdz) && (name) != 门派后勤管理员
+                            ($name) = (:findName (sxdz))
+                    [if] (name) == 道童 && (:room) == 武当派-广场
+                        ($name) = 武当派第四代弟子 道童
+                    select {r(name)}?;task yunbiao {r(name)}? give
+                    @tip 这是你的报酬|这不是($no)镖银|你有($wrong)事吗|这里(wrong)这个人
+                    [if] (no) != null || (wrong) != null
+                        ($wrong) = null
                         ($no) = null
-                        tm 【(map)】【(name)】失踪，等待1分钟再尝试交镖。
+                        tm 【(:room)】【(name)】失踪，等待1分钟再尝试交镖。
                         @await 60000
                         [continue]
                     [else]
