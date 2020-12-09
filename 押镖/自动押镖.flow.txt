@@ -185,6 +185,7 @@ stopstate
                     relive
                     @await 500
                 [if] (:status xuruo) == true && (WDXuruo) == 打开
+                    @await 1000
                     jh fam 9 start
                     go enter
                     ($force) = (:kf_nei)
