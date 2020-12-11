@@ -69,7 +69,7 @@ stopstate
 @cmdDelay 500
 [while] (num) < (repeat)
     @js $('#yb_prog').remove()
-    @js $(`.state-bar`).before(`<div id=yb_prog>开始运镖</div>`)
+    @js $(`.state-bar`).before(`<div id="yb_prog">开始运镖</div>`)
     [if] (:room) != 运镖-青石大道
         [if] (:room) != 运镖-城门
             @tidyBag
@@ -161,8 +161,6 @@ stopstate
                 ($info) = 当前运镖流程已完成 <hiy>(num)/(repeat)</hiy> 次，本次已打死 <hiy>(numJF)</hiy> 个劫匪。
                 @print (info)
                 @js $('#yb_prog').html(`(info)`)
-                //@js $('#yb_prog').remove();
-                //@js $(`.state-bar`).before($(`<div id=yb_prog>(info)</div>`).click(() => $('#yb_prog').remove()))
                 [continue]
             [if] (:living) == false
                 [(dead)== null]($dead)=0
@@ -171,8 +169,6 @@ stopstate
                 ($info) = <ord>累计死亡 (dead) 次！</ord><br>当前运镖流程已完成 <hiy>(num)/(repeat)</hiy> 次，本次已打死 <hiy>(numJF)</hiy> 个劫匪。
                 @print (info)
                 @js $('#yb_prog').html(`(info)`)
-                //@js $('#yb_prog').remove();
-                //@js $(`.state-bar`).before($(`<div id=yb_prog>(info)</div>`).click(() => $('#yb_prog').remove()))
                 [if] (jiuyang) != null
                     [if] (EscortFoguang) == 打开
                         [if] (dead) >= 5
@@ -237,8 +233,6 @@ stopstate
                 @tip 你推着镖银风尘仆仆地来到($map)，只要把镖银交给($name)就完成了。
                 ($info) = <hiy>收货人是(name)，准备交镖。</hiy>
                 @js $('#yb_prog').html(`(info)`)
-                //@js $('#yb_prog').remove();
-                //@js $(`.state-bar`).before($(`<div id=yb_prog>(info)</div>`).click(() => $('#yb_prog').remove()))
                 @await 500
                 [while] true
                     [if] (:room) == 华山派-练武场 || (:room) == 逍遥派-林间小道 || (:room) == 武当派-太子岩 || (:room) == 丐帮-破庙密室 || (:room) == 少林派-练武场 || (:room) == 峨眉派-广场 || (:room) == 杀手楼-练功房
