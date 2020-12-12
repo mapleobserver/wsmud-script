@@ -1,7 +1,7 @@
 // 生成练习代码，自动填入系统设置中，代码长度最多200。
 // 四区白三三
-($localVer) = 2020121201
-($changeLog) = 保存练习房间的选择
+($localVer) = 2020121202
+($changeLog) = 保存练习房间的选择；修正技能数量最大值为62
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.lxdm
@@ -55,7 +55,7 @@
   //选择需要练习的技能
   #input ($target_level) = 当前技能上限,(level)
   ($_i) = 0
-  [while] (_i) < 60
+  [while] (_i) < 62
     @js ($s(_i)) = $(".skill-item").eq('(_i)').attr('skid')
     [if] (s(_i)) == null
       [break]
