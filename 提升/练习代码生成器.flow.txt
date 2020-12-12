@@ -1,7 +1,7 @@
 // 生成练习代码，自动填入系统设置中，代码长度最多200。
 // 四区白三三
-($localVer) = 2020112501
-($changeLog) = 修复不加练习房间时存在的bug
+($localVer) = 2020121201
+($changeLog) = 保存练习房间的选择
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.lxdm
@@ -43,9 +43,9 @@
   //判断是否在副本中
   @js ($fb) = '(:room)'.indexOf('副本区域')
   //选择是否添加房间代码
-  [(lx_map)==null]($lx_map)=住房-练功房
-  [(fb)!=-1]($lx_map)=不加
-  #select ($lx_map) = 是否添加前往房间的代码,不加|住房-练功房|帮会-练功房,(lx_map)
+  [(LX_map)==null]($LX_map)=住房-练功房
+  [(fb)!=-1]($LX_map)=不加
+  #select ($LX_map) = 是否添加前往房间的代码,不加|住房-练功房|帮会-练功房,(LX_map)
   //选择练习结束后动作
   [(lx_after)==null]($lx_after)=挖矿
   [if] (jj) == 武帝 || (jj) == 武神
@@ -101,9 +101,9 @@
     ($_j) = (_j)+1
   [if] (list) != null
     //添加地图命令
-    [(fb)!=-1](lx_map)=不加
-    [if] (lx_map) != 不加
-      [if] (lx_map) == 住房-练功房
+    [(fb)!=-1](LX_map)=不加
+    [if] (LX_map) != 不加
+      [if] (LX_map) == 住房-练功房
         @js ($map) = 'jh fam 0 start,go west,go west,go north,go enter,go west,'
       [else]
         @js ($map) = 'jh fam 0 start,go south,go south,go east,go east,go east,go north,'
