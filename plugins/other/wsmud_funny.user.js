@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_funny
 // @namespace   suqing.fun
-// @version     0.3.33
+// @version     0.3.34
 // @author      SuQing
 // @match       http://*.wsmud.com/*
 // @exclude     http://*.wsmud.com/news/*
@@ -206,31 +206,47 @@ unsafeWindow.say = say;
       room.name1 = x[1];
       room.name2 = x[2];
       room.path = message.path;
-
       room.desc = message.desc;
+      if (room.desc.length > 20) {
+        let desc0 = room.desc.replace(/<([^<]+)>/g, "");
+        let desc1 = desc0.substr(0, 20);
+        let desc2 = desc0.substr(20);
+        message.desc = `${desc1}<span id="show"> <hic>»»»</hic></span><span id="more" style="display:none">${desc2}</span><span id="hide" style="display:none"> <hic>«««</hic></span>`;
+      }
       if (room.desc.includes("cmd")) {
         // 四周灰蒙蒙的不知身在何处，在你的正前方一根巨大的柱子虚空而立，柱子上雕刻着一些神秘的花纹，底下立着一块残破的<cmd cmd="look bei">石碑</cmd>，上面写着【戊申】两个大字。
         // <cmd cmd="look bei">石碑</cmd>
-        console.log(room.desc);
+        //console.log(room.desc);
         room.desc = room.desc.replace("<hig>椅子</hig>", "椅子");//新手教程的椅子
         room.desc = room.desc.replace("<CMD cmd='look men'>门(men)<CMD>", "<cmd cmd='look men'>门</cmd>");//兵营副本的门
         room.desc = room.desc.replace(/span/g, "cmd"); //古墓里的画和古琴是<span>标签
         room.desc = room.desc.replace(/"/g, "'"); // "" => ''
         room.desc = room.desc.replace(/\((.*?)\)/g, "");//去除括号和里面的英文单词
-        console.log(room.desc);
+        //console.log(room.desc);
         let cmds = room.desc.match(/<cmd cmd='([^']+)'>([^<]+)<\/cmd>/g);
-        console.log(cmds);
+        //console.log(cmds);
         cmds.forEach(cmd => {
           let x = cmd.match(/<cmd cmd='(.*)'>(.*)<\/cmd>/);
           message.commands.unshift({ cmd: x[1], name: `<hic>${x[2]}</hic>` });
         });
-        room.desc = room.desc.replace(/<([^<]+)>/g, "");
+        // room.desc = room.desc.replace(/<([^<]+)>/g, "");
+        cmds.forEach(desc => message.desc = `<hic>${desc}</hic>　${message.desc}`);
       }
 
       let event0 = DeepCopy(event);
-      message.desc = room.desc.substr(0, 20) + "……";
+      //message.desc = room.desc.substr(0, 20) + "……";
       event0.data = JSON.stringify(message);
       fn_onmessage.apply(this, [event0]);
+      $("#show").click(() => {
+        $("#more").show();
+        $("#show").hide();
+        $("#hide").show();
+      });
+      $("#hide").click(() => {
+        $("#more").hide();
+        $("#show").show();
+        $("#hide").hide();
+      });
       return false;
     } else if (message.type === "exits") {
       for (const key in exits) delete exits[key];//先清空
@@ -326,17 +342,6 @@ unsafeWindow.say = say;
         let x = message.text.match(/你扑向(.*)！/);
         message.text = `<hir>你开始攻击${x[1]}！<hir>\n`;
         return AddContent(message.text);
-      } else if (/造成(.*)点/.test(message.text)) {
-        let x = message.text.split(/.*造成<wht>|.*造成<hir>|<\/wht>点|<\/hir>点/);
-        if (x[2]) {
-          let y = x[2].split(/伤害|\(|</);
-          if (y[0] === "暴击") {
-            message.text = `${y[2]}受到<hir>${x[1]}</hir>点<hir>暴击伤害</hir>！\n`;
-          } else {
-            message.text = `${y[2]}受到<hiw>${x[1]}</hiw>点伤害！\n`;
-          }
-          return AddContent(message.text);
-        }
       } else if (/只留下一堆玄色石头/.test(message.text) && message.text.includes("你")) {
         let x = message.text.match(/只见(.*)发出一阵白光/);
         message.text = `你分解了${x[1]}！\n`;
@@ -594,7 +599,7 @@ unsafeWindow.say = say;
   });
   addListener(function (event, message) {//type=tasks
     if (message.type === "tasks" && message.items) {
-      let fb, qa, wd1, wd2, wd3, sm1, sm2, ym1, ym2, yb1, yb2;
+      let fb, qa, wd, wd1, wd2, wd3, xy, mpb, boss, wdtz, sm1, sm2, ym1, ym2, yb1, yb2;
       message.items.forEach(task => {
         if (task.state === 2) SendCommand(`taskover ${task.id}`);//自动完成
         if (task.id === "signin") {
@@ -616,12 +621,29 @@ unsafeWindow.say = say;
             wd2 = b[3];
             if (wd1 < wd2) wd1 = `<hig>${wd1}</hig>`;
             /可以重置/.test(b[1]) ? wd3 = "<hig>可以重置</hig>" : wd3 = "已经重置";
-          }
+            wd = wd1+"/"+wd2+" "+wd3
+          } else {wd = "只打塔主"}
 
           const c = task.desc.match(/<.+?>(.+)首席请安<.+?>/);
           if (c) {
             /已经/.test(c[1]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
+          } else {qa = "无需请安"}
+
+          const d = task.desc.match(/尚未协助襄阳守城/);
+          (d) ? xy = `<hig>0</hig>` : xy = 1;
+
+          const e = task.desc.match(/尚未挑战门派BOSS/);
+          (e) ? mpb = `<hig>0</hig>` : mpb = 1;
+
+          const f = task.desc.match(/挑战武神BOSS(\d+)次/);
+          if (f) {
+            boss = 5 - parseInt(f[1]);
+            boss = `<hig>${boss}</hig>`;
+          }else{
+              if (G.level && G.level.indexOf('武神') >= 0) boss = 5;
           }
+          const g = task.desc.match(/尚未挑战武道塔塔主/);
+          (g) ? wdtz = `<hig>0</hig>/1` : wdtz = `已打或未解锁`;
         } else if (task.id === "sm") {
           let a = task.desc.match(/目前完成(.*)\/20个，共连续完成(.*)个。/);
           (parseInt(a[1]) < 20) ? sm1 = `<hig>${a[1]}</hig>` : sm1 = a[1];
@@ -636,9 +658,12 @@ unsafeWindow.say = say;
           yb2 = a[2];
         }
       });
-      let html = `门派请安 => ${qa}\n武道之塔 => ${wd1}/${wd2} ${wd3}\n`;
+      let html = `门派请安 => ${qa}\n武道之塔 => ${wd}\n`;
       html += `日常副本 => ${fb}/20\n师门任务 => ${sm1}/20 ${sm2}连\n`;
       html += `衙门追捕 => ${ym1}/20 ${ym2}连\n每周运镖 => ${yb1}/20 ${yb2}连\n`;
+      html += `襄阳守城 => ${xy}/1 门派BOSS => ${mpb}/1\n`;
+      html += `武道塔主 => ${wdtz}\n`;
+      if (boss) html += `武神BOSS => ${boss}/5\n`;
       content.task = `<span class="remove_task">${html}<span>`;
       AddContent(content.task);
     }
