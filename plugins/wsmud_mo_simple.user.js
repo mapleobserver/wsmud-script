@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.2.0
+// @version     0.1.2.1
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -224,13 +224,17 @@
     // tasks
     listener.addListener("dialog", function(data) {
         if (data.dialog === "tasks" && data.items) {
-            let fb, qa, wd, wd1, wd2, wd3, sm1, sm2, ym1, ym2, yb1, yb2;
+            let fb, qa, wd, wd1, wd2, wd3, xy, mpb, boss, wdtz, sm1, sm2, ym1, ym2, yb1, yb2;
             data.items.forEach(item => {
                 if (item.state === 2) fn.send(`taskover ${item.id}`); // 自动完成
                 if (item.id === "signin") {
                     let a = item.desc.match(/师门任务：(.*)，副本：<(.*)>(.*)\/20<(.*)>/);
                     let b = item.desc.match(/(.*)武道塔(.*)，进度(\d+)\/(\d+)<(.*)/);
                     let c = item.desc.match(/<.+?>(.+)首席请安<.+?>/);
+                    let d = item.desc.match(/尚未协助襄阳守城/);
+                    let e = item.desc.match(/尚未挑战门派BOSS/);
+                    let f = item.desc.match(/挑战武神BOSS(\d+)次/);
+                    let g = item.desc.match(/尚未挑战武道塔塔主/);
                     (parseInt(a[3]) < 20) ? fb = `<hig>${a[3]}</hig>` : fb = a[3];
                     if (b) {
                         (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
@@ -241,6 +245,15 @@
                     if (c) {
                         /已经/.test(c[1]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
                     }else {qa = "无需请安"}
+                    (d) ? xy = `<hig>0</hig>` : xy = 1;
+                    (e) ? mpb = `<hig>0</hig>` : mpb = 1;
+                    if (f) {
+                        boss = 5 - parseInt(f[1]);
+                        boss = `<hig>${boss}</hig>`;
+                    }else{
+                        if (G.level && G.level.indexOf('武神') >= 0) boss = 5;
+                    }
+                    (g) ? wdtz = `<hig>0</hig>/1` : wdtz = `已打或未解锁`;
                 } else if (item.id === "sm") {
                     let a = item.desc.match(/目前完成(.*)\/20个，共连续完成(.*)个。/);
                     (parseInt(a[1]) < 20) ? sm1 = `<hig>${a[1]}</hig>` : sm1 = a[1];
@@ -258,6 +271,9 @@
             let html = `门派请安 => ${qa}\n武道之塔 => ${wd}\n`;
             html += `日常副本 => ${fb}/20\n师门任务 => ${sm1}/20 ${sm2}连\n`;
             html += `衙门追捕 => ${ym1}/20 ${ym2}连\n每周运镖 => ${yb1}/20 ${yb2}连\n`;
+            html += `襄阳守城 => ${xy}/1 门派BOSS => ${mpb}/1\n`
+            html += `武道塔主 => ${wdtz}\n`;
+            if (boss) html += `武神BOSS => ${boss}/5\n`;
             $(".remove_tasks").remove();
             $(".content-message pre").append($(`<span class="remove_tasks"><span>`).html(html));
             fn.scroll(".content-message");
@@ -411,10 +427,10 @@
             room.desc = room.desc.replace(/span/g, "cmd");//房间描述中<span>标签的命令改为<cmd>
             room.desc = room.desc.replace(/"/g, "'"); // "" => ''
             room.desc = room.desc.replace(/\((.*?)\)/g, "");//去除括号和里面的英文单词
-            console.log(room.desc);
+            //console.log(room.desc);
             // let c = `◆`;
             let cmds = room.desc.match(/<cmd cmd='([^']+)'>([^<]+)<\/cmd>/g);
-            console.log(cmds);
+            //console.log(cmds);
             cmds.forEach(cmd => {
                 let x = cmd.match(/<cmd cmd='(.*)'>(.*)<\/cmd>/);
                 data.commands.unshift({ cmd: x[1], name: `<hic>${x[2]}</hic>` });
