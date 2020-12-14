@@ -1,7 +1,7 @@
 //~silent
 // 挂机自动练习
 // 四区白三三
-($localVer) = 2020121401
+($localVer) = 2020121402
 ($changeLog) = 重构功能；可批量关闭触发并在练习结束后重新开启；可自定义练习技能；原地防掉线功能。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -59,6 +59,8 @@
 
 //获取技能列表、根据练习方式显示不同选项
 #input ($info2) = 练习方式：<ord>(Type)</ord>；上限等级：<ord>(level)</ord>；吃冰心丹：<ord>(Chiyao)</ord>；补飞翼：<ord>(Feiyi)</ord>,👇👇👇
+[if] (Type) == 指定等级
+  #input ($info3) = <ord>需要练习哪些技能，在右边输入框中填入指定等级即可，不练习的保持不变。</ord>,👇👇👇
 ($_i) = 0
 [while] (_i) < 62
   @js ($s(_i)) = $(".skill-item").eq('(_i)').attr('skid')
