@@ -1,8 +1,8 @@
 //~silent
 // 挂机自动练习
 // 四区白三三
-($localVer) = 2020112501
-($changeLog) = 修复技能找不到时重复查找功能的判断bug
+($localVer) = 2020121401
+($changeLog) = 重构功能；可批量关闭触发并在练习结束后重新开启；可自定义练习技能；原地防掉线功能。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.jqlx
@@ -22,121 +22,225 @@
   @print <ord>(log)</ord>
 
 @toolbar jh
-@toolbar skills
-//级别上限
-@js ($level) = /\d+/.exec($(".obj-money").text())['0']
-($skill_base)='基本拳脚','基本内功','基本轻功','基本招架','基本剑法','基本刀法','基本杖法','基本鞭法','基本暗器','基本棍法'
-[if] (Skill) == null
-    ($Skill) = (skill_base)
-[if] (lianxi_map) == null
-    ($lianxi_map) = 住房-练功房
-@js ($thisroom) = '(:room)'.indexOf('副本区域')
-[if] (thisroom) != -1
-    ($lianxi_map) = 原地不动
-    ($LXAfter) = stopstate;$tts 练习结束，请手动进行后续操作;$wait 5000;$music
-[if] (Chiyao) == null
-    ($Chiyao) = 否
-[if] (Feiyi) == null
-    ($Feiyi) = 否
-[if] (LXAfter) == null
-    ($LXAfter) = $zdwk
-#input ($Skill)=技能列表(请用英文单引号和逗号隔开要练习的技能),(Skill)
-#input ($target_level)=目标技能等级,(level)
-#input ($LXBefore)=练习前执行命令(用英文;隔开),(LXBefore)
-#select ($lianxi_map)=练习地点,住房-练功房|帮会-练功房|原地不动,(lianxi_map)
-#select ($Chiyao)=是否吃冰心丹,是|否,(Chiyao)
-#select ($Feiyi)=是否补飞翼(请事先装备飞翼剑),是|否,(Feiyi)
-#input ($LXAfter)=练习结束后执行命令(用英文;隔开，默认请填$zdwk),(LXAfter)
+//获取境界
+[while] (jj) == null
+  @toolbar score
+  @js ($jj) = $(`span[data-prop=level]`).text()
+//获取等级上限
+[while] (level) == null
+  @toolbar skills
+  @js ($level) = /\d+/.exec($(".obj-money").text())['0']
+
+//参数预置
+[(LXMap)==null]($LXMap) = 住房-练功房
+[if] (:room 副本区域) == true
+  ($LXMap) = 原地不动
+  ($LXEnd) = 原地防掉线
+  ($LXtts) = 打开
+[(OffLxTriggers) == null]($OffLxTriggers) = 续冰心,续飞翼,续药飞翼,鼓舞续药飞翼,续药飞翼徽章,补冰心,补飞翼
+[(Chiyao) == null]($Chiyao) = 否
+[(Feiyi) == null]($Feiyi) = 否
+[(LXEnd) == null]($LXEnd) = 闭关或挖矿
+[(LXtts) == null]($LXtts) = 关闭
+[(Type) == null]($Type) = 练至上限
+
+//选择练习方式、其它选项
+#input ($info1) = <ord>当前技能上限为(level)级</ord>,👇👇👇
+#select ($Type) = 练习方式,指定等级|练至上限,(Type)
+#input ($LXBefore) = 练习前执行命令(用英文;隔开),(LXBefore)
+#input ($OffLxTriggers)=关闭触发(多个触发名字用英文逗号隔开),(OffLxTriggers)
+#select ($LXMap) = 练习地点,住房-练功房|帮会-练功房|原地不动,(LXMap)
+#select ($Chiyao) = 是否吃冰心丹,是|否,(Chiyao)
+#select ($Feiyi) = 是否补飞翼(请事先装备飞翼剑),是|否,(Feiyi)
+#select ($LXEnd) = 练习结束后操作,原地防掉线|闭关或挖矿|打坐,(LXEnd)
+//#input ($LXAfter) = 练习结束后执行命令(用英文;隔开，默认请填$zdwk),(LXAfter)
+#select ($LXtts) = 练习结束后语音提醒,打开|关闭,(LXtts)
 #config
-[if] (arg0) != null
-    ($target_level) = (arg0)
-[if] (arg1) != null
-    ($lianxi_map) = (arg1)
-[if] (arg2) != null
-    ($Chiyao) = (arg2)
-[if] (arg3) != null
-    ($Feiyi) = (arg3)
+
+//获取技能列表、根据练习方式显示不同选项
+#input ($info2) = 练习方式：<ord>(Type)</ord>；上限等级：<ord>(level)</ord>；吃冰心丹：<ord>(Chiyao)</ord>；补飞翼：<ord>(Feiyi)</ord>,👇👇👇
+($_i) = 0
+[while] (_i) < 62
+  @js ($s(_i)) = $(".skill-item").eq('(_i)').attr('skid')
+  [if] (s(_i)) == null
+    [break]
+  @js ($n(_i)) = $(".skill-item").eq('(_i)').html().match(/[^\d]*/)
+  @js ($n(_i)) = '(n(_i))'.replace(/span class="skill-level"/,'')
+  @js ($n(_i)) = '(n(_i))'.replace(/<>/, '')
+  @js ($ln(_i)) = $(".skill-item").eq('(_i)').text().match(/[0-9]+/)
+  [if] (s(_i)) != literate && (s(_i)) != lianyao
+    [if] (Type) == 指定等级
+      #input ($l(_i)) = (n(_i))当前等级(ln(_i)),(ln(_i))
+    [else]
+      #select ($k(_i)) = (n(_i))当前等级(ln(_i)),练习|跳过,跳过
+  ($_i) = (_i) + 1
+#config
+@cmdDelay 500
+//生成练习清单
+($_j) = 0
+[while] (_j) < (_i)
+  [if] (k(_j)) == 练习
+    @js ($l(_j)) = (level)
+  [if] (l(_j)) != null && (l(_j)) > (ln(_j))
+    //技能id
+    [if] (lx_skill) == null
+      ($lx_skill) = '(s(_j))'
+    [else]
+      [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
+        ($lx_skill) = '(s(_j))',(lx_skill)
+      [else]
+        ($lx_skill) = (lx_skill),'(s(_j))'
+    //练习等级
+    [if] (lx_level) == null
+      ($lx_level) = (l(_j))
+    [else]
+      [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
+        ($lx_level) = '(l(_j))',(lx_level)
+      [else]
+        ($lx_level) = (lx_level),'(l(_j))'
+    //技能名称
+    @js ($n(_j)) = '(n(_j))'.replace(/✔/, '')
+    @js ($n(_j)) = '(n(_j))'.replace(/<span.*>.*<\/span>/g,'')
+    @print 练习(n(_j))[(s(_j))]至<wht>(l(_j))</wht>级
+    @js ($n(_j)) = '(n(_j))'.replace(/<[^>]+>/g,'')
+    tm 练习(n(_j))[(s(_j))]至(l(_j))级
+    [if] (lx_name) == null
+      ($lx_name) = '(n(_j))'
+    [else]
+      [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
+        ($lx_name) = '(n(_j))',(lx_name)
+      [else]
+        ($lx_name) = (lx_name),'(n(_j))'
+  ($_j) = (_j) + 1
+//@print 技能名称：(lx_name)
+//@print 技能代码：(lx_skill)
+//@print 练习等级：(lx_level)
+[if] (lx_skill) == null
+  <ord>未设定任何技能！</ord>
+  $zdwk
+  [exit]
+
+//关闭指定触发、检查触发有效性
+[if] (OffLxTriggers) != null
+  @js ($tgs)=var ts=("\""+"(OffLxTriggers)"+"\"").replace(/，/g,",");ts.replace(/,/g,"\",\"").split(",")
+  @js ($tl)=[(tgs)].length
+  @print 关闭指定触发：(OffLxTriggers)
+  ($num)=0
+  [while] (num)<(tl)
+    @js ($t)=[(tgs)][(num)]
+    @js ($checkT) = unsafeWindow.TriggerCenter._checkName("(t)")
+    [if] (checkT) != true
+      [if] (lxtrigger) == null
+        ($lxtrigger) = (t)
+      [else]
+        ($lxtrigger) = (lxtrigger),(t)
+      @js ($checkT2) = unsafeWindow.TriggerCenter._triggers["(t)"].active()
+      [if] (checkT2) == true
+        [if] (offT) == null
+          ($offT) = (t)
+        [else]
+          ($offT) = (offT),(t)
+      @js ToRaid.perform(`@off (t)`);
+    ($num)=(num)+1
+  ($OffLxTriggers) = (lxtrigger)
+  //@print (OffLxTriggers)
+  //@print (offT)
+
 <-stopSSAuto
 //获取技能数量
-@js ($skill_num) = [(Skill)].length
+@js ($skill_num) = [(lx_skill)].length
 //传送到练功房
 stopstate
-[if] (lianxi_map) != 原地不动
-    $to (lianxi_map)
+[if] (LXMap) != 原地不动
+  $to (LXMap)
 //练习前执行命令
 [if] (LXBefore) != null
-    (LXBefore)
-    $wait 5000
-//循环判断
+  (LXBefore)
+  @wait 5000
+//循环练习
 ($num)=0
-($endless)=0
-($tip_done) = start
-[while](num) < (skill_num)
-    [if] (tip_done) != null || (tip_limit) != null || (tip_base) != null || (endless) > 0
-        ($tip_done) = null
-        ($tip_limit) = null
-        ($tip_base) = null
-        //依次获取技能列表
-        @toolbar jh
-        @await 200
-        @toolbar skills
-        @js ($skill_name) = [(Skill)][(num)]
-        //获取技能id
-        @js ($skilltype) = '(skill_name)'.indexOf('基本')
-        [if] (skilltype) != -1
-            @js ($skill_id) = $(".base:contains((skill_name))").attr("skid")
-        [else]
-            [if] (skill_name) == 野兽扑咬
-                @js ($skill_id) = $(".base:contains((skill_name))").attr("skid")
-            [else]
-                @js ($skill_id) = $(".skill:contains((skill_name))").attr("skid")
-        @print (skill_id)
-        [if] (skill_id) == null
-            [if] (endless) = 5
-                tm 连续(endless)次无法获取【(skill_name)】技能id，跳过！
-                ($endless)=0
-                ($num)=(num)+1
-            [else]
-                @print <ord>未获取到【(skill_name)】技能id，正在重试！</ord>
-                ($endless)=(endless)+1
-            [continue]
-        stopstate
-    //开始练习
+($tip_done)=start
+[while] (num) < (skill_num)
+  //开场吃药开飞翼
+  [if] (num) == 0
+    [if] (:status food) == false && (Chiyao) == 是 && {b冰心丹}? != null
+      stopstate
+      use {b冰心丹}?
+      @await 1000
+    //判断是否用飞翼
+    [if] (:status fy) == false && (Feiyi) == 是
+      stopstate
+      use (:eq0)
+      @await 1000
+  //几种练习节点判断
+  [if] (tip_done) != null || (tip_limit) != null || (tip_base) != null
+    ($tip_done) = null
+    ($tip_limit) = null
+    ($tip_base) = null
+    //获取技能id和练习等级
+    @js ($skill_name) = [(lx_name)][(num)]
+    @js ($skill_id) = [(lx_skill)][(num)]
+    @js ($target_level) = [(lx_level)][(num)]
+    stopstate
+  //开始练习
+  @await 500
+  //检查当前房间和状态
+  [if] (:room) != (LXMap) && (LXMap) != 原地不动
+    stopstate
+  [if] (:room) == 扬州城-矿山 || (:state) == 挖矿
+    stopstate
+    (LXBefore)
+    @await 5000
+    $to (LXMap)
     @await 500
-    [if] (:room) != (lianxi_map) && (lianxi_map) != 原地不动
-        stopstate
-        [if] (:room) == 扬州城-矿山
-            (LXBefore)
-            @await 5000
-        $to (lianxi_map)
-        @await 500
-    //避免@tip对同一句内容重复生效
-    lianxi (skill_id) (target_level)
-    //判断练习状态
-    @tip 缺乏($tip_limit)经验|已经练习($tip_done)了|练习($tip_done)毕|你的($tip_base)功火候未到|等级($levelup)了|提升到($levelup)级|你的($tip_qn)不够
-    [if] (levelup) != null
-        //判断是否吃药
-        [if] (:status food) == false && (Chiyao) == 是 && {b冰心丹}? != null
-            stopstate
-            use {b冰心丹}?
-            @await 1000
-        //判断是否用飞翼
-        [if] (:status fy) == false && (Feiyi) == 是
-            stopstate
-            use (:eq0)
-            @await 1000
-        ($levelup) = null
-        [continue]
-    [if] (tip_limit) != null
-        tm 技能上限不足(target_level)级，(skill_name)无法继续练习。
-    [else if] (tip_base) != null
-        tm 基础技能等级不足(target_level)级，(skill_name)无法继续练习。
-    [else if] (tip_done) != null
-        tm (skill_name)已练习(target_level)级，继续练习下一个。
-    [else if] (tip_qn) != null
-        tm 潜能不够，停止练习！
-        [break]
-    ($num) = (num) + 1
+  //开始练习，同时避免@tip对同一句内容重复生效
+  lianxi (skill_id) (target_level)
+  //判断练习状态
+  @tip 缺乏($tip_limit)经验|已经练习($tip_done)了|练习($tip_done)毕|你的($tip_base)功火候未到|等级($levelup)了|提升到($levelup)级|你的($tip_qn)不够
+  [if] (levelup) != null
+    //判断是否吃药
+    [if] (:status food) == false && (Chiyao) == 是 && {b冰心丹}? != null
+      stopstate
+      use {b冰心丹}?
+      @await 1000
+    //判断是否用飞翼
+    [if] (:status fy) == false && (Feiyi) == 是
+      stopstate
+      use (:eq0)
+      @await 1000
+    ($levelup) = null
+    [continue]
+  [if] (tip_limit) != null
+    tm 技能上限不足(target_level)级，(skill_name)无法继续练习。
+  [else if] (tip_base) != null
+    tm 基础技能等级不足(target_level)级，(skill_name)无法继续练习。
+  [else if] (tip_done) != null
+    tm (skill_name)已练习(target_level)级，继续练习下一个。
+  [else if] (tip_qn) != null
+    tm 潜能不够，停止练习！
+    [break]
+  ($num) = (num) + 1
 stopstate
-(LXAfter)
+//还原指定触发
+[if] (offT) != null
+  @js ($tgs)=var ts=("\""+"(offT)"+"\"").replace(/，/g,",");ts.replace(/,/g,"\",\"").split(",")
+  @js ($tl)=[(tgs)].length
+  @print 还原指定触发
+  ($num)=0
+  [while] (num)<(tl)
+    @js ($t)=[(tgs)][(num)]
+    @js ToRaid.perform(`@on (t)`);
+    ($num)=(num)+1
+//练习结束
+[if] (LXEnd) == 原地防掉线
+  [if] (LXtts) == 打开
+    $tts 练习结束，请手动进行后续操作;$wait 5000;$music
+  [while] true
+    tm (:hour):(:minute):(:second) 原地防掉线功能已开启
+    lianxi (skill_id) (target_level)
+    @await 10000
+[else if] (LXEnd) == 闭关或挖矿
+  $zdwk
+[else if] (LXEnd) == 打坐
+  dazuo
 stopSSAuto->
