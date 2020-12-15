@@ -2,7 +2,7 @@
 // @name        wsmud_funny
 // @namespace   suqing.fun
 // @version     0.3.34
-// @author      SuQing
+// @author      SuQing, 白三三
 // @match       http://*.wsmud.com/*
 // @exclude     http://*.wsmud.com/news/*
 // @exclude     http://*.wsmud.com/pay.html
