@@ -1,8 +1,8 @@
 //~silent
 // 挂机自动练习
 // 四区白三三
-($localVer) = 2020121402
-($changeLog) = 重构功能；可批量关闭触发并在练习结束后重新开启；可自定义练习技能；原地防掉线功能。
+($localVer) = 2020121601
+($changeLog) = 新增手动填写技能的功能，按从上到下顺序练习；可自定义练习技能；可批量关闭触发并在练习结束后重新开启；原地防掉线功能。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.jqlx
@@ -45,8 +45,8 @@
 [(Type) == null]($Type) = 练至上限
 
 //选择练习方式、其它选项
-#input ($info1) = <ord>当前技能上限为(level)级</ord>,👇👇👇
-#select ($Type) = 练习方式,指定等级|练至上限,(Type)
+#input ($info) = <ord>当前技能上限为(level)级</ord>,👇👇👇
+#select ($Type) = 练习方式,指定等级|练至上限|手动填写,(Type)
 #input ($LXBefore) = 练习前执行命令(用英文;隔开),(LXBefore)
 #input ($OffLxTriggers)=关闭触发(多个触发名字用英文逗号隔开),(OffLxTriggers)
 #select ($LXMap) = 练习地点,住房-练功房|帮会-练功房|原地不动,(LXMap)
@@ -58,37 +58,100 @@
 #config
 
 //获取技能列表、根据练习方式显示不同选项
-#input ($info2) = 练习方式：<ord>(Type)</ord>；上限等级：<ord>(level)</ord>；吃冰心丹：<ord>(Chiyao)</ord>；补飞翼：<ord>(Feiyi)</ord>,👇👇👇
-[if] (Type) == 指定等级
-  #input ($info3) = <ord>需要练习哪些技能，在右边输入框中填入指定等级即可，不练习的保持不变。</ord>,👇👇👇
-($_i) = 0
-[while] (_i) < 62
-  @js ($s(_i)) = $(".skill-item").eq('(_i)').attr('skid')
-  [if] (s(_i)) == null
-    [break]
-  @js ($n(_i)) = $(".skill-item").eq('(_i)').html().match(/[^\d]*/)
-  @js ($n(_i)) = '(n(_i))'.replace(/span class="skill-level"/,'')
-  @js ($n(_i)) = '(n(_i))'.replace(/<>/, '')
-  @js ($ln(_i)) = $(".skill-item").eq('(_i)').text().match(/[0-9]+/)
-  [if] (s(_i)) != literate && (s(_i)) != lianyao
-    [if] (Type) == 指定等级
+[if] (Type) == 指定等级 || (Type) == 练至上限
+  #input ($info1) = 练习方式：<ord>(Type)</ord>；上限等级：<ord>(level)</ord>；吃冰心丹：<ord>(Chiyao)</ord>；补飞翼：<ord>(Feiyi)</ord>,👇👇👇
+  [if] (Type) == 指定等级
+    #input ($info2) = <ord>需要练习哪些技能，在右边输入框中填入指定等级即可，不练习的保持不变。</ord>,👇👇👇
+  ($_i) = 0
+  [while] (_i) < 62
+    @js ($s(_i)) = $(".skill-item").eq('(_i)').attr('skid')
+    [if] (s(_i)) == null
+      [break]
+    @js ($n(_i)) = $(".skill-item").eq('(_i)').html().match(/[^\d]*/)
+    @js ($n(_i)) = '(n(_i))'.replace(/span class="skill-level"/,'')
+    @js ($n(_i)) = '(n(_i))'.replace(/<>/, '')
+    @js ($ln(_i)) = $(".skill-item").eq('(_i)').text().match(/[0-9]+/)
+    [if] (s(_i)) != literate && (s(_i)) != lianyao
+      [if] (Type) == 指定等级
+        #input ($l(_i)) = (n(_i))当前等级(ln(_i)),(ln(_i))
+      [else]
+        #select ($k(_i)) = (n(_i))当前等级(ln(_i)),练习|跳过,跳过
+    ($_i) = (_i) + 1
+  #config
+[else if] (Type) == 手动填写
+  #input ($info1) = 练习方式：<ord>(Type)</ord>；上限等级：<ord>(level)</ord>；吃冰心丹：<ord>(Chiyao)</ord>；补飞翼：<ord>(Feiyi)</ord>,👇👇👇
+  #input ($info2) = <ord>手动填写技能，会按照从上往下顺序练习</ord>,👇👇👇
+  #select ($manType) = 练习方式,指定等级|练至上限,练至上限
+  @js ($Skill)=var ss="(Skill)";ss.replace(/，/g,",").replace(/"/g,"").replace(/'/g,"")
+  @js ($ss)=var ss=("\""+"(Skill)"+"\"");ss.replace(/,/g,"\",\"").split(",")
+  ($_i) = 0
+  [while] (_i) < 30
+    @js ($n(_i)) = [(ss)][(_i)]
+    ($n) = (_i) + 1
+    #input ($n(_i)) = 练习技能(n),(n(_i))
+    ($_i) = (_i) + 1
+  #config
+  ($_i) = 0
+  [while] (_i) < 30
+    [if] (n(_i)) != null && (n(_i)) != 炼药术 && (n(_i)) != 读书写字
+      @js ($skillbase) = '(n(_i))'.indexOf('基本')
+      [if] (skillbase) != -1 || (n(_i)) == 野兽扑咬
+        ($skilltype) = base
+      [else]
+        ($skilltype) = skill
+      @js ($s(_i)) = $(".(skilltype):contains((n(_i)))").attr("skid")
+      [if] (s(_i)) != null
+        //@print (s(_i))
+        @js ($ln(_i)) = $(".(skilltype):contains((n(_i)))").text().match(/[0-9]+/)
+        @js ($n(_i)) = $(".(skilltype):contains((n(_i)))").html().match(/[^\d]*/)
+        @js ($n(_i)) = '(n(_i))'.replace(/span class="skill-level"/,'').replace(/<>/, '').replace(/✔/, '').replace(/<span.*>.*<\/span>/g,'')
+        [if] (lx_skill) == null
+          ($lx_skill) = '(s(_i))'
+        [else]
+          ($lx_skill) = (lx_skill),'(s(_i))'
+        [if] (lx_name) == null
+          ($lx_name) = '(n(_i))'
+        [else]
+         ($lx_name) = (lx_name),'(n(_i))'
+        [if] (lx_level) == null
+          ($lx_level) = (ln(_i))
+        [else]
+          ($lx_level) = (lx_level),(ln(_i))
+    ($_i) = (_i) + 1
+  // 手动填写模式的两种练习方式
+  @js ($slen) = [(lx_skill)].length
+  [if] (manType) == 指定等级
+    #input ($info2) = 练习方式：<ord>(Type)-(manType)</ord>；上限等级：<ord>(level)</ord>；吃冰心丹：<ord>(Chiyao)</ord>；补飞翼：<ord>(Feiyi)</ord>,👇👇👇
+    [if] (slen) == 0
+      @print <ord>未设定任何技能！</ord>
+      $zdwk
+      [exit]
+    ($_i) = 0
+    [while] (_i) < (slen)
+      @js ($n(_i)) = [(lx_name)][(_i)]
+      @js ($s(_i)) = [(lx_skill)][(_i)]
+      @js ($ln(_i)) = [(lx_level)][(_i)]
       #input ($l(_i)) = (n(_i))当前等级(ln(_i)),(ln(_i))
-    [else]
-      #select ($k(_i)) = (n(_i))当前等级(ln(_i)),练习|跳过,跳过
-  ($_i) = (_i) + 1
-#config
+      ($_i) = (_i) + 1
+    #config
+
 @cmdDelay 500
 //生成练习清单
+($lx_skill) = null
+($lx_name) = null
+($lx_level) = null
 ($_j) = 0
 [while] (_j) < (_i)
-  [if] (k(_j)) == 练习
+  [if] (k(_j)) == 练习 || (manType) == 练至上限
     @js ($l(_j)) = (level)
-  [if] (l(_j)) != null && (l(_j)) > (ln(_j))
+  [if] (l(_j)) != null && (l(_j)) > (ln(_j)) && (s(_j)) != null
     //技能id
+    [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
+      ($baseYes) = true
     [if] (lx_skill) == null
       ($lx_skill) = '(s(_j))'
     [else]
-      [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
+      [if] (baseYes) == true && (Type) != 手动填写
         ($lx_skill) = '(s(_j))',(lx_skill)
       [else]
         ($lx_skill) = (lx_skill),'(s(_j))'
@@ -96,7 +159,7 @@
     [if] (lx_level) == null
       ($lx_level) = (l(_j))
     [else]
-      [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
+      [if] (baseYes) == true && (Type) != 手动填写
         ($lx_level) = '(l(_j))',(lx_level)
       [else]
         ($lx_level) = (lx_level),'(l(_j))'
@@ -109,7 +172,7 @@
     [if] (lx_name) == null
       ($lx_name) = '(n(_j))'
     [else]
-      [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
+      [if] (baseYes) == true && (Type) != 手动填写
         ($lx_name) = '(n(_j))',(lx_name)
       [else]
         ($lx_name) = (lx_name),'(n(_j))'
@@ -121,6 +184,9 @@
   <ord>未设定任何技能！</ord>
   $zdwk
   [exit]
+[if] (Type) == 手动填写
+  ($Skill) = (lx_name)
+  //@print (Skill)
 
 //关闭指定触发、检查触发有效性
 [if] (OffLxTriggers) != null
