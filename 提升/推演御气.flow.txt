@@ -1,0 +1,65 @@
+// 如何制造原子弹 v1.4
+// 四区 黑白郎君
+// 献给所有为科学而牺牲的人(和瓜)
+
+// 依赖:
+//   wsmud_funny >= 0.3.32
+//   wsmud_Raid >= 2.4.16
+
+@cmdDelay 500
+@js ($funny) = (funny != undefined)
+[if] (funny) == false
+  @js alert('本流程依赖于苏轻的funny脚本。')
+[if] (TYSlev) == null
+  ($TYSlev) = 5000
+#input ($TYSid) = 自创武功id,(TYSid)
+#input ($TYSlev) = 自创武功等级,(TYSlev)
+#select ($TYStep) = 单步,true|false,(TYStep)
+#config
+
+stopstate
+checkskill (TYSid)
+@js ($l) = var s = $(".dialog-skills > pre:last");var m = s.text().match(/内力上限：\+[0-9]+/);s.remove();var f = parseInt(m[0].split('+')[1], '10');Math.floor((f/'(TYSlev)'-308)/8)
+($TYEnable) = true
+
+[while] (TYEnable)
+  stopstate
+  [if] (l) == 0
+    ($t) = 5
+  [else]
+    ($t) = (l) + 1
+  @print 内力上限等级(l),升级需要推演(t)次
+  cha
+  @await 1000
+  @js ($TYStartPot) = funny.role.pot
+  tm 推演开始，当前潜能 (TYStartPot)
+  @js $('#ty_prog').remove()
+  @js $(`.room-item[itemid=(:id)]`).before(`<div id=ty_prog>推演进度: (num)/(t)</div>`)
+
+  [if] (:status food) == false
+    use {b冰心丹}?
+  [if] (:status fy) == false
+    use (:eq0)
+  zc prop force ban;zc prop force ban;zc prop force ban
+  zc prop force ban;zc prop force ban;zc prop force ban
+  zc typedel force;zc typelv force
+  @await 300
+  [while] (:state) == 推演
+    @tip 有了更深入的理解
+    cha
+    @await 1000
+    @js ($TYCurrentPot) = funny.role.pot
+    @js ($num) = ('(TYStartPot)'*1 - '(TYCurrentPot)'*1)/100000
+    @print 当前潜能 (TYCurrentPot), 已推演(num)次, 总共需要推演(t)次
+    @js $('#ty_prog').text(`推演进度: (num)/(t)`)
+    pty 推演进度: (num)/(t)
+    [if] (num) >= (t)
+      ($num) = 0
+      stopstate;xiulian
+  [if] (l) == 0
+    ($l) = 2
+  [else]
+    ($l) = (l) + 1
+  [if] (TYStep) == true
+    ($TYEnable) = false
+stopstate;xiulian
