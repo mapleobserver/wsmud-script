@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020120101
-($changeLog) = 底部提醒信息点击可隐藏。
+($localVer) = 2020121801
+($changeLog) = 1、新增【赌场兑换残页】功能。2、删除【最高连续追捕数达到后自动放弃】功能。3、优化偷渡副本防止卡住。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -11,7 +11,7 @@
   @js WG.SendCmd("tm 当前自动日常版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
   ($f_ss)={"name":"自动日常","source":"http://wsmud-cdn.if404.com/自动日常.flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
-  @wait 1000
+  @wait 1500
   ($log) = 自动日常已更新至最新版【(remoteVer)】，即将自动运行。
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
@@ -64,8 +64,6 @@
   ($ZBsx) = 转为正常模式
 [if] (ZBWaitCD) == null
   ($ZBWaitCD) = 30
-[if] (ZBMax) == null
-  ($ZBMax) = 9999999
 [if] (ZBcdskill) == null
   ($ZBcdskill) = null
 [if] (ZBBefore) == null
@@ -77,8 +75,7 @@
 #input ($ZBBefore) = 追捕前执行命令(用英文;隔开),(ZBBefore)
 #input ($ZBWaitCD) = 从此次追捕开始，等待技能冷却,(ZBWaitCD)
 #input ($ZBcdskill) = 需要冷却的技能使用英文逗号隔开或以^开头过滤不需要的，填null全部不等冷却,(ZBcdskill)
-#input ($ZBMax) = 最高连续追捕数达到后自动放弃,(ZBMax)
-#select ($DieToReset) = 死亡自动重置,已开启|已关闭,(DieToReset)
+#select ($DieToReset) = 死亡自动重置追捕环数,已开启|已关闭,(DieToReset)
 
 // 武道自定义参数
 [if] (WudaoMode) == null || (WudaoMode) = 正常肝塔
@@ -115,6 +112,11 @@
 #select ($DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(DungeonHpThreshold)
 #select ($DungeonWaitSkillCD) = Boss战前等待技能冷却,打开|关闭,(DungeonWaitSkillCD)
 #select ($DungeonBagCleanWay) = 背包清理方案,不清理|售卖|存仓及售卖,(DungeonBagCleanWay)
+
+// 赌场兑换残页
+[if] (Duihuan) == null
+  ($Duihuan) = 不兑换
+#select ($Duihuan) = <hiz>赌场兑换副本残页物品</hiz>,不兑换|无念禅功|长生诀|慈航剑典|阴阳九转|战神图录|神奇碎片,(Duihuan)
 
 // 请安
 [if] (RC_qingan) == null
@@ -256,13 +258,6 @@ stopstate
     ($zb) = true
     @renew
     @until (:status xuruo) == false
-    [if](comboN)>=(ZBMax)
-      [while] (:room) != 扬州城-衙门正厅
-        $to 扬州城-衙门正厅
-        @await 500
-      ask1 {程药发}
-      ask2 {程药发}
-      ($comboN) = 0
     [if](comboN)>=(ZBWaitCD)
       @cd (ZBcdskill)
     [while] (:room) != 扬州城-衙门正厅
@@ -564,7 +559,7 @@ stopstate
     [if] (FBWay) == 扫荡
       //扫荡模式
       [if] (FBName) == 流氓巷(组队) || (FBName) == 神龙教(组队) || (FBName) == 五毒教(组队) || (FBName) == 云梦沼泽(组队) || (FBName) == 白驼山(组队) || (FBName) == 冰火岛(偷渡) || (FBName) == 移花宫(偷渡) || (FBName) == 燕子坞(偷书) || (FBName) == 缥缈峰(偷渡) || (FBName) == 光明顶(组队) || (FBName) == 光明顶(偷渡) || (FBName) == 天龙寺(偷渡) || (FBName) == 古墓派(困难偷渡)
-        ($alert_fb) = (FBName)无法扫荡！
+        ($alert_fb) = (FBName)无法扫荡，请改为自动模式！
       [else]
         //team out
         @tidyBag
@@ -585,7 +580,7 @@ stopstate
           @await 2000
           @toolbar jh
           @toolbar tasks
-          @await 350
+          @await 500
           @task 副本：($tag2)>($fb_com)/20
     [else if] (FBWay) == 自动
       //脚本自动模式
@@ -596,7 +591,7 @@ stopstate
         ($tdnum) = 0
         [while] (tdnum) < (fb_num)
           (fbcr) 0;cr over
-          @await 350
+          @await 500
           ($tdnum) = (tdnum) + 1
       [else]
         @js ($fbexist) = if(GetDungeonFlow(`(FBName)`)!=null){true}else{false}
@@ -607,6 +602,48 @@ stopstate
           @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门
         [else]
           ($alert_fb) = (FBName)没有自动脚本！
+
+// 赌场兑换残页
+[if] (Duihuan) != 不兑换
+  //($dhdata) = "无念禅功":"0_32","长生诀":"1_32","慈航剑典":"1_33","阴阳九转":"0_34","战神图录":"0_35","神器碎片":"1_35"
+  //@js ($dhfb) = var dh={(dhdata)};dh.(Duihuan)
+  [if] (Duihuan) == 无念禅功
+    ($dhfb) = 0_32
+  [else if] (Duihuan) == 长生诀
+    ($dhfb) = 1_32
+  [else if] (Duihuan) == 慈航剑典
+    ($dhfb) = 1_33
+  [else if] (Duihuan) == 阴阳九转
+    ($dhfb) = 0_34
+  [else if] (Duihuan) == 战神图录
+    ($dhfb) = 0_35
+  [else if] (Duihuan) == 神器碎片
+    ($dhfb) = 1_35
+  [if] (dhfb) != null
+    stopstate
+    [while] (:room) != 扬州城-赌场
+      $to 扬州城-赌场
+      @await 500
+    ask3 {r易直非}?
+    duihuan (dhfb)
+    @tip 你目前共完成($dhtotal)次
+    @await 200
+    @js ($dhcy) = $(".content-message").find(".item-commands").last().children("span:contains('(Duihuan)')").attr("cmd")
+    @js ($dhpl) = $(".content-message").find(".item-commands").last().children("span:contains('(Duihuan)')").text().match(/[0-9]+/)
+    [if] (dhcy) != null && (dhpl) != null
+      @js ($dhnum) = parseInt((dhtotal)/(dhpl))
+    [if] (dhnum) > 0 && (dhnum) != null
+      ($num) = 0
+      [while] (num) < (dhnum)
+        (dhcy)
+        @await 500
+        ($num) = (num) + 1
+      ($dhinfo) = 当前完成次数(dhtotal)，每(dhpl)次兑换1份(Duihuan)，共计兑换(num)页。
+    [else]
+      ($dhinfo) = 当前完成次数(dhtotal)，无法兑换(Duihuan)。
+    [if] (dhinfo) != null
+      @print <hic>(dhinfo)</hic>
+      tm (dhinfo)
 
 // 当铺购买
 stopstate
