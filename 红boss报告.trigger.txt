@@ -17,6 +17,9 @@
       ($BossInfo) = null
       ($log) = ✅ 本周已打完5次Boss\n⚙️ 当前Boss类型：(BossModel)
       @js messageAppend("(log)",2,1);$('.content-message pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));$('.content-message')[0].scrollTop = 99999;messageAppend("(log)",2);
+      //按钮命令
+      @js $(".redboss").off("click")
+      @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config\ntm b`);})
       [exit]
     [if] (BossInfo) != null
       @js ($info)=("\""+"(BossInfo)"+"\"").replace(/\|/g,"\"|\"").split("|")
