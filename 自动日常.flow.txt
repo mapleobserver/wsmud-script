@@ -2,7 +2,7 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020121801
+($localVer) = 2020121802
 ($changeLog) = 1、新增【赌场兑换残页】功能。2、删除【最高连续追捕数达到后自动放弃】功能。3、优化偷渡副本防止卡住。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -116,7 +116,7 @@
 // 赌场兑换残页
 [if] (Duihuan) == null
   ($Duihuan) = 不兑换
-#select ($Duihuan) = <hiz>赌场兑换副本残页物品</hiz>,不兑换|无念禅功|长生诀|慈航剑典|阴阳九转|战神图录|神奇碎片,(Duihuan)
+#select ($Duihuan) = <hiz>赌场兑换副本残页物品</hiz>,不兑换|无念禅功|长生诀|慈航剑典|阴阳九转|战神图录|神器碎片,(Duihuan)
 
 // 请安
 [if] (RC_qingan) == null
