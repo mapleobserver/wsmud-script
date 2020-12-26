@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2020121201
+($localVer) = 2020122202
 ($changeLog) = 合并续药飞翼徽章触发，可改参数设置无鼓舞时停止练习。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -40,6 +40,7 @@
 
 // 触发
 #input ($info2)=👇<hiz>以下是触发</hiz>👇,愉快游戏🎮
+#select ($triggerRedBoss)=[<hiz>红boss报告</hiz>]武神红boss辅助触发(任意频道输入b或者谣言刷新时出现辅助按钮),导入|跳过,跳过
 #select ($triggerFoodFy)=[<hiz>续药飞翼</hiz>]古墓打坐续蕴象，练习领悟续冰心飞翼徽章，可改参数设置无鼓舞时停止练习,导入|跳过,跳过
 #select ($triggerXWZZ)=[<hiz>卸武自装</hiz>]被下武器后自动重新装备,导入|跳过,跳过
 #select ($triggerCMS)=[<hiz>帮战橙满伤</hiz>]满伤停止出招自动脱战(精简版只保留丐帮武当),导入|跳过,跳过
@@ -124,21 +125,36 @@
     ($num)=(num)+1
 
 //触发
+[if] (triggerRedBoss)==导入
+  @print 导入 <hic>红boss报告</hic> 触发
+  @js unsafeWindow.TriggerCenter.remove("红boss报告")
+  @await 350
+  @js Server.importTrigger("三三来迟·红boss报告·触发@685a092fb6b9ccb1867e465a71bbc3ea")
 [if] (triggerFoodFy)==导入
   @print 导入 <hic>续药飞翼</hic> 触发
+  @js unsafeWindow.TriggerCenter.remove("续药飞翼")
+  @await 350
   @js Server.importTrigger("白三三·续药飞翼·触发@4de9e844c1d56c5dd72b1abd1871be9e")
   @print <hiy>【徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。【鼓舞】可改参数设置无鼓舞时停止练习</hiy>
   tm 【徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。【鼓舞】可改参数设置无鼓舞时停止练习
 [if] (triggerXWZZ)==导入
   @print 导入 <hic>卸武自装</hic> 触发
+  @js unsafeWindow.TriggerCenter.remove("卸武自装")
+  @await 350
   @js Server.importTrigger("白三三·卸武自装·触发@33b0009ff0108c92a34841c7174b876a")
 [if] (triggerCMS)==导入
   @print 导入 <hic>帮战橙满伤</hic> 触发
+  @js unsafeWindow.TriggerCenter.remove("橙满伤")
+  @await 350
   @js Server.importTrigger("白三三·橙满伤·触发@92ae0deb0926f129d2fab09cd3b3ca0c")
   @js WG.SendCmd("tm 如果满伤脱战过程不想卸武器，请在触发代码中按说明修改参数。")
 [if] (triggerXYJS)==导入
   @print 导入 <hic>襄阳叫杀</hic> 触发
+  @js unsafeWindow.TriggerCenter.remove("襄阳叫杀")
+  @await 350
   @js Server.importTrigger("白三三·触发@0b2616c7c2d44a84a0c77e02789451af")
 [if] (triggerXYMJG)==导入
   @print 导入 <hic>襄阳满军功</hic> 触发
+  @js unsafeWindow.TriggerCenter.remove("襄阳满")
+  @await 350
   @js Server.importTrigger("白三三·触发@68476d5f2bf4abe1f26d508502cf4137")
