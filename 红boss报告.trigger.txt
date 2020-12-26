@@ -2,12 +2,13 @@
 // 查询Boss
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
-// version:2020121401
+($localVer) = 2020122201
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 
 [if] (content)==boss || (content)==b
   [if] (name)==(:name)
+    ($mycall) = true
     @toolbar jh
     @toolbar tasks
     @await 350
@@ -102,11 +103,20 @@
       @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前Boss类型：(BossModel)\n(remain)</ord>",1,1);$('.content-message pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-team">🚌 进入 <hic>(bossPlace)(<hiy>组队</hiy>)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
     [else]
       @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前Boss类型：(BossModel)\n(remain)</ord>",1,1);$('.content-message pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
-@js $('.content-message')[0].scrollTop = 99999;
 //按钮命令
-@js $(".redboss").off("click")
-@js $(".boss-single").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr) 0\n($BossInfo)=notime\n@js messageAppend("🥕 进入单人副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1);$('.content-message')[0].scrollTop = 99999;`);})
-@js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n[if](:room 副本区域)==true\n  ($BossInfo)=notime\n  @js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1)\n[else]\n  @js messageAppend("⚠️ 请先组队再进入！",1,1);$('.content-message')[0].scrollTop = 99999;`);})
-@js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,1);$('.content-message')[0].scrollTop = 99999;`);})
-@js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
-@js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config\ntm b`);})
+[if] (mycall) == true || (channel) == 谣言
+  @js $(".redboss").off("click")
+  @js $(".boss-single").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr) 0\n($BossInfo)=notime\n@js messageAppend("🥕 进入单人副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1);$('.content-message')[0].scrollTop = 99999;`);})
+  @js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n[if](:room 副本区域)==true\n  ($BossInfo)=notime\n  @js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1)\n[else]\n  @js messageAppend("⚠️ 请先组队再进入！",1,1);$('.content-message')[0].scrollTop = 99999;`);})
+  @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,1);$('.content-message')[0].scrollTop = 99999;`);})
+  @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
+  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config\ntm b`);})
+  //检查版本
+  @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+  @js ($remoteVer) = var v = (version);v.rboss
+  @js ($rVer) = [(remoteVer)][0]
+  [if] (localVer) != (rVer) && (remoteVer) != null
+    @js ($newT) = [(remoteVer)][1]
+    @js messageAppend("<ord>检测到新版本！</ord>",1,1);$('.content-message pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss update">♻️ 更新 => <hig>红boss报告</hig></span>`)))
+    @js $(".update").on("click", function(){ToRaid.perform(`//~silent\n@js unsafeWindow.TriggerCenter.remove("红boss报告")\n@await 350\n@js Server.importTrigger("(newT)")`);})
+  @js $('.content-message')[0].scrollTop = 99999;
