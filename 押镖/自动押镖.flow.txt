@@ -199,11 +199,17 @@ stopstate
                     @await 500
                 @liaoshang
                 @cd
-                [if] (dead) >= 3 && (EscortXuantie) == 是
-                    [if] (:kf_jian) != xuantiejianfa
-                        enable sword xuantiejianfa
-                    [if] (EscortWeaponID) != null
-                        @eq (EscortWeaponID)
+                [if] (EscortXuantie) == 是
+                    [if] (dead) == 3
+                        [if] (:kf_jian) != xuantiejianfa
+                            enable sword xuantiejianfa
+                        [if] (EscortWeaponID) != null
+                            @eq (EscortWeaponID)
+                            @await 4000
+                    [else if] (dead) > 3 && (:eq0) != (weapon)
+                        [if] (:kf_jian) != (jianfa)
+                            enable sword (jianfa)
+                        eq (weapon)
                         @await 4000
                 @until (:status xuruo) == false
                 [if] (jiuyang) != null && (EscortShenzhao) == 是
