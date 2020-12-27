@@ -1,8 +1,8 @@
 //~silent
 // 挂机自动练习
 // 四区白三三
-($localVer) = 2020121601
-($changeLog) = 新增手动填写技能的功能，按从上到下顺序练习；可自定义练习技能；可批量关闭触发并在练习结束后重新开启；原地防掉线功能。
+($localVer) = 2020122701
+($changeLog) = 可自定义练习结束后执行命令；新增手动填写技能的功能，按从上到下顺序练习；可自定义练习技能；可批量关闭触发并在练习结束后重新开启；原地防掉线功能。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.jqlx
@@ -41,6 +41,7 @@
 [(Chiyao) == null]($Chiyao) = 否
 [(Feiyi) == null]($Feiyi) = 否
 [(LXEnd) == null]($LXEnd) = 闭关或挖矿
+[LXAfter] == null]($LXAfter) = $zdwk
 [(LXtts) == null]($LXtts) = 关闭
 [(Type) == null]($Type) = 练至上限
 
@@ -52,8 +53,8 @@
 #select ($LXMap) = 练习地点,住房-练功房|帮会-练功房|原地不动,(LXMap)
 #select ($Chiyao) = 是否吃冰心丹,是|否,(Chiyao)
 #select ($Feiyi) = 是否补飞翼(请事先装备飞翼剑),是|否,(Feiyi)
-#select ($LXEnd) = 练习结束后操作,原地防掉线|闭关或挖矿|打坐,(LXEnd)
-//#input ($LXAfter) = 练习结束后执行命令(用英文;隔开，默认请填$zdwk),(LXAfter)
+#select ($LXEnd) = 练习结束后操作,原地防掉线|闭关或挖矿|打坐|自定义命令,(LXEnd)
+#input ($LXAfter) = 练习结束后执行命令(自定义命令模式，多个命令用英文;隔开，默认请填$zdwk),(LXAfter)
 #select ($LXtts) = 练习结束后语音提醒,打开|关闭,(LXtts)
 #config
 
@@ -311,4 +312,6 @@ stopstate
   $zdwk
 [else if] (LXEnd) == 打坐
   dazuo
+[else if] (LXEnd) == 自定义命令
+  (LXAfter)
 stopSSAuto->
