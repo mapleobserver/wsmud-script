@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.31
+// @version         2.4.32
 // @date            23/12/2018
-// @modified        27/12/2020
+// @modified        30/12/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4137,14 +4137,15 @@ look men;open men
                 all["@@@trigger"] = tConfig;
             }
             let value = JSON.stringify(all);
-            Server._sync("uploadConfig", {id: Role.id, value: value}, _ => {
-                alert("wsmud_Raid 配置上传成功，该角色配置会在服务器保存 24 小时。");
+            Server._sync("uploadConfig", {id: Role.id, value: value}, pass => {
+                GM_setClipboard(pass);
+                alert(`wsmud_Raid 配置上传成功，该浏览器所有角色配置会在服务器保存 24 小时。\n配置获取码：${pass}，已复制到系统剪切板。`);
             }, _ => {
                 alert("wsmud_Raid 配置上传失败！");
             });
         },
-        downloadConfig: function() {
-            Server._sync("downloadConfig", {id: Role.id}, data => {
+        downloadConfig: function(pass) {
+            Server._sync("downloadConfig", {pass: pass}, data => {
                 let config = JSON.parse(data);
                 for (const key in config) {
                     if (key == "@@@trigger") {
@@ -4944,7 +4945,18 @@ look men;open men
                 Server.uploadConfig();
             });
             $(".downloadConfig").on('click', _ => {
-                Server.downloadConfig();
+                layer.confirm('下载成功将会完全覆盖该浏览器所有角色配置！', {
+                    title: "<red>! 警告</red>",
+                    btn: ['那还是算了','好的继续'],
+                    shift: 2,
+                }, function(index){
+                    layer.close(index);
+                }, function(){
+                    layer.prompt({ title: '输入配置获取码', formType: 0, shift: 2 }, function(pass, index){
+                        layer.close(index);
+                        Server.downloadConfig(pass);
+                    });
+                });
             });
             $(".uploadFlows").on('click', _ => {
                 Server.uploadFlows();
