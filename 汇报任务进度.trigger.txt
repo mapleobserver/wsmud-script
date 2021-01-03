@@ -1,0 +1,83 @@
+// 帮派频道；发言人自己填或者留空；关键字：汇报任务|task
+// 白三三
+[if] (content)==汇报任务 || (content)==task
+  @toolbar jh
+  @toolbar tasks
+  @await 500
+  @js ($taskT) = $(".dialog-tasks").find(".task-desc").eq("0").text().replace(/\n/g,"")
+  @js ($test) = "(taskT)".match(/师门任务/)
+  [if] (test) == null
+    ($num) = 1
+  [else]
+    ($num) = 0
+  @js ($taskAll) = $(".dialog-tasks").find(".task-desc").eq("(num)").text().replace(/\n/g,"")
+  ($num) = (num) + 1
+  @js ($taskSM) = $(".dialog-tasks").find(".task-desc").eq("(num)").text()
+  ($num) = (num) + 1
+  @js ($taskZB) = $(".dialog-tasks").find(".task-desc").eq("(num)").text()
+  ($num) = (num) + 1
+  @js ($taskYB) = $(".dialog-tasks").find(".task-desc").eq("(num)").text()
+
+  //请安
+  @js ($sxqa) = "(taskAll)".match(/尚未首席请安/)
+  //副本
+  @js ($fbjd) = "(taskAll)".match(/，副本：(.*)\/20/)[1]
+  //武道塔
+  @js ($wdjd) = "(taskAll)".match(/武道塔(.*)，进度(\d+)\/(\d+)，/)
+  [if] (wdjd) != null
+    @js ($wdjd1) = "(taskAll)".match(/武道塔(.*)，进度(\d+)\/(\d+)，/)[1]
+    @js ($wdjd2) = "(taskAll)".match(/武道塔(.*)，进度(\d+)\/(\d+)，/)[2]
+    @js ($wdjd3) = "(taskAll)".match(/武道塔(.*)，进度(\d+)\/(\d+)，/)[3]
+    [if] (wdjd2) < (wdjd3)
+      ($wdjd) = (wdjd2)/(wdjd3)
+    [else if] (wdjd1) == 可以重置
+      ($wdjd) = (wdjd1)
+    [else]
+      ($wdjd) = null
+  //襄阳
+  @js ($xy) = "(taskAll)".match(/尚未协助襄阳守城/)
+  //门派BOSS
+  @js ($mpb) = "(taskAll)".match(/尚未挑战门派BOSS/)
+  //武神BOSS
+  @js ($wsboss) = var wb="(taskAll)".match(/挑战武神BOSS(\d+)次/);if (wb!=null){wb[1]}
+  [if] (wsboss) != null
+    ($wsboss) = 5 - (wsboss)
+  [else if] (:grade) == 武神 && (wsboss) == null
+    ($wsboss) = 5
+  //武道塔主
+  @js ($wdtz) = "(taskAll)".match(/尚未挑战武道塔塔主/)
+  //师门
+  @js ($smjd1) = "(taskSM)".match(/目前完成(.*)\/20个，共连续完成(.*)个/)[1]
+  @js ($smjd2) = "(taskSM)".match(/目前完成(.*)\/20个，共连续完成(.*)个/)[2]
+  //追捕
+  @js ($zbjd1) = "(taskZB)".match(/目前完成(.*)\/20个，共连续完成(.*)个/)[1]
+  @js ($zbjd2) = "(taskZB)".match(/目前完成(.*)\/20个，共连续完成(.*)个/)[2]
+  //押镖
+  @js ($ybjd1) = "(taskYB)".match(/本周完成(.*)\/20个，共连续完成(.*)个/)[1]
+  @js ($ybjd2) = "(taskYB)".match(/本周完成(.*)\/20个，共连续完成(.*)个/)[2]
+
+  ($info) = 进度：
+  [if] (sxqa) != null
+    ($info) = (info) 😐尚未请安
+  [if] (fbjd) < 20
+    ($info) = (info) 🍺副本 (fbjd)/20
+  [if] (smjd1) < 20
+    ($info) = (info) 🍗师门 (smjd1)/20
+  [if] (zbjd1) < 20
+    ($info) = (info) 🦁追捕 (zbjd1)/20
+  [if] (wdjd) != null
+    ($info) = (info) 🏯武道塔 (wdjd)
+  [if] (ybjd1) < 20
+    ($info) = (info) 🦆押镖 (ybjd1)/20
+  [if] (xy) != null
+    ($info) = (info) 🍟襄阳 0/1
+  [if] (mpb) != null
+    ($info) = (info) 🍎门派红 0/1
+  [if] (wdtz) != null
+    ($info) = (info) 🐷武道塔主 0/1
+  [if] (wsboss) < 5 && (wsboss) != null
+    ($info) = (info) 🥕武神BOSS (wsboss)/5
+  [if] (info) != 进度：
+    [if] (name) == (:name)
+      @await 5000
+    @js WG.SendCmd("pty (info)")
