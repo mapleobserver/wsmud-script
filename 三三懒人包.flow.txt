@@ -1,8 +1,8 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2020122202
-($changeLog) = 合并续药飞翼徽章触发，可改参数设置无鼓舞时停止练习。
+($localVer) = 2021011001
+($changeLog) = 更新武神红BOSS辅助触发
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.lrb
@@ -126,15 +126,15 @@
 
 //触发
 [if] (triggerRedBoss)==导入
-  @print 导入 <hic>红boss报告</hic> 触发
+  @print 导入 <ord>红boss报告</ord> 触发
   @js unsafeWindow.TriggerCenter.remove("红boss报告")
   @await 350
-  @js Server.importTrigger("三三来迟·红boss报告·触发@685a092fb6b9ccb1867e465a71bbc3ea")
+  @js Server.importTrigger("白三三·红boss报告·触发@56d4092329810fbf1cfebad6b11f7ed2")
 [if] (triggerFoodFy)==导入
   @print 导入 <hic>续药飞翼</hic> 触发
   @js unsafeWindow.TriggerCenter.remove("续药飞翼")
   @await 350
-  @js Server.importTrigger("白三三·续药飞翼·触发@4de9e844c1d56c5dd72b1abd1871be9e")
+  @js Server.importTrigger("白三三·续药飞翼·触发@1fde50ccc43a8e2ef5f5adcdd9331c42")
   @print <hiy>【徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。【鼓舞】可改参数设置无鼓舞时停止练习</hiy>
   tm 【徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。【鼓舞】可改参数设置无鼓舞时停止练习
 [if] (triggerXWZZ)==导入

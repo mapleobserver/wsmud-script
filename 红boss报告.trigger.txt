@@ -2,7 +2,8 @@
 // 查询Boss
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
-($localVer) = 2020122201
+// 2021011001：单人黑木崖改为普通模式
+($localVer) = 2021011001
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 
@@ -74,7 +75,7 @@
   [if] (i_time) == null
     ($BossInfo)=(:date)|(:hour):(:minute):(:second)|(bossName)|(bossPlace)
   @js messageAppend("<ord>(BossInfo)\n(remain)</ord>");
-  ($fbdata) = "树林":"cr yz/lw/shangu 0","财主家":"cr yz/cuifu/caizhu 1","丽春院":"cr yz/lcy/dating 0","流氓巷":"cr yz/lmw/xiangzi1 0","兵营":"cr yz/by/damen 0","庄府":"cr bj/zhuang/xiaolu 0","鳌拜府":"cr bj/ao/damen 0","天地会":"cr bj/tdh/hct 0","神龙教":"cr bj/shenlong/haitan 0","关外":"cr bj/guanwai/damen 0","温府":"cr cd/wen/damen 0","五毒教":"cr cd/wudu/damen 0","恒山":"cr wuyue/hengshan/daziling 0","青城山":"cr wuyue/qingcheng/shanlu 0","衡山":"cr wuyue/henshan/hengyang 0","泰山":"cr wuyue/taishan/daizong 0","嵩山":"cr wuyue/songshan/taishi 0","云梦沼泽":"cr cd/yunmeng/senlin 0","桃花岛":"cr taohua/haitan 1","白驼山":"cr baituo/damen 0","星宿海":"cr xingxiu/xxh6 0","冰火岛":"cr mj/bhd/haibian 1","移花宫":"cr huashan/yihua/shandao 1","燕子坞":"cr murong/anbian 1","黑木崖":"cr heimuya/shangu 1","缥缈峰":"cr lingjiu/shanjiao 1","光明顶":"cr mj/shanmen 0","天龙寺":"cr tianlong/damen 1","血刀门":"cr xuedao/shankou 0","古墓派":"cr gumu/gumukou 1","华山论剑":"cr huashan/lunjian/leitaixia 0"
+  ($fbdata) = "树林":"cr yz/lw/shangu 0","财主家":"cr yz/cuifu/caizhu 1","丽春院":"cr yz/lcy/dating 0","流氓巷":"cr yz/lmw/xiangzi1 0","兵营":"cr yz/by/damen 0","庄府":"cr bj/zhuang/xiaolu 0","鳌拜府":"cr bj/ao/damen 0","天地会":"cr bj/tdh/hct 0","神龙教":"cr bj/shenlong/haitan 0","关外":"cr bj/guanwai/damen 0","温府":"cr cd/wen/damen 0","五毒教":"cr cd/wudu/damen 0","恒山":"cr wuyue/hengshan/daziling 0","青城山":"cr wuyue/qingcheng/shanlu 0","衡山":"cr wuyue/henshan/hengyang 0","泰山":"cr wuyue/taishan/daizong 0","嵩山":"cr wuyue/songshan/taishi 0","云梦沼泽":"cr cd/yunmeng/senlin 0","桃花岛":"cr taohua/haitan 1","白驼山":"cr baituo/damen 0","星宿海":"cr xingxiu/xxh6 0","冰火岛":"cr mj/bhd/haibian 1","移花宫":"cr huashan/yihua/shandao 1","燕子坞":"cr murong/anbian 1","黑木崖":"cr heimuya/shangu 0","缥缈峰":"cr lingjiu/shanjiao 1","光明顶":"cr mj/shanmen 0","天龙寺":"cr tianlong/damen 1","血刀门":"cr xuedao/shankou 0","古墓派":"cr gumu/gumukou 1","华山论剑":"cr huashan/lunjian/leitaixia 0"
   @js ($fbcr) = var fb={(fbdata)};fb.(bossPlace)
 // 生成快捷按钮
 [if] (fbcr) != null
@@ -107,7 +108,7 @@
 [if] (mycall) == true || (channel) == 谣言
   @js $(".redboss").off("click")
   @js $(".boss-single").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr) 0\n($BossInfo)=notime\n@js messageAppend("🥕 进入单人副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1);$('.content-message')[0].scrollTop = 99999;`);})
-  @js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n[if](:room 副本区域)==true\n  ($BossInfo)=notime\n  @js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1)\n[else]\n  @js messageAppend("⚠️ 请先组队再进入！",1,1);$('.content-message')[0].scrollTop = 99999;`);})
+  @js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n($BossInfo)=notime\n@js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1);$('.content-message')[0].scrollTop = 99999;`);})
   @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,1);$('.content-message')[0].scrollTop = 99999;`);})
   @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
   @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config\ntm b`);})
