@@ -1,8 +1,8 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021011001
-($changeLog) = 更新武神红BOSS辅助触发
+($localVer) = 2021011101
+($changeLog) = 更新武神红BOSS辅助触发；更新部分失效触发
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.lrb
@@ -152,9 +152,9 @@
   @print 导入 <hic>襄阳叫杀</hic> 触发
   @js unsafeWindow.TriggerCenter.remove("襄阳叫杀")
   @await 350
-  @js Server.importTrigger("白三三·触发@0b2616c7c2d44a84a0c77e02789451af")
+  @js Server.importTrigger("白三三·襄阳叫杀·触发@1989d41b8ac4524944df173752f62ea7")
 [if] (triggerXYMJG)==导入
   @print 导入 <hic>襄阳满军功</hic> 触发
   @js unsafeWindow.TriggerCenter.remove("襄阳满")
   @await 350
-  @js Server.importTrigger("白三三·触发@68476d5f2bf4abe1f26d508502cf4137")
+  @js Server.importTrigger("白三三·襄阳满·触发@2c8369028e3413d2ba5e2ff6ed1d810f")
