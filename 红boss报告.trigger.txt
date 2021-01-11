@@ -2,8 +2,8 @@
 // 查询Boss
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
-// 2021011001：单人黑木崖改为普通模式
-($localVer) = 2021011001
+// 2021011101：单人黑木崖改为普通模式；优化信息显示
+($localVer) = 2021011101
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 
@@ -109,7 +109,7 @@
   @js $(".redboss").off("click")
   @js $(".boss-single").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr) 0\n($BossInfo)=notime\n@js messageAppend("🥕 进入单人副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1);$('.content-message')[0].scrollTop = 99999;`);})
   @js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n($BossInfo)=notime\n@js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,1);$('.content-message')[0].scrollTop = 99999;`);})
-  @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,1);$('.content-message')[0].scrollTop = 99999;`);})
+  @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,1);$('.content-message')[0].scrollTop = 99999;messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1)`);})
   @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
   @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#config\ntm b`);})
   //检查版本
