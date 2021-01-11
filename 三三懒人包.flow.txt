@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021011102
+($localVer) = 2021011103
 ($changeLog) = 更新武神红BOSS辅助触发；更新部分失效触发
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -127,9 +127,11 @@
 //触发
 [if] (triggerRedBoss)==导入
   @print 导入 <ord>红boss报告</ord> 触发
+  @js ($remoteVer) = var v = (version);v.rboss
+  @js ($rboss) = [(remoteVer)][1]
   @js unsafeWindow.TriggerCenter.remove("红boss报告")
   @await 350
-  @js Server.importTrigger("白三三·红boss报告·触发@552b4993cef121e7e1c666073be676eb")
+  @js Server.importTrigger("(rboss)")
 [if] (triggerFoodFy)==导入
   @print 导入 <hic>续药飞翼</hic> 触发
   @js unsafeWindow.TriggerCenter.remove("续药飞翼")
