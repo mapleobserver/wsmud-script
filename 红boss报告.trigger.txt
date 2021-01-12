@@ -11,7 +11,7 @@
 [if] (BossPost) == 游戏信息区
   ($comClass) = content-message
   ($magPost) = 1
-[else if] (BossPost) == 插件信息区
+[else] (BossPost) == 插件信息区
   ($comClass) = WG_log
   ($magPost) = 0
 
