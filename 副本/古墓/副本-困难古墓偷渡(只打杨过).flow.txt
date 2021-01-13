@@ -23,7 +23,7 @@ stopstate
     go enter;go east
     enable force none;enable force jiuyinshengong
     @cd
-    @until (:status unarmed) == false && (:status xuantie) == false
+    @until (:status unarmed) == false && (:status xuantie) == false && (:status xuruo) == false
     // 叫杀小龙女让杨过挡刀
     kill {r小龙女}?
     @until {r杨过的尸体}? != null && {r小龙女的尸体}? != null
@@ -35,7 +35,7 @@ stopstate
     @cleanBag
 [else if] (_DungeonBagCleanWay) == 存仓及售卖
     @tidyBag
-$to 住房-练功房;dazuo
+$zdwk
 @off 困难古墓翻车
 recordGains->
 stopSSAuto->
