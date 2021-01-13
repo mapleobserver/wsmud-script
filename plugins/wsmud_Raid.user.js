@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.32
+// @version         2.4.33
 // @date            23/12/2018
-// @modified        30/12/2020
+// @modified        13/1/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -2347,6 +2347,58 @@
         _tips: [],
         _maxCapacity: 100,
     };
+    class MsgTip {
+        constructor(content,ch,name,uid) {
+            this.timestamp = new Date().getTime();
+            this.content = content;
+            this.ch = ch;
+            this.name = name;
+            this.uid = uid;
+        }
+    }
+
+    var MsgTips = {
+        init: function () {
+            this._monitorSystemTips();
+        },
+        search: function (regex, from) {
+            var patt = new RegExp(regex);
+            var tips = this._tips.slice();
+            for (let index = tips.length - 1; index >= 0; index--) {
+                const tip = tips[index];
+                if (tip.timestamp < from) break;
+                var result = patt.exec(tip.content);
+                if (result) return result;
+            }
+            return null;
+        },
+        clean: function (to) {
+            while (true) {
+                if (this._tips.length <= 0) break;
+                var tip = this._tips[0];
+                if (tip.timestamp > to) break;
+                this._tips.shift();
+            }
+        },
+        rejectTimestamp: null,
+
+        _monitorSystemTips: function () {
+            var theSelf = this;
+            WG.add_hook("msg", function (data) {
+                console.log(data)
+                var tip = new MsgTip(data.content,data.ch,data.name,data.uid);
+                theSelf._push(tip);
+            });
+        },
+        _push: function (tip) {
+            if (this._tips.length >= this._maxCapacity) {
+                this._tips.shift();
+            }
+            this._tips.push(tip);
+        },
+        _tips: [],
+        _maxCapacity: 100,
+    };
 
     var DialogList = {
         init: function() {
@@ -2887,6 +2939,13 @@
     (function() {
         const executor = new UntilSearchedAtCmdExecutor("tip", (regex, from) => {
             return SystemTips.search(regex, from);
+        });
+        CmdExecuteCenter.addExecutor(executor);
+    })();
+
+    (function () {
+        const executor = new UntilSearchedAtCmdExecutor("msgtip", (regex, from) => {
+            return MsgTips.search(regex, from);
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
@@ -5972,6 +6031,7 @@ tm (last)宿，最后一个方位是【(dir_l)】60秒倒计时已开始，请�
         Role.init();
         Room.init();
         SystemTips.init();
+        MsgTips.init();
         DialogList.init();
         TaskList.init();
         Xiangyang.init();
