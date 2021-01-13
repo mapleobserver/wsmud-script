@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            wsmud_Trigger
 // @namespace       cqv3
-// @version         0.0.40
+// @version         0.0.41
 // @date            03/03/2019
 // @modified        13/01/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
@@ -364,6 +364,10 @@
         _loadTrigger: function(name) {
             const data = this._getData(name);
             if (data == null) return;
+            // patch new trigger
+            if (data['event'] === '新聊天信息' &&  data['conditions']['忽略发言人']===undefined){
+                data['conditions']['忽略发言人']=''
+            }
             const trigger = this._toTrigger(data);
             this._triggers[name] = trigger;
             if (data.active) {
