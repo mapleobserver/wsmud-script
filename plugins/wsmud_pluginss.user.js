@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.139
+// @version      0.0.32.148
 // @date         01/07/2018
-// @modified     10/11/2020
+// @modified     15/01/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -537,18 +537,6 @@
         "hig引气丹": {
             "id": null,
             "type": "hig",
-            "sales": "药铺老板 平一指",
-            "place": "扬州城-药铺"
-        },
-        "hic金创药": {
-            "id": null,
-            "type": "hic",
-            "sales": "药铺老板 平一指",
-            "place": "扬州城-药铺"
-        },
-        "hic引气丹": {
-            "id": null,
-            "type": "hic",
             "sales": "药铺老板 平一指",
             "place": "扬州城-药铺"
         },
@@ -1608,6 +1596,11 @@
                 }
             }, 1000);
         },
+        clean_id_all:function(){
+            GM_setValue("goods", goods);
+            pgoods = goods
+            alert("清空完毕,请刷新一下页面")
+        },
         update_store_hook: undefined,
         update_store: async function () {
             WG.update_store_hook = WG.add_hook(['dialog', 'text'], (data) => {
@@ -2098,7 +2091,7 @@
                             WG.smbuyNum = WG.smbuyNum + 1;
                         }
                     }
-                    setTimeout(WG.sm, 500);
+                    setTimeout(WG.sm, 1000);
                     break;
                 case 4:
                     var mysm_loser = GM_getValue(role + "_sm_loser", sm_loser);
@@ -2152,20 +2145,35 @@
             WG.Send("buy 1 " + good.id + " from " + tmp);
             return true;
         },
+        qu_hook:undefined,
         qu: function (good, callback) {
-            setTimeout(() => {
-                let storestatus = false;
-                $(".obj-item").each(function () {
-                    if ($(this).html().toLowerCase().indexOf(good) != -1) {
-                        storestatus = true;
-                        var id = $(this).attr("obj")
-                        WG.Send("qu 1 " + id);
-                        return;
-                    }
-                })
-                callback(storestatus);
-            }, 1500);
 
+                let storestatus = false;
+                // $(".obj-item").each(function () {
+                //     if ($(this).html().toLowerCase().indexOf(good) != -1) {
+                //         storestatus = true;
+                //         var id = $(this).attr("obj")
+                //         WG.Send("qu 1 " + id);
+                //         return;
+                //     }
+                // })
+                WG.qu_hook = WG.add_hook("dialog",async function(data){
+                    if (data.dialog != undefined & data.stores!=undefined){
+                        for (let item of data.stores){
+                            if (item.name.toLocaleLowerCase().indexOf(good)!=-1){
+                                storestatus = true;
+                                var id = item.id;
+                                WG.Send("qu 1 " + id);
+                                break;
+                            }
+                        }
+                        callback(storestatus);
+                        WG.remove_hook(WG.qu_hook)
+                        WG.qu_hook = undefined;
+                    }
+                });
+
+               WG.SendCmd('store')
         },
         Give: function (items) {
             var tmp = npcs["店小二"];
@@ -2965,9 +2973,10 @@
                         } else {
                             messageAppend("请先安装Raid.js");
                         }
-                    }, onelddh: function () {
+                    },
+                    onelddh: function () {
                         let mlh = `//
-                        ($f_ss)={"name":"来点动画","source":"http://qjio0y33d.hb-bkt.clouddn.com/gif.txt","finder":"根文件夹"}
+                        ($f_ss)={"name":"来点动画","source":"http://ii74.oss-cn-qingdao.aliyuncs.com/gif.txt","finder":"根文件夹"}
                         @js var time=Date.parse(new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
                         @awiat 2000
                         tm 来点动画已导入`;
@@ -3004,6 +3013,11 @@
                     },
                     zdybtnset: function () {
                         WG.zdy_btnset();
+                    },
+                    cleankksboss:function(){
+                        GM_setValue(role +"_autoKsBoss",null);
+                        GM_setValue(role +"_automarry",null);
+                        L.msg("操作成功");
                     }
                 }
             })
@@ -3519,13 +3533,9 @@
                 skilllist = GM_getValue(role + "_skilllist", skilllist);
                 var p_cmds = "";
                 //  console.log(G.enable_skills)
-                let mySkills = "";
+                let mySkills = [];
                 let myEqs = "";
-                for (let ski of G.enable_skills) {
-                    if (ski) {
-                        mySkills = mySkills + ski.name;
-                    }
-                }
+
                 for (let ski of G.eqs) {
                     if (ski) {
                         myEqs = myEqs + ski.id;
@@ -3543,12 +3553,15 @@
                 }
                 if (enaskill === 1) {
                     for (var key in skilllist[type]) {
-                        //console.log(skilllist[type][key])
-                        if (mySkills.indexOf(skilllist[type][key]) < 0) {
-                            p_cmds += (`$wait 40;enable ${key} ${skilllist[type][key]};`);
+                        for (let ski of G.enable_skills) {
+                            if (ski.name != skilllist[type][key] && ski.type == key) {
+                                p_cmds += (`$wait 40;enable ${key} ${skilllist[type][key]};`);
+                                break
+                            }
                         }
                     }
                 }
+
                 p_cmds = p_cmds + '$wait 40;look3 1';
 
                 WG.eqx = WG.add_hook('text', function (data) {
@@ -4748,6 +4761,7 @@
             $('.load_btn').off('click')
             $(".update_store").off('click')
             $(".update_id_all").off('click')
+            $(".clean_id_all").off('click')
             $('#autobuy').off('change')
             $('#loginhml').off('change')
             $('#backimageurl').off('change')
@@ -5023,6 +5037,7 @@
                 GM_setValue(role + "_auto_buylist", auto_buylist);
             });
             $(".update_id_all").on("click", WG.update_id_all);
+            $(".clean_id_all").on("click", WG.clean_id_all);
             $(".update_store").on("click", WG.update_store);
             $('.backup_btn').on('click', WG.make_config);
             $('.load_btn').on('click', WG.load_config);
@@ -6231,7 +6246,8 @@
                 + `
 
                 <div class="setting-item" >
-                <div class="item-commands"><span class="update_id_all">初始化ID</span></div>
+                <div class="item-commands"><span class="update_id_all">初始化ID</span>
+                                            <span class="clean_id_all">清空商品ID配置</span></div>
                         </div>
                 <div class="setting-item" >
                 <div class="item-commands"><span class="update_store">更新存仓数据(覆盖)</span><span class="clean_dps">重置伤害统计</span></div>
@@ -6362,6 +6378,7 @@
                 <span @click='sortbag'>排序背包</span>
                 <span @click='dsrw'>定时任务</span>
                 <span @click='cleandps'>清空伤害</span>
+                <span @click='cleankksboss'>不再提示婚宴及boss传送信息</span>
             </div></div>`,
         lxjsui: `
                        <div style="width:50%;float:left" class='StudyTimeCalc'>
@@ -6445,9 +6462,9 @@
         toui: [
             `<div class='item-commands'><span cmd = "$to 扬州城-衙门正厅" > 衙门 </span>
             <span cmd = "$to 扬州城-当铺" > 当铺 </span>
-            <span cmd = "$to 扬州城-醉仙楼" > 醉仙楼 </span>
-            <span cmd = "$to 扬州城-杂货铺" > 杂货铺 </span>
-            <span cmd = "$to 扬州城-打铁铺" > 打铁铺 </span>
+            <span cmd = "$to 扬州城-醉仙楼" > 醉仙 </span>
+            <span cmd = "$to 扬州城-杂货铺" > 杂货 </span>
+            <span cmd = "$to 扬州城-打铁铺" > 打铁 </span>
             <span cmd = "$to 扬州城-钱庄" > 钱庄 </span>
             <span cmd = "$to 扬州城-药铺" > 药铺 </span>
             <span cmd = "$to 扬州城-扬州武馆" > 武馆 </span>
@@ -6502,7 +6519,7 @@
                 ui += `未安装Raid.js插件`;
             }
             if (ui == `<div class='item-commands'>`) {
-                return `<div>暂无自动副本脚本,欢迎共享。</div>`
+                return `<div>暂无自动副本脚本,欢迎共享。可以到三三仓库寻找更多脚本。</div>`
             } else {
                 return ui + `</div>`;
             }
@@ -6592,20 +6609,11 @@
                         }
                     }
                     if (data.enable != undefined) {
-                        if (data.enable) {
-                            for (let item of G.enable_skills) {
-                                if (item.type == data.id) {
-                                    item.name = ""
-                                }
-                            }
-                        } else {
-                            for (let item of G.enable_skills) {
-                                if (item.type == data.id) {
-                                    item.name = data.enable
-                                }
+                        for (let item of G.enable_skills) {
+                            if (item.type == data.id) {
+                                item.name = data.enable
                             }
                         }
-
                     }
                 }
 
@@ -7086,7 +7094,6 @@
                     }
 
                     if (dpssakada == '开') {
-
                         if (/.*造成<.*>.*<\/.*>点.*/.test(data.msg)) {
                             let pdata = data.msg;
                             let a = pdata.split(/.*造成<wht>|.*造成<hir>|<\/wht>点|<\/hir>点/);
@@ -7099,12 +7106,10 @@
                                 } else {
                                     // pfmdps = pfmdps + parseInt(a[1]);
                                     lastpfm = parseInt(a[1]);
-
                                 }
                                 dpslock = 1;
                                // messageAppend(`你造成了${addChineseUnit(pfmdps)}伤害,共计${pfmnum}次。`, 1, 1);
                             }
-
                         }
                         let dd = data.msg.split(/看起来充满活力，一点也不累。|似乎有些疲惫，但是仍然十分有活力。|看起来可能有些累了。|动作似乎开始有点不太灵光，但是仍然有条不紊。|已经一副头重脚轻的模样，正在勉力支撑著不倒下去。|看起来已经力不从心了。|已经陷入半昏迷状态，随时都可能摔倒晕去。|似乎十分疲惫，看来需要好好休息了。|气喘嘘嘘，看起来状况并不太好。|摇头晃脑、歪歪斜斜地站都站不稳，眼看就要倒在地上。/);
                         //console.log(dd);
