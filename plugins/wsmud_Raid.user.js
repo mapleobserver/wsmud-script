@@ -1710,6 +1710,7 @@
         items: {}, // {id: object}
         stores: {}, // {id: object}
         _weaponType: '',
+        skills:{},
         kongfu: {
             quan: null,
             nei: null,
@@ -2135,7 +2136,8 @@
                 if (data.items != null) {
                     for (const item of data.items) {
                         var value = item.enable_skill ? item.enable_skill : null;
-                        var s_name = ""
+                        var s_name = "";
+                        Role.skills = data.items;
                         for (const sklii_item of data.items) {
                             if (sklii_item.id == value) {
                                 s_name = /<([^<>]*)>/.exec(sklii_item.name)[1]
@@ -2147,7 +2149,13 @@
                 if (data.id != null && data.enable != null) {
                     var value = data.enable;
                     if (value == false) value = "none";
-                    action(data.id, value);
+                    s_name = ""
+                    for (const sklii_item of Role.skills) {
+                        if (sklii_item.id == value) {
+                            s_name = /<([^<>]*)>/.exec(sklii_item.name)[1]
+                        }
+                    }
+                    action(data.id, value, s_name);
                 }
             });
         },
