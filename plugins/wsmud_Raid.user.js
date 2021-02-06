@@ -3,7 +3,7 @@
 // @namespace       cqv
 // @version         2.4.33
 // @date            23/12/2018
-// @modified        13/1/2021
+// @modified        06/02/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -32,11 +32,11 @@
     //---------------------------------------------------------------------------
 
     var Message = {
-        append: function(msg) {
+        append: function (msg) {
             console.log(msg);
         },
-        clean: function() { },
-        cmdLog: function(title, cmd) {
+        clean: function () { },
+        cmdLog: function (title, cmd) {
             let msg = `&nbsp;&nbsp;<hic>${title}</hic>`
             if (cmd != null) {
                 msg += `: ${cmd}`;
@@ -54,7 +54,7 @@
      * @param {*} value
      * @param {Function} assert function(previous, current)
      */
-    const SortInsert = function(list, value, assert) {
+    const SortInsert = function (list, value, assert) {
         let index = list.length;
         while (index >= 0) {
             if (index == 0) {
@@ -75,7 +75,7 @@
     //---------------------------------------------------------------------------
 
     const SourceCodeHelper = {
-        split: function(source) {
+        split: function (source) {
             var cmds = source.split(/\s*\n+/g);
             var first = cmds[0];
             if (first != null && /\S/.test(first) == false) {
@@ -87,7 +87,7 @@
             }
             return cmds;
         },
-        appendHeader: function(header, text) {
+        appendHeader: function (header, text) {
             let result = `\n${text}`;
             result = result.replace(/(\n)/g, `$1${header}`);
             result = result.replace(/\n\s*\n/g, "\n");
@@ -140,7 +140,7 @@
 
     class PrecompileRuleCenter extends PrecompileRule {
         constructor() {
-            const handle = function(cmds) {
+            const handle = function (cmds) {
                 var result = cmds;
                 for (const rule of this._rules) {
                     result = rule.handle(result);
@@ -152,7 +152,7 @@
             this.instance = this;
         }
         static shared() {
-            if(!this.instance) {
+            if (!this.instance) {
                 this.instance = new PrecompileRuleCenter();
             }
             return this.instance;
@@ -234,66 +234,66 @@
 
             var result = [];
             var r = this._handleCondition(cmds[0]);
-            var callback = function() {};
+            var callback = function () { };
             var self = this;
             switch (r.type) {
                 case ControlKeys.while:
-                this._breakStacks.push([]);
-                result.push(r.cmd);
-                result.push(null);
-                callback = function() {
-                    result.push(`%${self._pc}=${start}`);
-                    var truePC = start + 2;
-                    var falsePC = result.length + start;
-                    result[1] = `%${self._pc}=${self._cc}?${truePC}:${falsePC}`;
-                    var breakStack = self._breakStacks.pop();
-                    breakStack.forEach(index => {
-                        result[index-start] = `%${self._pc}=${falsePC}`;
-                    });
-                };
-                realLoopStart = start;
-                break;
+                    this._breakStacks.push([]);
+                    result.push(r.cmd);
+                    result.push(null);
+                    callback = function () {
+                        result.push(`%${self._pc}=${start}`);
+                        var truePC = start + 2;
+                        var falsePC = result.length + start;
+                        result[1] = `%${self._pc}=${self._cc}?${truePC}:${falsePC}`;
+                        var breakStack = self._breakStacks.pop();
+                        breakStack.forEach(index => {
+                            result[index - start] = `%${self._pc}=${falsePC}`;
+                        });
+                    };
+                    realLoopStart = start;
+                    break;
                 case ControlKeys.if:
-                result.push(r.cmd);
-                result.push(null);
-                callback = function() {
-                    result.push("%pass");
-                    var truePC = start + 2;
-                    var falsePC = result.length + start;
-                    result[1] = `%${self._pc}=${self._cc}?${truePC}:${falsePC}`;
-                };
-                break;
+                    result.push(r.cmd);
+                    result.push(null);
+                    callback = function () {
+                        result.push("%pass");
+                        var truePC = start + 2;
+                        var falsePC = result.length + start;
+                        result[1] = `%${self._pc}=${self._cc}?${truePC}:${falsePC}`;
+                    };
+                    break;
                 case ControlKeys.elseif:
-                result.push(r.cmd);
-                result.push(null);
-                callback = function() {
-                    result.push("%pass");
-                    var truePC = start + 2;
-                    var falsePC = result.length + start;
-                    result[1] = `%${self._pc}=${self._cc}?${truePC}:${falsePC}`;
-                };
-                break;
+                    result.push(r.cmd);
+                    result.push(null);
+                    callback = function () {
+                        result.push("%pass");
+                        var truePC = start + 2;
+                        var falsePC = result.length + start;
+                        result[1] = `%${self._pc}=${self._cc}?${truePC}:${falsePC}`;
+                    };
+                    break;
                 case ControlKeys.else:
-                result.push(null);
-                callback = function() {
-                    var truePC = start + 1;
-                    var falsePC = result.length + start;
-                    result[0] = `%${self._pc}=${self._cc}?${falsePC}:${truePC}`;
-                };
-                break;
+                    result.push(null);
+                    callback = function () {
+                        var truePC = start + 1;
+                        var falsePC = result.length + start;
+                        result[0] = `%${self._pc}=${self._cc}?${falsePC}:${truePC}`;
+                    };
+                    break;
                 case ControlKeys.continue:
-                result.push(`%${self._pc}=${loopStart}`);
-                return {type: "continue", cmds: result};
+                    result.push(`%${self._pc}=${loopStart}`);
+                    return { type: "continue", cmds: result };
                 case ControlKeys.break:
-                result.push(null);
-                var breakStack = this._breakStacks[this._breakStacks.length - 1];
-                breakStack.push(start);
-                return {type: "break", cmds: result};
+                    result.push(null);
+                    var breakStack = this._breakStacks[this._breakStacks.length - 1];
+                    breakStack.push(start);
+                    return { type: "break", cmds: result };
                 case ControlKeys.exit:
-                result.push("%exit");
-                return {type: "exit", cmds: result};
+                    result.push("%exit");
+                    return { type: "exit", cmds: result };
                 default:
-                throw "未知的控制关键字: " + r.type;
+                    throw "未知的控制关键字: " + r.type;
             }
 
             var cmdsLength = cmds.length;
@@ -330,19 +330,19 @@
             }
 
             callback();
-            return {type: r.type, cmds: result};
+            return { type: r.type, cmds: result };
         }
         _handleCondition(condition) {
             var type = null;
             var cmd = null;
             var formats = [
-                {type: ControlKeys.while, regexp: /^\s*\[while\]/g},
-                {type: ControlKeys.if, regexp: /^\s*\[if\]/g},
-                {type: ControlKeys.elseif, regexp: /^\s*\[else\s?if\]/g},
-                {type: ControlKeys.else, regexp: /^\s*\[else\]/g},
-                {type: ControlKeys.continue, regexp: /^\s*\[continue\]/g},
-                {type: ControlKeys.break, regexp: /^\s*\[break\]/g},
-                {type: ControlKeys.exit, regexp: /^\s*\[exit\]/g},
+                { type: ControlKeys.while, regexp: /^\s*\[while\]/g },
+                { type: ControlKeys.if, regexp: /^\s*\[if\]/g },
+                { type: ControlKeys.elseif, regexp: /^\s*\[else\s?if\]/g },
+                { type: ControlKeys.else, regexp: /^\s*\[else\]/g },
+                { type: ControlKeys.continue, regexp: /^\s*\[continue\]/g },
+                { type: ControlKeys.break, regexp: /^\s*\[break\]/g },
+                { type: ControlKeys.exit, regexp: /^\s*\[exit\]/g },
             ];
             for (const format of formats) {
                 var r = format.regexp.exec(condition);
@@ -356,7 +356,7 @@
             if (type == null) {
                 throw "编译失败: " + condition;
             }
-            return {type: type, cmd: cmd};
+            return { type: type, cmd: cmd };
         }
     }
 
@@ -383,7 +383,7 @@
     //---------------------------------------------------------------------------
 
     (function () {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             for (const cmd of cmds) {
                 if (/^\s*\/\//.test(cmd)) continue;
@@ -396,7 +396,7 @@
     })();
 
     (function () {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             var ignore = false;
             for (const cmd of cmds) {
@@ -423,7 +423,7 @@
     //---------------------------------------------------------------------------
 
     (function () {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             let result = [];
             let collecting = false;
             let subflowCmd = null;
@@ -458,7 +458,7 @@
     //---------------------------------------------------------------------------
 
     (function () {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             // {headerLength: Number, cmds: [String]}
             var guards = [];
@@ -521,8 +521,8 @@
 
     // TODO: 尚不支持嵌套调用
     // @call 函数名 参数1,参数2,参数3,...
-    (function() {
-        const handle = function(cmds) {
+    (function () {
+        const handle = function (cmds) {
             let result = [];
             cmds.forEach(cmd => {
                 var r = /^(\s*)@call\s(\S+)(\s*(\S.*)+\s*|\s*)$/.exec(cmd);
@@ -566,7 +566,7 @@
     //---------------------------------------------------------------------------
 
     (function () {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             for (const cmd of cmds) {
                 if (!/\S+/.test(cmd)) continue;
@@ -583,7 +583,7 @@
     //---------------------------------------------------------------------------
 
     (function addCompatibleGuardRule() {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             cmds.forEach(cmd => {
                 var r = /^\s*#(\[.*)$/.exec(cmd);
@@ -611,7 +611,7 @@
     }
 
     (function addCompatibleUntilRule() {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             cmds.forEach(cmd => {
                 var r = /^(\s*)\[=(.+?)\](.*)$/.exec(cmd);
@@ -636,7 +636,7 @@
     })();
 
     (function addCompatibleIfRule() {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             cmds.forEach(cmd => {
                 var r = /^(\s*)\[(.*?[=<>].*?|true|false)\](.*)$/i.exec(cmd);
@@ -660,7 +660,7 @@
     })();
 
     (function addCompatibleNextRule() {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             cmds.forEach(cmd => {
                 var r = /^(\s*)@next(.*)$/i.exec(cmd);
@@ -678,7 +678,7 @@
     })();
 
     (function addCompatibleExitRule() {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             cmds.forEach(cmd => {
                 var r = /^(\s*)@exit(.*)$/i.exec(cmd);
@@ -707,7 +707,7 @@
         /**
          * @param {Function} handler function(leftMark)->{handle: Bool, value: string}
          */
-        addHandler: function(handler) {
+        addHandler: function (handler) {
             this._leftMarkHandlers.push(handler);
         },
         getValue(leftMark) {
@@ -729,7 +729,7 @@
          */
         constructor(assert1) {
             var theSelf = this;
-            this.assert = function() {
+            this.assert = function () {
                 return assert1(theSelf.text);
             };
         }
@@ -756,14 +756,14 @@
         /**
          * @param {AssertHolder} holder
          */
-        addAssertHolder: function(holder) {
+        addAssertHolder: function (holder) {
             this._assertHolders.push(holder);
         },
         /**
          * @param {string} expression
          * @returns {Function} assert: function()
          */
-        get: function(expression) {
+        get: function (expression) {
             var exp = expression.replace(/^\s*|\s*$/g, "");
             var theSelf = this;
             var relationIndex = exp.search(/&&|\|\|/g);
@@ -771,7 +771,7 @@
                 var relation = exp.substring(relationIndex, relationIndex + 2);
                 var left = exp.substring(0, relationIndex);
                 var right = exp.substring(relationIndex + 2);
-                var assert = function() {
+                var assert = function () {
                     var leftAssert = theSelf.get(left);
                     var rightAssert = theSelf.get(right);
                     switch (relation) {
@@ -785,7 +785,7 @@
             }
             var not = exp[0];
             if (not == "!") {
-                var assert = function() {
+                var assert = function () {
                     return !theSelf.get(exp.substring(1))();
                 }
                 return assert;
@@ -804,33 +804,33 @@
     };
 
     (function addTureAssertHolder() {
-        var match = function(text) {
+        var match = function (text) {
             return text == "true";
         };
-        var assert = function(text) {
+        var assert = function (text) {
             return true;
         };
-        var holder = new AssertHolder(match, function() { return new AssertWrapper(assert); });
+        var holder = new AssertHolder(match, function () { return new AssertWrapper(assert); });
         AssertHolderCenter.addAssertHolder(holder);
     })();
 
     (function addFalseAssertHolder() {
-        var match = function(text) {
+        var match = function (text) {
             return text == "false";
         };
-        var assert = function(text) {
+        var assert = function (text) {
             return false;
         };
-        var holder = new AssertHolder(match, function() { return new AssertWrapper(assert); });
+        var holder = new AssertHolder(match, function () { return new AssertWrapper(assert); });
         AssertHolderCenter.addAssertHolder(holder);
     })();
 
     (function addPresetConfigAssertHolder() {
         var patt = new RegExp(">=?|<=?|!=|==?");
-        var match = function(text) {
+        var match = function (text) {
             return patt.test(text);
         };
-        var assert = function(text) {
+        var assert = function (text) {
             let validText = text;
             validText = validText.replace(/<(\w+)>/g, "「$1」");
             validText = validText.replace(/<(\/\w+)>/g, "「¿$1」");
@@ -851,30 +851,30 @@
             switch (opt) {
                 case "=":
                 case "==":
-                if (byDigit) {
-                    return Math.abs(lvalue - rvalue) < 0.001;
-                } else {
-                    return lvalue == rvalue;
-                }
+                    if (byDigit) {
+                        return Math.abs(lvalue - rvalue) < 0.001;
+                    } else {
+                        return lvalue == rvalue;
+                    }
                 case ">":
-                return lvalue > rvalue;
+                    return lvalue > rvalue;
                 case "<":
-                return lvalue < rvalue;
+                    return lvalue < rvalue;
                 case ">=":
-                return lvalue >= rvalue;
+                    return lvalue >= rvalue;
                 case "<=":
-                return lvalue <= rvalue;
+                    return lvalue <= rvalue;
                 case "!=":
-                if (byDigit) {
-                    return Math.abs(lvalue - rvalue) > 0.001;
-                } else {
-                    return lvalue != rvalue;
-                }
+                    if (byDigit) {
+                        return Math.abs(lvalue - rvalue) > 0.001;
+                    } else {
+                        return lvalue != rvalue;
+                    }
                 default:
-                return false;
+                    return false;
             }
         };
-        var holder = new AssertHolder(match, function() { return new AssertWrapper(assert); });
+        var holder = new AssertHolder(match, function () { return new AssertWrapper(assert); });
         AssertHolderCenter.addAssertHolder(holder);
     })();
 
@@ -902,7 +902,7 @@
 
     class CmdPrehandleCenter extends CmdPrehandler {
         constructor() {
-            const handle = function(performer, cmd) {
+            const handle = function (performer, cmd) {
                 var result = cmd;
                 for (const handler of this._handlers) {
                     result = handler.handle(performer, result);
@@ -914,7 +914,7 @@
             this.instance = this;
         }
         static shared() {
-            if(!this.instance) {
+            if (!this.instance) {
                 this.instance = new CmdPrehandleCenter();
             }
             return this.instance;
@@ -959,12 +959,12 @@
     }
 
     var CmdExecuteCenter = {
-        addExecutor: function(executor) {
+        addExecutor: function (executor) {
             SortInsert(this._executors, executor, (p, c) => {
                 return p.priority >= c.priority;
             });
         },
-        execute: function(performer, cmd) {
+        execute: function (performer, cmd) {
             var valid = null;
             for (const executor of this._executors) {
                 if (executor.appropriate(cmd)) {
@@ -1101,53 +1101,53 @@
 
     // Compile Cmd Executor
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd == "%exit";
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             performer.stop();
         };
         const executor = new CmdExecutor(appropriate, execute, CmdExecutorPriority.compiler);
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd == "%pass";
         };
-        const execute = function(performer, cmd) { };
+        const execute = function (performer, cmd) { };
         const executor = new CmdExecutor(appropriate, execute, CmdExecutorPriority.compiler);
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd.indexOf("%PC=CC") == 0;
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             performer._pc = eval(`performer._cc${cmd.substring(6)}`);
         };
         const executor = new CmdExecutor(appropriate, execute, CmdExecutorPriority.compiler);
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd.indexOf("%PC=") == 0;
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             performer._pc = eval(cmd.substring(4));
         };
         const executor = new CmdExecutor(appropriate, execute, CmdExecutorPriority.compiler);
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd.indexOf("%CC=") == 0;
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             const validCmd = CmdPrehandleCenter.shared().handle(performer, cmd);
             var assert = AssertHolderCenter.get(validCmd.substring(4));
             performer._cc = assert();
@@ -1156,33 +1156,33 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd == "%guardStart";
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             performer._guarding = true;
         };
         const executor = new CmdExecutor(appropriate, execute, CmdExecutorPriority.compiler);
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd == "%guardEnd";
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             performer._guarding = false;
         };
         const executor = new CmdExecutor(appropriate, execute, CmdExecutorPriority.compiler);
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return /^<===[^爫]*===>$/.test(cmd);
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             const source = cmd.slice(4, -4);
             const p = new Performer("subflow", source);
             performer._subflows.push(p);
@@ -1216,12 +1216,12 @@
         }
     }
 
-    (function() {
+    (function () {
         var patt = /^\(\$([A-Za-z_][a-zA-Z0-9_]*?)\)\s*=\s*(.+)\s*/;
-        const appropriate = function(cmd) {
+        const appropriate = function (cmd) {
             return patt.test(cmd);
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             const validCmd = CmdPrehandleCenter.shared().handle(performer, cmd);
             var result = patt.exec(validCmd);
             var name = result[1];
@@ -1233,10 +1233,10 @@
     })();
 
     var VariableStore = {
-        register: function(getAll) {
+        register: function (getAll) {
             this._allGetAll.push(getAll);
         },
-        getAll: function() {
+        getAll: function () {
             var result = {};
             for (const getAll of this._allGetAll) {
                 const all = getAll();
@@ -1250,12 +1250,12 @@
         _allGetAll: []
     };
 
-    (function() {
-        const _assignVariables = function(expression, params) {
+    (function () {
+        const _assignVariables = function (expression, params) {
             var placeholders = [];
             var patt = /\([:a-zA-Z0-9_]+?\)/g;
             var result = patt.exec(expression);
-            while(result != null) {
+            while (result != null) {
                 placeholders.push(result[0]);
                 result = patt.exec(expression);
             }
@@ -1271,8 +1271,8 @@
             let placeholders2 = [];
             let patt2 = /\((:[a-zA-Z0-9_]+?)\s+([^\(\)\s][^\(\)]*?)\s*\)/g;
             let r2 = patt2.exec(assignedExp);
-            while(r2 != null) {
-                placeholders2.push({value: r2[0], key: `${r2[1]} `, params: r2[2]});
+            while (r2 != null) {
+                placeholders2.push({ value: r2[0], key: `${r2[1]} `, params: r2[2] });
                 r2 = patt2.exec(assignedExp);
             }
             for (const p of placeholders2) {
@@ -1286,7 +1286,7 @@
 
             return assignedExp;
         };
-        const assignVariables = function(expression, params) {
+        const assignVariables = function (expression, params) {
             let result = expression;
             while (true) {
                 const assigned = _assignVariables(result, params);
@@ -1294,7 +1294,7 @@
                 result = assigned;
             }
         };
-        const handle = function(performer, cmd) {
+        const handle = function (performer, cmd) {
             let allParam = {};
             Object.assign(allParam, VariableStore.getAll(), performer.tempParams);
             const result = assignVariables(cmd, allParam);
@@ -1310,10 +1310,10 @@
 
     class AtCmdExecutor extends CmdExecutor {
         constructor(key, execute, priority) {
-            const appropriate = function(cmd) {
+            const appropriate = function (cmd) {
                 return cmd.indexOf(`@${key}`) == 0;
             };
-            const superExecute = function(performer, cmd) {
+            const superExecute = function (performer, cmd) {
                 const validCmd = CmdPrehandleCenter.shared().handle(performer, cmd);
                 let param = /^\s*(.*)\s*$/.exec(validCmd.substring(key.length + 1))[1];
                 if (param && param.length == 0) param = null;
@@ -1323,9 +1323,9 @@
         }
     }
 
-    (function() {
-        const executor = new AtCmdExecutor("wait", function(performer, param) {
-            if (performer.log()) Message.cmdLog(`等待 ${(param/1000).toFixed(2)} 秒`);
+    (function () {
+        const executor = new AtCmdExecutor("wait", function (performer, param) {
+            if (performer.log()) Message.cmdLog(`等待 ${(param / 1000).toFixed(2)} 秒`);
             return new Promise(resolve => {
                 setTimeout(() => resolve(), param);
             });
@@ -1333,8 +1333,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("await", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("await", function (performer, param) {
             return new Promise(resolve => {
                 setTimeout(() => resolve(), param);
             });
@@ -1342,8 +1342,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("debug", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("debug", function (performer, param) {
             let text = param;
             if (text[0] == ">") {
                 text = JSON.stringify(eval(text.substring(1)));
@@ -1355,8 +1355,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("print", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("print", function (performer, param) {
             Message.append(param);
         });
         CmdExecuteCenter.addExecutor(executor);
@@ -1364,11 +1364,11 @@
 
     class UntilAtCmdExecutor extends CmdExecutor {
         constructor(key, assert, priority, tryAgain, timeout) {
-            const appropriate = function(cmd) {
+            const appropriate = function (cmd) {
                 return cmd.indexOf(`@${key}`) == 0;
             };
-            const superExecute = function(performer, cmd) {
-                const tryExecute = function(callback) {
+            const superExecute = function (performer, cmd) {
+                const tryExecute = function (callback) {
                     const validCmd = CmdPrehandleCenter.shared().handle(performer, cmd);
                     let param = /^\s*(.*)\s*$/.exec(validCmd.substring(key.length + 1))[1];
                     if (param != null && param.length == 0) param = null;
@@ -1394,19 +1394,19 @@
         }
     }
 
-    (function() {
-        const executor = new UntilAtCmdExecutor("until", function(performer, param) {
+    (function () {
+        const executor = new UntilAtCmdExecutor("until", function (performer, param) {
             const assert = AssertHolderCenter.get(param);
             return assert();
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd.indexOf("@js ") == 0;
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             const validCmd = CmdPrehandleCenter.shared().handle(performer, cmd);
             let exp = validCmd.substring(4);
             if (performer.log()) Message.cmdLog("调用 js", exp);
@@ -1459,11 +1459,11 @@
         });
     }
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return cmd.indexOf("$wait ") == 0;
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             return PerformerPromise(`@wait ${cmd.substring(6)}`, null, performer.log());
         };
         const executor = new CmdExecutor(appropriate, execute);
@@ -1487,10 +1487,10 @@
 
     class HashCmdExecutor extends CmdExecutor {
         constructor(key, handle) {
-            const appropriate = function(cmd) {
+            const appropriate = function (cmd) {
                 return cmd.indexOf(`#${key}`) == 0;
             };
-            const superHandle = function(performer, cmd) {
+            const superHandle = function (performer, cmd) {
                 const validCmd = CmdPrehandleCenter.shared().handle(performer, cmd);
                 const param = validCmd.substring(this._key.length + 2);
                 const result = handle(performer, cmd, param);
@@ -1504,8 +1504,8 @@
         }
     }
 
-    (function() {
-        const executor = new HashCmdExecutor("input", function(performer, cmd, param) {
+    (function () {
+        const executor = new HashCmdExecutor("input", function (performer, cmd, param) {
             const result = /^\(\$([a-zA-Z0-9_]+)\)\s?=\s?([^,]+?),(.*)\s*$/.exec(param);
             if (result == null) {
                 throw `错误的格式: ${cmd}`;
@@ -1518,21 +1518,21 @@
             <p>
                 <label for="${id}">&nbsp;* ${desc}:&nbsp;</label><input style='width:80px' id ="${id}" type="text">
             </p>`;
-            const init = function() {
+            const init = function () {
                 $(`#${id}`).val(defaultValue);
             };
-            const action = function() {
+            const action = function () {
                 let result = {};
                 result[variableName] = $(`#${id}`).val();
                 return result;
             };
-            return {html: html, init: init, action: action};
+            return { html: html, init: init, action: action };
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new HashCmdExecutor("select", function(performer, cmd, param) {
+    (function () {
+        const executor = new HashCmdExecutor("select", function (performer, cmd, param) {
             const result = /^\(\$([a-zA-Z0-9_]+)\)\s?=\s?([^,]+?),([^,]+?),([^,]+?)\s*$/.exec(param);
             if (result == null) {
                 throw `错误的格式: ${cmd}`;
@@ -1552,24 +1552,24 @@
                     ${optionsHtml}
                 </select>
             </p>`;
-            const init = function() {
+            const init = function () {
                 $(`#${id}`).val(defaultValue);
             };
-            const action = function() {
+            const action = function () {
                 let result = {};
                 result[variableName] = $(`#${id}`).val();
                 return result;
             };
-            return {html: html, init: init, action: action};
+            return { html: html, init: init, action: action };
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const appropriate = function(cmd) {
+    (function () {
+        const appropriate = function (cmd) {
             return /^#config\s*$/.test(cmd);
         };
-        const execute = function(performer, cmd) {
+        const execute = function (performer, cmd) {
             return new Promise(resolve => {
                 var index = layer.open({
                     type: 1,
@@ -1577,35 +1577,35 @@
                     area: "350px",
                     title: "配置参数",
                     content: __ConfigPanelHtml,
-                    offset:"auto",
+                    offset: "auto",
                     shift: 2,
                     move: false,
                     closeBtn: 0,
-                    success: function(layero, index) {
+                    success: function (layero, index) {
                         __ConfigPanelInits.forEach(init => { init(); });
                         for (const node of layero[0].children) {
                             if (node.className != "layui-layer-content") continue;
                             node.setAttribute("style", "max-height: 370px;color: rgb(0, 128, 0);");
                         }
                     },
-                    end: function() {
+                    end: function () {
                         __ConfigPanelHtml = "";
                         __ConfigPanelInits = [];
                         __ConfigPanelActions = [];
                     },
                     btn: ['运行流程', '取消'],
-                    yes: function() {
+                    yes: function () {
                         __ConfigPanelActions.forEach(action => {
                             const params = action();
                             for (const key in params) {
                                 if (!params.hasOwnProperty(key)) continue;
-                                UpdateVariable(performer, key,  params[key]);
+                                UpdateVariable(performer, key, params[key]);
                             }
                         });
                         layer.close(index);
                         resolve();
                     },
-                    btn2: function() {
+                    btn2: function () {
                         performer.stop();
                         resolve();
                     }
@@ -1626,10 +1626,10 @@
     var T = null;
     var L = null;
 
-    Message.append = function(msg) {
+    Message.append = function (msg) {
         messageAppend(msg);
     };
-    Message.clean = function() {
+    Message.clean = function () {
         messageClear();
     };
 
@@ -1709,7 +1709,7 @@
         equipments: [],
         items: {}, // {id: object}
         stores: {}, // {id: object}
-
+        _weaponType: '',
         kongfu: {
             quan: null,
             nei: null,
@@ -1723,11 +1723,11 @@
             an: null
         },
 
-        init: function() {
-            WG.add_hook("login", function(data) {
+        init: function () {
+            WG.add_hook("login", function (data) {
                 Role.id = data.id;
                 Role.status = [];
-                setTimeout(function() {
+                setTimeout(function () {
                     $("span[command=skills]").click();
                     setTimeout(_ => { $(".glyphicon-remove-circle").click(); }, 500);
                 }, 2000); // 查看装备技能
@@ -1752,15 +1752,16 @@
             Role._monitorItems();
             Role._monitorCombat();
             Role._monitorInfo();
+            Role._monitorWeapon();
         },
 
-        hasStatus: function(s) {
+        hasStatus: function (s) {
             var stamp = Role.status[s];
             if (stamp == null) return false;
             if (stamp < new Date().getTime()) return false;
             return true;
         },
-        isFree: function() {
+        isFree: function () {
             return !Role.hasStatus("busy") && !Role.hasStatus("faint") && !Role.hasStatus("rash");
         },
 
@@ -1782,14 +1783,14 @@
 
         state: RoleState.none,
 
-        wearing: function(eqId) {
+        wearing: function (eqId) {
             for (const eq of this.equipments) {
                 if (eq != null && eq.id == eqId) return true;
             }
             return false;
         },
 
-        getEqId: function(index) {
+        getEqId: function (index) {
             const eq = this.equipments[index];
             if (eq == null) return null;
             return eq.id;
@@ -1801,33 +1802,33 @@
 
         rtime: false,
 
-        shimen: function(callback) {
+        shimen: function (callback) {
             var timestamp = new Date().getTime();
             Role._shimen(0, timestamp, callback);
         },
 
-        atPath: function(p) {
+        atPath: function (p) {
             switch (arguments.length) {
-            case 0:
-                return Room.path;
-            case 1:
-                return p == Room.path;
+                case 0:
+                    return Room.path;
+                case 1:
+                    return p == Room.path;
             }
         },
-        inRoom: function(n) {
+        inRoom: function (n) {
             switch (arguments.length) {
-            case 0:
-                return Room.name;
-            case 1:
-                return n == Room.name;
+                case 0:
+                    return Room.name;
+                case 1:
+                    return n == Room.name;
             }
         },
 
-        findItem: function(itemName, blurry, quality, filterExp) {
+        findItem: function (itemName, blurry, quality, filterExp) {
             return FindItem(Object.values(Role.items), itemName, blurry, quality, filterExp);
         },
 
-        renew: function(callback) {
+        renew: function (callback) {
             const source = `
             stopstate;$to 扬州城-武庙
             @liaoshang
@@ -1839,27 +1840,30 @@
             p.start(callback);
         },
 
-        cleanBag: function(callback) {
+        cleanBag: function (callback) {
             WG.clean_all();
             if (callback) callback();
         },
 
-        tidyBag: function(callback) {
+        tidyBag: function (callback) {
             Role._tidyBag(0, callback);
         },
 
-        hasCoolingSkill: function() {
+        hasCoolingSkill: function () {
             return Role._coolingSkills.length > 0;
         },
-        coolingSkills: function() {
+        coolingSkills: function () {
             var result = [];
             for (const mark of Role._coolingSkills) {
                 result.push(mark.split("_")[0]);
             }
             return result;
         },
-        coolingSkill: function(skill) {
+        coolingSkill: function (skill) {
             return this.coolingSkills().indexOf(skill) != -1
+        },
+        weapon: function () {
+            return Role._weaponType
         },
 
         _renewHookIndex: null,
@@ -1868,17 +1872,17 @@
         _coolingSkills: [],
         _gains: [], // [{timestamp: number, name: string, count: number, unit: string}]
 
-        _shimen: function(counter, timestamp, callback) {
+        _shimen: function (counter, timestamp, callback) {
             if (counter == 0) {
                 WG.SendCmd("stopstate");
                 WG.sm_button();
             }
             var result = SystemTips.search("你先去休息|和本门毫无瓜葛|你没有", timestamp);
             if (result != null) { callback(); return; }
-            setTimeout(function() { Role._shimen(counter + 1, timestamp, callback) }, 1000);
+            setTimeout(function () { Role._shimen(counter + 1, timestamp, callback) }, 1000);
         },
 
-        _tidyBag: function(counter, callback) {
+        _tidyBag: function (counter, callback) {
             if (counter == 0) WG.sell_all();
 
             if (!WG.packup_listener) {
@@ -1890,78 +1894,78 @@
                 callback();
                 return;
             }
-            window.setTimeout(function() { Role._tidyBag(counter + 1, callback); }, 1000);
+            window.setTimeout(function () { Role._tidyBag(counter + 1, callback); }, 1000);
         },
 
-        _monitorHpMp: function() {
-            WG.add_hook(["items", "sc", "itemadd"], function(data) {
+        _monitorHpMp: function () {
+            WG.add_hook(["items", "sc", "itemadd"], function (data) {
                 switch (data.type) {
-                case "items":
-                    if (data.items == null) break;
-                    for (var i = data.items.length - 1; i >= 0; i--) {
-                        var item = data.items[i];
-                        if (item.id == Role.id) {
-                            Role.hp = item.hp;
-                            Role.maxHp = item.max_hp;
-                            Role.mp = item.mp;
-                            Role.maxMp = item.max_mp;
-                            break;
-                        }
-                    }
-                    break;
-                case "itemadd":
-                case "sc":
-                    if (data.id != Role.id) break;
-                    if (data.hp != null) Role.hp = data.hp;
-                    if (data.max_hp != null) Role.maxHp = data.max_hp;
-                    if (data.mp != null) Role.mp = data.mp;
-                    if (data.max_mp != null) Role.maxMp = data.max_mp;
-                    break;
-                }
-            });
-        },
-        _monitorStatus: function() {
-            WG.add_hook(["items", "status", "itemadd"], function(data) {
-                switch (data.type) {
-                case "items":
-                    if (data.items == null) break;
-                    for (var i = data.items.length - 1; i >= 0; i--) {
-                        var item = data.items[i];
-                        if (item.id != Role.id) continue;
-                        if (item.status == null) break;
-                        Role.status = {};
-                        var timestamp = new Date().getTime();
-                        for (var j = item.status.length - 1; j >= 0; j--) {
-                            var s = item.status[j];
-                            Role.status[s.sid] = timestamp + s.duration - s.overtime;
+                    case "items":
+                        if (data.items == null) break;
+                        for (var i = data.items.length - 1; i >= 0; i--) {
+                            var item = data.items[i];
+                            if (item.id == Role.id) {
+                                Role.hp = item.hp;
+                                Role.maxHp = item.max_hp;
+                                Role.mp = item.mp;
+                                Role.maxMp = item.max_mp;
+                                break;
+                            }
                         }
                         break;
-                    }
-                    break;
-                case "status":
-                    if (data.id != Role.id) break;
-                    var timestamp1 = new Date().getTime();
-                    if (data.action == "add") {
-                        Role.status[data.sid] = timestamp1 + data.duration;
-                    } else if (data.action == "remove") {
-                        delete Role.status[data.sid];
-                    }
-                    break;
-                case "itemadd":
-                    if (data.id != Role.id) break;
-                    if (data.status == null) break;
-                    Role.status = {};
-                    var timestamp2 = new Date().getTime();
-                    for (var k = data.status.length - 1; k >= 0; k--) {
-                        var s1 = data.status[k];
-                        Role.status[s1.sid] = timestamp2 + s1.duration - s1.overtime;
-                    }
-                    break;
+                    case "itemadd":
+                    case "sc":
+                        if (data.id != Role.id) break;
+                        if (data.hp != null) Role.hp = data.hp;
+                        if (data.max_hp != null) Role.maxHp = data.max_hp;
+                        if (data.mp != null) Role.mp = data.mp;
+                        if (data.max_mp != null) Role.maxMp = data.max_mp;
+                        break;
                 }
             });
         },
-        _monitorState: function() {
-            WG.add_hook("state", function(data) {
+        _monitorStatus: function () {
+            WG.add_hook(["items", "status", "itemadd"], function (data) {
+                switch (data.type) {
+                    case "items":
+                        if (data.items == null) break;
+                        for (var i = data.items.length - 1; i >= 0; i--) {
+                            var item = data.items[i];
+                            if (item.id != Role.id) continue;
+                            if (item.status == null) break;
+                            Role.status = {};
+                            var timestamp = new Date().getTime();
+                            for (var j = item.status.length - 1; j >= 0; j--) {
+                                var s = item.status[j];
+                                Role.status[s.sid] = timestamp + s.duration - s.overtime;
+                            }
+                            break;
+                        }
+                        break;
+                    case "status":
+                        if (data.id != Role.id) break;
+                        var timestamp1 = new Date().getTime();
+                        if (data.action == "add") {
+                            Role.status[data.sid] = timestamp1 + data.duration;
+                        } else if (data.action == "remove") {
+                            delete Role.status[data.sid];
+                        }
+                        break;
+                    case "itemadd":
+                        if (data.id != Role.id) break;
+                        if (data.status == null) break;
+                        Role.status = {};
+                        var timestamp2 = new Date().getTime();
+                        for (var k = data.status.length - 1; k >= 0; k--) {
+                            var s1 = data.status[k];
+                            Role.status[s1.sid] = timestamp2 + s1.duration - s1.overtime;
+                        }
+                        break;
+                }
+            });
+        },
+        _monitorState: function () {
+            WG.add_hook("state", function (data) {
                 var text = data.state;
                 if (text == null) {
                     Role.state = RoleState.none;
@@ -1978,8 +1982,8 @@
                 Role.state = RoleState.none;
             });
         },
-        _monitorDeath: function() {
-            WG.add_hook("die", function(data) {
+        _monitorDeath: function () {
+            WG.add_hook("die", function (data) {
                 if (data.relive == true) {
                     Role.living = true;
                 } else {
@@ -1987,7 +1991,7 @@
                 }
             });
         },
-        _monitorInfo: function() {
+        _monitorInfo: function () {
             WG.add_hook("dialog", function (data) {
                 if (data.dialog == "score") {
                     if (data.level != null) {
@@ -2000,8 +2004,8 @@
                 }
             });
         },
-        _monitorItems: function() {
-            WG.add_hook("dialog", function(data) {
+        _monitorItems: function () {
+            WG.add_hook("dialog", function (data) {
                 if (data.dialog == null) return;
                 if (data.dialog == "pack") {
                     if (data.items != null) {
@@ -2051,12 +2055,12 @@
                         var item = Role.items[data.id];
                         var store = Role.stores[data.storeid];
                         if (item == null) {
-                            item = Object.assign({}, store, {count: 0});
+                            item = Object.assign({}, store, { count: 0 });
                             item.id = data.id;
                             Role.items[item.id] = item;
                         }
                         if (store == null) {
-                            store = Object.assign({}, item, {count: 0});
+                            store = Object.assign({}, item, { count: 0 });
                             Role.stores[store.id] = store;
                         }
                         item.count -= data.store;
@@ -2067,8 +2071,8 @@
                 }
             });
         },
-        _monitorGains: function() {
-            WG.add_hook("dialog", function(data) {
+        _monitorGains: function () {
+            WG.add_hook("dialog", function (data) {
                 if (data.dialog != "pack" || data.id == null || data.name == null || data.unit == null || data.count == null || data.remove != null) return;
                 var timestamp = new Date().getTime();
                 // [{timestamp: number, name: string, count: number, unit: string}]
@@ -2077,16 +2081,16 @@
                 if (old != null && old.count != null) {
                     count -= old.count;
                 }
-                var gain = {timestamp: timestamp, name: data.name, count: count, unit: data.unit};
+                var gain = { timestamp: timestamp, name: data.name, count: count, unit: data.unit };
                 Role._gains.push(gain);
             });
         },
-        _monitorSkillCD: function() {
-            WG.add_hook("dispfm", function(data) {
+        _monitorSkillCD: function () {
+            WG.add_hook("dispfm", function (data) {
                 var timestamp = Date.parse(new Date());
                 var mark = data.id + "_" + timestamp;
                 Role._coolingSkills.push(mark);
-                window.setTimeout(function() {
+                window.setTimeout(function () {
                     var index = Role._coolingSkills.indexOf(mark);
                     if (index != -1) Role._coolingSkills.splice(index, 1);
                 }, data.distime);
@@ -2099,39 +2103,45 @@
                 }
             });
         },
-        _monitorSkills: function() {
-            var action = function(id, value) {
+        _monitorSkills: function () {
+            var action = function (id, value, s_name) {
                 switch (id) {
                     case "unarmed":
-                    Role.kongfu.quan = value; break;
+                        Role.kongfu.quan = value;Role.kongfu.quan_c = s_name; break;
                     case "force":
-                    Role.kongfu.nei = value; break;
+                        Role.kongfu.nei = value; Role.kongfu.nei_c = s_name; break;
                     case "parry":
-                    Role.kongfu.zhao = value; break;
+                        Role.kongfu.zhao = value; Role.kongfu.zhao_c = s_name; break;
                     case "dodge":
-                    Role.kongfu.qing = value; break;
+                        Role.kongfu.qing = value; Role.kongfu.qing_c = s_name; break;
                     case "sword":
-                    Role.kongfu.jian = value; break;
+                        Role.kongfu.jian = value; Role.kongfu.jian_c = s_name; break;
                     case "blade":
-                    Role.kongfu.dao = value; break;
+                        Role.kongfu.dao = value; Role.kongfu.dao_c = s_name; break;
                     case "club":
-                    Role.kongfu.gun = value; break;
+                        Role.kongfu.gun = value; Role.kongfu.gun_c = s_name; break;
                     case "staff":
-                    Role.kongfu.zhang = value; break;
+                        Role.kongfu.zhang = value; Role.kongfu.zhang_c = s_name; break;
                     case "whip":
-                    Role.kongfu.bian = value; break;
+                        Role.kongfu.bian = value; Role.kongfu.bian_c = s_name; break;
                     case "throwing":
-                    Role.kongfu.an = value; break;
+                        Role.kongfu.an = value; Role.kongfu.an_c = s_name; break;
                     default:
-                    break;
+                        break;
                 }
             };
-            WG.add_hook("dialog", function(data) {
+            WG.add_hook("dialog", function (data) {
                 if (data.dialog == null || data.dialog != "skills") return;
                 if (data.items != null) {
                     for (const item of data.items) {
                         var value = item.enable_skill ? item.enable_skill : null;
-                        action(item.id, value);
+                        var s_name = ""
+                        for (const sklii_item of data.items) {
+                            if (sklii_item.id == value) {
+                                s_name = /<([^<>]*)>/.exec(sklii_item.name)[1]
+                            }
+                        }
+                        action(item.id, value, s_name.toLocaleLowerCase());
                     }
                 }
                 if (data.id != null && data.enable != null) {
@@ -2141,20 +2151,39 @@
                 }
             });
         },
-        _monitorCombat: function() {
-            WG.add_hook("combat", function(data) {
+        _monitorCombat: function () {
+            WG.add_hook("combat", function (data) {
                 if (data.start != null && data.start == 1) {
                     Role.combating = true;
                 } else if (data.end != null && data.end == 1) {
                     Role.combating = false;
                 }
             });
-            WG.add_hook("text", function(data) {
+            WG.add_hook("text", function (data) {
                 if (data.msg == null) return;
                 if (data.msg.indexOf('只能在战斗中使用') != -1 || data.msg.indexOf('这里不允许战斗') != -1 || data.msg.indexOf('没时间这么做') != -1) {
                     Role.combating = false;
                 }
+                if (data.msg.indexOf('战斗中打坐，你找死吗？') != -1 || data.msg.indexOf('你正在战斗') != -1) {
+                    Role.combating = true;
+                }
             });
+
+        },
+        _monitorWeapon: function () {
+            WG.add_hook("perform", function (data) {
+                if (data.skills != null) {
+                    if (JSON.stringify(data.skills).indexOf("sword") != -1) {
+                        Role._weaponType = 'sword'
+                    } else if (JSON.stringify(data.skills).indexOf("blade") != -1) {
+                        Role._weaponType = 'blade'
+                    } else {
+                        Role._weaponType = ''
+                    }
+                }
+
+            });
+
         }
     };
 
@@ -2164,15 +2193,15 @@
 
         updateTimestamp: null,
 
-        init: function() {
+        init: function () {
             this._monitorLocation();
             this._monitorItemsInRoom();
             this._monitorDeath();
         },
-        getItem: function(id) {
+        getItem: function (id) {
             return this._itemsInRoom[id];
         },
-        getItemId: function(name, blurry, living, filterExp) {
+        getItemId: function (name, blurry, living, filterExp) {
             for (const item of Object.values(this._itemsInRoom)) {
                 if (blurry == true) {
                     if (item.name.indexOf(name) != -1) {
@@ -2196,7 +2225,7 @@
          * @param {{name: string, blurry: Boolean}[]} itemNameInfos
          * @returns {Boolean}
          */
-        didKillItemsInRoom: function(itemNameInfos) {
+        didKillItemsInRoom: function (itemNameInfos) {
             var deadItems = this._deadItemsInRoom.slice();
             for (const info of itemNameInfos) {
                 var found = false;
@@ -2220,8 +2249,8 @@
         _itemsInRoom: {},
         _deadItemsInRoom: [],
 
-        _monitorLocation: function() {
-            WG.add_hook("room", function(data) {
+        _monitorLocation: function () {
+            WG.add_hook("room", function (data) {
                 Room.name = data.name;
                 Room.path = data.path;
                 Room.updateTimestamp = new Date().getTime();
@@ -2229,56 +2258,58 @@
                 Room._deadItemsInRoom = [];
             });
         },
-        _monitorItemsInRoom: function() {
-            WG.add_hook(["items", "itemadd", "itemremove", "sc", "status"], function(data) {
+        _monitorItemsInRoom: function () {
+            WG.add_hook(["items", "itemadd", "itemremove", "sc", "status"], function (data) {
                 switch (data.type) {
-                case "items":
-                    if (data.items == null) break;
-                    for (const item of data.items) {
-                        if (item.name == null || item.id == null) continue;
-                        Room._itemsInRoom[item.id] = item;
+                    case "items":
+                        if (data.items == null) break;
+                        for (const item of data.items) {
+                            if (item.name == null || item.id == null) continue;
+                            Room._itemsInRoom[item.id] = item;
+                        }
+                        break;
+                    case "itemadd":
+                        if (data.name == null || data.id == null) break;
+                        Room._itemsInRoom[data.id] = data;
+                        break;
+                    case "itemremove":
+                        if (data.id == null) break;
+                        delete Room._itemsInRoom[data.id];
+                        break;
+                    case "sc": {
+                        if (data.id == null) break;
+                        const item = Room._itemsInRoom[data.id];
+                        if (item == null) break;
+                        if (data.hp != null) item.hp = data.hp;
+                        if (data.max_hp != null) item.max_hp = data.max_hp;
+                        if (data.mp != null) item.mp = data.mp;
+                        if (data.max_mp != null) item.max_mp = data.max_mp;
+                        break;
                     }
-                    break;
-                case "itemadd":
-                    if (data.name == null || data.id == null) break;
-                    Room._itemsInRoom[data.id] = data;
-                    break;
-                case "itemremove":
-                    if (data.id == null) break;
-                    delete Room._itemsInRoom[data.id];
-                    break;
-                case "sc": {
-                    if (data.id == null) break;
-                    const item = Room._itemsInRoom[data.id];
-                    if (item == null) break;
-                    if (data.hp != null) item.hp = data.hp;
-                    if (data.max_hp != null) item.max_hp = data.max_hp;
-                    if (data.mp != null) item.mp = data.mp;
-                    if (data.max_mp != null) item.max_mp = data.max_mp;
-                    break;}
-                case "status": {
-                    if (data.action == null || data.id == null || data.sid == null) return;
-                    const item = Room._itemsInRoom[data.id];
-                    if (item == null) break;
-                    if (data.action == "add") {
-                        if (item.status == null) item.status = [];
-                        item.status.push({sid: data.sid, name: data.name, duration: data.duration, overtime: 0});
-                    } else if (data.action == "remove") {
-                        for (let i = 0; i < item.status.length; i++) {
-                            const s = item.status[i];
-                            if (s.sid == data.sid) {
-                                item.status.splice(i, 1);
-                                break;
+                    case "status": {
+                        if (data.action == null || data.id == null || data.sid == null) return;
+                        const item = Room._itemsInRoom[data.id];
+                        if (item == null) break;
+                        if (data.action == "add") {
+                            if (item.status == null) item.status = [];
+                            item.status.push({ sid: data.sid, name: data.name, duration: data.duration, overtime: 0 });
+                        } else if (data.action == "remove") {
+                            for (let i = 0; i < item.status.length; i++) {
+                                const s = item.status[i];
+                                if (s.sid == data.sid) {
+                                    item.status.splice(i, 1);
+                                    break;
+                                }
                             }
                         }
+                        break;
                     }
-                    break;}
                 }
             });
         },
-        _monitorDeath: function() {
-            WG.add_hook("sc", function(data) {
-                if (data.id == null|| data.hp == null || data.hp != 0) return;
+        _monitorDeath: function () {
+            WG.add_hook("sc", function (data) {
+                if (data.id == null || data.hp == null || data.hp != 0) return;
                 for (const item of Object.values(Room._itemsInRoom)) {
                     if (item.id == data.id) {
                         Room._deadItemsInRoom.push(item);
@@ -2297,10 +2328,10 @@
     }
 
     var SystemTips = {
-        init: function() {
+        init: function () {
             this._monitorSystemTips();
         },
-        search: function(regex, from) {
+        search: function (regex, from) {
             var patt = new RegExp(regex);
             var tips = this._tips.slice();
             for (let index = tips.length - 1; index >= 0; index--) {
@@ -2311,8 +2342,8 @@
             }
             return null;
         },
-        clean: function(to) {
-            while(true) {
+        clean: function (to) {
+            while (true) {
                 if (this._tips.length <= 0) break;
                 var tip = this._tips[0];
                 if (tip.timestamp > to) break;
@@ -2321,9 +2352,9 @@
         },
         rejectTimestamp: null,
 
-        _monitorSystemTips: function() {
+        _monitorSystemTips: function () {
             var theSelf = this;
-            WG.add_hook("text", function(data) {
+            WG.add_hook("text", function (data) {
                 var tip = new SystemTip(data.msg);
                 theSelf._push(tip);
 
@@ -2331,14 +2362,14 @@
                     theSelf.rejectTimestamp = new Date().getTime();
                 }
             });
-            WG.add_hook("item", function(data) {
+            WG.add_hook("item", function (data) {
                 var desc = data.desc;
                 if (desc == null) return;
                 var tip = new SystemTip(desc);
                 theSelf._push(tip);
             });
         },
-        _push: function(tip) {
+        _push: function (tip) {
             if (this._tips.length >= this._maxCapacity) {
                 this._tips.shift();
             }
@@ -2348,7 +2379,7 @@
         _maxCapacity: 100,
     };
     class MsgTip {
-        constructor(content,ch,name,uid) {
+        constructor(content, ch, name, uid) {
             this.timestamp = new Date().getTime();
             this.content = content;
             this.ch = ch;
@@ -2386,7 +2417,7 @@
             var theSelf = this;
             WG.add_hook("msg", function (data) {
                 console.log(data)
-                var tip = new MsgTip(data.content,data.ch,data.name,data.uid);
+                var tip = new MsgTip(data.content, data.ch, data.name, data.uid);
                 theSelf._push(tip);
             });
         },
@@ -2401,18 +2432,18 @@
     };
 
     var DialogList = {
-        init: function() {
+        init: function () {
             this._monitorDialogList();
         },
         timestamp: null,
-        findItem: function(itemName, blurry, quality, filterExp) {
+        findItem: function (itemName, blurry, quality, filterExp) {
             return FindItem(this._list, itemName, blurry, quality, filterExp);
         },
 
         _list: [],
-        _monitorDialogList: function() {
+        _monitorDialogList: function () {
             const self = this;
-            WG.add_hook("dialog", function(data) {
+            WG.add_hook("dialog", function (data) {
                 let list = null;
                 if (data.selllist != null) {
                     list = data.selllist;
@@ -2429,10 +2460,10 @@
     };
 
     var TaskList = {
-        init: function() {
+        init: function () {
             this._monitorTasksList();
         },
-        search: function(regex, from) {
+        search: function (regex, from) {
             if (this._timestamp < from) return null;
             var patt = new RegExp(regex);
             for (const task of this._list) {
@@ -2444,9 +2475,9 @@
 
         _timestamp: null,
         _list: [],
-        _monitorTasksList: function() {
+        _monitorTasksList: function () {
             const self = this;
-            WG.add_hook("dialog", function(data) {
+            WG.add_hook("dialog", function (data) {
                 if (data.dialog == null || data.dialog != "tasks" || data.items == null) return;
                 let list = [];
                 for (const item of data.items) {
@@ -2459,10 +2490,10 @@
     };
 
     var Xiangyang = {
-        init: function() {
+        init: function () {
             this._monitorXiangyang();
         },
-        search: function(regex, from) {
+        search: function (regex, from) {
             if (this._timestamp < from) return null;
             var patt = new RegExp(regex);
             const result = patt.exec(this._desc);
@@ -2472,9 +2503,9 @@
 
         _timestamp: null,
         _desc: '',
-        _monitorXiangyang: function() {
+        _monitorXiangyang: function () {
             const self = this;
-            WG.add_hook('dialog', function(data) {
+            WG.add_hook('dialog', function (data) {
                 if (data.dialog == null || data.t != 'fam' || data.index != 8 || data.desc == null) return;
                 self._timestamp = new Date().getTime();
                 self._desc = data.desc;
@@ -2486,9 +2517,9 @@
         Persistent Cache
     \***********************************************************************************/
 
-    (function() {
-        const FlowStoreKey = function() { return `flow_store@${Role.id}`; };
-        const getMap = function() {
+    (function () {
+        const FlowStoreKey = function () { return `flow_store@${Role.id}`; };
+        const getMap = function () {
             let map = GM_getValue(FlowStoreKey(), null);
             if (map == null) {
                 // 之前 FlowStoreKey 会错误地一只返回 flow_store@null
@@ -2507,14 +2538,14 @@
             delete map[key];
             GM_setValue(FlowStoreKey(), map);
         });
-        FlowStore.corver = function(value) {
+        FlowStore.corver = function (value) {
             GM_setValue(FlowStoreKey(), value);
         };
     })();
 
-    (function() {
-        const PersistentVariablesKey = function() { return `global_params@${Role.id}`; };
-        const getMap = function() {
+    (function () {
+        const PersistentVariablesKey = function () { return `global_params@${Role.id}`; };
+        const getMap = function () {
             let map = GM_getValue(PersistentVariablesKey(), null);
             if (map == null) {
                 // 之前 PersistentVariablesKey 会错误地一只返回 global_params@null
@@ -2545,10 +2576,10 @@
             ":money": Role.money,
             ":hp": Role.hp,
             ":maxHp": Role.maxHp,
-            ":hpPer": Role.hp/Role.maxHp,    // 0-1
+            ":hpPer": Role.hp / Role.maxHp,    // 0-1
             ":mp": Role.mp,
             ":maxMp": Role.maxMp,
-            ":mpPer": Role.mp/Role.maxMp,    // 0-1
+            ":mpPer": Role.mp / Role.maxMp,    // 0-1
             ":living": Role.living,          // true/false
             ":state": Role.state,            // RoleState
             ":combating": Role.combating,    // true/false
@@ -2578,23 +2609,34 @@
             ":kf_gun": Role.kongfu.gun,
             ":kf_zhang": Role.kongfu.zhang,
             ":kf_bian": Role.kongfu.bian,
-            ":kf_an": Role.kongfu.an
+            ":kf_an": Role.kongfu.an,
+
+            ":kf_quan_c": Role.kongfu.quan_c,
+            ":kf_nei_c": Role.kongfu.nei_c,
+            ":kf_zhao_c": Role.kongfu.zhao_c,
+            ":kf_qing_c": Role.kongfu.qing_c,
+            ":kf_jian_c": Role.kongfu.jian_c,
+            ":kf_dao_c": Role.kongfu.dao_c,
+            ":kf_gun_c": Role.kongfu.gun_c,
+            ":kf_zhang_c": Role.kongfu.zhang_c,
+            ":kf_bian_c": Role.kongfu.bian_c,
+            ":kf_an_c": Role.kongfu.an_c
         };
     });
 
     VariableStore.register(_ => {
         return {
-            ":room ": function(param) {
+            ":room ": function (param) {
                 const parts = param.split(",");
                 for (const part of parts) {
                     if (Room.name.indexOf(part) != -1) return true;
                 }
                 return false;
             },
-            ":cd ": function(sid) {
+            ":cd ": function (sid) {
                 return Role.coolingSkill(sid);
             },
-            ":status ": function(param) {
+            ":status ": function (param) {
                 const parts = param.split(",");
                 if (parts.length > 1) {
                     const status = parts[0];
@@ -2608,32 +2650,35 @@
                 }
                 return Role.hasStatus(param);
             },
-            ":hp ": function(id) {
+            ":hp ": function (id) {
                 const item = Room.getItem(id);
                 if (item != null) return item.hp;
                 return -1;
             },
-            ":maxHp ": function(id) {
+            ":weapon ": function (id) {
+                return id == Role.weapon()
+            },
+            ":maxHp ": function (id) {
                 const item = Room.getItem(id);
                 if (item != null) return item.max_hp;
                 return -1;
             },
-            ":mp ": function(id) {
+            ":mp ": function (id) {
                 const item = Room.getItem(id);
                 if (item != null) return item.mp;
                 return -1;
             },
-            ":maxMp ": function(id) {
+            ":maxMp ": function (id) {
                 const item = Room.getItem(id);
                 if (item != null) return item.max_mp;
                 return -1;
             },
-            ":exist ": function(id) {
+            ":exist ": function (id) {
                 if (id == null) return false;
                 const item = Room.getItem(id);
                 return item != null;
             },
-            ":findName ": function(id) {
+            ":findName ": function (id) {
                 if (id == null) return null;
                 const item = Room.getItem(id);
                 if (item != null) return item.name.match(/.*\s([\u4e00-\u9fa5]+)/)[1];
@@ -2651,7 +2696,7 @@
     //---------------------------------------------------------------------------
 
     const FilterCenter = {
-        filter: function(filterExp, obj) {
+        filter: function (filterExp, obj) {
             if (filterExp == null) {
                 return false;
             }
@@ -2665,7 +2710,7 @@
         var patt = /\{([a-z]?)([^a-z%#]+?|<\w+>[^a-z%#]+?<\/\w+>)([a-z]?)(%?)(#?)\}\??(#[^#{}]*#)?/g;
         var placeholders = [];
         var result = patt.exec(exp);
-        while(result != null) {
+        while (result != null) {
             placeholders.push({
                 text: result[0],
                 location: result[1] == "" ? null : result[1],
@@ -2677,7 +2722,7 @@
             });
             result = patt.exec(exp);
         }
-        const getValue = function(p) {
+        const getValue = function (p) {
             let locationOrder = [];
             if (p.location == null) {
                 locationOrder = p.quality == null ? ["r", "b", "d"] : ["b", "d"];
@@ -2688,8 +2733,8 @@
                 let value = null;
                 switch (location) {
                     case "r":
-                    value = Room.getItemId(p.name, p.blurry, false, p.filterExp);
-                    break;
+                        value = Room.getItemId(p.name, p.blurry, false, p.filterExp);
+                        break;
                     case "b": {
                         let item = Role.findItem(p.name, p.blurry, p.quality, p.filterExp);
                         if (item) {
@@ -2717,8 +2762,8 @@
         return realExp;
     }
 
-    (function() {
-        const handle = function(performer, cmd) {
+    (function () {
+        const handle = function (performer, cmd) {
             return ReplacePlaceholder(cmd);
         };
         const handler = new CmdPrehandler(handle)
@@ -2726,14 +2771,14 @@
     })();
 
     (function () {
-        const handle = function(cmds) {
+        const handle = function (cmds) {
             var result = [];
             for (const cmd of cmds) {
                 const header = /^\s*/.exec(cmd)[0];
                 let patt = /(\{[^\}]+\})([^\?]|$)/g;
                 let r = patt.exec(cmd);
                 let j = cmd.indexOf("@js")
-                while(r != null && j == -1) {
+                while (r != null && j == -1) {
                     result.push(`${header}@until ${r[1]}? != null`);
                     r = patt.exec(cmd);
                 }
@@ -2749,7 +2794,7 @@
     //  WSMUD Raid 命令
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const executor = new CmdExecutor(cmd => {
             return cmd.indexOf("<-stopSSAuto") == 0 || cmd.indexOf("@stopSSAuto") == 0;
         }, (performer, _) => {
@@ -2759,7 +2804,7 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
+    (function () {
         const executor = new CmdExecutor(cmd => {
             return cmd.indexOf("stopSSAuto->") == 0 || cmd.indexOf("@recoverSSAuto") == 0;
         }, (performer, _) => {
@@ -2770,7 +2815,7 @@
     })();
 
     var __RecordGainsFrom = null;
-    (function() {
+    (function () {
         const executor = new CmdExecutor(cmd => {
             return cmd.indexOf("<-recordGains") == 0;
         }, (performer, _) => {
@@ -2780,7 +2825,7 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
+    (function () {
         const executor = new CmdExecutor(cmd => {
             return cmd.indexOf("recordGains->") == 0;
         }, _ => {
@@ -2790,7 +2835,7 @@
                 var oldCount = 0;
                 var old = result[gain.name];
                 if (old) oldCount = old.count;
-                result[gain.name] = {count: oldCount + gain.count, unit: gain.unit};
+                result[gain.name] = { count: oldCount + gain.count, unit: gain.unit };
             });
             var content = "";
             Message.clean();
@@ -2813,8 +2858,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("toolbar", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("toolbar", function (performer, param) {
             performer.timeSeries(new Date().getTime());
             $(`span[command=${param}]`).click();
             return new Promise(resolve => {
@@ -2827,9 +2872,9 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new UntilAtCmdExecutor("liaoshang", function(performer, param) {
-            if (Role.hp/Role.maxHp >= 1) {
+    (function () {
+        const executor = new UntilAtCmdExecutor("liaoshang", function (performer, param) {
+            if (Role.hp / Role.maxHp >= 1) {
                 WG.SendCmd("stopstate");
                 return true;
             }
@@ -2841,9 +2886,9 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new UntilAtCmdExecutor("dazuo", function(performer, param) {
-            if (Role.mp/Role.maxMp > 0.99) {
+    (function () {
+        const executor = new UntilAtCmdExecutor("dazuo", function (performer, param) {
+            if (Role.mp / Role.maxMp > 0.99) {
                 WG.SendCmd("stopstate");
                 return true;
             }
@@ -2855,8 +2900,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new UntilAtCmdExecutor("eq", function(performer, param) {
+    (function () {
+        const executor = new UntilAtCmdExecutor("eq", function (performer, param) {
             const eqIds = param.split(",");
             let cmds = [];
             eqIds.forEach(eqId => {
@@ -2871,8 +2916,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new UntilAtCmdExecutor("cd", function(performer, param) {
+    (function () {
+        const executor = new UntilAtCmdExecutor("cd", function (performer, param) {
             if (param == null) {
                 return !Role.hasCoolingSkill();
             }
@@ -2905,11 +2950,11 @@
 
     class UntilSearchedAtCmdExecutor extends UntilAtCmdExecutor {
         constructor(key, search) {
-            const assert = function(performer, param) {
+            const assert = function (performer, param) {
                 let placeholders = [];
                 let patt = /\(\$[a-zA-Z0-9_]+?\)/g;
                 let result = patt.exec(param);
-                while(result != null) {
+                while (result != null) {
                     placeholders.push(result[0]);
                     result = patt.exec(param);
                 }
@@ -2936,7 +2981,7 @@
         }
     }
 
-    (function() {
+    (function () {
         const executor = new UntilSearchedAtCmdExecutor("tip", (regex, from) => {
             return SystemTips.search(regex, from);
         });
@@ -2950,22 +2995,22 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
+    (function () {
         const executor = new UntilSearchedAtCmdExecutor("task", (regex, from) => {
             return TaskList.search(regex, from);
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
+    (function () {
         const executor = new UntilSearchedAtCmdExecutor("xy", (regex, from) => {
             return Xiangyang.search(regex, from);
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new UntilAtCmdExecutor("kill", function(performer, param) {
+    (function () {
+        const executor = new UntilAtCmdExecutor("kill", function (performer, param) {
             const parts = param.split(",");
             let infos = [];
             for (let i = 0; i < parts.length; i++) {
@@ -2975,7 +3020,7 @@
                     name = name.substring(0, name.length - 1);
                     blurry = false;
                 }
-                infos.push({name: name, blurry: blurry});
+                infos.push({ name: name, blurry: blurry });
             }
             const finish = Room.didKillItemsInRoom(infos);
             if (finish) {
@@ -2996,8 +3041,8 @@
     })();
 
     /* 等待，直到 dialog 打开，在打开 dialog 后调用，便于后续使用占位符 */
-    (function() {
-        const executor = new UntilAtCmdExecutor("dialog", function(performer, param) {
+    (function () {
+        const executor = new UntilAtCmdExecutor("dialog", function (performer, param) {
             return DialogList.timestamp > performer.timeSeries();
         });
         CmdExecuteCenter.addExecutor(executor);
@@ -3007,8 +3052,8 @@
         return PerformerPromise("@until (:free) == true", callback, log);
     }
 
-    (function() {
-        const executor = new AtCmdExecutor("cleanBag", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("cleanBag", function (performer, param) {
             if (performer.log()) Message.cmdLog("清理包裹");
             return UntilRoleFreePerformerPromise(resolve => {
                 WG.SendCmd("$cleanall");
@@ -3018,8 +3063,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("tidyBag", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("tidyBag", function (performer, param) {
             if (performer.log()) Message.cmdLog("整理包裹");
             return UntilRoleFreePerformerPromise(resolve => {
                 Role.tidyBag(_ => { setTimeout(resolve, 1000); });
@@ -3028,8 +3073,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("shimen", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("shimen", function (performer, param) {
             if (performer.log()) Message.cmdLog("自动完成允许放弃的放弃师门");
             return UntilRoleFreePerformerPromise(resolve => {
                 Role.shimen(_ => { setTimeout(resolve, 1000); });
@@ -3038,8 +3083,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("renew", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("renew", function (performer, param) {
             if (performer.log()) Message.cmdLog("恢复角色气血和内力");
             return UntilRoleFreePerformerPromise(resolve => {
                 Role.renew(_ => { setTimeout(resolve, 1000); });
@@ -3053,11 +3098,11 @@
     //---------------------------------------------------------------------------
 
     var SkillStateMachine = {
-        perform: function(skill, force) {
+        perform: function (skill, force) {
             const timestamp = new Date().getTime();
             this._perform(skill, force, timestamp);
         },
-        _perform: function(skill, force, timestamp) {
+        _perform: function (skill, force, timestamp) {
             if (this._skillStack[skill] != null && this._skillStack[skill] > timestamp) return;
             const self = this;
             if ((!Role.isFree() && !force) || Role.coolingSkill(skill) || Role.rtime) {
@@ -3080,7 +3125,7 @@
                 WG.SendCmd(`perform ${skill}`);
             }, 1000);
         },
-        reset: function() {
+        reset: function () {
             this._skillStack = {};
         },
         _skillStack: {}
@@ -3092,14 +3137,14 @@
 
     var __systemCmdDelay = 1500;
 
-    (function() {
-        const executor = new AtCmdExecutor("cmdDelay", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("cmdDelay", function (performer, param) {
             performer._cmdDelay = parseInt(param);
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    const UnpackSystemCmd = function(cmd) {
+    const UnpackSystemCmd = function (cmd) {
         let result = cmd;
         let patt = /([^;]+)\[(\d+?)\]/g;
         let r = patt.exec(cmd);
@@ -3114,7 +3159,7 @@
         return result;
     };
 
-    (function() {
+    (function () {
         const executor = new CmdExecutor(_ => {
             return true;
         }, (performer, cmd) => {
@@ -3141,8 +3186,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("force", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("force", function (performer, param) {
             return new Promise(resolve => {
                 if (performer.log()) Message.cmdLog("强行执行系统命令", param);
                 WG.SendCmd(param);
@@ -3153,8 +3198,8 @@
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("perform", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("perform", function (performer, param) {
             const skills = param.split(",");
             for (const skill of skills) {
                 SkillStateMachine.perform(skill, false);
@@ -3167,15 +3212,15 @@
     //  Manage Trigger
     //---------------------------------------------------------------------------
 
-    (function() {
-        const executor = new AtCmdExecutor("on", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("on", function (performer, param) {
             unsafeWindow.TriggerCenter.activate(param);
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
 
-    (function() {
-        const executor = new AtCmdExecutor("off", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("off", function (performer, param) {
             unsafeWindow.TriggerCenter.deactivate(param);
         });
         CmdExecuteCenter.addExecutor(executor);
@@ -3185,7 +3230,7 @@
         Dungeons
     \***********************************************************************************/
 
-    const GetDungeonFlow = function(name) {
+    const GetDungeonFlow = function (name) {
         for (const d of Dungeons) {
             if (d.name == name) {
                 return d.source;
@@ -3195,41 +3240,41 @@
     };
 
     // params: name subtype
-    const AutoDungeonName = function(params) {
+    const AutoDungeonName = function (params) {
         const parts = params.split(' ');
         const name = parts[0];
         const type = parts[1];
         let totalName = '';
         switch (type) {
             case '0':
-            if (GetDungeonFlow(name)) {
-                return name;
-            }
-            totalName = `${name}(简单)`;
-            if (GetDungeonFlow(totalName)) {
-                return totalName;
-            }
-            break;
+                if (GetDungeonFlow(name)) {
+                    return name;
+                }
+                totalName = `${name}(简单)`;
+                if (GetDungeonFlow(totalName)) {
+                    return totalName;
+                }
+                break;
             case '1':
-            totalName = `${name}(困难)`;
-            if (GetDungeonFlow(totalName) != null) {
-                return totalName;
-            };
-            break;
+                totalName = `${name}(困难)`;
+                if (GetDungeonFlow(totalName) != null) {
+                    return totalName;
+                };
+                break;
             case '2':
-            totalName = `${name}(组队)`;
-            if (GetDungeonFlow(totalName) != null) {
-                return totalName;
-            };
-            break;
+                totalName = `${name}(组队)`;
+                if (GetDungeonFlow(totalName) != null) {
+                    return totalName;
+                };
+                break;
             default:
-            break;
+                break;
         }
         return null;
     };
 
-    (function() {
-        const executor = new AtCmdExecutor("fb", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("fb", function (performer, param) {
             const name = AutoDungeonName(param);
             if (name == null) {
                 Message.append('暂不支持次副本哦，欢迎到论坛分享此副本流程。');
@@ -4185,7 +4230,7 @@ look men;open men
     \***********************************************************************************/
 
     const Server = {
-        uploadConfig: function() {
+        uploadConfig: function () {
             let all = {};
             let keys = GM_listValues();
             keys.forEach(key => {
@@ -4196,15 +4241,15 @@ look men;open men
                 all["@@@trigger"] = tConfig;
             }
             let value = JSON.stringify(all);
-            Server._sync("uploadConfig", {id: Role.id, value: value}, pass => {
+            Server._sync("uploadConfig", { id: Role.id, value: value }, pass => {
                 GM_setClipboard(pass);
                 alert(`wsmud_Raid 配置上传成功，该浏览器所有角色配置会在服务器保存 24 小时。\n配置获取码：${pass}，已复制到系统剪切板。`);
             }, _ => {
                 alert("wsmud_Raid 配置上传失败！");
             });
         },
-        downloadConfig: function(pass) {
-            Server._sync("downloadConfig", {pass: pass}, data => {
+        downloadConfig: function (pass) {
+            Server._sync("downloadConfig", { pass: pass }, data => {
                 let config = JSON.parse(data);
                 for (const key in config) {
                     if (key == "@@@trigger") {
@@ -4220,20 +4265,20 @@ look men;open men
                 alert("wsmud_Raid 配置下载失败！");
             });
         },
-        uploadFlows: function() {
+        uploadFlows: function () {
             const flows = FlowStore.getAll();
             const map = WorkflowConfig._rootList();
-            const data = {map: map, flows: flows};
+            const data = { map: map, flows: flows };
             const value = JSON.stringify(data);
-            Server._sync("uploadFlows", {id: Role.id, value: value}, pass => {
+            Server._sync("uploadFlows", { id: Role.id, value: value }, pass => {
                 GM_setClipboard(pass);
                 alert(`角色流程上传成功，该角色流程会在服务器保存 24 小时。\n角色流程获取码：${pass}，已复制到系统剪切板。`);
             }, _ => {
                 alert("角色流程上传失败！");
             });
         },
-        downloadFlows: function(pass) {
-            Server._sync("downloadFlows", {pass: pass}, value => {
+        downloadFlows: function (pass) {
+            Server._sync("downloadFlows", { pass: pass }, value => {
                 let data = JSON.parse(value);
                 FlowStore.corver(data.flows);
                 WorkflowConfig._rootList(data.map);
@@ -4243,18 +4288,18 @@ look men;open men
                 alert("错误的角色流程获取码！");
             });
         },
-        uploadTriggers: function() {
+        uploadTriggers: function () {
             const triggers = unsafeWindow.TriggerCenter.getAllData();
             const value = JSON.stringify(triggers);
-            Server._sync("uploadTriggers", {id: Role.id, value: value}, pass => {
+            Server._sync("uploadTriggers", { id: Role.id, value: value }, pass => {
                 GM_setClipboard(pass);
                 alert(`角色触发器上传成功，该角色流程会在服务器保存 24 小时。\n角色触发器获取码：${pass}，已复制到系统剪切板。`);
             }, _ => {
                 alert("角色触发器上传失败！");
             });
         },
-        downloadTriggers: function(pass) {
-            Server._sync("downloadTriggers", {pass: pass}, value => {
+        downloadTriggers: function (pass) {
+            Server._sync("downloadTriggers", { pass: pass }, value => {
                 let data = JSON.parse(value);
                 unsafeWindow.TriggerCenter.corver(data);
                 console.log(data);
@@ -4263,10 +4308,10 @@ look men;open men
                 alert("错误的角色触发器获取码！");
             });
         },
-        getNotice: function() {
+        getNotice: function () {
             const noticeDataKey = "NoticeDataKey";
-            const oldData = GM_getValue(noticeDataKey, {version: "0.0.0", type: "0", value: "欢迎使用 wsmud_Raid"});
-            Server._async("notice", {version: oldData.version}, data => {
+            const oldData = GM_getValue(noticeDataKey, { version: "0.0.0", type: "0", value: "欢迎使用 wsmud_Raid" });
+            Server._async("notice", { version: oldData.version }, data => {
                 let validData = oldData;
                 if (data.version > oldData.version) {
                     GM_setValue(noticeDataKey, data);
@@ -4289,15 +4334,15 @@ look men;open men
                         area: ["380px"],
                         title: `wsmud_Raid 提示`,
                         content: validData.value,
-                        offset:"auto",
+                        offset: "auto",
                         shift: 2,
                         move: false,
                         closeBtn: 0,
                         btn: ['确认', '不再显示'],
-                        yes: function(index) {
+                        yes: function (index) {
                             layer.close(index);
                         },
-                        btn2: function() {
+                        btn2: function () {
                             GM_setValue(HideVersionNoticeKey, validData.version);
                         }
                     });
@@ -4373,7 +4418,7 @@ look men;open men
                 url: `http://${Server._address}/${uri}`,
                 data: params,
                 async: async,
-                success: function(data) {
+                success: function (data) {
                     if (data.code == 200) {
                         if (success != null) success(data.data);
                     } else {
@@ -4399,7 +4444,7 @@ look men;open men
         /**
          * @returns {{ id: number, name: string }[]}
          */
-        getAll: function() {
+        getAll: function () {
             var result = [];
             GM_listValues().map(function (key) {
                 if (key.indexOf(CmdGroupManager._prefix) == 0) {
@@ -4410,13 +4455,13 @@ look men;open men
             });
             return result;
         },
-        getName: function(id) {
+        getName: function (id) {
             var value = GM_getValue(this._key(id));
             if (value == null) return null;
             var obj = JSON.parse(value);
             return obj.name;
         },
-        getCmdsText: function(id) {
+        getCmdsText: function (id) {
             var value = GM_getValue(this._key(id));
             if (value == null) return "";
             var obj = JSON.parse(value);
@@ -4426,7 +4471,7 @@ look men;open men
         /**
          * @returns {string[]}
          */
-        getCmds: function(id) {
+        getCmds: function (id) {
             var text = this.getCmdsText(id);
             var cmds = text.split(/^\s*|\s*\n+\s*/g);
             var first = cmds[0];
@@ -4439,11 +4484,11 @@ look men;open men
             }
             return cmds;
         },
-        createCmdGroup: function(name, cmdsStr) {
+        createCmdGroup: function (name, cmdsStr) {
             var id = new Date().getTime();
             return this.updateCmdGroup(id, name, cmdsStr);
         },
-        updateCmdGroup: function(id, name, cmdsStr) {
+        updateCmdGroup: function (id, name, cmdsStr) {
             if (name == null || !/\S+/g.test(name)) {
                 alert("命令组想要一个名字...");
                 return false;
@@ -4460,15 +4505,15 @@ look men;open men
             GM_setValue(this._key(id), JSON.stringify(value));
             return true;
         },
-        removeCmdGroup: function(id) {
+        removeCmdGroup: function (id) {
             GM_deleteValue(this._key(id));
         },
 
         _prefix: "@cmdgroup",
-        _key: function(id) {
+        _key: function (id) {
             return this._prefix + id;
         },
-        _id: function(key) {
+        _id: function (key) {
             return parseInt(key.substring(this._prefix.length));
         }
     };
@@ -4477,7 +4522,7 @@ look men;open men
         /**
          * @returns {{ id: number, name: string }[]}
          */
-        getAll: function() {
+        getAll: function () {
             var result = [];
             GM_listValues().map(function (key) {
                 if (WorkflowConfigManager._isMyKey(key)) {
@@ -4488,7 +4533,7 @@ look men;open men
             });
             return result;
         },
-        getName: function(id) {
+        getName: function (id) {
             var value = GM_getValue(this._key(id));
             if (value == null) return null;
             var obj = JSON.parse(value);
@@ -4497,7 +4542,7 @@ look men;open men
         /**
          * @returns {{ id: number, repeat: number }[]}
          */
-        getCmdGroupInfos: function(id) {
+        getCmdGroupInfos: function (id) {
             var value = GM_getValue(this._key(id));
             if (value == null) return null;
             var obj = JSON.parse(value);
@@ -4506,7 +4551,7 @@ look men;open men
         /**
          * @returns {Workflow}
          */
-        getWorkflow: function(id) {
+        getWorkflow: function (id) {
             var cmdGroupInfos = this.getCmdGroupInfos(id);
             var items = [];
             for (const info of cmdGroupInfos) {
@@ -4522,7 +4567,7 @@ look men;open men
          * @param {string} name
          * @param {{ id: string, repeat: number }[]} cmdGroupInfos
          */
-        createWorkflowConfig: function(name, cmdGroupInfos) {
+        createWorkflowConfig: function (name, cmdGroupInfos) {
             var id = new Date().getTime();
             return this.updateWorkflowConfig(id, name, cmdGroupInfos);
         },
@@ -4531,7 +4576,7 @@ look men;open men
          * @param {string} name
          * @param {{ id: string, repeat: number }[]} cmdGroupInfos
          */
-        updateWorkflowConfig: function(id, name, cmdGroupInfos) {
+        updateWorkflowConfig: function (id, name, cmdGroupInfos) {
             if (name == null || !/\S+/g.test(name)) {
                 alert("工作流想要一个名字...");
                 return false;
@@ -4548,24 +4593,24 @@ look men;open men
             GM_setValue(this._key(id), JSON.stringify(value));
             return true;
         },
-        removeWorkflowConfig: function(id) {
+        removeWorkflowConfig: function (id) {
             GM_deleteValue(this._key(id));
         },
 
         _prefix: "workflow@",
-        _isMyKey: function(key) {
+        _isMyKey: function (key) {
             return key.indexOf(this._prefix + Role.id) == 0;
         },
-        _key: function(id) {
+        _key: function (id) {
             return this._prefix + Role.id + id;
         },
-        _id: function(key) {
+        _id: function (key) {
             return parseInt(key.substring((this._prefix + Role.id).length));
         }
     };
 
     const CodeTranslator = {
-        run: function() {
+        run: function () {
             const oldFinder1 = this._getFinder("原命令组");
             if (oldFinder1) {
                 WorkflowConfig.removeFinder(oldFinder1);
@@ -4607,7 +4652,7 @@ look men;open men
                 WorkflowConfig.createWorkflow(f.name, source, "原工作流程");
             });
         },
-        _newSingleName: function(cmdGroups, workflows) {
+        _newSingleName: function (cmdGroups, workflows) {
             let allCmdGroup = this._singleName(cmdGroups);
             let allWorkflow = this._singleName(workflows);
             allCmdGroup.forEach(cmdGroup => {
@@ -4619,9 +4664,9 @@ look men;open men
                     }
                 }
             });
-            return {group: allCmdGroup, flow: allWorkflow};
+            return { group: allCmdGroup, flow: allWorkflow };
         },
-        _singleName: function(list) {
+        _singleName: function (list) {
             for (const item of list) {
                 item.name = item.name.replace(/[^_a-zA-Z0-9\u4e00-\u9fa5]/g, "");
             }
@@ -4639,13 +4684,13 @@ look men;open men
             }
             return list;
         },
-        _getFinder: function(name) {
+        _getFinder: function (name) {
             let list = WorkflowConfig._rootList();
             const index = WorkflowConfig._findFinder(name, list);
             if (index == null) return null;
             return list[index];
         },
-        _appendHeader: function(header, text) {
+        _appendHeader: function (header, text) {
             let result = `\n${text}`;
             result = result.replace(/(\n)/g, `$1${header}`);
             result = result.replace(/\n\s*\n/g, "\n");
@@ -4661,14 +4706,14 @@ look men;open men
 
     var WorkflowConfig = {
         rootFinderName: "根文件夹",
-        rootFinderSortWay: function(value) {
+        rootFinderSortWay: function (value) {
             const key = "__WorkflowRootFinderSortWay";
             if (value == null) {
                 return GM_getValue(key, "nameAsc");
             }
             GM_setValue(key, value);
         },
-        finderList: function(finderName) {
+        finderList: function (finderName) {
             let result = [];
             if (finderName == this.rootFinderName) {
                 result = this._rootList();
@@ -4687,35 +4732,35 @@ look men;open men
             });
             switch (this.rootFinderSortWay()) {
                 case "updateDesc":
-                result.reverse();
-                break;
+                    result.reverse();
+                    break;
                 case "nameAsc":
-                result.sort(function(a, b) {
-                    return a.name.localeCompare(b.name);
-                });
-                break;
+                    result.sort(function (a, b) {
+                        return a.name.localeCompare(b.name);
+                    });
+                    break;
                 case "nameDesc":
-                result.sort(function(a, b) {
-                    return b.name.localeCompare(a.name);
-                });
-                break;
+                    result.sort(function (a, b) {
+                        return b.name.localeCompare(a.name);
+                    });
+                    break;
                 case "updateAsc":
                 default:
-                break;
+                    break;
             }
             return result;
         },
-        createFinder: function(name, flows) {
+        createFinder: function (name, flows) {
             const result = this._checkName(null, name, true);
             if (result != true) return result;
 
             let list = this._rootList();
-            const finder = {name: name, type: "finder", flows: flows ? flows : []};
+            const finder = { name: name, type: "finder", flows: flows ? flows : [] };
             list.push(finder);
             this._rootList(list);
             return true;
         },
-        modifyFinder: function(finder, newName) {
+        modifyFinder: function (finder, newName) {
             const result = this._checkName(finder.name, newName, true);
             if (result != true) return result;
 
@@ -4724,7 +4769,7 @@ look men;open men
             this.removeFinder(finder);
             return this.createFinder(newName, finder.flows);
         },
-        removeFinder: function(finder) {
+        removeFinder: function (finder) {
             let list = this._rootList();
             const index = this._findFinder(finder.name, list);
             if (index == null) return;
@@ -4736,11 +4781,11 @@ look men;open men
                 FlowStore.remove(flow.name);
             }
         },
-        createWorkflow: function(name, source, finderName) {
+        createWorkflow: function (name, source, finderName) {
             const result = this._checkName(null, name, false);
             if (result != true) return result;
 
-            const flow = {name: name, type: "flow"};
+            const flow = { name: name, type: "flow" };
             let list = this._rootList();
             let success = false;
             if (finderName == this.rootFinderName) {
@@ -4762,7 +4807,7 @@ look men;open men
                 return `未找到名为"${finderName}"的文件夹。`;
             }
         },
-        modifyWorkflow: function(flow, newName, newSource, newFinderName) {
+        modifyWorkflow: function (flow, newName, newSource, newFinderName) {
             const result = this._checkName(flow.name, newName, false);
             if (result != true) return result;
 
@@ -4774,7 +4819,7 @@ look men;open men
             }
             return true;
         },
-        removeWorkflow: function(flow) {
+        removeWorkflow: function (flow) {
             let list = this._rootList();
             if (flow.finder == this.rootFinderName) {
                 for (let i = 0; i < list.length; i++) {
@@ -4802,7 +4847,7 @@ look men;open men
 
             FlowStore.remove(flow.name);
         },
-        getFinderNames: function() {
+        getFinderNames: function () {
             let result = [this.rootFinderName];
             let list = this._rootList();
             list.forEach(item => {
@@ -4812,14 +4857,14 @@ look men;open men
             });
             return result;
         },
-        _rootList: function(list) {
+        _rootList: function (list) {
             const key = `WorkflowConfig_${Role.id}`;
             if (list != null) {
                 GM_setValue(key, list);
             }
             return GM_getValue(key, []);
         },
-        _checkName: function(oldName, name, isFinder) {
+        _checkName: function (oldName, name, isFinder) {
             if (name == oldName) return true;
             const itemName = isFinder ? "文件夹" : "工作流程";
             if (!/\S+/.test(name)) return `${itemName}的名称不能为空。`;
@@ -4841,7 +4886,7 @@ look men;open men
             }
             return true;
         },
-        _findFinder: function(name, list) {
+        _findFinder: function (name, list) {
             for (let i = 0; i < list.length; i++) {
                 const item = list[i];
                 if (item.type == "finder" && item.name == name) {
@@ -4853,7 +4898,7 @@ look men;open men
     };
 
     var ManagedPerformerCenter = {
-        start: function(name, source, log, callback) {
+        start: function (name, source, log, callback) {
             const p = new Performer(name, source);
             p.log(log != null ? log : true);
             const key = `key${this._counter}`;
@@ -4868,7 +4913,7 @@ look men;open men
             });
             $("#workflows-button").css("border-color", "#00FF00");
         },
-        getAll: function() {
+        getAll: function () {
             return Object.values(this._performers);
         },
         _counter: 0,
@@ -4876,7 +4921,7 @@ look men;open men
     };
 
     const UI = {
-        showToolbar: function() {
+        showToolbar: function () {
             if (!UI._toolbarHidden) return;
             UI._toolbarHidden = false;
             var raidToolbar = `
@@ -4917,7 +4962,7 @@ look men;open men
             $(".moreRaid").on('click', UI.dungeons);
             $(".hideRaidToolbar").on('click', UI.hideToolbar);
         },
-        hideToolbar: function() {
+        hideToolbar: function () {
             var toolbar = document.getElementById("raidToolbar");
             if (toolbar != null) {
                 toolbar.parentNode.removeChild(toolbar);
@@ -4926,7 +4971,7 @@ look men;open men
             UI._toolbarHidden = true;
         },
 
-        trigger: function() {
+        trigger: function () {
             if (unsafeWindow.TriggerUI == null) {
                 const content = `
                 <span class = "zdy-item install-trigger" style="width:120px"> 前往安装 </span>
@@ -4939,7 +4984,7 @@ look men;open men
                 unsafeWindow.TriggerUI.triggerHome();
             }
         },
-        forum: function() {
+        forum: function () {
             var content = `
             <span class = "zdy-item about-something" style="width:120px"> 综合讨论 </span>
             <span class = "zdy-item about-flow" style="width:120px"> <wht>流程讨论</wht> </span>
@@ -4966,7 +5011,7 @@ look men;open men
                 window.open("https://emeisuqing.github.io/wsmud/", '_blank').location;
             });
         },
-        shortcut: function() {
+        shortcut: function () {
             var content = `
             <span class = "zdy-item outMaze" style="width:120px"> 走出桃花林 </span>
             <span class = "zdy-item zhoubotong" style="width:120px"> 找到周伯通 </span>
@@ -5006,12 +5051,12 @@ look men;open men
             $(".downloadConfig").on('click', _ => {
                 layer.confirm('下载成功将会完全覆盖该浏览器所有角色配置！', {
                     title: "<red>! 警告</red>",
-                    btn: ['那还是算了','好的继续'],
+                    btn: ['那还是算了', '好的继续'],
                     shift: 2,
-                }, function(index){
+                }, function (index) {
                     layer.close(index);
-                }, function(){
-                    layer.prompt({ title: '输入配置获取码', formType: 0, shift: 2 }, function(pass, index){
+                }, function () {
+                    layer.prompt({ title: '输入配置获取码', formType: 0, shift: 2 }, function (pass, index) {
                         layer.close(index);
                         Server.downloadConfig(pass);
                     });
@@ -5023,12 +5068,12 @@ look men;open men
             $(".downloadFlows").on('click', _ => {
                 layer.confirm('拷贝成功将会完全覆盖原有角色流程！', {
                     title: "<red>! 警告</red>",
-                    btn: ['那还是算了','好的继续'],
+                    btn: ['那还是算了', '好的继续'],
                     shift: 2,
-                }, function(index){
+                }, function (index) {
                     layer.close(index);
-                }, function(){
-                    layer.prompt({ title: '输入角色流程获取码', formType: 0, shift: 2 }, function(pass, index){
+                }, function () {
+                    layer.prompt({ title: '输入角色流程获取码', formType: 0, shift: 2 }, function (pass, index) {
                         layer.close(index);
                         Server.downloadFlows(pass);
                     });
@@ -5040,12 +5085,12 @@ look men;open men
             $(".downloadTriggers").on('click', _ => {
                 layer.confirm('拷贝成功将会完全覆盖原有角色触发器！', {
                     title: "<red>! 警告</red>",
-                    btn: ['那还是算了','好的继续'],
+                    btn: ['那还是算了', '好的继续'],
                     shift: 2,
-                }, function(index){
+                }, function (index) {
                     layer.close(index);
-                }, function(){
-                    layer.prompt({ title: '输入角色触发获取码', formType: 0, shift: 2 }, function(pass, index){
+                }, function () {
+                    layer.prompt({ title: '输入角色触发获取码', formType: 0, shift: 2 }, function (pass, index) {
                         layer.close(index);
                         Server.downloadTriggers(pass);
                     });
@@ -5077,7 +5122,7 @@ look men;open men
             });
 
             $(".translateCode").on('click', _ => {
-                layer.prompt({ title: '客栈->流程讨论，阅读使用说明后操作', formType: 0, shift: 2 }, function(pass, index){
+                layer.prompt({ title: '客栈->流程讨论，阅读使用说明后操作', formType: 0, shift: 2 }, function (pass, index) {
                     if (pass == "我确认开始转换") {
                         layer.close(index);
                         CodeTranslator.run();
@@ -5089,20 +5134,20 @@ look men;open men
                 Server.getNotice();
             });
         },
-        dungeons: function() {
+        dungeons: function () {
             UI._appendHtml("🍺 <hic>自动副本</hic>", "");
             const model = UI._dungeonsContentModel();
             UI._mountableDiv().appendChild(model.$el);
         },
 
-        workflows: function() {
+        workflows: function () {
             if (ManagedPerformerCenter.getAll().length == 0) {
                 UI.workflowsHome();
             } else {
                 UI.runningFlows();
             }
         },
-        workflowsHome: function() {
+        workflowsHome: function () {
             // const leftText = `
             // <select style='width:80px' id="workflows-sort">
             //     <option value="updateAsc">更新时间升序</option>
@@ -5124,16 +5169,16 @@ look men;open men
             UI._appendHtml("🥗 <hig>工作流程</hig>", "", rightText, null, leftText, UI.runningFlows);
             $('#workflows-opts').val("none");
             $("#workflows-opts").change(function () {
-                switch($('#workflows-opts').val()) {
+                switch ($('#workflows-opts').val()) {
                     case "createFinder":
-                    UI.createFinder();
-                    break;
+                        UI.createFinder();
+                        break;
                     case "createFlow":
-                    UI.createWorkflow(WorkflowConfig.rootFinderName);
-                    break;
+                        UI.createWorkflow(WorkflowConfig.rootFinderName);
+                        break;
                     case "none":
                     default:
-                    break;
+                        break;
                 };
             });
             // $('#workflows-sort').val(WorkflowConfig.rootFinderSortWay());
@@ -5144,17 +5189,17 @@ look men;open men
             const model = UI._workflowContentModel(WorkflowConfig.finderList(WorkflowConfig.rootFinderName));
             UI._mountableDiv().appendChild(model.$el);
         },
-        runningFlows: function() {
+        runningFlows: function () {
             UI._appendHtml("🥗 <hig>运行中流程</hig>", "", null, null, UI._backTitle, UI.workflowsHome);
             const model = UI._runningFlowsContentModel();
             UI._mountableDiv().appendChild(model.$el);
         },
-        createFinder: function() {
+        createFinder: function () {
             const content = `
             <div style="margin: 0 2em 5px 2em;text-align:center;width:calc(100% - 4em)">
                 <label for="create-finder-name"> 名称:</label><input id ="create-finder-name" style='width:120px' type="text"  name="create-finder-name" value="">
             </div>`;
-            const save = function() {
+            const save = function () {
                 const name = $("#create-finder-name").val();
                 const result = WorkflowConfig.createFinder(name);
                 if (result == true) {
@@ -5165,19 +5210,19 @@ look men;open men
             };
             UI._appendHtml("🥗 <hig>新建文件夹</hig>", content, "<wht>保存</wht>", save, UI._backTitle, UI.workflowsHome);
         },
-        modifyFinder: function(finder) {
+        modifyFinder: function (finder) {
             const content = `
             <div style="margin: 0 2em 5px 2em;text-align:center;width:calc(100% - 4em)">
                 <label for="modify-finder-name"> 名称:</label><input id ="modify-finder-name" style='width:120px' type="text"  name="modify-finder-name" value="">
             </div>`;
-            const remove = function() {
+            const remove = function () {
                 var verify = confirm("删除文件夹将删除其中的所有流程，确认删除吗？");
                 if (verify) {
                     WorkflowConfig.removeFinder(finder);
                     UI.workflowsHome();
                 }
             };
-            const back = function() {
+            const back = function () {
                 const name = $("#modify-finder-name").val();
                 const result = WorkflowConfig.modifyFinder(finder, name);
                 if (result != true) {
@@ -5189,7 +5234,7 @@ look men;open men
             UI._appendHtml("🥗 <hig>修改文件夹</hig>", content, "删除", remove, UI._backSaveTitle, back);
             $('#modify-finder-name').val(finder.name);
         },
-        openFinder: function(finderName) {
+        openFinder: function (finderName) {
             if (finderName == WorkflowConfig.rootFinderName) {
                 UI.workflowsHome();
                 return;
@@ -5199,13 +5244,13 @@ look men;open men
             const model = UI._workflowContentModel(list);
             UI._mountableDiv().appendChild(model.$el);
         },
-        createWorkflow: function(finderName) {
+        createWorkflow: function (finderName) {
             const content = `
             <div style="margin: 0 2em 5px 2em;text-align:left;width:calc(100% - 4em)">
                 <label for="create-flow-name"> 名称:</label><input id ="create-flow-name" style='width:120px' type="text"  name="create-flow-name" value="">
             </div>
             <textarea class = "settingbox hide" style = "height:5rem;display:inline-block;font-size:0.8em;width:calc(100% - 4em)" id = "create-flow-source"></textarea>`;
-            const save = function() {
+            const save = function () {
                 const name = $("#create-flow-name").val();
                 const source = $("#create-flow-source").val();
                 const result = WorkflowConfig.createWorkflow(name, source, finderName);
@@ -5217,7 +5262,7 @@ look men;open men
             };
             UI._appendHtml("🥗 <hig>新建流程</hig>", content, "<wht>保存</wht>", save, UI._backTitle, UI.workflowsHome);
         },
-        modifyWorkflow: function(flow) {
+        modifyWorkflow: function (flow) {
             let options = "";
             WorkflowConfig.getFinderNames().forEach(finderName => {
                 options += `<option value="${finderName}">${finderName}</option>`;
@@ -5231,14 +5276,14 @@ look men;open men
             </div>
             <textarea class = "settingbox hide" style = "height:5rem;display:inline-block;font-size:0.8em;width:calc(100% - 4em)" id = "modify-flow-source"></textarea>
             <span class="raid-item shareFlow">分享此流程</span>`;
-            const remove = function() {
+            const remove = function () {
                 var verify = confirm("确认删除此工作流程吗？");
                 if (verify) {
                     WorkflowConfig.removeWorkflow(flow);
                     UI.workflowsHome();
                 }
             };
-            const back = function() {
+            const back = function () {
                 const name = $("#modify-flow-name").val();
                 const source = $("#modify-flow-source").val();
                 const finderName = $("#modify-flow-finder").val();
@@ -5288,17 +5333,17 @@ look men;open men
                 if (rightAction) rightAction();
             });
         },
-        _mountableDiv: function() {
+        _mountableDiv: function () {
             var wg_log = document.getElementsByClassName("WG_log")[0];
             var pre = wg_log.getElementsByTagName("pre")[0];
             var div = pre.getElementsByTagName("div")[0];
             return div;
         },
-        _workflowContentModel: function(items) {
+        _workflowContentModel: function (items) {
             const contentModel = new Vue({
                 el: '#WorkflowsContentModel',
                 methods: {
-                    createSpan: function(createElement, item) {
+                    createSpan: function (createElement, item) {
                         let style = {
                             width: "120px",
                             "background-color": "#12e4a0",
@@ -5317,14 +5362,14 @@ look men;open men
                             attrs: { class: "zdy-item" },
                             style: style
                         };
-                        var play = function() {
+                        var play = function () {
                             if (item.type == "finder") {
                                 UI.openFinder(item.name);
                             } else {
                                 ManagedPerformerCenter.start(item.name, FlowStore.get(item.name));
                             }
                         };
-                        var edit = function() {
+                        var edit = function () {
                             if (item.type == "finder") {
                                 UI.modifyFinder(item);
                             } else {
@@ -5343,7 +5388,7 @@ look men;open men
                         var leftNode = createElement("div", leftProperties, "⚙");
                         var mainProperties = {
                             attrs: { class: "breakText" },
-                            style: { width: "85px", float: "right"},
+                            style: { width: "85px", float: "right" },
                             on: { click: play }
                         };
                         const title = item.type == "finder" ? item.name : `▶️${item.name}`;
@@ -5351,7 +5396,7 @@ look men;open men
                         return createElement("span", properties, [leftNode, mainNode]);
                     },
                 },
-                render: function(createElement) {
+                render: function (createElement) {
                     var self = this;
                     let flows = [];
                     let finders = [];
@@ -5376,28 +5421,30 @@ look men;open men
             });
             return contentModel;
         },
-        _dungeonsContentModel: function() {
+        _dungeonsContentModel: function () {
             const contentModel = new Vue({
                 el: '#DungeonsContentModel',
                 methods: {
-                    getItems: function() {
+                    getItems: function () {
                         return Dungeons;
                     },
-                    createSpan: function(createElement, item) {
+                    createSpan: function (createElement, item) {
                         var properties = {
                             attrs: { class: "zdy-item" },
                             style: { width: "120px" },
-                            on: { click: function() {
-                                ManagedPerformerCenter.start(`自动副本-${item.name}`, GetDungeonSource(item.name));
-                            }},
+                            on: {
+                                click: function () {
+                                    ManagedPerformerCenter.start(`自动副本-${item.name}`, GetDungeonSource(item.name));
+                                }
+                            },
                         };
                         return createElement('span', properties, item.desc != null ? item.desc : item.name);
                     },
                 },
-                render: function(createElement) {
+                render: function (createElement) {
                     var items = this.getItems();
                     var theSelf = this;
-                    var spans = items.map(function(item) {
+                    var spans = items.map(function (item) {
                         return theSelf.createSpan(createElement, item);
                     });
                     return createElement(
@@ -5409,11 +5456,11 @@ look men;open men
             });
             return contentModel;
         },
-        _runningFlowsContentModel: function() {
+        _runningFlowsContentModel: function () {
             const contentModel = new Vue({
                 el: '#WorkflowsContentModel',
                 methods: {
-                    createSpan: function(createElement, flow) {
+                    createSpan: function (createElement, flow) {
                         let style = {
                             width: "120px",
                             "background-color": "#05b77d",
@@ -5424,10 +5471,10 @@ look men;open men
                             attrs: { class: "zdy-item" },
                             style: style
                         };
-                        var stop = function() {
+                        var stop = function () {
                             flow.stop();
                         };
-                        var pause = function() {
+                        var pause = function () {
                             if (flow.pausing()) {
                                 flow.resume();
                             } else {
@@ -5452,17 +5499,17 @@ look men;open men
                         var leftNode = createElement("div", leftProperties, flow.pausing() ? "▶️" : "⏸");
                         var mainProperties = {
                             attrs: { class: "breakText" },
-                            style: { width: "85px", float: "right"},
+                            style: { width: "85px", float: "right" },
                             on: { click: stop }
                         };
                         const mainNode = createElement("div", mainProperties, `⏹${flow.name()}`);
                         return createElement("span", properties, [leftNode, mainNode]);
                     },
                 },
-                render: function(createElement) {
+                render: function (createElement) {
                     var items = ManagedPerformerCenter.getAll();
                     var theSelf = this;
-                    var spans = items.map(function(item) {
+                    var spans = items.map(function (item) {
                         return theSelf.createSpan(createElement, item);
                     });
                     const style = createElement("style", ".breakText {word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}");
@@ -5482,7 +5529,7 @@ look men;open men
          * @param {String} type 流程  触发
          * @param {Object} value
          */
-        _share: function(type, value) {
+        _share: function (type, value) {
             UI._shareData = value;
             let source = `
             [if] (__FormUserName) == null
@@ -5554,7 +5601,7 @@ look men;open men
     }
 
     const THIsland = {
-        outMaze: function(callback) {
+        outMaze: function (callback) {
             if (!Role.atPath("taohua/haitan")) {
                 Message.append("只有在 桃花岛的海滩 才能使用此虫洞。");
                 return;
@@ -5565,17 +5612,17 @@ look men;open men
                 "@look 1",
                 "@look 5"
             ];
-            var willStartExecute = function() {
+            var willStartExecute = function () {
                 THIsland._monitorMaze();
             };
-            var didFinishExecute = function() {
+            var didFinishExecute = function () {
                 THIsland._cancelMonitorMaze();
                 if (callback) callback();
             };
-            var willPerformCmd = function(lastCmd, cmd) {
+            var willPerformCmd = function (lastCmd, cmd) {
                 if (cmd == "@look 1") {
                     if (THIsland._goCenterCmd) {
-                       return THIsland._goCenterCmd;
+                        return THIsland._goCenterCmd;
                     } else {
                         return null;
                     }
@@ -5599,7 +5646,7 @@ look men;open men
             );
             executer.execute();
         },
-        zhoubotong: function(callback) {
+        zhoubotong: function (callback) {
             if (!Role.atPath("taohua/wofang")) {
                 Message.append("只有在 蓉儿的卧室 才能使用此虫洞。");
                 return;
@@ -5619,12 +5666,12 @@ look men;open men
                 "@go 8",
                 "@end"
             ];
-            var willStartExecute = function() {
+            var willStartExecute = function () {
                 THIsland._monitorMaze();
-                THIsland._exitsHookIndex = WG.add_hook("exits", function(data) {
+                THIsland._exitsHookIndex = WG.add_hook("exits", function (data) {
                     if (THIsland._lastCoord == undefined || THIsland._lastCoord == [0, 0]) return;
                     if (Object.keys(data.items).length != 4) return;
-                    for(var key in data.items) {
+                    for (var key in data.items) {
                         if (data.items[key] != "桃花林") return;
                     }
                     var normalExistMap = [
@@ -5635,14 +5682,14 @@ look men;open men
                     var x = THIsland._lastCoord[0] + 1;
                     var y = THIsland._lastCoord[1] + 1;
                     var normalExists = normalExistMap[x][y];
-                    for(var key2 in data.items) {
+                    for (var key2 in data.items) {
                         if (normalExists.indexOf(key2) != -1) continue;
                         THIsland._goCave = "go " + key2;
                         return;
                     }
                 });
             };
-            var didFinishExecute = function() {
+            var didFinishExecute = function () {
                 THIsland._lastCoord = undefined;
                 THIsland._lastGo = undefined;
                 THIsland._goCave = undefined;
@@ -5650,30 +5697,30 @@ look men;open men
                 WG.remove_hook(THIsland._exitsHookIndex);
                 if (callback) callback();
             };
-            var willPerformCmd = function(lastCmd, cmd) {
+            var willPerformCmd = function (lastCmd, cmd) {
                 if (THIsland._goCave) return THIsland._goCave + ";go west;[exit]";
 
                 var number = 0;
                 switch (cmd) {
-                case "@look 1":
-                    if (THIsland._goCenterCmd) {
-                       return THIsland._goCenterCmd;
-                    } else {
-                        return null;
-                    }
-                    break;
-                case "@look 5":
-                    if (!THIsland._decodedMaze) return null;
-                    break;
-                case "@go 2":
-                    THIsland._lastCoord = THIsland._mazeCoords[2];
-                    THIsland._lastGo = THIsland._mazePath(THIsland._lastCoord);
-                    return THIsland._lastGo;
-                case "@go 3": number = 3; break;
-                case "@go 4": number = 4; break;
-                case "@go 6": number = 6; break;
-                case "@go 7": number = 7; break;
-                case "@go 8": number = 8; break;
+                    case "@look 1":
+                        if (THIsland._goCenterCmd) {
+                            return THIsland._goCenterCmd;
+                        } else {
+                            return null;
+                        }
+                        break;
+                    case "@look 5":
+                        if (!THIsland._decodedMaze) return null;
+                        break;
+                    case "@go 2":
+                        THIsland._lastCoord = THIsland._mazeCoords[2];
+                        THIsland._lastGo = THIsland._mazePath(THIsland._lastCoord);
+                        return THIsland._lastGo;
+                    case "@go 3": number = 3; break;
+                    case "@go 4": number = 4; break;
+                    case "@go 6": number = 6; break;
+                    case "@go 7": number = 7; break;
+                    case "@go 8": number = 8; break;
                 }
                 if (number != 0) {
                     var back = THIsland._mazeBackPath(THIsland._lastGo);
@@ -5694,7 +5741,7 @@ look men;open men
             executer.execute();
         },
 
-        _outMazeCmd: function() {
+        _outMazeCmd: function () {
             var cmd = "";
             for (var i = 2; i <= 9; i++) {
                 var coord = THIsland._mazeCoords[i];
@@ -5708,7 +5755,7 @@ look men;open men
             cmd += ";go south";
             return cmd;
         },
-        _mazePath: function(coord) {
+        _mazePath: function (coord) {
             var pathMap = [
                 ["go southwest", "go west", "go northwest"],
                 ["go south", "", "go north"],
@@ -5718,7 +5765,7 @@ look men;open men
             var y = coord[1] + 1;
             return pathMap[x][y];
         },
-        _mazeBackPath: function(path) {
+        _mazeBackPath: function (path) {
             var backMap = {
                 "": "",
                 "go southwest": "go northeast",
@@ -5732,7 +5779,7 @@ look men;open men
             };
             return backMap[path];
         },
-        _monitorMaze: function() {
+        _monitorMaze: function () {
             THIsland._mazeCoords = [
                 [2, 2], // unused
                 [2, 2],
@@ -5749,7 +5796,7 @@ look men;open men
             THIsland._goCenterCmd = undefined;
             THIsland._decodedMaze = false;
 
-            var index1 = WG.add_hook(["room", "exits"], function(data) {
+            var index1 = WG.add_hook(["room", "exits"], function (data) {
                 if (THIsland._goCenterCmd != undefined) return;
 
                 if (data.type == "room") {
@@ -5780,7 +5827,7 @@ look men;open men
                     }
                 }
             });
-            var index2 = WG.add_hook("room", function(data) {
+            var index2 = WG.add_hook("room", function (data) {
                 if (THIsland._decodedMaze) return;
 
                 if (data.desc == undefined) return;
@@ -5835,7 +5882,7 @@ look men;open men
             });
             THIsland._mazeHookIndexes = [index1, index2];
         },
-        _cancelMonitorMaze: function() {
+        _cancelMonitorMaze: function () {
             for (var i = THIsland._mazeHookIndexes.length - 1; i >= 0; i--) {
                 var index = THIsland._mazeHookIndexes[i];
                 WG.remove_hook(index);
@@ -5846,8 +5893,8 @@ look men;open men
     //---------------------------------------------------------------------------
 
     /* @taohualin 走出桃花林 */
-    (function() {
-        const executor = new AtCmdExecutor("taohualin", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("taohualin", function (performer, param) {
             return new Promise(resolve => {
                 THIsland.outMaze(resolve);
             });
@@ -5856,8 +5903,8 @@ look men;open men
     })();
 
     /* @zhoubotong 找到周伯通 */
-    (function() {
-        const executor = new AtCmdExecutor("zhoubotong", function(performer, param) {
+    (function () {
+        const executor = new AtCmdExecutor("zhoubotong", function (performer, param) {
             return new Promise(resolve => {
                 THIsland.zhoubotong(resolve);
             });
@@ -5866,7 +5913,7 @@ look men;open men
     })();
 
     const DungeonsShortcuts = {
-        cihang: function() {
+        cihang: function () {
             let source = `
 [if] (:room 慈航静斋) == false
     @print <hiy>请先进入慈航副本再运行。</hiy>
@@ -5933,7 +5980,7 @@ go south
             p.log(false);
             p.start();
         },
-        zhanshendian: function() {
+        zhanshendian: function () {
             let source = `
 [if] (:room 战神殿) == false
     @print <hiy>请先进入战神殿副本再运行。</hiy>
@@ -5991,18 +6038,18 @@ tm (last)宿，最后一个方位是【(dir_l)】60秒倒计时已开始，请�
     \***********************************************************************************/
 
     const ToRaid = {
-        menu :UI.showToolbar,
+        menu: UI.showToolbar,
 
-        perform: function(content, name, log) {
+        perform: function (content, name, log) {
             const realName = name ? name : "第三方调用";
             ManagedPerformerCenter.start(realName, content, log);
         },
 
-        existAutoDungeon: function(params) {
+        existAutoDungeon: function (params) {
             return AutoDungeonName(params) != null;
         },
 
-        shareTrigger: function(triggerData) {
+        shareTrigger: function (triggerData) {
             UI._share("触发", triggerData);
         }
     };
@@ -6010,14 +6057,14 @@ tm (last)宿，最后一个方位是【(dir_l)】60秒倒计时已开始，请�
     $(document).ready(function () {
         __init__();
         if (WG == undefined || WG == null) {
-            setTimeout(__init__,300);
+            setTimeout(__init__, 300);
         }
     });
 
-    function __init__(){
+    function __init__() {
         WG = unsafeWindow.WG;
-        if(WG == undefined || WG == null){
-            setTimeout(()=>{__init__()}, 300);
+        if (WG == undefined || WG == null) {
+            setTimeout(() => { __init__() }, 300);
             return;
         }
         messageAppend = unsafeWindow.messageAppend;
