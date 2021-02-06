@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.34
+// @version         2.4.35
 // @date            23/12/2018
 // @modified        06/02/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
