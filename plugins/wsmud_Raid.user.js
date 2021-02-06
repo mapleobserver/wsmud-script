@@ -1863,6 +1863,14 @@
         coolingSkill: function (skill) {
             return this.coolingSkills().indexOf(skill) != -1
         },
+        hasSkill: function (skill) {
+            var combatStr = $('.combat-commands').html()
+            if (combatStr.indexOf(skill) != -1) {
+                return true;
+            } else {
+                return false;
+            }
+        },
         weapon: function () {
             return Role._weaponType
         },
@@ -3107,6 +3115,7 @@
 
     var SkillStateMachine = {
         perform: function (skill, force) {
+            if (!Role.hasSkill(skill)) return;
             const timestamp = new Date().getTime();
             this._perform(skill, force, timestamp);
         },
