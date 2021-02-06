@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.33
+// @version         2.4.34
 // @date            23/12/2018
-// @modified        06/02/2020
+// @modified        06/02/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1863,6 +1863,14 @@
         coolingSkill: function (skill) {
             return this.coolingSkills().indexOf(skill) != -1
         },
+        hasSkill: function (skill) {
+            var combatStr = $('.combat-commands').html()
+            if (combatStr.indexOf(skill) != -1) {
+                return true;
+            } else {
+                return false;
+            }
+        },
         weapon: function () {
             return Role._weaponType
         },
@@ -3107,6 +3115,7 @@
 
     var SkillStateMachine = {
         perform: function (skill, force) {
+            if (!Role.hasSkill(skill)) return;
             const timestamp = new Date().getTime();
             this._perform(skill, force, timestamp);
         },
