@@ -3,7 +3,7 @@
 // @namespace       cqv
 // @version         2.4.33
 // @date            23/12/2018
-// @modified        30/12/2020
+// @modified        06/02/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -2158,7 +2158,11 @@
                 if (data.msg.indexOf('只能在战斗中使用') != -1 || data.msg.indexOf('这里不允许战斗') != -1 || data.msg.indexOf('没时间这么做') != -1) {
                     Role.combating = false;
                 }
+                if (data.msg.indexOf('战斗中打坐，你找死吗？') != -1 || data.msg.indexOf('你正在战斗') != -1  {
+                    Role.combating = true;
+                }
             });
+   
         }, 
         _monitorWeapon: function () {
             WG.add_hook("perform", function (data) {
