@@ -2158,7 +2158,7 @@
                 if (data.msg.indexOf('只能在战斗中使用') != -1 || data.msg.indexOf('这里不允许战斗') != -1 || data.msg.indexOf('没时间这么做') != -1) {
                     Role.combating = false;
                 }
-                if (data.msg.indexOf('战斗中打坐，你找死吗？') != -1 || data.msg.indexOf('你正在战斗') != -1  {
+                if (data.msg.indexOf('战斗中打坐，你找死吗？') != -1 || data.msg.indexOf('你正在战斗') != -1 ) {
                     Role.combating = true;
                 }
             });
