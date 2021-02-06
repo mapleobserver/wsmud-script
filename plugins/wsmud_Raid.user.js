@@ -2141,7 +2141,7 @@
                                 s_name = /<([^<>]*)>/.exec(sklii_item.name)[1]
                             }
                         }
-                        action(item.id, value, s_name);
+                        action(item.id, value, s_name.toLocaleLowerCase());
                     }
                 }
                 if (data.id != null && data.enable != null) {
