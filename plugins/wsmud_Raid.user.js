@@ -3,7 +3,7 @@
 // @namespace       cqv
 // @version         2.4.33
 // @date            23/12/2018
-// @modified        13/1/2021
+// @modified        30/12/2020
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1709,7 +1709,7 @@
         equipments: [],
         items: {}, // {id: object}
         stores: {}, // {id: object}
-
+        _weaponType:'',
         kongfu: {
             quan: null,
             nei: null,
@@ -1752,6 +1752,7 @@
             Role._monitorItems();
             Role._monitorCombat();
             Role._monitorInfo();
+            Role._monitorWeapon();
         },
 
         hasStatus: function(s) {
@@ -1860,6 +1861,9 @@
         },
         coolingSkill: function(skill) {
             return this.coolingSkills().indexOf(skill) != -1
+        },
+        weapon:function(){
+            return Role._weaponType
         },
 
         _renewHookIndex: null,
@@ -2154,11 +2158,22 @@
                 if (data.msg.indexOf('只能在战斗中使用') != -1 || data.msg.indexOf('这里不允许战斗') != -1 || data.msg.indexOf('没时间这么做') != -1) {
                     Role.combating = false;
                 }
-                if (data.msg.indexOf('战斗中打坐，你找死吗？') != -1 || data.msg.indexOf('你正在战斗') != -1  {
-                    Role.combating = true;
-                }
             });
-                
+        }, 
+        _monitorWeapon: function () {
+            WG.add_hook("perform", function (data) {
+                if (data.skills != null ) {
+                    if (JSON.stringify(data.skills).indexOf("sword")!=-1){
+                        Role._weaponType = 'sword'
+                    } else if (JSON.stringify(data.skills).indexOf("blade") != -1){
+                        Role._weaponType = 'blade'
+                    }else{
+                        Role._weaponType = ''
+                    }
+                }
+                   
+            });
+        
         }
     };
 
@@ -2616,6 +2631,9 @@
                 const item = Room.getItem(id);
                 if (item != null) return item.hp;
                 return -1;
+            }, 
+            ":weapon ": function (id) {
+                return id == Role.weapon()
             },
             ":maxHp ": function(id) {
                 const item = Room.getItem(id);
