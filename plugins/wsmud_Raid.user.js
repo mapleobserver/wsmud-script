@@ -2149,7 +2149,7 @@
                 if (data.id != null && data.enable != null) {
                     var value = data.enable;
                     if (value == false) value = "none";
-                    s_name = ""
+                    var s_name = ""
                     for (const sklii_item of Role.skills) {
                         if (sklii_item.id == value) {
                             s_name = /<([^<>]*)>/.exec(sklii_item.name)[1]
