@@ -17,7 +17,6 @@
 // @grant           GM_listValues
 // @grant           GM_setClipboard
 
-// @downloadURL none
 // ==/UserScript==
 
 (function () {
