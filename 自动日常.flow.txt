@@ -1,9 +1,9 @@
 //~silent
 //自动日常合并版
 //四区白三三
-//1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。
-($localVer) = 2020121802
-($changeLog) = 1、新增【赌场兑换残页】功能。2、删除【最高连续追捕数达到后自动放弃】功能。3、优化偷渡副本防止卡住。
+//1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
+($localVer) = 2021020801
+($changeLog) = 1.新增春节免费扫荡模式。2.优化追捕打塔过程的疗伤过程。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -35,6 +35,10 @@
   @print <ord>(alert_start)</ord>
   [exit]
 
+// 自动日常模式
+[if] (RCMode) == null
+  ($RCMode) = 正常模式
+#select ($RCMode) = 当前模式<ord>(RCMode)</ord>，自动日常的执行模式,正常模式|春节模式,(RCMode)
 // 是否统计收益
 [if] (RecordG) == null
   ($RecordG) = 是
@@ -48,9 +52,11 @@
   ($SMtasks) = 正常进行
 [if] (smComboN) >= 100
   [if] (:hour) <5 || (:hour) >= 20
-    #select ($SMtasks) = <ord>处于抢首席时段</ord>，师门任务可正常进行,正常进行|跳过,正常进行
+    ($SMtasks) = 正常进行
+    #select ($SMtasks) = <ord>处于抢首席时段，师门任务可正常进行</ord>,正常进行|跳过,正常进行
   [else]
-    #select ($SMtasks) = 师门已连(smComboN)次，<ord>是否先跳过</ord>等晚上抢首席,正常进行|跳过,跳过
+    ($SMtasks) = 跳过
+    #select ($SMtasks) = 师门已连(smComboN)次，<ord>是否先跳过等晚上抢首席</ord>,正常进行|跳过,跳过
 [else if] (smComboN) < 30
   ($SMtasks) = 正常进行
   #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,正常进行
@@ -164,26 +170,6 @@ stopstate
 // 吃养精丹和潜能丹药
 stopstate
 @await 500
-// ($yjd) = {b养精丹g#}?
-// [if] (yjd) == null || (yjd) < 10
-// $to 扬州城-药铺
-// select {r平一指}
-// list {r平一指}
-// @dialog
-// [if] (yjd) == null
-//   ($yjd) = 10
-// [else]
-//   ($yjd) = 10 - (yjd)
-//   buy (yjd) {d养精丹g}? from {r平一指}
-// use {b养精丹g}?[5]
-// use {b养精丹g}?[5]
-// @await 2000
-// [if] {b养精丹b}? != null
-//   [if] {b养精丹b#} <= 10
-//     use {b养精丹b}[{b养精丹b#}]
-//   [else]
-//     use {b养精丹b}[10]
-//   @await 2000
 [if] {b朱果g}? != null
   [if] {b朱果g#} <= 10
     use {b朱果g}[{b朱果g#}]
@@ -208,6 +194,9 @@ stopstate
   @await 500
   @toolbar tasks
   @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
+[if] (RCMode) == 春节模式 && (ZByes) != 快速扫荡
+  ($zbtemp) = (ZByes)
+  ($ZByes) = 快速扫荡
 [if] (currentN) < 20 && (ZByes) == 快速扫荡
   @print 开始快速追捕
   stopstate
@@ -218,7 +207,8 @@ stopstate
     @await 500
   [while] true
     [if] {b扫荡符#}? < 20 || {b扫荡符}? == null
-      shop 0 20
+      [if] (RCMode) == 正常模式
+        shop 0 20
     ask3 {程药发}
     @tip 无法($speed)完成|目前完成20/20个|已经完成|你的($sdfnum)符不够
     [if] (speed) != null || (sdfnum) != null
@@ -256,7 +246,7 @@ stopstate
   @js $(`.state-bar`).before(`<div id=zb_prog>开始追捕</div>`)
   [while](currentN) < 20
     ($zb) = true
-    @renew
+    @liaoshang
     @until (:status xuruo) == false
     [if](comboN)>=(ZBWaitCD)
       @cd (ZBcdskill)
@@ -452,6 +442,7 @@ stopstate
         go east
         go up
 ($zb) = false
+($ZByes) = (zbtemp)
 @js $('#zb_prog').remove()
 @cmdDelay
 @await 2000
@@ -460,7 +451,7 @@ stopstate
 
 // 武道塔
 ($currentN) = null
-[if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式
+[if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式  || (RCMode) == 春节模式
   @toolbar jh
   @toolbar tasks
   @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
@@ -492,14 +483,19 @@ stopstate
       @await 500
       @tip 你目前可以直接去挑战第($wdlevel)层
     @print 开始挑战第(wdlevel)层
-    go enter
-    [while] true
+    [if] (RCMode) == 正常模式
+      go enter
+    [while] (RCMode) == 正常模式
       [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
         [break]
       [if] (WudaoMode) == 正常模式
-        [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
-          @renew
-          jh fam 9 start;go enter
+        [if] (:hpPer) < 0.7
+          //$to 扬州城-武庙
+          @liaoshang
+        [if] (:mpPer) < 0.3
+          dazuo
+          @await 5000
+          //jh fam 9 start;go enter
         [if] (wdlevel) >= (WudaoManualMaxLevel)
           [break]
         [if] (wdlevel) >= (WudaoWaitCDLevel)
@@ -522,12 +518,12 @@ stopstate
       [else]
         ($wdlevel) = (wdlevel) + 1
         go up
-    [if] (WudaoMode) == 正常模式
+    [if] (WudaoMode) == 正常模式 || (RCMode) == 春节模式
       ($num)=0
       jh fam 9 start
       ask2 {r守门人}
       @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
-      [if] (num) > 0
+      [if] (num) > 0 && (RCMode) != 春节模式
         [if] {b扫荡符#}? < (num) || {b扫荡符}? == null
           shop 0 (num)
       ask2 {r守门人};ask3 {r守门人}
@@ -536,7 +532,7 @@ stopstate
     @await 2000
     stopstate
     @tidyBag
-    @renew
+    @liaoshang
 [else if] (WudaoMode) == 只打塔主
   @print <hiy>已设置只打塔主，跳过武道塔。</hiy>
   tm 已设置只打塔主，跳过武道塔。
@@ -567,7 +563,8 @@ stopstate
         [while] (fb_com) < (FBnum)
           ($fb_num) = (FBnum) - (fb_com)
           [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
-            shop 0 (fb_num)
+            [if] (RCMode) == 正常模式
+              shop 0 (fb_num)
           (fbcr) (fb_num)
           @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
           [if] (lack) != null
@@ -649,6 +646,7 @@ stopstate
 stopstate
 $tnbuy
 @await 3000
+@tidyBag
 
 // 请安
 greet master

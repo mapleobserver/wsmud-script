@@ -127,26 +127,6 @@ stopstate
 // 吃养精丹和潜能丹药
 stopstate
 @await 500
-($yjd) = {b养精丹g#}?
-[if] (yjd) == null || (yjd) < 10
-  $to 扬州城-药铺
-  select {r平一指}
-  list {r平一指}
-  @dialog
-  [if] (yjd) == null
-    ($yjd) = 10
-  [else]
-    ($yjd) = 10 - (yjd)
-  buy (yjd) {d养精丹g}? from {r平一指}
-use {b养精丹g}?[5]
-use {b养精丹g}?[5]
-@await 2000
-[if] {b养精丹b}? != null
-  [if] {b养精丹b#} <= 10
-    use {b养精丹b}[{b养精丹b#}]
-  [else]
-    use {b养精丹b}[10]
-  @await 2000
 [if] {b朱果g}? != null
   [if] {b朱果g#} <= 10
     use {b朱果g}[{b朱果g#}]
