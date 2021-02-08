@@ -2,7 +2,7 @@
 // 常用流程
 // 四区白三三
 ($localVer) = 2021020801
-($changeLog) = 更新武神红BOSS辅助触发；更新部分失效触发
+($changeLog) = 开放圆月弯刀整合版本；更新武神红BOSS辅助触发；更新部分失效触发
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.lrb
