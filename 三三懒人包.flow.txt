@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021011103
+($localVer) = 2021020801
 ($changeLog) = 更新武神红BOSS辅助触发；更新部分失效触发
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -49,7 +49,7 @@
 
 // 特殊流程
 #input ($info3)=👇<hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz>👇,愉快游戏🎮
-//#select ($flowYYWD)=[<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
+#select ($flowYYWD)=[<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
 //#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
 //#select ($flowZSDJM)=[<hiz>战神殿解谜</hiz>]战神殿解谜进门,导入|跳过,跳过
 
