@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.35
+// @version         2.4.36
 // @date            23/12/2018
-// @modified        06/02/2021
+// @modified        08/02/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -3115,7 +3115,7 @@
 
     var SkillStateMachine = {
         perform: function (skill, force) {
-            if (!Role.hasSkill(skill)) return;
+            // if (!Role.hasSkill(skill)) return;
             const timestamp = new Date().getTime();
             this._perform(skill, force, timestamp);
         },
@@ -3125,9 +3125,22 @@
             if ((!Role.isFree() && !force) || Role.coolingSkill(skill) || Role.rtime) {
                 setTimeout(_ => {
                     self._perform(skill, force, timestamp);
+                 
                 }, 200);
                 return;
             }
+            // if (!Role.hasSkill(skill)) {
+            //     if( self._performNum < 10){
+            //         setTimeout(_ => {
+            //             self._perform(skill, force, timestamp);
+            //         }, 200);
+            //     }else{
+            //         self._performNum = 0;  
+            //         return;
+            //     }
+            //     self._performNum = self._performNum + 1;
+            //     return;
+            // }
             this._skillStack[skill] = timestamp;
             WG.SendCmd(`perform ${skill}`);
             const timer = setInterval(_ => {
@@ -3145,7 +3158,9 @@
         reset: function () {
             this._skillStack = {};
         },
-        _skillStack: {}
+        _skillStack: {},
+        
+        _performNum : 0
     }
 
     //---------------------------------------------------------------------------
