@@ -2,7 +2,7 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021021001
+($localVer) = 2021021101
 ($changeLog) = 1.新增春节免费扫荡模式。2.优化追捕打塔过程的疗伤过程。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -492,15 +492,11 @@ stopstate
       [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
         [break]
       [if] (WudaoMode) == 正常模式
-        [if] (:hpPer) < 0.7
-          //$to 扬州城-武庙
-          @liaoshang
-        [if] (:mpPer) < 0.3
-          dazuo
-          @await 5000
-          //jh fam 9 start;go enter
         [if] (wdlevel) >= (WudaoManualMaxLevel)
           [break]
+        [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
+          @renew
+          jh fam 9 start;go enter
         [if] (wdlevel) >= (WudaoWaitCDLevel)
           @cd (WudaoWaitCDExp)
       [else if] (WudaoMode) == 快速模式
