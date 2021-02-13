@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021021101
-($changeLog) = 1.新增春节免费扫荡模式。2.优化追捕打塔过程的疗伤过程。
+($localVer) = 2021021301
+($changeLog) = 1.新增春节免费扫荡模式。2.优化追捕打塔过程的疗伤过程。3.增加师门无视环数选项。4.优化追捕春节模式的判断。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -50,18 +50,18 @@
 @task 师门委托目前完成($smnum)/20个，共连续完成($smComboN)个|师门委托你去寻找($smtype)，共连续完成($smComboN)个
 [if] (SMtasks) == null
   ($SMtasks) = 正常进行
-[if] (smComboN) >= 100
+[if] (smComboN) >= 100 && (SMtasks) != 无视环数
   [if] (:hour) <5 || (:hour) >= 20
     ($SMtasks) = 正常进行
-    #select ($SMtasks) = <ord>处于抢首席时段，师门任务可正常进行</ord>,正常进行|跳过,正常进行
+    #select ($SMtasks) = <ord>处于抢首席时段，师门任务可正常进行</ord>,正常进行|跳过|无视环数,正常进行
   [else]
     ($SMtasks) = 跳过
-    #select ($SMtasks) = 师门已连(smComboN)次，<ord>是否先跳过等晚上抢首席</ord>,正常进行|跳过,跳过
-[else if] (smComboN) < 30
+    #select ($SMtasks) = 师门已连(smComboN)次，<ord>是否先跳过等晚上抢首席</ord>,正常进行|跳过|无视环数,跳过
+[else if] (smComboN) < 30 && (SMtasks) != 无视环数
   ($SMtasks) = 正常进行
-  #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,正常进行
+  #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过|无视环数,正常进行
 [else]
-  #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过,(SMtasks)
+  #select ($SMtasks) = 师门任务正常进行或跳过(抢首席),正常进行|跳过|无视环数,(SMtasks)
 
 // 追捕自定义参数
 [if] (ZByes) == null || (ZByes) == 是
@@ -160,7 +160,7 @@ stopstate
 @await 2000
 
 // 师门
-[if] (SMtasks) == 正常进行
+[if] (SMtasks) == 正常进行 || (SMtasks) == 无视环数
   $sm
   @tip 你先去休息一下吧
 [else]
@@ -194,7 +194,7 @@ stopstate
   @await 500
   @toolbar tasks
   @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
-[if] (RCMode) == 春节模式 && (ZByes) != 快速扫荡
+[if] (RCMode) == 春节模式 && (ZByes) == 正常模式
   ($zbtemp) = (ZByes)
   ($ZByes) = 快速扫荡
 [if] (currentN) < 20 && (ZByes) == 快速扫荡
@@ -445,7 +445,8 @@ stopstate
         go east
         go up
 ($zb) = false
-($ZByes) = (zbtemp)
+[if] (RCMode) == 春节模式
+  ($ZByes) = (zbtemp)
 @js $('#zb_prog').remove()
 @cmdDelay
 @await 2000
