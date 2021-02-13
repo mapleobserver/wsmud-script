@@ -44,7 +44,7 @@ team out
     @print <ord>今天已完成 10 次，无法再进入！</ord>
     $zdwk
     [exit]
-[if] (method) == 结婚
+[if] (method) == 正常结婚 || (method) == 超龄结婚
     #select ($timecheck) = 是否开启月圆之夜计时器,是|否,(timecheck)
     #config
     [if] {b忘忧草#}? == null || {b忘忧草#}? < 4
