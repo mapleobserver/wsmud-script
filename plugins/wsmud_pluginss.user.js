@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.151
+// @version      0.0.32.152
 // @date         01/07/2018
-// @modified     04/02/2021
+// @modified     15/02/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -2476,7 +2476,7 @@
                                         if (store.count < 4) {
                                             store.count += data.items[i].count;
                                             cmds.push("store " + data.items[i].count + " " + data.items[i].id);
-                                            cmds.push("$wait 200");
+                                            cmds.push("$wait 350");
                                             messageAppend("<hio>包裹整理</hio>" + data.items[i].name + "储存到仓库");
                                         } else {
                                             messageAppend("<hio>包裹整理</hio>" + data.items[i].name + "超过设置的储存上限");
@@ -2484,12 +2484,12 @@
                                     } else {
                                         stores.push(data.items[i]);
                                         cmds.push("store " + data.items[i].count + " " + data.items[i].id);
-                                        cmds.push("$wait 200");
+                                        cmds.push("$wait 350");
                                         messageAppend("<hio>包裹整理</hio>" + data.items[i].name + "储存到仓库");
                                     }
                                 } else {
                                     cmds.push("store " + data.items[i].count + " " + data.items[i].id);
-                                    cmds.push("$wait 200");
+                                    cmds.push("$wait 350");
                                     messageAppend("<hio>包裹整理</hio>" + data.items[i].name + "储存到仓库");
                                 }
                             }
@@ -2499,10 +2499,10 @@
                             if (lock_list.indexOf(data.items[i].name.toLowerCase()) >= 0) { continue; }
                             if (data.items[i].count == 1) {
                                 dropcmds.push("drop " + data.items[i].id);
-                                dropcmds.push("$wait 200");
+                                dropcmds.push("$wait 350");
                             } else {
                                 dropcmds.push("drop " + data.items[i].count + " " + data.items[i].id);
-                                dropcmds.push("$wait 200");
+                                dropcmds.push("$wait 350");
                             }
 
                             messageAppend("<hio>包裹整理</hio>" + data.items[i].name + "丢弃");
@@ -2511,12 +2511,12 @@
                         //分解
                         if (fenjie_list.length && WG.inArray(data.items[i].name.toLowerCase(), fenjie_list) && data.items[i].name.indexOf("★") == -1 && fenjie) {
                             cmds.push("fenjie " + data.items[i].id);
-                            cmds.push("$wait 200");
+                            cmds.push("$wait 350");
                             messageAppend("<hio>包裹整理</hio>" + data.items[i].name + "分解");
 
                         }
                     }
-
+                    cmds.push("$wait 1000")
                     cmds.push("$to 扬州城-杂货铺");
                     cmds.push("sell all");
                     cmds.push("$wait 1000");
