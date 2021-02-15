@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.148
+// @version      0.0.32.151
 // @date         01/07/2018
-// @modified     15/01/2021
+// @modified     04/02/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -1294,8 +1294,8 @@
             "sx": "首席弟子"
         },
         '峨眉': {
-            "place": "峨眉派-大殿",
-            "npc": "峨眉派第四代弟子 静心",
+            "place": "峨眉派-庙门",
+            "npc": "峨眉派第五代弟子 苏梦清",
             "sxplace": "峨眉派-广场",
             "sx": "大师姐"
         },
@@ -2167,7 +2167,9 @@
                                 break;
                             }
                         }
-                        callback(storestatus);
+                        setTimeout(() => {
+                            callback(storestatus);
+                        }, 300);
                         WG.remove_hook(WG.qu_hook)
                         WG.qu_hook = undefined;
                     }
@@ -6603,8 +6605,12 @@
                     }
                     if (data.items) {
                         for (let item of data.items) {
-                            if (item.enable_skill) {
-                                G.enable_skills.push({ name: item.enable_skill, type: item.id })
+                            if (item.name.indexOf("基本")>=0) {
+                                if(item.enable_skill){
+                                    G.enable_skills.push({ name: item.enable_skill, type: item.id })
+                                }else{
+                                    G.enable_skills.push({ name: 'none', type: item.id })
+                                }
                             }
                         }
                     }
