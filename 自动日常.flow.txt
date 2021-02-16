@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021021401
-($changeLog) = 1.新增春节免费扫荡模式。2.师门新增无视环数选项。3.初八2月19日5点后自动恢复正常模式。
+($localVer) = 2021021601
+($changeLog) = 1.新增春节免费扫荡模式。2.师门新增无视环数选项。3.初八2月19日5点后自动恢复正常模式。4.优化追捕变量的调用方式。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
@@ -197,10 +197,11 @@ stopstate
   @await 500
   @toolbar tasks
   @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
-[if] (RCMode) == 春节模式 && (ZByes) == 正常模式
-  ($zbtemp) = (ZByes)
-  ($ZByes) = 快速扫荡
-[if] (currentN) < 20 && (ZByes) == 快速扫荡
+($zbtemp) = (ZByes)
+[if] (RCMode) == 春节模式 && (zbtemp) == 正常模式
+  //($zbtemp) = (ZByes)
+  ($zbtemp) = 快速扫荡
+[if] (currentN) < 20 && (zbtemp) == 快速扫荡
   @print 开始快速追捕
   stopstate
   @tidyBag
@@ -237,7 +238,8 @@ stopstate
   [if] (alert_zb) != null
     @print <ord>(alert_zb)</ord>
     tm (alert_zb)
-[if] (currentN) < 20 && (ZByes) == 正常模式
+($zbtemp) = (ZByes)
+[if] (currentN) < 20 && (zbtemp) == 正常模式
   @print 开始自动追捕
   @cd
   stopstate
@@ -448,8 +450,8 @@ stopstate
         go east
         go up
 ($zb) = false
-[if] (RCMode) == 春节模式
-  ($ZByes) = (zbtemp)
+//[if] (RCMode) == 春节模式 && (zbtemp) != null
+  //($ZByes) = (zbtemp)
 @js $('#zb_prog').remove()
 @cmdDelay
 @await 2000
