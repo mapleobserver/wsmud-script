@@ -2,7 +2,7 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021021601
+($localVer) = 2021021701
 ($changeLog) = 1.新增春节免费扫荡模式。2.师门新增无视环数选项。3.初八2月19日5点后自动恢复正常模式。4.优化追捕变量的调用方式。
 @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -234,11 +234,11 @@ stopstate
           ($speed) = null
           @await 1000
           [continue]
+      ($zbtemp) = (ZByes)
     [break]
   [if] (alert_zb) != null
     @print <ord>(alert_zb)</ord>
     tm (alert_zb)
-($zbtemp) = (ZByes)
 [if] (currentN) < 20 && (zbtemp) == 正常模式
   @print 开始自动追捕
   @cd
