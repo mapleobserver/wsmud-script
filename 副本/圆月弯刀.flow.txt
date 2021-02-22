@@ -1,22 +1,19 @@
 // 对四区沧浪、四区白三三两位大佬的圆月弯刀流程进行了整合
 // 四区-黑白郎君&&沧浪&&白三三
-// 2021-02-18 11:15
-// 1.3、修复了拿不到技能id的bug
-// 1.4、修复漏加stopstate导致卡死
-// 1.5、骑鹰老头处的死亡判断使用了白三三大佬写的判断,加上了被骑鹰老头打死及打死骑鹰老头的提示。
-// 1.6、修改了结婚选项要求的忘忧草最低数量为4棵（本次进本所得则为5棵）、整合了白三三大佬的自动结婚功能
+// 2021-02-22 10:05
 // 1.7、优化离开副本的过程，避免命令过多卡地图。
 // 1.8、修改正常结婚和超龄结婚的差异操作，减少可能存在的bug。
 // 1.9、优化拿草的后续判断；进地窖后不选择直接叫杀避免小楼面板变高。
 // 1.10、优化进地窖的方式，避免出招过多导致卡住没进去。
-($localVer) = 2021021801
+($localVer) = 2021022201
 ($changeLog) = 优化选择拿草的后续判断；进地窖后不选择是否放过，直接叫杀避免小楼的面板变高。
-@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.yywd
 [if] (localVer) != (remoteVer) && (remoteVer) != null
   @js WG.SendCmd("tm 当前圆月弯刀版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"圆月弯刀","source":"http://wsmud-cdn.if404.com/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
+  ($f_ss)={"name":"圆月弯刀","source":"(repourl)/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1500
   ($log) = 圆月弯刀已更新至最新版【(remoteVer)】，即将自动运行。

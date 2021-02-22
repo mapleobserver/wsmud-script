@@ -1,14 +1,15 @@
 //整合了之前的几个相关流程，一键收割、安排随从工作
 //收割过程中包满了会自动清包再继续，不过有概率卡住。
 //四区白三三
-($localVer) = 2020112501
+($localVer) = 2021022201
 ($changeLog) = 精确匹配材料，避免拿错
-@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.yjsg
 [if] (localVer) != (remoteVer)
   @js WG.SendCmd("tm 当前一键收割版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"一键收割","source":"http://wsmud-cdn.if404.com/杂务/一键收割.flow.txt","finder":"杂务"}
+  ($f_ss)={"name":"一键收割","source":"(repourl)/杂务/一键收割.flow.txt","finder":"杂务"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1000
   ($log) = 一键收割已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)

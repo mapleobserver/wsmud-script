@@ -1,14 +1,15 @@
 //~silent
 // 自动领悟门派进阶书籍
 // 四区白三三
-($localVer) = 2020112501
+($localVer) = 2021022201
 ($changeLog) = 修复小无相功代码错误。
-@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.mpjj
 [if] (localVer) != (remoteVer)
   @js WG.SendCmd("tm 当前门派进阶版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"门派进阶","source":"http://wsmud-cdn.if404.com/提升/门派进阶.flow.txt","finder":"提升"}
+  ($f_ss)={"name":"门派进阶","source":"(repourl)/提升/门派进阶.flow.txt","finder":"提升"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1000
   ($log) = 门派进阶已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)

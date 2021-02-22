@@ -2,14 +2,15 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021021702
-($changeLog) = 1.新增春节免费扫荡模式。2.师门新增无视环数选项。3.初八2月19日5点后自动恢复正常模式。4.优化追捕变量的调用方式。
-@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+($localVer) = 2021022201
+($changeLog) = 修改脚本自动更新路径。
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
 [if] (localVer) != (remoteVer) && (remoteVer) != null
   @js WG.SendCmd("tm 当前自动日常版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"自动日常","source":"http://wsmud-cdn.if404.com/自动日常.flow.txt","finder":"根文件夹"}
+  ($f_ss)={"name":"自动日常","source":"(repourl)/自动日常.flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1500
   ($log) = 自动日常已更新至最新版【(remoteVer)】，即将自动运行。
@@ -26,8 +27,8 @@
   @print <ord>(log)</ord>
 
 // 正月初八（2月19日）自动恢复正常模式
-[if] (:date)>=19 && (:hour)>=5
-  ($RCMode) = 正常模式
+//[if] (:date)>=19 && (:hour)>=5
+//  ($RCMode) = 正常模式
 
 //检测状态
 @js ($fbroom) = '(:room)'.indexOf('副本区域')

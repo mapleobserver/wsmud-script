@@ -1,14 +1,15 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021020801
+($localVer) = 2021022201
 ($changeLog) = 开放圆月弯刀整合版本；更新武神红BOSS辅助触发；更新部分失效触发
-@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.lrb
 [if] (localVer) != (remoteVer)
   @js WG.SendCmd("tm 当前懒人包版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"三三懒人包","source":"http://wsmud-cdn.if404.com/三三懒人包.flow.txt","finder":"根文件夹"}
+  ($f_ss)={"name":"三三懒人包","source":"(repourl)/三三懒人包.flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1000
   ($log) = 懒人包已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
@@ -24,8 +25,8 @@
 #input ($info0)=👉<hiz>当前流程版本为(localVer)，以下有♻️标志的流程有自更新功能</hiz>👈,自动更新🚀
 #input ($info1)=👉<hiz>第一次使用前，如已有同名流程，请先手动删除</hiz>👈,挖矿愉快😊
 #select ($flowZDRC)=[♻️<hiz>自动日常</hiz>]师门、养精、追捕、打塔、副本、请安,导入|跳过,跳过
-#select ($flowZDZB)=[♻️<hiz>自动追捕</hiz>]自动寻路追捕逃犯<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
-#select ($flowZDWD)=[♻️<hiz>自动武道</hiz>]自动打武道塔<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
+//#select ($flowZDZB)=[♻️<hiz>自动追捕</hiz>]自动寻路追捕逃犯<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
+//#select ($flowZDWD)=[♻️<hiz>自动武道</hiz>]自动打武道塔<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
 #select ($flowKSSD)=[♻️<hiz>快速扫荡</hiz>]批量扫荡副本,导入|跳过,跳过
 #select ($flowTDFB)=[<hiz>偷渡副本</hiz>]快进快出副本积累次数,导入|跳过,跳过

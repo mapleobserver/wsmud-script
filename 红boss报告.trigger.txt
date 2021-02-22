@@ -2,8 +2,8 @@
 // 查询Boss
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
-// 2021011202：Boss信息可选择显示在游戏信息区或插件信息区；单人黑木崖改为普通模式；优化信息显示；增加选项只打浪翻云烛九阴
-($localVer) = 2021011202
+// 2021022201：Boss信息可选择显示在游戏信息区或插件信息区；单人黑木崖改为普通模式；优化信息显示；增加选项只打浪翻云烛九阴
+($localVer) = 2021022201
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 [if] (BossPost) == null
@@ -123,7 +123,8 @@
   @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
   @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#config\ntm b`);})
   //检查版本
-  @js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
+  ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+  @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
   @js ($remoteVer) = var v = (version);v.rboss
   @js ($rVer) = [(remoteVer)][0]
   [if] (localVer) < (rVer) && (remoteVer) != null
