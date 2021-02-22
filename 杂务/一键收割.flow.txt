@@ -3,7 +3,7 @@
 //四区白三三
 ($localVer) = 2021022201
 ($changeLog) = 精确匹配材料，避免拿错
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.yjsg

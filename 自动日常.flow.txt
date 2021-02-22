@@ -4,7 +4,7 @@
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 ($localVer) = 2021022201
 ($changeLog) = 修改脚本自动更新路径。
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc

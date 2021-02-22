@@ -123,7 +123,7 @@
   @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
   @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#config\ntm b`);})
   //检查版本
-  ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+  ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
   @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
   @js ($remoteVer) = var v = (version);v.rboss
   @js ($rVer) = [(remoteVer)][0]

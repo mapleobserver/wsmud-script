@@ -3,7 +3,7 @@
 // 四区白三三
 ($localVer) = 2021022201
 ($changeLog) = 开放圆月弯刀整合版本；更新武神红BOSS辅助触发；更新部分失效触发
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script@latest
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.lrb
