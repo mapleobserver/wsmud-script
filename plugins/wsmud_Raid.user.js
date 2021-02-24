@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.36
+// @version         2.4.37
 // @date            23/12/2018
-// @modified        08/02/2021
+// @modified        23/02/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1335,8 +1335,19 @@
 
     (function () {
         const executor = new AtCmdExecutor("await", function (performer, param) {
+            function createWorker(f) {
+                var blob = new Blob(['(function(){' + f.toString() + '})()']);
+                var url = window.URL.createObjectURL(blob);
+                var worker = new Worker(url);
+                return worker;
+            }
             return new Promise(resolve => {
-                setTimeout(() => resolve(), param);
+                var wa = createWorker("setTimeout(() =>  postMessage('0'), "+param+")")
+                wa.onmessage = function (event) {
+                    console.log(new Date,event.data);
+                    wa.terminate();
+                    resolve();
+                };
             });
         });
         CmdExecuteCenter.addExecutor(executor);
@@ -3125,7 +3136,7 @@
             if ((!Role.isFree() && !force) || Role.coolingSkill(skill) || Role.rtime) {
                 setTimeout(_ => {
                     self._perform(skill, force, timestamp);
-                 
+
                 }, 200);
                 return;
             }
@@ -3135,7 +3146,7 @@
             //             self._perform(skill, force, timestamp);
             //         }, 200);
             //     }else{
-            //         self._performNum = 0;  
+            //         self._performNum = 0;
             //         return;
             //     }
             //     self._performNum = self._performNum + 1;
@@ -3159,7 +3170,6 @@
             this._skillStack = {};
         },
         _skillStack: {},
-        
         _performNum : 0
     }
 
@@ -3192,6 +3202,12 @@
     };
 
     (function () {
+        function createWorker(f) {
+            var blob = new Blob(['(function(){' + f.toString() + '})()']);
+            var url = window.URL.createObjectURL(blob);
+            var worker = new Worker(url);
+            return worker;
+        }
         const executor = new CmdExecutor(_ => {
             return true;
         }, (performer, cmd) => {
@@ -3205,14 +3221,17 @@
                     console.log(fromReject);
                     delay = fromReject;
                 }
-                setTimeout(_ => {
+                var wa = createWorker("setTimeout(() =>  postMessage('0'), " + delay + ")")
+                wa.onmessage = function (event) {
+                    console.log(new Date, event.data);
+                    wa.terminate();
                     if (performer.log()) Message.cmdLog("执行系统命令", validCmd);
                     performer.timeSeries(timestamp);
                     performer.systemCmdTimestamp = timestamp;
                     WG.SendCmd(validCmd);
                     const cmdDelay = performer._cmdDelay == null ? __systemCmdDelay : performer._cmdDelay;
                     setTimeout(resolve, cmdDelay);
-                }, delay);
+                };
             });
         }, CmdExecutorPriority.low);
         CmdExecuteCenter.addExecutor(executor);
