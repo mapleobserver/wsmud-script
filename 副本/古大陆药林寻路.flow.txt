@@ -1,0 +1,114 @@
+//四区白三三
+// 检测武器类型
+[if] (:weapon sword) != true
+    [if] (weaponSword) == null
+        ($weaponSword) = 绣花针
+    #input ($weaponSword) = 本流程需要装备剑类武器，请填写剑武器名称,(weaponSword)
+    #config
+    stopstate
+    eq {b(weaponSword)}?
+    @await 3000
+    [if] (:weapon sword) != true
+        @print <ord>选择的武器不是剑，流程终止。</ord>
+        [exit]
+// 检测唐诗剑法
+enable sword tangshijianfa
+[if] (:kf_jian) != tangshijianfa
+    @print <ord>没有唐诗剑法，流程终止。</ord>
+
+// 开始寻路
+@cmdDelay 500
+stopstate
+jh fam 9 start
+go enter
+go up
+@tip 打败我，你就($pass)上去|去古老的大陆寻找真相
+[if] (pass) != null
+    @print <ord>不符合前往古大陆要求，流程终止。</ord>
+    [exit]
+ggdl {r疯癫的老头}
+go north[3]
+go north[3]
+look shi
+tiao1 shi;tiao1 shi;tiao2 shi
+@until (:room) == 古大陆-断山
+// 获取方向信息，预处理
+@js ($ylfx) = $(".room_desc").text().match(/[东南西北]，/g)
+@js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/，/g,"")
+@js ($ylfx) = (ylfx).replace(/东/g,"west")
+@js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/西/g,"east")
+@js ($ylfx) = (ylfx).replace(/南/g,"north")
+@js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/北/g,"south")
+//@print (ylfx)
+// 方向颠倒、倒序
+@js ($ylfx) = ("\""+(ylfx)+"\"").replace(/,/g,"\",\"")
+@js ($ylfx) = var f=[(ylfx)];f.reverse()
+@js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/,/g,"\",\"")
+//
+@js ($fl) = [(ylfx)].length
+($n) = (fl) - 1
+// 5个方向缺几个需要探索
+($c) = 5 - (fl)
+
+
+
+// 进入森林
+go down
+go south[3]
+go south[2]
+go west
+
+// 探索第一步
+($go) = 'east','west','south','north'
+($num) = 0
+[while] (num) < 3
+    @await 500
+    @js $(".content-message pre").html("");
+    @await 500
+    @js ($fx1) = [(go)][(num)]
+    go (fx1)
+    @js ($lost) = $(".content-message").text().match("你似乎迷路了")
+    [if] (lost) != null
+        go south[3]
+        go south[3]
+        go west
+        ($num) = (num) + 1
+    [else]
+        [break]
+
+// 后续5步
+[if] (fl) == 5
+    ($num) = 0
+    [while] (num) < 5
+        @js ($fx) = [(ylfx)][(num)]
+        go (fx)
+        ($num) = (num) + 1
+[else if] (fl) == 4
+    @js ($fx2) = [(ylfx)][0]
+    @js ($fx3) = [(ylfx)][1]
+    @js ($fx4) = [(ylfx)][2]
+    @js ($fx5) = [(ylfx)][3]
+    ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx4);go (fx5);go (fx5)"},{"lx":"go (fx2);go (fx3);go (fx4);go (fx4);go (fx5)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx4);go (fx5)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx4);go (fx5)"}
+[else if] (fl) == 3
+    @js ($fx2) = [(ylfx)][0]
+    @js ($fx3) = [(ylfx)][1]
+    @js ($fx4) = [(ylfx)][2]
+    ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx4);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx3);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx3);go (fx4)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx3);go (fx4)"}
+[if] (fl) == 4 || (fl) == 3
+    @js ($fxlen) = [(lxjh)].length
+    @print (fxlen)
+    ($num) = 0
+    [while] (num) < (fxlen)
+        @js ($map) = var f=[(lxjh)];f[(num)]["lx"]
+        (map)
+        [if] (:room) != 古大陆-药林
+            [while] (:room) != 古大陆-平原
+                go south
+                @await 350
+            go north;go west
+            go (fx1)
+            ($num) = (num) + 1
+        [else]
+            [break]
+tiao bush
+@print <ord>古宗门自动寻路已完成！</ord>
