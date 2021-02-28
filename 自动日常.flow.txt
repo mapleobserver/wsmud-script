@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021022801
-($changeLog) = 副本新增【古宗门遗址】扫荡。
+($localVer) = 2021022802
+($changeLog) = 1.新增【古宗门遗址】单独扫荡；2.副本扫荡也可选【古宗门遗址】。3.武神自动跳过请安。
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -128,9 +128,19 @@
   ($Duihuan) = 不兑换
 #select ($Duihuan) = <hiz>赌场兑换副本残页物品</hiz>,不兑换|无念禅功|长生诀|慈航剑典|阴阳九转|战神图录|神器碎片,(Duihuan)
 
+// 古宗门遗址单独扫荡
+[if] (GmpSD) == null
+  ($GmpSD) = 跳过
+[if] (GmpSDnum) == null
+  ($GmpSDnum) = 10
+#select ($GmpSD) = <ord>古宗门遗址单独扫荡</ord>,跳过|扫荡,(GmpSD)
+#input ($GmpSDnum) = <ord>古宗门遗址扫荡次数</ord>,(GmpSDnum)
+
 // 请安
 [if] (RC_qingan) == null
   ($RC_qingan) = 请安
+[if] (:grade) == 武神
+  ($RC_qingan) = 逃过
 #select ($RC_qingan) = 是否给首席请安,请安|跳过,(RC_qingan)
 
 // 日常结束后动作
@@ -659,6 +669,27 @@ stopstate
       @print <hic>(dhinfo)</hic>
       tm (dhinfo)
 
+[if] (GmpSD) == 扫荡
+  @await 1000
+  stopstate
+  jh fam 9 start;go enter
+  go up
+  ggdl {r疯癫的老头}
+  go north[3]
+  go north[3]
+  look shi
+  tiao1 shi;tiao1 shi;tiao2 shi
+  jumpdown
+  [if] {b扫荡符#}? < (GmpSDnum) || {b扫荡符}? == null
+    [if] (RCMode) == 正常模式
+      shop 0 (GmpSDnum)
+  cr gmp/shanmen 0 (GmpSDnum)
+  @tip 扫荡完成|扫荡符($gmplack)继续扫荡|你的($gmpjingli)不够
+  [if] (gmplack) != null
+    ($alert_gmp) = 扫荡符不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
+  [else if] (gmpjingli) != null
+    ($alert_gmp) = 精力不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
+
 // 当铺购买
 stopstate
 $tnbuy
@@ -672,7 +703,8 @@ greet master
   @js WG.oneKeyQA()
   @await 5000
 [else]
-  ($alert_qa) = 根据设置，已跳过请安。
+  [if] (:grade) != 武神
+    ($alert_qa) = 根据设置，已跳过请安。
 
 // 领取签到奖励
 stopstate
@@ -696,6 +728,10 @@ taskover signin;taskover zz1;taskover zz2
   @print <ord>(alert_fb)</ord>
   ($bobao) = (bobao)(alert_fb)
   ($report) = (report)⚠️(alert_fb)
+[if] (alert_gmp) != null
+  @print <ord>(alert_gmp)</ord>
+  ($bobao) = (bobao)(alert_gmp)
+  ($report) = (report)⚠️(alert_gmp)
 [if] (alert_qa) != null
   @print <ord>(alert_qa)</ord>
   ($bobao) = (bobao)(alert_qa)
