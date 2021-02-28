@@ -140,7 +140,7 @@
 [if] (RC_qingan) == null
   ($RC_qingan) = 请安
 [if] (:grade) == 武神
-  ($RC_qingan) = 逃过
+  ($RC_qingan) = 跳过
 #select ($RC_qingan) = 是否给首席请安,请安|跳过,(RC_qingan)
 
 // 日常结束后动作
