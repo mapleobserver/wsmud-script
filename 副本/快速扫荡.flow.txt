@@ -1,8 +1,8 @@
 //~silent
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
 // 四区白三三
-($localVer) = 2021022201
-($changeLog) = 优化扫荡频次，及时清包避免背包太满变废号。
+($localVer) = 2021022801
+($changeLog) = 副本新增【古宗门遗址】;优化扫荡频次，及时清包避免背包太满变废号。
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -27,7 +27,7 @@
 #input ($info1) = <ord>扫荡开始后无法中止，为避免意外，次数限定最高2000次。</ord>,👇🏻仔细填写👇🏻
 #input ($info2) = <ord>为避免背包太满无法清理，前期副本每100次会自动清理。</ord>,👇🏻仔细填写👇🏻
 #select ($AutoBuy) = 自动补充扫荡符(免费扫荡期间选不购买),购买|不购买,(AutoBuy)
-#select ($FBNameQ) = 副本,温府|五毒教|云梦沼泽|桃花岛(简单)|桃花岛(困难)|白驼山|星宿海|冰火岛(困难)|移花宫(简单)|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|光明顶|天龙寺(困难)|血刀门|古墓派(简单)|古墓派(困难)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBNameQ)
+#select ($FBNameQ) = 副本,温府|五毒教|云梦沼泽|桃花岛(简单)|桃花岛(困难)|白驼山|星宿海|冰火岛(困难)|移花宫(简单)|移花宫(困难)|燕子坞(简单)|燕子坞(困难)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|光明顶|天龙寺(困难)|血刀门|古墓派(简单)|古墓派(困难)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难)|古宗门遗址,(FBNameQ)
 #input ($repeat) = 扫荡副本次数,1
 #select ($SDWay) = 扫荡方式<ord>(分批扫荡将每次发送扫荡100次命令，直到完成)</ord>,直接扫荡|分批扫荡,(SDWay)
 #config
@@ -98,6 +98,8 @@ stopstate
     ($fbcr) = cr zsd/damen 0
 [else if] (FBNameQ) == 战神殿(困难)
     ($fbcr) = cr zsd/damen 1
+[else if] (FBNameQ) == 古宗门遗址
+    ($fbcr) = cr gmp/shanmen 0
 [else]
     @print <ord>没有找到对应副本，请重新选择！</ord>
     ($FBNameQ) = null
@@ -118,6 +120,16 @@ stopstate
         ($qingbao) = true
         ($SDWay) = 分批扫荡
         tm 副本为【(FBNameQ)】，为避免背包爆炸，自动改为分批扫荡模式，直到完成(repeat)次。
+[if] (FBNameQ) == 古宗门遗址
+    ($SDWay) = 直接扫荡
+    jh fam 9 start;go enter
+    go up
+    ggdl {r疯癫的老头}
+    go north[3]
+    go north[3]
+    look shi
+    tiao1 shi;tiao1 shi;tiao2 shi
+    jumpdown
 <-recordGains
 [if] (SDWay) == 直接扫荡
     tm 根据设置，开始扫荡【(FBNameQ)】(repeat)次。
