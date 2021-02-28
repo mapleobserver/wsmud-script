@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021022201
-($changeLog) = 修改脚本自动更新路径。
+($localVer) = 2021022801
+($changeLog) = 副本新增【古宗门遗址】扫荡。
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -116,7 +116,7 @@
 [if] (DungeonBagCleanWay) == null
   ($DungeonBagCleanWay) = 存仓及售卖
 #input ($FBBefore)=副本前执行命令(用英文;隔开),(FBBefore)
-#select ($FBName) = 副本(上次所选:<ord>(FBName)</ord>),财主家(简单)|财主家(困难)|丽春院|流氓巷|流氓巷(组队)|兵营|庄府|鳌拜府|天地会|神龙教|神龙教(组队)|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难),(FBName)
+#select ($FBName) = 副本(上次所选:<ord>(FBName)</ord>),财主家(简单)|财主家(困难)|丽春院|流氓巷|流氓巷(组队)|兵营|庄府|鳌拜府|天地会|神龙教|神龙教(组队)|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|慈航静斋(简单)|慈航静斋(困难)|阴阳谷|战神殿(简单)|战神殿(困难)|古宗门遗址,(FBName)
 #input ($FBnum) = <ord>需要完成的次数</ord>,(FBnum)
 #select ($FBWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡|跳过副本,(FBWay)
 #select ($DungeonHpThreshold) = 副本内疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(DungeonHpThreshold)
@@ -558,7 +558,7 @@ stopstate
   [else]
     ($fb_num) = (FBnum) - (fb_com)
     @js ($fbName) = "(FBName)".replace(/\(|\)/g,"")
-    ($fbdata) = "财主家简单":"cr yz/cuifu/caizhu 0","财主家困难":"cr yz/cuifu/caizhu 1","丽春院":"cr yz/lcy/dating 0","流氓巷":"cr yz/lmw/xiangzi1 0","兵营":"cr yz/by/damen 0","庄府":"cr bj/zhuang/xiaolu 0","鳌拜府":"cr bj/ao/damen 0","天地会":"cr bj/tdh/hct 0","神龙教":"cr bj/shenlong/haitan 0","关外":"cr bj/guanwai/damen 0","温府":"cr cd/wen/damen 0","五毒教":"cr cd/wudu/damen 0","恒山":"cr wuyue/hengshan/daziling 0","青城山":"cr wuyue/qingcheng/shanlu 0","衡山":"cr wuyue/henshan/hengyang 0","嵩山":"cr wuyue/songshan/taishi 0","云梦沼泽":"cr cd/yunmeng/senlin 0","桃花岛简单":"cr taohua/haitan 0","桃花岛困难":"cr taohua/haitan 1","白驼山":"cr baituo/damen 0","星宿海":"cr xingxiu/xxh6 0","冰火岛简单":"cr mj/bhd/haibian 1","冰火岛困难":"cr mj/bhd/haibian 1","冰火岛偷渡":"cr mj/bhd/haibian 1","移花宫简单":"cr huashan/yihua/shandao 0","移花宫困难":"cr huashan/yihua/shandao 1","移花宫偷渡":"cr huashan/yihua/shandao 1","燕子坞简单":"cr murong/anbian 0","燕子坞困难":"cr murong/anbian 1","黑木崖简单":"cr heimuya/shangu 0","黑木崖困难":"cr heimuya/shangu 1","缥缈峰困难":"cr lingjiu/shanjiao 1","缥缈峰偷渡":"cr lingjiu/shanjiao 1","光明顶":"cr mj/shanmen 0","光明顶偷渡":"cr mj/shanmen 0","天龙寺困难":"cr tianlong/damen 1","天龙寺偷渡":"cr tianlong/damen 1","血刀门":"cr xuedao/shankou 0","古墓派简单":"cr gumu/gumukou 0","古墓派困难":"cr gumu/gumukou 1","古墓派困难偷渡":"cr gumu/gumukou 1","华山论剑":"cr huashan/lunjian/leitaixia 0","侠客岛":"cr xkd/shimen 0","净念禅宗简单":"cr chanzong/shanmen 0","净念禅宗困难":"cr chanzong/shanmen 1","慈航静斋简单":"cr cihang/shanmen 0","慈航静斋困难":"cr cihang/shanmen 1","阴阳谷":"cr yyg/ya 0","战神殿简单":"cr zsd/damen 0","战神殿困难":"cr zsd/damen 1"
+    ($fbdata) = "财主家简单":"cr yz/cuifu/caizhu 0","财主家困难":"cr yz/cuifu/caizhu 1","丽春院":"cr yz/lcy/dating 0","流氓巷":"cr yz/lmw/xiangzi1 0","兵营":"cr yz/by/damen 0","庄府":"cr bj/zhuang/xiaolu 0","鳌拜府":"cr bj/ao/damen 0","天地会":"cr bj/tdh/hct 0","神龙教":"cr bj/shenlong/haitan 0","关外":"cr bj/guanwai/damen 0","温府":"cr cd/wen/damen 0","五毒教":"cr cd/wudu/damen 0","恒山":"cr wuyue/hengshan/daziling 0","青城山":"cr wuyue/qingcheng/shanlu 0","衡山":"cr wuyue/henshan/hengyang 0","嵩山":"cr wuyue/songshan/taishi 0","云梦沼泽":"cr cd/yunmeng/senlin 0","桃花岛简单":"cr taohua/haitan 0","桃花岛困难":"cr taohua/haitan 1","白驼山":"cr baituo/damen 0","星宿海":"cr xingxiu/xxh6 0","冰火岛简单":"cr mj/bhd/haibian 1","冰火岛困难":"cr mj/bhd/haibian 1","冰火岛偷渡":"cr mj/bhd/haibian 1","移花宫简单":"cr huashan/yihua/shandao 0","移花宫困难":"cr huashan/yihua/shandao 1","移花宫偷渡":"cr huashan/yihua/shandao 1","燕子坞简单":"cr murong/anbian 0","燕子坞困难":"cr murong/anbian 1","黑木崖简单":"cr heimuya/shangu 0","黑木崖困难":"cr heimuya/shangu 1","缥缈峰困难":"cr lingjiu/shanjiao 1","缥缈峰偷渡":"cr lingjiu/shanjiao 1","光明顶":"cr mj/shanmen 0","光明顶偷渡":"cr mj/shanmen 0","天龙寺困难":"cr tianlong/damen 1","天龙寺偷渡":"cr tianlong/damen 1","血刀门":"cr xuedao/shankou 0","古墓派简单":"cr gumu/gumukou 0","古墓派困难":"cr gumu/gumukou 1","古墓派困难偷渡":"cr gumu/gumukou 1","华山论剑":"cr huashan/lunjian/leitaixia 0","侠客岛":"cr xkd/shimen 0","净念禅宗简单":"cr chanzong/shanmen 0","净念禅宗困难":"cr chanzong/shanmen 1","慈航静斋简单":"cr cihang/shanmen 0","慈航静斋困难":"cr cihang/shanmen 1","阴阳谷":"cr yyg/ya 0","战神殿简单":"cr zsd/damen 0","战神殿困难":"cr zsd/damen 1","古宗门遗址":"cr gmp/shanmen 0"
     @js ($fbcr) = var fb={(fbdata)};fb.(fbName)
     [if] (FBWay) == 扫荡
       //扫荡模式
@@ -567,12 +567,21 @@ stopstate
       [else]
         //team out
         @tidyBag
-        @await 2000
+        @await 3000
         [while] (fb_com) < (FBnum)
           ($fb_num) = (FBnum) - (fb_com)
           [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
             [if] (RCMode) == 正常模式
               shop 0 (fb_num)
+          [if] (FBName) == 古宗门遗址
+            jh fam 9 start;go enter
+            go up
+            ggdl {r疯癫的老头}
+            go north[3]
+            go north[3]
+            look shi
+            tiao1 shi;tiao1 shi;tiao2 shi
+            jumpdown
           (fbcr) (fb_num)
           @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
           [if] (lack) != null
