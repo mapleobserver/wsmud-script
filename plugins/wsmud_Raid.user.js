@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.37
+// @version         2.4.38
 // @date            23/12/2018
-// @modified        23/02/2021
+// @modified        01/03/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -5068,6 +5068,7 @@ look men;open men
             <span class = "zdy-item zhoubotong" style="width:120px"> 找到周伯通 </span>
             <span class = "zdy-item cihang" style="width:120px"> 慈航七重门 </span>
             <span class = "zdy-item zhanshendian" style="width:120px"> 战神殿解谜 </span>
+            <span class = "zdy-item guzongmen" style="width:120px"> 古宗门寻路 </span>
             <span class = "zdy-item uploadConfig" style="width:120px"> 上传本地配置 </span>
             <span class = "zdy-item downloadConfig" style="width:120px"> 下载云端配置 </span>
             <span class = "zdy-item uploadFlows" style="width:120px"> 分享角色流程 </span>
@@ -5095,6 +5096,10 @@ look men;open men
             $(".zhanshendian").on('click', function () {
                 WG.SendCmd('stopstate');
                 DungeonsShortcuts.zhanshendian();
+            });
+            $(".guzongmen").on('click', function () {
+                WG.SendCmd('stopstate');
+                DungeonsShortcuts.guzongmen();
             });
             $(".uploadConfig").on('click', _ => {
                 Server.uploadConfig();
@@ -6079,6 +6084,107 @@ tm (last)宿，最后一个方位是【(dir_l)】60秒倒计时已开始，请�
     go (go_l);$wait 100
             `
             const p = new Performer("战神殿解谜", source);
+            p.log(false);
+            p.start();
+        },
+        guzongmen: function () {
+            let source = `
+@print <hiy>如果寻路一直失败，请检查设置中<ord>【切换房间时不清空上房间信息】</ord>是否开启。</hiy>
+[if] (:room 副本区域,忧愁谷) == true
+    @print <ord>当前处于副本中，无法寻路！</ord>
+    [exit]
+@cmdDelay 500
+stopstate
+jh fam 9 start
+go enter
+go up
+@tip 打败我，你就($pass)上去|聚魂成功|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
+[if] (pass) != null
+    @print <ord>不符合前往古大陆要求，流程终止。</ord>
+    [exit]
+ggdl {r疯癫的老头}
+go north[3]
+go north[3]
+look shi
+tiao1 shi;tiao1 shi;tiao2 shi
+@until (:room) == 古大陆-断山
+@js ($ylfx) = $(".room_desc").text().match(/[东南西北]，/g)
+@js ($ylfx) = var f="(ylfx)";f.replace(/，/g,"")
+@js ($ylfx) = var f="(ylfx)";f.replace(/东/g,"west")
+@js ($ylfx) = var f="(ylfx)";f.replace(/西/g,"east")
+@js ($ylfx) = var f="(ylfx)";f.replace(/南/g,"north")
+@js ($ylfx) = var f="(ylfx)";f.replace(/北/g,"south")
+@js ($ylfx) = var f="(ylfx)";f.replace(/,/g,"','")
+@js ($ylfx) = var f=['(ylfx)'];f.reverse()
+@js ($ylfx) = var f="(ylfx)";f.replace(/,/g,"','")
+@js ($ylfx) = "'"+"(ylfx)"+"'"
+@js ($fl) = [(ylfx)].length
+go down
+go south[3]
+go south[2]
+go west
+($go) = 'east','west','south','north'
+($num) = 0
+[while] (num) < 4
+    @await 500
+    @js $(".content-message pre").html("");
+    @await 500
+    @js ($fx1) = [(go)][(num)]
+    go (fx1)
+    @js ($lost) = $(".content-message").text().match("你似乎迷路了")
+    [if] (lost) != null
+        go south[3]
+        go south[3]
+        go west
+        ($num) = (num) + 1
+    [else]
+        [break]
+[if] (fl) == 5
+    ($num) = 0
+    [while] (num) < 5
+        @js ($fx) = [(ylfx)][(num)]
+        go (fx)
+        ($num) = (num) + 1
+[else if] (fl) == 4
+    @js ($fx2) = [(ylfx)][0]
+    @js ($fx3) = [(ylfx)][1]
+    @js ($fx4) = [(ylfx)][2]
+    @js ($fx5) = [(ylfx)][3]
+    ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx4);go (fx5);go (fx5)"},{"lx":"go (fx2);go (fx3);go (fx4);go (fx4);go (fx5)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx4);go (fx5)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx4);go (fx5)"}
+[else if] (fl) == 3
+    @js ($fx2) = [(ylfx)][0]
+    @js ($fx3) = [(ylfx)][1]
+    @js ($fx4) = [(ylfx)][2]
+    ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx4);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx3);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx3);go (fx4)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx3);go (fx4)"}
+[else if] (fl) == 2
+    @js ($fx2) = [(ylfx)][0]
+    @js ($fx3) = [(ylfx)][1]
+    ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx3);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx2);go (fx3)"}
+[else if] (fl) == 1
+    @js ($fx2) = [(ylfx)][0]
+    ($lxjh) = {"lx":"go (fx2);go (fx2);go (fx2);go (fx2);go (fx2)"}
+[if] (fl) < 5
+    @js ($fxlen) = [(lxjh)].length
+    ($num) = 0
+    [while] (num) < (fxlen)
+        @js ($map) = var f=[(lxjh)];f[(num)]["lx"]
+        (map)
+        [if] (:room) != 古大陆-药林
+            [while] (:room) != 古大陆-平原
+                go south
+                @await 350
+            go north;go west
+            go (fx1)
+            ($num) = (num) + 1
+        [else]
+            [break]
+tiao bush
+[if] (:room) == 古大陆-山脚
+    @print <ord>古宗门自动寻路已完成！</ord>
+[else]
+    @print <ord>寻路失败，请重新运行或换个时间。</ord>
+            `
+            const p = new Performer("古宗门寻路", source);
             p.log(false);
             p.start();
         },
