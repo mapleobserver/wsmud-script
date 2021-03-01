@@ -17,6 +17,7 @@
 [if] (:kf_jian) != tangshijianfa
     @print <ord>没有唐诗剑法，流程终止。</ord>
 
+@print <hiy>如果寻路一直失败，请检查设置中<ord>【切换房间时不清空上房间信息】</ord>是否开启。</hiy>
 // 检测是否在副本中
 [if] (:room 副本区域,忧愁谷) == true
     @print <ord>当前处于副本中，无法寻路！</ord>
@@ -27,7 +28,7 @@ stopstate
 jh fam 9 start
 go enter
 go up
-@tip 打败我，你就($pass)上去|聚魂成功|你连($pass)都没聚合|你想($pass)为神吗
+@tip 打败我，你就($pass)上去|聚魂成功|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
 [if] (pass) != null
     @print <ord>不符合前往古大陆要求，流程终止。</ord>
     [exit]
@@ -39,17 +40,15 @@ tiao1 shi;tiao1 shi;tiao2 shi
 @until (:room) == 古大陆-断山
 // 获取方向信息，预处理
 @js ($ylfx) = $(".room_desc").text().match(/[东南西北]，/g)
-@js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/，/g,"")
-@js ($ylfx) = (ylfx).replace(/东/g,"west")
-@js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/西/g,"east")
-@js ($ylfx) = (ylfx).replace(/南/g,"north")
-@js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/北/g,"south")
-//@print (ylfx)
-// 方向颠倒、倒序
-@js ($ylfx) = ("\""+(ylfx)+"\"").replace(/,/g,"\",\"")
-@js ($ylfx) = var f=[(ylfx)];f.reverse()
-@js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/,/g,"\",\"")
-//
+@js ($ylfx) = var f="(ylfx)";f.replace(/，/g,"")
+@js ($ylfx) = var f="(ylfx)";f.replace(/东/g,"west")
+@js ($ylfx) = var f="(ylfx)";f.replace(/西/g,"east")
+@js ($ylfx) = var f="(ylfx)";f.replace(/南/g,"north")
+@js ($ylfx) = var f="(ylfx)";f.replace(/北/g,"south")
+@js ($ylfx) = var f="(ylfx)";f.replace(/,/g,"','")
+@js ($ylfx) = var f=['(ylfx)'];f.reverse()
+@js ($ylfx) = var f="(ylfx)";f.replace(/,/g,"','")
+@js ($ylfx) = "'"+"(ylfx)"+"'"
 @js ($fl) = [(ylfx)].length
 // 进入森林
 go down
