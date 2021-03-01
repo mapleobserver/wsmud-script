@@ -2,7 +2,7 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021030101
+($localVer) = 2021030102
 ($changeLog) = 1.武道塔快速模式新增天地诀回蓝选项；2.新增【古宗门遗址】单独扫荡；3.副本扫荡也可选【古宗门遗址】。4.武神自动跳过请安。
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -522,7 +522,7 @@ stopstate
         [if] (wdlevel) >= (WudaoWaitCDLevel)
           @cd (WudaoWaitCDExp)
       [else if] (WudaoMode) == 快速模式
-        [if] (:mpPer) <= 1.5
+        [if] (:mpPer) <= 0.15
           [if] (WudaoRenew) == 天地诀
             ($wdforce)=(:kf_nei)
             enable force changshengjue
