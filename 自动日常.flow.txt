@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021022802
-($changeLog) = 1.新增【古宗门遗址】单独扫荡；2.副本扫荡也可选【古宗门遗址】。3.武神自动跳过请安。
+($localVer) = 2021030101
+($changeLog) = 1.武道塔快速模式新增天地诀回蓝选项；2.新增【古宗门遗址】单独扫荡；3.副本扫荡也可选【古宗门遗址】。4.武神自动跳过请安。
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -90,6 +90,8 @@
 // 武道自定义参数
 [if] (WudaoMode) == null || (WudaoMode) = 正常肝塔
   ($WudaoMode) = 正常模式
+[if] (WudaoRenew) == null
+  ($WudaoRenew) = 天地诀
 [if] (WudaoWaitCDLevel) == null
   ($WudaoWaitCDLevel) = 30
 [if] (WudaoManualMaxLevel) == null
@@ -99,6 +101,7 @@
 [if] (WudaoBefore) == null
   ($WudaoBefore) = $eq 1
 #select ($WudaoMode)=武道塔模式<ord>(快速模式建议至少已有血刀九阴)</ord>,正常模式|快速模式|只打塔主,(WudaoMode)
+#select ($WudaoRenew)=<hiz>快速模式</hiz>恢复内力方式,武庙恢复|天地诀,(WudaoRenew)
 #input ($WudaoBefore)=打塔前执行命令(用英文;隔开),(WudaoBefore)
 #input ($WudaoWaitCDExp)=打塔等待以下技能冷却,(WudaoWaitCDExp)
 #input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
@@ -519,10 +522,25 @@ stopstate
         [if] (wdlevel) >= (WudaoWaitCDLevel)
           @cd (WudaoWaitCDExp)
       [else if] (WudaoMode) == 快速模式
-        [while] (:mpPer) <= 0.1
-          dazuo
-          @await 5000
-        stopstate
+        [if] (:mpPer) <= 1.5
+          [if] (WudaoRenew) == 天地诀
+            ($wdforce)=(:kf_nei)
+            enable force changshengjue
+            [if] (:kf_nei) != changshengjue
+              ($WudaoRenew) = 武庙恢复
+              @print <hiy>无法装备长生诀，改回武庙恢复模式。</hiy>
+            [else]
+              @cd force.zhen
+              @perform force.zhen
+              enable force (wdforce)
+          [if] (WudaoRenew) == 武庙恢复
+            [while] (:room) != 扬州城-武庙
+              $to 扬州城-武庙
+              @await 500
+            @dazuo
+            jh fam 9 start;go enter
+          @await 2000
+        //stopstate
         [if] (:hpPer) <= 0.01
           @js var jy='(:room)'.indexOf('第七十');if(jy!=-1){WG.SendCmd('liaoshang;$wait 10000;stopstate')}
           @await 100
