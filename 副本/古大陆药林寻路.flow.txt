@@ -12,10 +12,14 @@
         @print <ord>选择的武器不是剑，流程终止。</ord>
         [exit]
 // 检测唐诗剑法
-enable sword tangshijianfa
+[if] (:kf_jian) != tangshijianfa
+    enable sword tangshijianfa
 [if] (:kf_jian) != tangshijianfa
     @print <ord>没有唐诗剑法，流程终止。</ord>
 
+// 检测是否在副本中
+[if] (:room 副本区域,忧愁谷) == true
+    @print <ord>当前处于副本中，无法寻路！</ord>
 // 开始寻路
 @cmdDelay 500
 stopstate
@@ -46,22 +50,15 @@ tiao1 shi;tiao1 shi;tiao2 shi
 @js ($ylfx) = ("\""+"(ylfx)"+"\"").replace(/,/g,"\",\"")
 //
 @js ($fl) = [(ylfx)].length
-($n) = (fl) - 1
-// 5个方向缺几个需要探索
-($c) = 5 - (fl)
-
-
-
 // 进入森林
 go down
 go south[3]
 go south[2]
 go west
-
 // 探索第一步
 ($go) = 'east','west','south','north'
 ($num) = 0
-[while] (num) < 3
+[while] (num) < 4
     @await 500
     @js $(".content-message pre").html("");
     @await 500
@@ -75,7 +72,6 @@ go west
         ($num) = (num) + 1
     [else]
         [break]
-
 // 后续5步
 [if] (fl) == 5
     ($num) = 0
@@ -94,9 +90,15 @@ go west
     @js ($fx3) = [(ylfx)][1]
     @js ($fx4) = [(ylfx)][2]
     ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx4);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx3);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx3);go (fx4)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx3);go (fx4)"}
+[else if] (fl) == 2
+    @js ($fx2) = [(ylfx)][0]
+    @js ($fx3) = [(ylfx)][1]
+    ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx3);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx2);go (fx3)"}
+[else if] (fl) == 1
+    @js ($fx2) = [(ylfx)][0]
+    ($lxjh) = {"lx":"go (fx2);go (fx2);go (fx2);go (fx2);go (fx2)"}
 [if] (fl) == 4 || (fl) == 3
     @js ($fxlen) = [(lxjh)].length
-    @print (fxlen)
     ($num) = 0
     [while] (num) < (fxlen)
         @js ($map) = var f=[(lxjh)];f[(num)]["lx"]
@@ -111,4 +113,7 @@ go west
         [else]
             [break]
 tiao bush
-@print <ord>古宗门自动寻路已完成！</ord>
+[if] (:room) == 古大陆-山脚
+    @print <ord>古宗门自动寻路已完成！</ord>
+[else]
+    @print <ord>寻路失败，请重新运行或换个时间。</ord>
