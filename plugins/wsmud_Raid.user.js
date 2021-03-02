@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.40
+// @version         2.4.41
 // @date            23/12/2018
 // @modified        02/03/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
@@ -6109,7 +6109,7 @@ stopstate
 jh fam 9 start
 go enter
 go up
-@tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
+@tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
 [if] (pass) != null
     @print <ord>不符合前往古大陆要求，流程终止。</ord>
     [exit]
