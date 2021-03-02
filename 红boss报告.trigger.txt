@@ -2,10 +2,15 @@
 // 查询Boss
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
-// 2021022201：Boss信息可选择显示在游戏信息区或插件信息区；单人黑木崖改为普通模式；优化信息显示；增加选项只打浪翻云烛九阴
-($localVer) = 2021022201
+($changeLog) = 新增【只打组队本】和【Boss刷新发声提醒】功能。
+($localVer) = 2021030201
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
+($bossSet) = (BossModel)
+[if] (BossTeam) == null
+  ($BossTeam) = 关闭
+[if] (BossTeam) == 开启
+  ($bossSet) = (bossSet)；只打组队本
 [if] (BossPost) == null
   ($BossPost) = 游戏信息区
 [if] (BossPost) == 游戏信息区
@@ -14,7 +19,13 @@
 [else] (BossPost) == 插件信息区
   ($comClass) = WG_log
   ($magPost) = 0
+[if] (BossAlert) == null
+  ($BossAlert) = 关闭
 
+[if] (:state) == 闭关
+  ($action) = $zdwk
+[else if] (:state) == 练习
+  ($action) = dazuo
 [if] (content)==boss || (content)==b
   [if] (name)==(:name)
     ($mycall) = true
@@ -25,11 +36,11 @@
     ($remain)=⚔️ 本周还可挑战(num)次
     [if] (num)==null
       ($BossInfo) = null
-      ($log) = ✅ 本周已打完5次Boss\n⚙️ 当前Boss类型：(BossModel)
+      ($log) = ✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)
       @js messageAppend("(log)",2,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));$('.(comClass)')[0].scrollTop = 99999;
       //按钮命令
       @js $(".redboss").off("click")
-      @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#config\ntm b`);})
+      @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#select ($BossAlert)=Boss刷新时发声提醒（提示音需Raid版本至少为2.4.40）,关闭|提示音|语音播报,(BossAlert)\n#config\ntm b`);})
       [exit]
     [if] (BossInfo) != null
       @js ($info)=("\""+"(BossInfo)"+"\"").replace(/\|/g,"\"|\"").split("|")
@@ -60,11 +71,11 @@
       @tip 这位客官，我最近听不少人说是在($bossPlace)见到过($bossName)。|这两天也($notime)什么消息|小的听到的消息($all)您老了
     [if] (notime) != null || (all) != null
       [if] (notime) != null
-        ($log) = ⏳ Boss尚未刷新，请稍后再试\n⚙️ 当前Boss类型：(BossModel)\n(remain)</ord>
+        ($log) = ⏳ Boss尚未刷新，请稍后再试\n⚙️ 当前设置：(bossSet)\n(remain)</ord>
       [else if] (all) != null
-        ($log) = <hig>✅ 本周已打完5次Boss\n⚙️ 当前Boss类型：(BossModel)</hig>
+        ($log) = <hig>✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)</hig>
       @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
-      $zdwk
+      (action)
   [else]
     [exit]
 // 谣言获取Boss
@@ -85,12 +96,14 @@
   //@js messageAppend("<ord>(BossInfo)\n(remain)</ord>",1,(magPost));
   ($fbdata) = "树林":"cr yz/lw/shangu 0","财主家":"cr yz/cuifu/caizhu 1","丽春院":"cr yz/lcy/dating 0","流氓巷":"cr yz/lmw/xiangzi1 0","兵营":"cr yz/by/damen 0","庄府":"cr bj/zhuang/xiaolu 0","鳌拜府":"cr bj/ao/damen 0","天地会":"cr bj/tdh/hct 0","神龙教":"cr bj/shenlong/haitan 0","关外":"cr bj/guanwai/damen 0","温府":"cr cd/wen/damen 0","五毒教":"cr cd/wudu/damen 0","恒山":"cr wuyue/hengshan/daziling 0","青城山":"cr wuyue/qingcheng/shanlu 0","衡山":"cr wuyue/henshan/hengyang 0","泰山":"cr wuyue/taishan/daizong 0","嵩山":"cr wuyue/songshan/taishi 0","云梦沼泽":"cr cd/yunmeng/senlin 0","桃花岛":"cr taohua/haitan 1","白驼山":"cr baituo/damen 0","星宿海":"cr xingxiu/xxh6 0","冰火岛":"cr mj/bhd/haibian 1","移花宫":"cr huashan/yihua/shandao 1","燕子坞":"cr murong/anbian 1","黑木崖":"cr heimuya/shangu 0","缥缈峰":"cr lingjiu/shanjiao 1","光明顶":"cr mj/shanmen 0","天龙寺":"cr tianlong/damen 1","血刀门":"cr xuedao/shankou 0","古墓派":"cr gumu/gumukou 1","华山论剑":"cr huashan/lunjian/leitaixia 0"
   @js ($fbcr) = var fb={(fbdata)};fb.(bossPlace)
+  [if] (bossPlace)==流氓巷 || (bossPlace)==神龙教 || (bossPlace)==五毒教 || (bossPlace)==云梦沼泽 || (bossPlace)==白驼山 || (bossPlace)==冰火岛 || (bossPlace)==移花宫 || (bossPlace)==黑木崖 || (bossPlace)==光明顶 || (bossPlace)==血刀门
+    ($team) = true
 // 生成快捷按钮
 [if] (fbcr) != null
   [if] (:state) == 推演
     ($log) = <ord>⚠️ 推演中，请注意操作！</ord>
     @js messageAppend("(log)",1,(magPost));
-  [if] (:state) == 闭关 || (:room) == 扬州城-有间客栈
+  [if] (:state) == 闭关 || (:state) == 练习 || (:room) == 扬州城-有间客栈
     [if] (bossName) != 浪翻云 && (BossModel) == 只打浪翻云
       ($model) = true
     [else if] (bossName) != 烛九阴 && (BossModel) == 只打烛九阴
@@ -103,25 +116,32 @@
       ($model) = true
     [else if] (bossName) == 天僧 && (BossModel) == 自动跳过天僧
       ($model) = true
+  [if] (BossTeam) == 开启 && (team) != true
+    ($model) = true
   [if] (model) == true
-    ($log) = <ord>💎 (BossInfo)\n⚠️ 根据Boss类型【(BossModel)】，自动跳过当前Boss(bossName)\n(remain)</ord>
+    ($log) = <ord>💎 (BossInfo)\n<hiy>⚠️ 根据设置<ord>【(bossSet)】</ord>，自动跳过当前Boss(bossName)</hiy>\n(remain)</ord>
     @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
-    team out;stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk
+    team out;stopstate;(fbcr) 0;cr over;$wait 1000;(action)
     ($BossInfo)=notime
   [else]
     [if] (bossPlace)==流氓巷 || (bossPlace)==神龙教 || (bossPlace)==五毒教 || (bossPlace)==云梦沼泽 || (bossPlace)==白驼山 || (bossPlace)==冰火岛 || (bossPlace)==移花宫 || (bossPlace)==黑木崖 || (bossPlace)==光明顶 || (bossPlace)==血刀门
       @js ($fbcr2) = var f="(fbcr)";f=f.substr(0,f.length-1)+"2"
-      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前Boss类型：(BossModel)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-team">🚌 进入 <hic>(bossPlace)(<hiy>组队</hiy>)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
+      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-team">🚌 进入 <hic>(bossPlace)(<hiy>组队</hiy>)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
     [else]
-      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前Boss类型：(BossModel)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
+      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
+    [if] (channel) == 谣言
+      [if] (BossAlert) == 提示音
+        @beep
+      [else if] (BossAlert) == 语音播报
+        $tts (:name)，(bossName)出现在(bossPlace)。
 //按钮命令
 [if] (mycall) == true || (channel) == 谣言
   @js $(".redboss").off("click")
   @js $(".boss-single").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr) 0\n($BossInfo)=notime\n@js messageAppend("🥕 进入单人副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n($BossInfo)=notime\n@js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
-  @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;$zdwk\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
+  @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;(action)\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
-  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#config\ntm b`);})
+  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#select ($BossAlert)=Boss刷新时发声提醒（提示音需Raid版本至少为2.4.40）,关闭|提示音|语音播报,(BossAlert)\n#config\ntm b`);})
   //检查版本
   ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
   @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
