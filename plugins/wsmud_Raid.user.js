@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.39
+// @version         2.4.40
 // @date            23/12/2018
 // @modified        02/03/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
@@ -1886,6 +1886,10 @@
             return Role._weaponType
         },
 
+        beep: function () {
+            document.getElementById("beep-alert").play();
+        },
+
         _renewHookIndex: null,
         _renewStatus: "resting",
 
@@ -3116,6 +3120,13 @@
             return UntilRoleFreePerformerPromise(resolve => {
                 Role.renew(_ => { setTimeout(resolve, 1000); });
             });
+        });
+        CmdExecuteCenter.addExecutor(executor);
+    })();
+
+    (function () {
+        const executor = new AtCmdExecutor("beep", function (performer, param) {
+            Role.beep();
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
@@ -6216,6 +6227,9 @@ tiao bush
         if (WG == undefined || WG == null) {
             setTimeout(__init__, 300);
         }
+        $("body").append(
+            $(`<audio id="beep-alert" preload="auto"></audio>`).append(`<source src="https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script/plugins/complete.mp3" type="audio/mpeg">`)
+        );
     });
 
     function __init__() {
