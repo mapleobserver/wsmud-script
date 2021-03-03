@@ -2,8 +2,8 @@
 // 查询Boss
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
-($changeLog) = 新增【只打组队本】和【Boss刷新发声提醒】功能。
-($localVer) = 2021030201
+($changeLog) = 新增【只打组队本】和【Boss刷新发声提醒】功能；新增【跳过天僧庞斑】选项。
+($localVer) = 2021030301
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -40,7 +40,7 @@
       @js messageAppend("(log)",2,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));$('.(comClass)')[0].scrollTop = 99999;
       //按钮命令
       @js $(".redboss").off("click")
-      @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#select ($BossAlert)=Boss刷新时发声提醒（提示音需Raid版本至少为2.4.40）,关闭|提示音|语音播报,(BossAlert)\n#config\ntm b`);})
+      @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|跳过天僧庞斑|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#select ($BossAlert)=Boss刷新时发声提醒（提示音需Raid版本至少为2.4.40）,关闭|提示音|语音播报,(BossAlert)\n#config\ntm b`);})
       [exit]
     [if] (BossInfo) != null
       @js ($info)=("\""+"(BossInfo)"+"\"").replace(/\|/g,"\"|\"").split("|")
@@ -114,6 +114,8 @@
       ($model) = true
     [else if] (bossName) != 浪翻云 && (bossName) != 烛九阴 && (BossModel) == 只打浪翻云烛九阴
       ($model) = true
+    [else if] (bossName) != 浪翻云 && (bossName) != 烛九阴 && (bossName) != 蚩尤 && (BossModel) == 跳过天僧庞斑
+      ($model) = true
     [else if] (bossName) == 天僧 && (BossModel) == 自动跳过天僧
       ($model) = true
   [if] (BossTeam) == 开启 && (team) != true
@@ -141,7 +143,7 @@
   @js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n($BossInfo)=notime\n@js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;(action)\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
-  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#select ($BossAlert)=Boss刷新时发声提醒（提示音需Raid版本至少为2.4.40）,关闭|提示音|语音播报,(BossAlert)\n#config\ntm b`);})
+  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|跳过天僧庞斑|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#select ($BossAlert)=Boss刷新时发声提醒（提示音需Raid版本至少为2.4.40）,关闭|提示音|语音播报,(BossAlert)\n#config\ntm b`);})
   //检查版本
   ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
   @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
