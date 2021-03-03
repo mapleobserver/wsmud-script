@@ -1,6 +1,6 @@
 //~silent
 //基于原版修改
-($localVer) = 2021030301
+($localVer) = 2021030302
 ($changeLog) = 新增重选词条功能，方便调整词条内容。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
@@ -81,8 +81,44 @@
   [if] (entryspc)==无 || (entryspc)==null
     ($ZCSpc) = null
   [else]
-    ($spcData) = "吸血（太玄）":"攻击力的内功伤害","不灭（混沌）":"短时间无视伤害","战神":"空手时附加的内力加倍","反震":"最大内力的反震伤害","守护":"气血每降低","剑心":"额外攻击敌人","弱化":"战斗属性","溅射":"对附近一名敌人","吸血":"转化为自身气血","穿透":"伤害增加","无情":"敌人的气血每降低","嗜血":"你的气血每降低","内伤（入魔）":"附加你最大内力","反击（移花）":"招架成功后顺势反击敌人","乾坤":"伤害减免","纵横":"招架成功后增加","反击":"躲闪成功后顺势反击敌人","灵动":"躲闪成功后增加","专注":"战斗中提升躲闪"
-    @js ($ZCSpc)=var spc={(spcData)};spc.(entryspc)
+    [if] (entryspc)==吸血（太玄）
+      ($ZCSpc)=攻击力的内功伤害
+    [else if] (entryspc)==不灭（混沌）
+      ($ZCSpc)=短时间无视伤害
+    [else if] (entryspc)==战神
+      ($ZCSpc)=空手时附加的内力加倍
+    [else if] (entryspc)==反震
+      ($ZCSpc)=最大内力的反震伤害
+    [else if] (entryspc)==守护
+      ($ZCSpc)=气血每降低
+    [else if] (entryspc)==剑心
+      ($ZCSpc)=额外攻击敌人
+    [else if] (entryspc)==弱化
+      ($ZCSpc)=战斗属性
+    [else if] (entryspc)==溅射
+      ($ZCSpc)=对附近一名敌人
+    [else if] (entryspc)==吸血
+      ($ZCSpc)=转化为自身气血
+    [else if] (entryspc)==穿透
+      ($ZCSpc)=伤害增加
+    [else if] (entryspc)==无情
+      ($ZCSpc)=敌人的气血每降低
+    [else if] (entryspc)==嗜血
+      ($ZCSpc)=你的气血每降低
+    [else if] (entryspc)==内伤（入魔）
+      ($ZCSpc)=附加你最大内力
+    [else if] (entryspc)==反击（移花）
+      ($ZCSpc)=招架成功后顺势反击敌人
+    [else if] (entryspc)==乾坤
+      ($ZCSpc)=伤害减免
+    [else if] (entryspc)==纵横
+      ($ZCSpc)=招架成功后增加
+    [else if] (entryspc)==反击
+      ($ZCSpc)=躲闪成功后顺势反击敌人
+    [else if] (entryspc)==灵动
+      ($ZCSpc)=躲闪成功后增加
+    [else if] (entryspc)==专注
+      ($ZCSpc)=战斗中提升躲闪
   @js ManagedPerformerCenter.start("自创推演", FlowStore.get("自创推演"));
   [exit]
 
