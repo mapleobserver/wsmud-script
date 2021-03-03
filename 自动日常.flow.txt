@@ -2,18 +2,19 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021030202
-($changeLog) = 1.武道塔快速模式新增天地诀回蓝选项；2.新增【古宗门遗址】单独扫荡；3.副本扫荡也可选【古宗门遗址】。4.武神自动跳过请安。
+($localVer) = 2021030301
+($changeLog) = 1.武道塔快速模式新增天地诀回蓝选项；2.新增【古宗门遗址】单独扫荡；3.副本扫荡也可选【古宗门遗址】。4.自动使用玉简。
+($flowName) = 自动日常
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 @js ($remoteVer) = var v = (version);v.zdrc
-[if] (localVer) != (remoteVer) && (remoteVer) != null
-  @js WG.SendCmd("tm 当前自动日常版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"自动日常","source":"(repourl)/自动日常.flow.txt","finder":"根文件夹"}
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"(flowName)","source":"(repourl)/(flowName).flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1500
-  ($log) = 自动日常已更新至最新版【(remoteVer)】，即将自动运行。
+  ($log) = (flowName)已更新至最新版【(remoteVer)】，即将自动运行。
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
   @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
@@ -22,7 +23,7 @@
   [if] (remoteVer) == null
     ($log) = 获取远程版本失败，维持当前版本不变。
   [else]
-    ($log) = 开始运行自动日常，当前版本【(remoteVer)】。更新内容：(changeLog)
+    ($log) = 开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
@@ -719,6 +720,10 @@ stopstate
     ($alert_gmp) = 扫荡符不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
   [else if] (gmpjingli) != null
     ($alert_gmp) = 精力不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
+
+// 使用玉简
+[if] {b玉简p%}? != null
+  use {b玉简p%}?
 
 // 当铺购买
 stopstate
