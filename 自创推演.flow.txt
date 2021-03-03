@@ -1,0 +1,180 @@
+//~silent
+//基于原版修改
+($localVer) = 2021030301
+($changeLog) = 新增重选词条功能，方便调整词条内容。
+($flowName) = 自创推演
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
+//@print (version)
+@js ($remoteVer) = var v = (version);v.zcty
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"(flowName)","source":"(repourl)/(flowName).flow.txt","finder":"根文件夹"}
+  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+  @wait 1500
+  ($log) = (flowName)已更新至最新版【(remoteVer)】，即将自动运行。
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+  [exit]
+[else]
+  [if] (remoteVer) == null
+    ($log) = 获取远程版本失败，维持当前版本不变。
+  [else]
+    ($log) = 开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
+@cmdDelay 0
+[if] (ZCFood) == null
+  ($ZCFood)=是
+[if] (ZCFy) == null
+  ($ZCFy)=是
+[if] (ZCSkill) == null
+  ($ZCSkill)=内功
+[if] (ZCNum) == null
+  ($ZCNum)=4
+[if] (ZCMaxqn) == null
+  ($ZCMaxqn)=100000
+[if] (ZCProp) == null
+  ($ZCProp)=忽视对方防御|最终伤害|暴击|绝招冷却时间%
+[if] (ZCSpc) == null
+  ($ZCSpc)=短时间无视伤害
+[if] (ZCXlu) == null
+  ($ZCXlu)=无
+
+#select ($zcEntry)=<hiz>重新设定词条（开启前先选择推演部位👇）</hiz>,开启|关闭,关闭
+#select ($ZCSkill)=要推演的技能部位,内功|鞭法|棍法|剑法|刀法|杖法|招架|拳脚|暗器|轻功,(ZCSkill)
+#select ($ZCFood)=冰心,是|否,(ZCFood)
+#select ($ZCFy)=飞翼,是|否,(ZCFy)
+#input ($ZCProp)=普通词条(完全匹配，|隔开，限定只拿百分比后面加%),(ZCProp)
+#input ($ZCSpc)=特殊词条(模糊匹配),(ZCSpc)
+#select ($ZCXlu)=香炉,无|沉香木鼎|麝香铜鼎|龙涎香熏|龙脑古鼎,(ZCXlu)
+#input ($ZCNum)=计数,(ZCNum)
+#input ($ZCMaxqn)=总消耗潜能(万),(ZCMaxqn)
+#config
+
+[if] (zcEntry)==开启
+  [if] (ZCSkill)==内功
+    ($propAry)=臂力|命中|攻击%|命中%|最终伤害%|忽视对方防御%|绝招冷却%|暴击%|练习效率%|攻速%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|绝招释放%|学习效率%|打坐效率%|攻击|绝招冷却|攻速|绝招释放|忙乱|根骨|身法|悟性|防御|招架|躲闪
+    ($spcAry)=吸血（太玄）|不灭（混沌）|战神|反震|守护|剑心
+  [else if] (ZCSkill)==鞭法 || (ZCSkill)==棍法 || (ZCSkill)==剑法 || (ZCSkill)==刀法 || (ZCSkill)==杖法 || (ZCSkill)==拳脚 || (ZCSkill)==暗器
+    ($propAry)=攻击|命中|臂力|攻击%|命中%|最终伤害%|忽视对方防御%|暴击%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|根骨|身法|悟性|防御|招架|躲闪
+    ($spcAry)=弱化|溅射|吸血|穿透|无情|嗜血|内伤（入魔）
+  [else if] (ZCSkill)==招架
+    ($propAry)=攻击|命中|臂力|命中%|根骨|身法|悟性|防御|招架|躲闪|暴击伤害%|内力消耗%|练习效率%|学习效率%|打坐效率%|防御%|招架%|躲闪%|气血%
+    ($spcAry)=反击（移花）|乾坤|纵横
+  [else if] (ZCSkill)==轻功
+    ($propAry)=攻击|臂力|命中|命中%|防御|招架|躲闪|根骨|身法|悟性|防御%|招架%|躲闪%|气血%|暴击伤害%|内力消耗%|练习效率%|学习效率%|打坐效率%
+    ($spcAry)=反击|灵动|专注
+  #input ($info)= <hiz>当前选择部位：</hiz><ord>👉(ZCSkill)👈</ord>,🐱
+  #select ($entry1)=普通词条1,(propAry),(entry1)
+  #select ($entry2)=普通词条2,(propAry),(entry2)
+  #select ($entry3)=普通词条3,(propAry),(entry3)
+  #select ($entry4)=普通词条4,(propAry),(entry4)
+  #select ($entry5)=普通词条5（有特殊词条可选无）,无|(propAry),(entry5)
+  #select ($entryspc)=特殊词条（不需要则选无）,无|(spcAry),(entryspc)
+  #config
+  ($ZCProp) = (entry1)|(entry2)|(entry3)|(entry4)
+  [if] (entry5) != 无
+    ($ZCProp) = (ZCProp)|(entry5)
+  [if] (entryspc)==无 || (entryspc)==null
+    ($ZCSpc) = null
+  [else]
+    ($spcData) = "吸血（太玄）":"攻击力的内功伤害","不灭（混沌）":"短时间无视伤害","战神":"空手时附加的内力加倍","反震":"最大内力的反震伤害","守护":"气血每降低","剑心":"额外攻击敌人","弱化":"战斗属性","溅射":"对附近一名敌人","吸血":"转化为自身气血","穿透":"伤害增加","无情":"敌人的气血每降低","嗜血":"你的气血每降低","内伤（入魔）":"附加你最大内力","反击（移花）":"招架成功后顺势反击敌人","乾坤":"伤害减免","纵横":"招架成功后增加","反击":"躲闪成功后顺势反击敌人","灵动":"躲闪成功后增加","专注":"战斗中提升躲闪"
+    @js ($ZCSpc)=var spc={(spcData)};spc.(entryspc)
+  @js ManagedPerformerCenter.start("自创推演", FlowStore.get("自创推演"));
+  [exit]
+
+
+($skill)=force
+[if] (ZCSkill) == 鞭法
+   ($skill)=whip
+[else if] (ZCSkill) == 杖法
+   ($skill)=staff
+[else if] (ZCSkill) == 招架
+   ($skill)=parry
+[else if] (ZCSkill) == 拳脚
+   ($skill)=unarmed
+[else if] (ZCSkill) == 暗器
+   ($skill)=throwing
+[else if] (ZCSkill) == 轻功
+   ($skill)=dodge
+[else if] (ZCSkill) == 棍法
+   ($skill)=club
+[else if] (ZCSkill) == 剑法
+   ($skill)=sword
+[else if] (ZCSkill) == 刀法
+   ($skill)=blade
+
+($max)=(ZCMaxqn)*10000
+
+[if](ZCProp)!=null&&(ZCProp)!=none
+  @js ($zcp)=("\""+"(ZCProp)"+"\"").replace(/\|/g,"\"|\"").split("|")
+
+stopstate
+[if] (ZCXlu)!=无 && {b(ZCXlu)}? != null
+  use {b(ZCXlu)}?
+($sum)=0
+[while] true
+  [if] (ZCFood) == 是 && (:status food)==false && {b冰心丹}? != null
+    use {b冰心丹}?
+  [if] (ZCFy) == 是 && (:status fy)==false
+    use (:eq0)
+  zc typelv (skill)
+  ($prop)=null
+  @tip 盘膝坐下|属性：($gd)<cyn>($prop)<
+  [if](prop)!=null
+    [if](sum)==1
+      ($sum)=2
+    ($add)=-1
+
+    [if](ZCProp)!=null&&(ZCProp)!=none
+      @js ($num)=[(zcp)].length
+      [while] (num)>0
+        ($num)=(num)-1
+        @js ($op)=[(zcp)][(num)]
+        @js ($pe)="(op)".indexOf("%")
+        [if] (pe)!=-1
+          @js ($op)="(op)".replace("%","")
+          @js ($add)="(prop)".search(/(op)：.*%/)
+        [else]
+          @js ($add)="(prop)".indexOf("(op)"+"：")
+        [if] (add) !=-1
+          [break]
+    [if] (add)==-1 && (ZCSpc) !=null
+      @js ($add)="(prop)".indexOf("(ZCSpc)")
+    [if] (add) !=-1
+      zc prop (skill) add
+      @tip 增加属性|不能再添加($finish)
+      @js WG.Send("tm 添加[(prop)]")
+    [else]
+      zc prop (skill) ban
+      @js WG.Send("tm 放弃[(prop)]")
+
+  [if](sum)==2
+    zc typedel (skill)
+    @tip 武道书，($qn)潜能，
+    tm (ZCSkill)已推演~(qn)潜能
+    [if] (qn)>=(max)
+      ($finish)=1
+    ($sum)=0
+
+  ($num) =1
+  [while] (:state)==推演
+    @tip 有了更深入的理解|潜能不够($finish)
+    say 已推演(num)次 (:hour):(:minute):(:second)
+    ($num)=(num)+1
+    [if] (num) > (ZCNum)||(finish)!=null
+      ($num) =0
+      [if](sum)==0
+        ($sum)=1
+      stopstate
+      [break]
+
+  [if](finish)!= null
+    [break]
+
+[if] (ZCXlu)!=无
+  get {r(ZCXlu)}?
+xiulian

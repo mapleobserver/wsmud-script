@@ -1,8 +1,8 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021022202
-($changeLog) = 开放圆月弯刀整合版本；更新武神红BOSS辅助触发；更新部分失效触发
+($localVer) = 2021030301
+($changeLog) = 新增自创推演流程；开放圆月弯刀整合版本；更新武神红BOSS辅助触发
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -25,6 +25,7 @@
 #input ($info0)=👉<hiz>当前流程版本为(localVer)，以下有♻️标志的流程有自更新功能</hiz>👈,自动更新🚀
 #input ($info1)=👉<hiz>第一次使用前，如已有同名流程，请先手动删除</hiz>👈,挖矿愉快😊
 #select ($flowZDRC)=[♻️<hiz>自动日常</hiz>]师门、养精、追捕、打塔、副本、请安,导入|跳过,跳过
+#select ($flowZCTY)=[♻️<hiz>自创推演</hiz>]武神自创推演,导入|跳过,跳过
 //#select ($flowZDZB)=[♻️<hiz>自动追捕</hiz>]自动寻路追捕逃犯<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowZDWD)=[♻️<hiz>自动武道</hiz>]自动打武道塔<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
@@ -58,6 +59,7 @@
 ($USE_kswd)=null
 // 流程
 ($f_zdrc)={"name":"自动日常","source":"(repourl)/自动日常.flow.txt","finder":"根文件夹"}
+($f_zcty)={"name":"自创推演","source":"(repourl)/自创推演.flow.txt","finder":"根文件夹"}
 ($f_zdzb)={"name":"自动追捕","source":"(repourl)/自动追捕.flow.txt","finder":"根文件夹"}
 ($f_zdwd)={"name":"自动武道","source":"(repourl)/自动武道.flow.txt","finder":"根文件夹"}
 ($f_kssd)={"name":"快速扫荡","source":"(repourl)/副本/快速扫荡.flow.txt","finder":"根文件夹"}
@@ -77,6 +79,8 @@
 
 [if] (flowZDRC)==导入
   ($f_list)=(f_list),(f_zdrc)
+[if] (flowZCTY)==导入
+  ($f_list)=(f_list),(f_zcty)
 [if] (flowZDZB)==导入
   ($f_list)=(f_list),(f_zdzb)
 [if] (flowZDWD)==导入
