@@ -2,13 +2,14 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门、买吃养精。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021030301
-($changeLog) = 1.武道塔快速模式新增天地诀回蓝选项；2.新增【古宗门遗址】单独扫荡；3.副本扫荡也可选【古宗门遗址】。4.自动使用玉简。
+($localVer) = 2021030401
+($changeLog) = 1.武道塔快速模式新增天地诀回蓝选项；2.新增【古宗门遗址】单独扫荡；3.副本扫荡也可选【古宗门遗址】。4.优化版本检测、古宗门扫荡、使用玉简。
 ($flowName) = 自动日常
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
-@js ($remoteVer) = var v = (version);v.zdrc
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.zdrc
 [if] (localVer) < (remoteVer) && (remoteVer) != null
   @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
   ($f_ss)={"name":"(flowName)","source":"(repourl)/(flowName).flow.txt","finder":"根文件夹"}
@@ -618,8 +619,10 @@ stopstate
             jh fam 9 start;go enter
             go up
             ggdl {r疯癫的老头}
-            go north[3]
-            go north[3]
+            go north[2]
+            go north[2]
+            go north[2]
+            @await 2000
             look shi
             tiao1 shi;tiao1 shi;tiao2 shi
             jumpdown
@@ -701,13 +704,15 @@ stopstate
       tm (dhinfo)
 
 [if] (GmpSD) == 扫荡
-  @await 1000
+  @await 3000
   stopstate
   jh fam 9 start;go enter
   go up
   ggdl {r疯癫的老头}
-  go north[3]
-  go north[3]
+  go north[2]
+  go north[2]
+  go north[2]
+  @await 2000
   look shi
   tiao1 shi;tiao1 shi;tiao2 shi
   jumpdown
@@ -715,7 +720,7 @@ stopstate
     [if] (RCMode) == 正常模式
       shop 0 (GmpSDnum)
   cr gmp/shanmen 0 (GmpSDnum)
-  @tip 扫荡完成|扫荡符($gmplack)继续扫荡|你的($gmpjingli)不够
+  @tip 古宗门遗址扫荡完成|扫荡符($gmplack)继续扫荡|你的($gmpjingli)不够
   [if] (gmplack) != null
     ($alert_gmp) = 扫荡符不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
   [else if] (gmpjingli) != null
@@ -723,6 +728,7 @@ stopstate
 
 // 使用玉简
 [if] {b玉简p%}? != null
+  @await 3000
   use {b玉简p%}?
 
 // 当铺购买
