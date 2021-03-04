@@ -1,0 +1,232 @@
+//~silent
+//躺尸过古宗门副本
+//四区白三三
+//更新时间：2021030401 - 14:11
+@cmdDelay 500
+[if] (:room 副本区域,忧愁谷) == true
+  @print <ord>正在副本中，流程终止。</ord>
+  [exit]
+stopstate
+// 检测武器类型
+[if] (:weapon sword) != true
+  [if] (weaponSword) == null
+    ($weaponSword) = 绣花针
+  #input ($weaponSword) = 本流程需要装备剑类武器，请填写剑武器名称,(weaponSword)
+  #config
+  stopstate
+  eq {b(weaponSword)}?
+  @await 3000
+  [if] (:weapon sword) != true
+    @print <ord>选择的武器不是剑，流程终止。</ord>
+    $zdwk
+    [exit]
+// 检测唐诗剑法
+[if] (:kf_jian) != tangshijianfa
+  enable sword tangshijianfa
+[if] (:kf_jian) != tangshijianfa
+  @print <ord>没有唐诗剑法，流程终止。</ord>
+  $zdwk
+  [exit]
+
+// 更换混天腰带或君子鞶带
+[if] {b君子鞶带o}? != null
+  eq {b君子鞶带o}?
+[else if] {b混天腰带o}? != null
+  eq {b混天腰带o}?
+
+// 更换门派内功
+[if] (:family) == 武当派
+  ($mpf) = taijishengong2
+[else if] (:family) == 少林派
+  ($mpf) = yijinjing2
+[else if] (:family) == 华山派
+  ($mpf) = zixiashengong2
+[else if] (:family) == 峨眉派
+  ($mpf) = linjizhuang2
+[else if] (:family) == 逍遥派
+  ($mpf) = xiaowuxianggong2
+[else if] (:family) == 丐帮
+  ($mpf) = huntianqigong2
+[else if] (:family) == 杀手楼
+  ($mpf) = shashengjue2
+[if] (:kf_nei) != (mpf)
+  enable force (mpf)
+[if] (:kf_nei) != (mpf)
+  @print <ord>没有对应门派内功，流程终止。</ord>
+  $zdwk
+  [exit]
+
+[if] (:room) != 古大陆-山脚
+  @print <hiy>如果寻路一直失败，请检查设置中<ord>【切换房间时不清空上房间信息】</ord>是否开启。</hiy>
+team out
+jh fam 9 start
+go enter
+go up
+@tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
+[if] (pass) != null
+  @print <ord>不符合前往古大陆要求，流程终止。</ord>
+  $zdwk
+  [exit]
+ggdl {r疯癫的老头}
+go north[3]
+go north[3]
+look shi
+tiao1 shi;tiao1 shi;tiao2 shi
+@until (:room) == 古大陆-断山
+// 获取方向信息，预处理
+@js ($ylfx) = $(".room_desc").text().match(/[东南西北]，/g)
+@js ($ylfx) = var f="(ylfx)";f.replace(/，/g,"")
+@js ($ylfx) = var f="(ylfx)";f.replace(/东/g,"west")
+@js ($ylfx) = var f="(ylfx)";f.replace(/西/g,"east")
+@js ($ylfx) = var f="(ylfx)";f.replace(/南/g,"north")
+@js ($ylfx) = var f="(ylfx)";f.replace(/北/g,"south")
+@js ($ylfx) = var f="(ylfx)";f.replace(/,/g,"','")
+@js ($ylfx) = var f=['(ylfx)'];f.reverse()
+@js ($ylfx) = var f="(ylfx)";f.replace(/,/g,"','")
+@js ($ylfx) = "'"+"(ylfx)"+"'"
+@js ($fl) = [(ylfx)].length
+// 进入森林
+go down
+go south[3]
+go south[2]
+go west
+// 探索第一步
+($go) = 'east','west','south','north'
+($num) = 0
+[while] (num) < 4
+  @await 500
+  @js $(".content-message pre").html("");
+  @await 500
+  @js ($fx1) = [(go)][(num)]
+  go (fx1)
+  @js ($lost) = $(".content-message").text().match("你似乎迷路了")
+  [if] (lost) != null
+    go south[3]
+    go south[3]
+    go west
+    ($num) = (num) + 1
+  [else]
+    [break]
+// 后续5步
+[if] (fl) == 5
+  ($num) = 0
+  [while] (num) < 5
+    @js ($fx) = [(ylfx)][(num)]
+    go (fx)
+    ($num) = (num) + 1
+[else if] (fl) == 4
+  @js ($fx2) = [(ylfx)][0]
+  @js ($fx3) = [(ylfx)][1]
+  @js ($fx4) = [(ylfx)][2]
+  @js ($fx5) = [(ylfx)][3]
+  ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx4);go (fx5);go (fx5)"},{"lx":"go (fx2);go (fx3);go (fx4);go (fx4);go (fx5)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx4);go (fx5)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx4);go (fx5)"}
+[else if] (fl) == 3
+  @js ($fx2) = [(ylfx)][0]
+  @js ($fx3) = [(ylfx)][1]
+  @js ($fx4) = [(ylfx)][2]
+  ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx4);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx3);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx3);go (fx4)"},{"lx":"go (fx2);go (fx3);go (fx3);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx4);go (fx4)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx3);go (fx4)"}
+[else if] (fl) == 2
+  @js ($fx2) = [(ylfx)][0]
+  @js ($fx3) = [(ylfx)][1]
+  ($lxjh) = {"lx":"go (fx2);go (fx3);go (fx3);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx3);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx3);go (fx3)"},{"lx":"go (fx2);go (fx2);go (fx2);go (fx2);go (fx3)"}
+[else if] (fl) == 1
+  @js ($fx2) = [(ylfx)][0]
+  ($lxjh) = {"lx":"go (fx2);go (fx2);go (fx2);go (fx2);go (fx2)"}
+[if] (fl) < 5
+  @js ($fxlen) = [(lxjh)].length
+  ($num) = 0
+  [while] (num) < (fxlen)
+    @js ($map) = var f=[(lxjh)];f[(num)]["lx"]
+    (map)
+    [if] (:room) != 古大陆-药林
+      [while] (:room) != 古大陆-平原
+        go south
+        @await 350
+      go north;go west
+      go (fx1)
+      ($num) = (num) + 1
+    [else]
+      [break]
+tiao bush
+[if] (:room) == 古大陆-山脚
+  @print <ord>古宗门自动寻路已完成！</ord>
+[else]
+  @print <ord>寻路失败，请重新运行或换个时间。</ord>
+  $zdwk
+  [exit]
+
+//古宗门副本
+@cmdDelay 500
+cr gmp/shanmen
+<---
+[while] true
+  @until (:combating) == true || (:combating) == false
+  [if] (:combating) == true
+    $waitpfm sword.wu
+  @until (:combating) == false || (:living) == false
+  [if] (:living) == false
+    @await 3000
+    @cd sword.wu
+    [{b天师符y}?==null]shop 1 1
+    relive locale
+    @until (:living) == true
+    [continue]
+  [else if] (:combating) == false
+    @until (:status busy) == false
+    [if] (:room) != 古宗门遗址-大殿(副本区域)
+      sou;sou
+    [else]
+      [while] true
+        sou
+        @tip 费力($haigu)大石|找到
+        [if] (haigu) == null
+          [continue]
+        [else]
+          [break]
+    [if] (:room) == 古宗门遗址-后殿(副本区域)
+      ($feixu) = true
+    [if] (:room) == 古宗门遗址-废墟(副本区域) && (feixu) == true
+      [if] (mpforce) == null
+        @tip 你站在这里深吸一口气，体内($mpforce)自主运转，和此处天地韵律有些微妙的同步
+      [else]
+        packitem zang {b骸骨}?
+    [if] (:room) == 古宗门遗址-大殿(副本区域) && (mpforce) != null
+      get {r骸骨}?
+    [if] (:room) == 古宗门遗址-悬崖(副本区域)
+      [if] {b藤蔓w%#}? < 10
+        @print <ord>藤蔓数量不足！建议离开副本重来！</ord>
+        [exit]
+      [else]
+        packitem combine {b藤蔓}?
+      use {b藤蔓绳}?
+      jumpdown
+      use {b宗主令牌}?
+      sou
+      cr;cr over
+      $zdwk
+      [exit]
+  @cd sword.wu
+  [break]
+--->
+go west
+go west
+go west
+go west
+go west
+go south
+go north
+go north
+go west
+go southwest
+go west
+go south
+go north
+go west
+go east
+go east
+go east
+go west
+go west
+go west
+go west
+go north

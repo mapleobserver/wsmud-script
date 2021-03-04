@@ -1,24 +1,26 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021030301
-($changeLog) = 新增自创推演流程；开放圆月弯刀整合版本；更新武神红BOSS辅助触发
+($localVer) = 2021030401
+($changeLog) = 新增古宗门躺尸流程；新增自创推演流程；开放圆月弯刀整合版本；更新武神红BOSS辅助触发
+($flowName) = 三三懒人包
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
-@js ($remoteVer) = var v = (version);v.lrb
-[if] (localVer) != (remoteVer)
-  @js WG.SendCmd("tm 当前懒人包版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"三三懒人包","source":"(repourl)/三三懒人包.flow.txt","finder":"根文件夹"}
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.lrb
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"(flowName)","source":"(repourl)/(flowName).flow.txt","finder":"根文件夹"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1000
-  ($log) = 懒人包已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  ($log) = (flowName)已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
   @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
   [exit]
 [else]
-  ($log) = 开始运行懒人包，当前版本【(remoteVer)】。更新内容：(changeLog)
+  ($log) = 开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
@@ -51,7 +53,8 @@
 
 // 特殊流程
 #input ($info3)=👇<hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz>👇,愉快游戏🎮
-#select ($flowYYWD)=[<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
+#select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
+#select ($flowGZM)=[<hiz>古宗门躺尸</hiz>],导入|跳过,跳过
 //#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
 //#select ($flowZSDJM)=[<hiz>战神殿解谜</hiz>]战神殿解谜进门,导入|跳过,跳过
 
@@ -73,6 +76,7 @@
 ($f_mpjj)={"name":"门派进阶","source":"(repourl)/提升/门派进阶.flow.txt","finder":"提升"}
 ($f_yzdy)={"name":"研制绿丹","source":"(repourl)/杂务/研制丹药/研制绿丹.flow.txt","finder":"研制丹药"},{"name":"研制蓝丹","source":"(repourl)/杂务/研制丹药/研制蓝丹.flow.txt","finder":"研制丹药"},{"name":"研制黄丹","source":"(repourl)/杂务/研制丹药/研制黄丹.flow.txt","finder":"研制丹药"},{"name":"研制紫丹","source":"(repourl)/杂务/研制丹药/研制紫丹.flow.txt","finder":"研制丹药"},{"name":"研制橙丹","source":"(repourl)/杂务/研制丹药/研制橙丹.flow.txt","finder":"研制丹药"},{"name":"研制突破","source":"(repourl)/杂务/研制丹药/研制突破.flow.txt","finder":"研制丹药"}
 ($f_yywd)={"name":"圆月弯刀","source":"(repourl)/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
+($f_gzm)={"name":"古宗门躺尸","source":"(repourl)/副本/古宗门躺尸版.flow.txt","finder":"根文件夹"}
 ($f_chqcm)={"name":"慈航七重门","source":"(repourl)/副本/慈航七重门.flow.txt","finder":"根文件夹"}
 ($f_zsdjm)={"name":"战神殿解谜","source":"(repourl)/副本/战神殿解谜.flow.txt","finder":"根文件夹"}
 
@@ -116,6 +120,8 @@
   ($f_list)=(f_list),(f_yzdy)
 [if] (flowYYWD)==导入
   ($f_list)=(f_list),(f_yywd)
+[if] (flowGZM)==导入
+  ($f_list)=(f_list),(f_gzm)
 [if] (flowCHQCM)==导入
   ($f_list)=(f_list),(f_chqcm)
 [if] (flowZSDJM)==导入
@@ -126,7 +132,7 @@
 [if] (f_list) != null
   @js ($l) = [(f_list)].length
   [while] (num)<(l)
-    @js var time = Date.parse( new Date());var f=[(f_list)];var n=f[(num)]["name"];var s=f[(num)]["source"];var fd=f[(num)]["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @js var time = Date.parse( new Date());var f=[(f_list)];var n=fb[(num)]["name"];var s=f[(num)]["source"];var fd=f[(num)]["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
     ($num)=(num)+1
 
 //触发
@@ -165,3 +171,5 @@
   @js unsafeWindow.TriggerCenter.remove("襄阳满")
   @await 350
   @js Server.importTrigger("白三三·襄阳满·触发@2c8369028e3413d2ba5e2ff6ed1d810f")
+
+@print <hiy>导入结束！</hiy>
