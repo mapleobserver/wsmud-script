@@ -1,12 +1,13 @@
 //~silent
 //基于原版修改
-($localVer) = 2021030302
-($changeLog) = 新增重选词条功能，方便调整词条内容。
+($localVer) = 2021030501
+($changeLog) = 新增重选词条功能，方便调整词条内容。优化词条生成判断。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
-@js ($remoteVer) = var v = (version);v.zcty
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.zcty
 [if] (localVer) < (remoteVer) && (remoteVer) != null
   @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
   ($f_ss)={"name":"(flowName)","source":"(repourl)/(flowName).flow.txt","finder":"根文件夹"}
@@ -76,7 +77,7 @@
   #select ($entryspc)=特殊词条（不需要则选无）,无|(spcAry),(entryspc)
   #config
   ($ZCProp) = (entry1)|(entry2)|(entry3)|(entry4)
-  [if] (entry5) != 无
+  [if] (entry5) != 无 && (entry5) != null
     ($ZCProp) = (ZCProp)|(entry5)
   [if] (entryspc)==无 || (entryspc)==null
     ($ZCSpc) = null
