@@ -1,7 +1,7 @@
 //~silent
 //基于原版修改
-($localVer) = 2021030501
-($changeLog) = 新增重选词条功能，方便调整词条内容。优化词条生成判断。
+($localVer) = 2021030502
+($changeLog) = 新增重选词条功能，方便调整词条内容。优化特殊词条生成判断。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -80,7 +80,7 @@
   [if] (entry5) != 无 && (entry5) != null
     ($ZCProp) = (ZCProp)|(entry5)
   [if] (entryspc)==无 || (entryspc)==null
-    ($ZCSpc) = null
+    ($ZCSpc) = (entry1)
   [else]
     [if] (entryspc)==吸血（太玄）
       ($ZCSpc)=攻击力的内功伤害
