@@ -1,0 +1,145 @@
+// 四区白三三
+// 圆月弯刀副本流程，青城山路线，自动进入青城山，跟随青青，采忘忧草，到挡刀被青青救醒，后续剧情（离开、结婚或者砍仇小楼）请手动操作。
+// 会自动卸掉、装上当前内功
+// 2020.10.01 - 优化判断
+[if] (TodayNum) != null
+    [if] (:date) != (TodayDate)
+        [if] (:hour) > 4
+            ($TodayNum) = 0
+            ($TodayDate) = (:date)
+[else]
+    ($TodayNum) = 0
+#select ($YYType) = 最后操作,剧情模式|直接砍小楼,(YYType)
+#input ($TodayNum) = 今天已完成次数(如果不清楚就不要改),(TodayNum)
+#input ($introduce01) = 圆月弯刀副本流程，青城山路线，会自动残血进入青城山，跑地图，跟随青青，采忘忧草，挡刀被青青救醒。,节
+#input ($introduce02) = 选【剧情模式】需要自己等10分钟才见到小楼，20-40岁之间可以结婚拿20页(5忘忧草和10醉仙酿，等5小时，建议在花厅挂机练技能，快5小时上线等着，时间到了走出花厅再进去，原地等青青回来后，带到谷口触发剧情，保护青青获得随从，随从身上有残页)。,日
+#input ($introduce03) = 不在这个年龄范围的和小楼对话选择「告辞」拿5残页。,快
+#input ($introduce04) = 选【直接砍小楼】会跳过剧情，砍25次小楼可以进地窖触发剧情拿20页。没有十几万命中就不用试了,乐
+#config
+[if] (TodayNum) >= 10
+    @print <ord>今天已完成 10 次，无法再进入！</ord>
+    $zdwk
+    [exit]
+@stopSSAuto
+stopstate
+($force) = (:kf_nei)
+enable force none
+enable force (force)
+@cmdDelay 500
+cr wuyue/qingcheng/shanlu
+go westup
+go north
+look cao
+tiao cao
+yywd ok
+pa tu
+@tip 只要伸手就到了
+answer s2
+@tip 神界就在前方
+answer s4
+@tip 是人是鬼
+answer s5
+@tip 不要阻止我
+answer s7
+@tip 只是觉得有些诡异
+answer s9
+@tip 去看看
+answer s10
+[while] true
+    @tip 青青往($direction)方走去|无边无际的黑暗中($goout)|青青走的太快，你已经($lost)她的身影了
+    [if] (goout) != null
+        @print (goout)
+        [break]
+    [if] (lost) != null
+        @print <ord>跟丢了，可能设备反应太慢或网络不稳定，建议换个时间再试。</ord>
+        tm 跟丢了，可能设备反应太慢或网络不稳定，建议换个时间再试。
+        ofb
+        @tip 当天进入次数($yynum)/10
+        ofb ok
+        ($TodayNum) = (yynum)
+        $zdwk
+        [exit]
+    [if] (direction) == 东
+        go east
+    [if] (direction) == 西
+        go west
+    [if] (direction) == 北
+        go north
+    [if] (direction) == 南
+        go south
+look cao
+@tip 你小心点
+answer s1
+cai cao
+$stoppfm
+@tip 他的剑已出鞘闪电刺向青青
+answer s3
+@await 2000
+[if] (:living) == true
+    [if] {r骑鹰老头的尸体}? != null
+        ($fail) = true
+        go south
+        ofb
+        @tip 当天进入次数($yynum)/10
+        ofb ok
+    [else if] (YYType) == 剧情模式 || (YYType) == null
+        @tip 青青看了你一眼转身跟了过去
+        go west
+        @print <ord>已进入山谷，请手动进行后续剧情</ord>
+    [else if] (YYType) == 直接砍小楼
+        @tip 你又恢复了知觉
+        go west;go north
+        @until (:room) == 忧愁谷-小楼
+        liaoshang
+        $wait 5000
+        $startpfm
+        stopstate
+        @cd
+        kill {r仇小楼}?
+        @tip 从仇小楼的尸体|凝听后($dijiao)大变
+        [if] (dijiao) != null
+            @until {r仇小楼}? == null
+            go down
+            $tts (:name)已进入地窖，请手动进行后续剧情
+            @print <ord>已进入地窖，请手动进行后续剧情</ord>
+        [else]
+            go south[4]
+            ofb
+            @tip 当天进入次数($yynum)/10
+            ofb ok
+[else]
+    ($dead) = true
+    relive
+@await 2000
+@js ($yyfb)='(:room)'.indexOf('忧愁谷')
+[if] (yyfb) == -1
+    $startpfm
+    @renew
+    $zdwk
+    @recoverSSAuto
+// 当天次数记录
+($TodayDate) = (:date)
+[if] (yynum) != null
+    ($TodayNum) = (yynum)
+[else]
+    [if] (TodayNum) == null
+        ($TodayNum) = 1
+    [else]
+        ($TodayNum) = (TodayNum) + 1
+[(fail)==true]($info) = 砍死了骑鹰老头，本次副本失败！
+[(dead)==true]($info) = 被骑鹰老头打死，本次副本失败！
+[if] (info) != null
+    ($info) = (info)今日已完成 (TodayNum) 次。
+[else]
+    ($info) = 今日已完成 (TodayNum) 次。
+@print <ord>(info)</ord>
+//以下为参考代码，暂时无用
+//@wait 600000
+//stopstate
+//go north
+//@tip 青青呢
+//answer s2
+//go south
+//go south
+//@tip 后会有期
+//answer s1
