@@ -1,7 +1,7 @@
 //~silent
 //基于原版修改
-($localVer) = 2021030602
-($changeLog) = 1.新增【重置推演部位】功能。2.优化推演提示信息。3.新增【重选词条功能】方便调整词条内容。4.修改错误词条。
+($localVer) = 2021030603
+($changeLog) = 1.自动更换已耗尽的香炉。2.新增【重置推演部位】【重选词条功能】功能。3.优化推演提示信息。4.修改错误词条。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -191,6 +191,18 @@ stopstate
     use {b冰心丹}?
   [if] (ZCFy) == 是 && (:status fy)==false
     use (:eq0)
+  ($xianglu) = {r(ZCXlu)}?
+  [if] (xianglu) != null && (:status xlu)==false
+    get {r(ZCXlu)}?
+    [if] {b(ZCXlu)}? == (xianglu)
+      @print (ZCXlu)已用完。
+      [if] (ZCXlu)==沉香木鼎
+        [if] {b麝香铜鼎}? != null
+          ($ZCXlu) = 麝香铜鼎
+          @print 自动更换为麝香铜鼎。
+          use {b(ZCXlu)}?
+    [else]
+      use {b(ZCXlu)}?
   zc typelv (skill)
   ($prop)=null
   @tip 盘膝坐下|属性：($gd)<cyn>($prop)<
