@@ -1,24 +1,50 @@
+//~silent
 //buff变化：移除
-//buffid:food|fy
+//buffid:food|fy|huiz
 //对象：自己
-//要先手动吃一颗或使用一次飞翼
-@cmdDelay 500
-[if] (:room) == 古墓派-卧室(副本区域) && (:state) == 打坐 && {b蕴象丸}? != null
-  stopstate;use {b蕴象丸}?;dazuo
+//要先手动吃一颗或使用一次飞翼，徽章先装备使用后，换回练习或打坐用的饰品，让徽章留在背包里。
+//设置没鼓舞就不再续药改闭关，将下一行($Guwu)值改为1
+($Guwu) = 0
+@cmdDelay 0
+[if] (:room) == 古墓派-卧室(副本区域) && (:state) == 打坐
+  [if] (sid) == food && {b蕴象丸}? != null
+    stopstate;use {b蕴象丸}?;dazuo
+  [if] (sid) == huiz && {b周年庆徽章r}? != null
+    ($shipin)=(:eq7)
+    ($hz) = {b周年庆徽章r}?
+    stopstate
+    eq {b周年庆徽章r}?;use (hz);eq (shipin)
+    dazuo
 @js ($fbroom)='(:room)'.indexOf('副本区域')
 [if] (fbroom) != -1
   [exit]
 ($cmd) = null
 ($item) = null
 [if] (:state) == 练习 || (:state) == 打坐
-  ($cmd) = dazuo;
+  [if] (:status success)==false && (Guwu)==1
+    @print 无鼓舞，自动停止练习。
+    @cmdDelay
+    stopstate
+    $usezml 攻装
+    @await 6000
+    @recoverSSAuto
+    $zdwk
+    [exit]
+  ($cmd) = dazuo
 [if] (:state) == 领悟
-  ($cmd) = lingwu continue;
+  ($cmd) = lingwu continue
 [if] (cmd)==null
   [exit]
-[if] (sid) == food && {b冰心丹}? != null
-  ($item) = {b冰心丹}
+[if] (sid) == food
+  [if] {b冰心丹}? != null
+    ($item) = use {b冰心丹}
+  [else]
+    @print 冰心丹已用完。
 [if] (sid) == fy
-  ($item) = (:eq0)
+  ($item) = use (:eq0)
+[if] (sid) == huiz && {b周年庆徽章r}? != null
+  ($shipin)=(:eq7)
+  ($hz) = {b周年庆徽章r}?
+  ($item) = eq {b周年庆徽章r}?;use (hz);eq (shipin)
 [if] (item) != null
-  stopstate;use (item);(cmd)
+  stopstate;(item);(cmd)
