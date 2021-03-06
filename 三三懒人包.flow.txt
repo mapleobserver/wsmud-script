@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021030401
+($localVer) = 2021030601
 ($changeLog) = 新增古宗门躺尸流程；新增自创推演流程；开放圆月弯刀整合版本；更新武神红BOSS辅助触发
 ($flowName) = 三三懒人包
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
@@ -147,7 +147,7 @@
   @print 导入 <hic>续药飞翼</hic> 触发
   @js unsafeWindow.TriggerCenter.remove("续药飞翼")
   @await 350
-  @js Server.importTrigger("白三三·续药飞翼·触发@1fde50ccc43a8e2ef5f5adcdd9331c42")
+  @js Server.importTrigger("白三三·续药飞翼·触发@a15c444b6d236a1a7e040f4cc13b18d1")
   @print <hiy>【徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。【鼓舞】可改参数设置无鼓舞时停止练习</hiy>
   tm 【徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。【鼓舞】可改参数设置无鼓舞时停止练习
 [if] (triggerXWZZ)==导入
