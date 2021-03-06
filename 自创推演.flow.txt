@@ -1,7 +1,7 @@
 //~silent
 //基于原版修改
-($localVer) = 2021030502
-($changeLog) = 新增重选词条功能，方便调整词条内容。优化特殊词条生成判断。
+($localVer) = 2021030601
+($changeLog) = 1.新增【重置推演部位】功能。2.新增【重选词条功能】方便调整词条内容。3.优化特殊词条生成判断。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -46,6 +46,7 @@
 
 #select ($zcEntry)=<hiz>重新设定词条（开启前先选择推演部位👇）</hiz>,开启|关闭,关闭
 #select ($ZCSkill)=要推演的技能部位,内功|鞭法|棍法|剑法|刀法|杖法|招架|拳脚|暗器|轻功,(ZCSkill)
+#select ($zcReset)=⚠️<ord>重置推演部位</ord>（清除已有词条重新开始）⚠️,是|否,否
 #select ($ZCFood)=冰心,是|否,(ZCFood)
 #select ($ZCFy)=飞翼,是|否,(ZCFy)
 #input ($ZCProp)=普通词条(完全匹配，|隔开，限定只拿百分比后面加%),(ZCProp)
@@ -122,27 +123,59 @@
       ($ZCSpc)=战斗中提升躲闪
   @js ManagedPerformerCenter.start("自创推演", FlowStore.get("自创推演"));
   [exit]
-
+stopstate
+// 卸掉已装备自创部位
+[if] (:kf_nei) == (:id)
+  enable force none
+[if] (:kf_quan) == (:id)
+  enable unarmed none
+[if] (:kf_qing) == (:id)
+  enable dodge none
+[if] (:kf_zhao) == (:id)
+  enable parry none
+[if] (:kf_jian) == (:id)
+  enable sword none
+[if] (:kf_dao) == (:id)
+  enable blade none
+[if] (:kf_zhang) == (:id)
+  enable staff none
+[if] (:kf_gun) == (:id)
+  enable club none
+[if] (:kf_bian) == (:id)
+  enable whip none
+[if] (:kf_an) == (:id)
+  enable throwing none
 
 ($skill)=force
 [if] (ZCSkill) == 鞭法
-   ($skill)=whip
+  ($skill)=whip
 [else if] (ZCSkill) == 杖法
-   ($skill)=staff
+  ($skill)=staff
 [else if] (ZCSkill) == 招架
-   ($skill)=parry
+  ($skill)=parry
 [else if] (ZCSkill) == 拳脚
-   ($skill)=unarmed
+  ($skill)=unarmed
 [else if] (ZCSkill) == 暗器
-   ($skill)=throwing
+  ($skill)=throwing
 [else if] (ZCSkill) == 轻功
-   ($skill)=dodge
+  ($skill)=dodge
 [else if] (ZCSkill) == 棍法
-   ($skill)=club
+  ($skill)=club
 [else if] (ZCSkill) == 剑法
-   ($skill)=sword
+  ($skill)=sword
 [else if] (ZCSkill) == 刀法
-   ($skill)=blade
+  ($skill)=blade
+
+// 是否重置推演部位
+[if] (zcReset) == 是
+  @await 2000
+  @print 根据设置，重置【(ZCSkill)】部位词条。
+  zc typedel (skill)
+  zc typedel (skill) ok
+  zc typedel (skill) ok2
+  zc typeadd (skill)
+  zc typeadd (skill) ok
+  @await 2000
 
 ($max)=(ZCMaxqn)*10000
 
