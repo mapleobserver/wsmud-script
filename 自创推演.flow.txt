@@ -1,7 +1,7 @@
 //~silent
 //基于原版修改
-($localVer) = 2021030601
-($changeLog) = 1.新增【重置推演部位】功能。2.新增【重选词条功能】方便调整词条内容。3.优化特殊词条生成判断。
+($localVer) = 2021030602
+($changeLog) = 1.新增【重置推演部位】功能。2.优化推演提示信息。3.新增【重选词条功能】方便调整词条内容。4.修改错误词条。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -58,7 +58,7 @@
 
 [if] (zcEntry)==开启
   [if] (ZCSkill)==内功
-    ($propAry)=臂力|命中|攻击%|命中%|最终伤害%|忽视对方防御%|绝招冷却%|暴击%|练习效率%|攻速%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|绝招释放%|学习效率%|打坐效率%|攻击|绝招冷却|攻速|绝招释放|忙乱|根骨|身法|悟性|防御|招架|躲闪
+    ($propAry)=臂力|命中|攻击%|命中%|最终伤害%|忽视对方防御%|绝招冷却时间%|暴击%|练习效率%|攻速%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|绝招释放时间%|学习效率%|打坐效率%|攻击|绝招冷却时间|攻速|绝招释放时间|忙乱|根骨|身法|悟性|防御|招架|躲闪
     ($spcAry)=吸血（太玄）|不灭（混沌）|战神|反震|守护|剑心
   [else if] (ZCSkill)==鞭法 || (ZCSkill)==棍法 || (ZCSkill)==剑法 || (ZCSkill)==刀法 || (ZCSkill)==杖法 || (ZCSkill)==拳脚 || (ZCSkill)==暗器
     ($propAry)=攻击|命中|臂力|攻击%|命中%|最终伤害%|忽视对方防御%|暴击%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|根骨|身法|悟性|防御|招架|躲闪
@@ -217,7 +217,11 @@ stopstate
     [if] (add) !=-1
       zc prop (skill) add
       @tip 增加属性|不能再添加($finish)
-      @js WG.Send("tm 添加[(prop)]")
+      @js WG.Send("tm 💡添加[(prop)]")
+      [if] (finish) == null
+        ($newprop) = new
+      [else]
+        ($newprop) = full
     [else]
       zc prop (skill) ban
       @js WG.Send("tm 放弃[(prop)]")
@@ -226,6 +230,11 @@ stopstate
     zc typedel (skill)
     @tip 武道书，($qn)潜能，
     tm (ZCSkill)已推演~(qn)潜能
+    [if] (newprop) == new
+      @print <hig>💡(:hour):(:minute):(:second) 添加[<hio>(prop)</hio>]，已推演~(qn)潜能</hig>
+    [else if] (newprop) == full && (finish) != null
+      @print <hig>⚠️(:hour):(:minute):(:second) <ord>词条已满</ord>无法添加[<hio>(prop)</hio>]，已推演~(qn)潜能</hig>
+    ($newprop) = null
     [if] (qn)>=(max)
       ($finish)=1
     ($sum)=0
