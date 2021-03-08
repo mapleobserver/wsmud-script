@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 新增【只打组队本】和【Boss刷新发声提醒】功能；新增【跳过天僧庞斑】选项。
-($localVer) = 2021030301
+($localVer) = 2021030801
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -57,8 +57,9 @@
       [else]
         ($log) = 🔎 无今日数据，前往客栈获取……
       @js messageAppend("(log)",1,(magPost));
-      [if] (:state) == 推演 || (:room 副本区域) == true
-        [(:state) == 推演]($log) = ⚠️ 推演中，暂停前往客栈获取信息。
+      [if] (:state) == 推演 || (:state) == 领悟 || (:room 副本区域) == true
+        [if] (:state) == 推演 || (:state) == 领悟
+          ($log) = ⚠️ (:state)中，暂停前往客栈获取信息。
         [(:room 副本区域) == true]($log) = ⚠️ 副本中，暂停前往客栈获取信息。
         @js messageAppend("<ord>(log)</ord>",1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
         [exit]
@@ -100,8 +101,8 @@
     ($team) = true
 // 生成快捷按钮
 [if] (fbcr) != null
-  [if] (:state) == 推演
-    ($log) = <ord>⚠️ 推演中，请注意操作！</ord>
+  [if] (:state) == 推演 || (:state) == 领悟
+    ($log) = <ord>⚠️ (:state)中，请注意操作！</ord>
     @js messageAppend("(log)",1,(magPost));
   [if] (:state) == 闭关 || (:state) == 练习 || (:room) == 扬州城-有间客栈
     [if] (bossName) != 浪翻云 && (BossModel) == 只打浪翻云
@@ -120,13 +121,13 @@
       ($model) = true
   [if] (BossTeam) == 开启 && (team) != true
     ($model) = true
-  [if] (model) == true
+  [if] (model) == true && (:state) != 推演 && (:state) != 领悟
     ($log) = <ord>💎 (BossInfo)\n<hiy>⚠️ 根据设置<ord>【(bossSet)】</ord>，自动跳过当前Boss(bossName)</hiy>\n(remain)</ord>
     @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
     team out;stopstate;(fbcr) 0;cr over;$wait 1000;(action)
     ($BossInfo)=notime
   [else]
-    [if] (bossPlace)==流氓巷 || (bossPlace)==神龙教 || (bossPlace)==五毒教 || (bossPlace)==云梦沼泽 || (bossPlace)==白驼山 || (bossPlace)==冰火岛 || (bossPlace)==移花宫 || (bossPlace)==黑木崖 || (bossPlace)==光明顶 || (bossPlace)==血刀门
+    [if] (team) == true
       @js ($fbcr2) = var f="(fbcr)";f=f.substr(0,f.length-1)+"2"
       @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-team">🚌 进入 <hic>(bossPlace)(<hiy>组队</hiy>)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
     [else]
@@ -147,7 +148,8 @@
   //检查版本
   ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
   @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
-  @js ($remoteVer) = var v = (version);v.rboss
+  [if] (version) != null
+    @js ($remoteVer) = var v = (version);v.rboss
   @js ($rVer) = [(remoteVer)][0]
   [if] (localVer) < (rVer) && (remoteVer) != null
     @js ($newT) = [(remoteVer)][1]
