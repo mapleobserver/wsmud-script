@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 新增【只打组队本】和【Boss刷新发声提醒】功能；新增【跳过天僧庞斑】选项。
-($localVer) = 2021030801
+($localVer) = 2021030802
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -119,9 +119,9 @@
       ($model) = true
     [else if] (bossName) == 天僧 && (BossModel) == 自动跳过天僧
       ($model) = true
-  [if] (BossTeam) == 开启 && (team) != true
-    ($model) = true
-  [if] (model) == true && (:state) != 推演 && (:state) != 领悟
+    [if] (BossTeam) == 开启 && (team) != true
+      ($model) = true
+  [if] (model) == true
     ($log) = <ord>💎 (BossInfo)\n<hiy>⚠️ 根据设置<ord>【(bossSet)】</ord>，自动跳过当前Boss(bossName)</hiy>\n(remain)</ord>
     @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
     team out;stopstate;(fbcr) 0;cr over;$wait 1000;(action)
