@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.153
+// @version      0.0.32.154
 // @date         01/07/2018
-// @modified     06/03/2021
+// @modified     08/03/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -370,7 +370,7 @@
         "逍遥派-地下石室": ["go up"],
         "逍遥派-木屋": ["go south;go south;go south;go south"]
     };
-    var pgoods={};
+    var pgoods = {};
     var goods = {
         "米饭": {
             "id": null,
@@ -1223,9 +1223,9 @@
     }
     var log_line = 0;
 
-    function imgShow(url,t=2000){
+    function imgShow(url, t = 2000) {
 
-        $('.container > .content-message').css('background', 'url('+url+') no-repeat center center')
+        $('.container > .content-message').css('background', 'url(' + url + ') no-repeat center center')
         setTimeout(() => {
             $('.container > .content-message').css('background', '')
         }, t);
@@ -1553,7 +1553,7 @@
         },
         update_id_all: function () {
 
-            GM_setValue("goods",goods);
+            GM_setValue("goods", goods);
             WG.SendCmd("stopstate")
             var t = [];
             Object.keys(pgoods).forEach(function (key) {
@@ -1596,7 +1596,7 @@
                 }
             }, 1000);
         },
-        clean_id_all:function(){
+        clean_id_all: function () {
             GM_setValue("goods", goods);
             pgoods = goods
             alert("清空完毕,请刷新一下页面")
@@ -1632,12 +1632,12 @@
 
                 let real_dps = alldps / battle_t;
                 let real_act = allpfmnum / battle_t;
-                if( battle_t < 1){
+                if (battle_t < 1) {
                     real_dps = alldps;
                     real_act = allpfmnum;
-                 }
-               setTimeout(() => {
-                   messageAppend(`⚔️战斗过程分析:
+                }
+                setTimeout(() => {
+                    messageAppend(`⚔️战斗过程分析:
                     ⏱️战斗时长:${battle_t}秒
                     ⚔️普通攻击:${pfmnum}次
                     ⚔️普通伤害:${addChineseUnit(pfmdps)}
@@ -1647,12 +1647,12 @@
                     ⚔️总计伤害:${addChineseUnit(alldps)}
                     ⏱️每秒伤害:${addChineseUnit(real_dps)}
                     ⏱️每秒攻击:${Math.round(real_act)}次`, 4);
-                   pfmdps = 0;
-                   pfmnum = 0;
-                   critical = 0;
-                   criticalnum = 0;
-                   dpslock = 0;
-               }, 100);
+                    pfmdps = 0;
+                    pfmnum = 0;
+                    critical = 0;
+                    criticalnum = 0;
+                    dpslock = 0;
+                }, 100);
 
 
 
@@ -2145,37 +2145,37 @@
             WG.Send("buy 1 " + good.id + " from " + tmp);
             return true;
         },
-        qu_hook:undefined,
+        qu_hook: undefined,
         qu: function (good, callback) {
 
-                let storestatus = false;
-                // $(".obj-item").each(function () {
-                //     if ($(this).html().toLowerCase().indexOf(good) != -1) {
-                //         storestatus = true;
-                //         var id = $(this).attr("obj")
-                //         WG.Send("qu 1 " + id);
-                //         return;
-                //     }
-                // })
-                WG.qu_hook = WG.add_hook("dialog",async function(data){
-                    if (data.dialog != undefined & data.stores!=undefined){
-                        for (let item of data.stores){
-                            if (item.name.toLocaleLowerCase().indexOf(good)!=-1){
-                                storestatus = true;
-                                var id = item.id;
-                                WG.Send("qu 1 " + id);
-                                break;
-                            }
+            let storestatus = false;
+            // $(".obj-item").each(function () {
+            //     if ($(this).html().toLowerCase().indexOf(good) != -1) {
+            //         storestatus = true;
+            //         var id = $(this).attr("obj")
+            //         WG.Send("qu 1 " + id);
+            //         return;
+            //     }
+            // })
+            WG.qu_hook = WG.add_hook("dialog", async function (data) {
+                if (data.dialog != undefined & data.stores != undefined) {
+                    for (let item of data.stores) {
+                        if (item.name.toLocaleLowerCase().indexOf(good) != -1) {
+                            storestatus = true;
+                            var id = item.id;
+                            WG.Send("qu 1 " + id);
+                            break;
                         }
-                        setTimeout(() => {
-                            callback(storestatus);
-                        }, 300);
-                        WG.remove_hook(WG.qu_hook)
-                        WG.qu_hook = undefined;
                     }
-                });
+                    setTimeout(() => {
+                        callback(storestatus);
+                    }, 300);
+                    WG.remove_hook(WG.qu_hook)
+                    WG.qu_hook = undefined;
+                }
+            });
 
-               WG.SendCmd('store')
+            WG.SendCmd('store')
         },
         Give: function (items) {
             var tmp = npcs["店小二"];
@@ -3016,9 +3016,9 @@
                     zdybtnset: function () {
                         WG.zdy_btnset();
                     },
-                    cleankksboss:function(){
-                        GM_setValue(role +"_autoKsBoss",null);
-                        GM_setValue(role +"_automarry",null);
+                    cleankksboss: function () {
+                        GM_setValue(role + "_autoKsBoss", null);
+                        GM_setValue(role + "_automarry", null);
                         L.msg("操作成功");
                     }
                 }
@@ -6583,6 +6583,37 @@
             WG.add_hook("items", function (data) {
                 WG.saveRoomstate(data);
             });
+            var sendStore=false;
+            WG.add_hook(['dialog', 'text'], function (data) {
+                if (data.type == "dialog") {
+                    if (WG.packup_listener == null && data.id != null && data.store != null) {
+                        if (sendStore){
+                            WG.SendCmd("store")
+                            sendStore=false;
+                        }
+                    }
+                    var stores = data.stores;
+                    if (stores != null) {
+                        store_list = [];
+                        for (let store of stores) {
+                            store_list.push(store.name.toLowerCase());
+                        }
+                        zdy_item_store = store_list.join(',');
+                        $('#store_info').val(zdy_item_store);
+                        GM_setValue(role + "_zdy_item_store", zdy_item_store);
+                        store_list = store_list.concat(zdy_item_store2.split(","));
+                    }
+                }
+                else{
+                    auto_updateStore = GM_getValue(role + "_auto_updateStore", auto_updateStore);
+                    if (WG.sort_hook == null && auto_updateStore == "开" && data.msg.indexOf("书架") < 0 &&
+                        (/^你把(.+)存入仓库。$/.test(data.msg) || /^你从仓库里取出(.+)。$/.test(data.msg))) {
+                        sendStore= true;
+
+                    }
+                }
+
+            });
             WG.add_hook("dialog", function (data) {
                 if (data.dialog == "pack" && data.items != undefined) {
                     packData = data.items;
@@ -6605,10 +6636,10 @@
                     }
                     if (data.items) {
                         for (let item of data.items) {
-                            if (item.name.indexOf("基本")>=0) {
-                                if(item.enable_skill){
+                            if (item.name.indexOf("基本") >= 0) {
+                                if (item.enable_skill) {
                                     G.enable_skills.push({ name: item.enable_skill, type: item.id })
-                                }else{
+                                } else {
                                     G.enable_skills.push({ name: 'none', type: item.id })
                                 }
                             }
@@ -6623,26 +6654,7 @@
                     }
                 }
 
-                auto_updateStore = GM_getValue(role + "_auto_updateStore", auto_updateStore);
-                if (data.dialog == "list" && G.room_name.indexOf("钱庄") && WG.sort_hook == null && auto_updateStore == "开") {
-                    if (WG.packup_listener == null && data.id != null && data.store != null) {
-                        WG.SendCmd("store")
-                    }
 
-                    var stores = data.stores;
-                    if (stores != null) {
-                        store_list = [];
-                        for (let store of stores) {
-                            store_list.push(store.name.toLowerCase());
-                        }
-                        zdy_item_store = store_list.join(',');
-                        $('#store_info').val(zdy_item_store);
-                        GM_setValue(role + "_zdy_item_store", zdy_item_store);
-
-                        store_list = store_list.concat(zdy_item_store2.split(","));
-                    }
-
-                }
             });
             WG.add_hook(["status", "login", "exits", "room", "items", "itemadd", "itemremove", "sc", "text", "state", "msg", "perform", "dispfm", "combat"], function (data) {
                 if (data.type == "login") {
@@ -7050,8 +7062,6 @@
                     if (data.msg.indexOf("恭喜你得到") >= 0 ||
                         (data.msg.indexOf("获得") >= 0 &&
                             data.msg.indexOf("经验") == -1 &&
-                            data.msg.indexOf("潜能") == -1 &&
-                            data.msg.indexOf("郭靖") == -1 &&
                             data.msg.indexOf("提升") == -1) ||
                         data.msg.indexOf("你找到") == 0 ||
                         data.msg.indexOf("你从") == 0 ||
@@ -7117,15 +7127,15 @@
                                     lastpfm = parseInt(a[1]);
                                 }
                                 dpslock = 1;
-                               // messageAppend(`你造成了${addChineseUnit(pfmdps)}伤害,共计${pfmnum}次。`, 1, 1);
+                                // messageAppend(`你造成了${addChineseUnit(pfmdps)}伤害,共计${pfmnum}次。`, 1, 1);
                             }
                         }
                         let dd = data.msg.split(/看起来充满活力，一点也不累。|似乎有些疲惫，但是仍然十分有活力。|看起来可能有些累了。|动作似乎开始有点不太灵光，但是仍然有条不紊。|已经一副头重脚轻的模样，正在勉力支撑著不倒下去。|看起来已经力不从心了。|已经陷入半昏迷状态，随时都可能摔倒晕去。|似乎十分疲惫，看来需要好好休息了。|气喘嘘嘘，看起来状况并不太好。|摇头晃脑、歪歪斜斜地站都站不稳，眼看就要倒在地上。/);
                         //console.log(dd);
-                        if (dd.length>=2){
+                        if (dd.length >= 2) {
                             //console.log(data.msg)
-                            if(dd[0].indexOf("你")<0){
-                                if (lastcri>0){
+                            if (dd[0].indexOf("你") < 0) {
+                                if (lastcri > 0) {
                                     critical = critical + lastcri;
                                     criticalnum = criticalnum + 1;//暴击伤害和暴击次数增加
                                 }
@@ -7332,17 +7342,17 @@
     var FakerTTS = {
 
         playtts: function (text) {
-            try{
+            try {
                 var msg = new SpeechSynthesisUtterance(text);
                 msg.lang = 'zh';
                 msg.voice = speechSynthesis.getVoices().filter(function (voice) {
                     return voice.name == 'Whisper';
                 })[0];
                 speechSynthesis.speak(msg);
-            }catch(e){
-                try{
+            } catch (e) {
+                try {
                     android.speak(text);
-                }catch(ex){
+                } catch (ex) {
                     console.log('这个真没有.')
                 }
 
