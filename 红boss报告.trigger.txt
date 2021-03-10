@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 新增【只打组队本】和【Boss刷新发声提醒】功能；新增【跳过天僧庞斑】选项。
-($localVer) = 2021030802
+($localVer) = 2021031001
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -76,7 +76,8 @@
       [else if] (all) != null
         ($log) = <hig>✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)</hig>
       @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
-      (action)
+      [if] (action) != null && (:state) != 闭关 && (:state) != 练习
+        (action)
   [else]
     [exit]
 // 谣言获取Boss
@@ -94,7 +95,6 @@
 [if] (bossPlace) != null && (bossName) != null
   [if] (i_time) == null
     ($BossInfo)=(:date)|(:hour):(:minute):(:second)|(bossName)|(bossPlace)
-  //@js messageAppend("<ord>(BossInfo)\n(remain)</ord>",1,(magPost));
   ($fbdata) = "树林":"cr yz/lw/shangu 0","财主家":"cr yz/cuifu/caizhu 1","丽春院":"cr yz/lcy/dating 0","流氓巷":"cr yz/lmw/xiangzi1 0","兵营":"cr yz/by/damen 0","庄府":"cr bj/zhuang/xiaolu 0","鳌拜府":"cr bj/ao/damen 0","天地会":"cr bj/tdh/hct 0","神龙教":"cr bj/shenlong/haitan 0","关外":"cr bj/guanwai/damen 0","温府":"cr cd/wen/damen 0","五毒教":"cr cd/wudu/damen 0","恒山":"cr wuyue/hengshan/daziling 0","青城山":"cr wuyue/qingcheng/shanlu 0","衡山":"cr wuyue/henshan/hengyang 0","泰山":"cr wuyue/taishan/daizong 0","嵩山":"cr wuyue/songshan/taishi 0","云梦沼泽":"cr cd/yunmeng/senlin 0","桃花岛":"cr taohua/haitan 1","白驼山":"cr baituo/damen 0","星宿海":"cr xingxiu/xxh6 0","冰火岛":"cr mj/bhd/haibian 1","移花宫":"cr huashan/yihua/shandao 1","燕子坞":"cr murong/anbian 1","黑木崖":"cr heimuya/shangu 0","缥缈峰":"cr lingjiu/shanjiao 1","光明顶":"cr mj/shanmen 0","天龙寺":"cr tianlong/damen 1","血刀门":"cr xuedao/shankou 0","古墓派":"cr gumu/gumukou 1","华山论剑":"cr huashan/lunjian/leitaixia 0"
   @js ($fbcr) = var fb={(fbdata)};fb.(bossPlace)
   [if] (bossPlace)==流氓巷 || (bossPlace)==神龙教 || (bossPlace)==五毒教 || (bossPlace)==云梦沼泽 || (bossPlace)==白驼山 || (bossPlace)==冰火岛 || (bossPlace)==移花宫 || (bossPlace)==黑木崖 || (bossPlace)==光明顶 || (bossPlace)==血刀门
@@ -137,6 +137,8 @@
         @beep
       [else if] (BossAlert) == 语音播报
         $tts (:name)，(bossName)出现在(bossPlace)。
+    [if] (action) != null && (:state) != 闭关 && (:state) != 练习
+      (action)
 //按钮命令
 [if] (mycall) == true || (channel) == 谣言
   @js $(".redboss").off("click")
@@ -153,6 +155,6 @@
   @js ($rVer) = [(remoteVer)][0]
   [if] (localVer) < (rVer) && (remoteVer) != null
     @js ($newT) = [(remoteVer)][1]
-    @js messageAppend("<ord>检测到新版本！</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss update">♻️ 更新 => <hig>红boss报告</hig></span>`)))
+    @js messageAppend("<ord>检测到新版本！(localVer) => (rVer)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss update">♻️ 更新 => <hig>红boss报告</hig></span>`)))
     @js $(".update").on("click", function(){ToRaid.perform(`//~silent\n@js unsafeWindow.TriggerCenter.remove("红boss报告")\n@await 350\n@js Server.importTrigger("(newT)")`);})
   @js $('.(comClass)')[0].scrollTop = 99999;
