@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.154
+// @version      0.0.32.155
 // @date         01/07/2018
-// @modified     08/03/2021
+// @modified     12/03/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -7062,10 +7062,14 @@
                     if (data.msg.indexOf("恭喜你得到") >= 0 ||
                         (data.msg.indexOf("获得") >= 0 &&
                             data.msg.indexOf("经验") == -1 &&
+                            data.msg.indexOf("潜能") == -1 &&
                             data.msg.indexOf("提升") == -1) ||
                         data.msg.indexOf("你找到") == 0 ||
                         data.msg.indexOf("你从") == 0 ||
-                        data.msg.indexOf("得到") >= 0) {
+                        (data.msg.indexOf("得到") >= 0 &&
+                            data.msg.indexOf("郭襄在得到倚天剑") == -1 &&
+                            data.msg.indexOf("长白山得到剑谱") == -1)
+                        ) {
                         messageAppend(data.msg);
                     }
                 }
