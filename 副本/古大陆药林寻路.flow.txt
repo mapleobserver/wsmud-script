@@ -24,14 +24,15 @@
     [exit]
 // 开始寻路
 @cmdDelay 500
-stopstate
-jh fam 9 start
-go enter
-go up
-@tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
-[if] (pass) != null
-    @print <ord>不符合前往古大陆要求，流程终止。</ord>
-    [exit]
+[if] (:room) != 武道塔-塔顶
+    stopstate
+    jh fam 9 start
+    go enter
+    go up
+    @tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
+    [if] (pass) != null
+        @print <ord>不符合前往古大陆要求，流程终止。</ord>
+        [exit]
 ggdl {r疯癫的老头}
 go north[3]
 go north[3]
