@@ -1,7 +1,7 @@
 //~silent
 //基于原版修改
-($localVer) = 2021030701
-($changeLog) = 1.新增【重置推演部位】【重选词条功能】功能。2.优化推演提示信息。3.修改错误词条。
+($localVer) = 2021032601
+($changeLog) = 1.新增【出特殊词条后闭关】功能。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -43,12 +43,15 @@
   ($ZCSpc)=短时间无视伤害
 [if] (ZCXlu) == null
   ($ZCXlu)=无
+[if] (ZCxl) == null
+  ($ZCxl)=是
 
 #select ($zcEntry)=<hiz>重新设定词条（开启前先选择推演部位👇）</hiz>,开启|关闭,关闭
 #select ($ZCSkill)=要推演的技能部位,内功|鞭法|棍法|剑法|刀法|杖法|招架|拳脚|暗器|轻功,(ZCSkill)
 #select ($zcReset)=⚠️<ord>重置推演部位</ord>（清除已有词条重新开始）⚠️,是|否,否
 #select ($ZCFood)=冰心,是|否,(ZCFood)
 #select ($ZCFy)=飞翼,是|否,(ZCFy)
+#select ($ZCxl)=出特殊词条后闭关,是|否,(ZCxl)
 #input ($ZCProp)=普通词条(完全匹配，|隔开，限定只拿百分比后面加%),(ZCProp)
 #input ($ZCSpc)=特殊词条(模糊匹配),(ZCSpc)
 #select ($ZCXlu)=香炉,无|沉香木鼎|麝香铜鼎|龙涎香熏|龙脑古鼎,(ZCXlu)
@@ -81,7 +84,7 @@
   [if] (entry5) != 无 && (entry5) != null
     ($ZCProp) = (ZCProp)|(entry5)
   [if] (entryspc)==无 || (entryspc)==null
-    ($ZCSpc) = (entry1)
+    ($ZCSpc) = 暂时不推
   [else]
     [if] (entryspc)==吸血（太玄）
       ($ZCSpc)=攻击力的内功伤害
@@ -214,6 +217,8 @@ stopstate
           [break]
     [if] (add)==-1 && (ZCSpc) !=null
       @js ($add)="(prop)".indexOf("(ZCSpc)")
+      [if] (add) !=-1 && (ZCxl) == 是
+        (xl)=1
     [if] (add) !=-1
       zc prop (skill) add
       @tip 增加属性|不能再添加($finish)
@@ -235,7 +240,7 @@ stopstate
     [else if] (newprop) == full && (finish) != null
       @print <hig>⚠️(:hour):(:minute):(:second) <ord>词条已满</ord>无法添加[<hio>(prop)</hio>]，已推演~(qn)潜能</hig>
     ($newprop) = null
-    [if] (qn)>=(max)
+    [if] (qn)>=(max) || (xl) == 1
       ($finish)=1
     ($sum)=0
 
