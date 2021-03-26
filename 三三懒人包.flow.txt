@@ -1,8 +1,8 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021030601
-($changeLog) = 新增古宗门躺尸流程；新增自创推演流程；开放圆月弯刀整合版本；更新武神红BOSS辅助触发
+($localVer) = 2021032601
+($changeLog) = 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程
 ($flowName) = 三三懒人包
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -53,6 +53,7 @@
 
 // 特殊流程
 #input ($info3)=👇<hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz>👇,愉快游戏🎮
+#select ($flowSJXL)=[<hiz书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
 #select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
 #select ($flowGZM)=[<hiz>古宗门躺尸</hiz>],导入|跳过,跳过
 //#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
@@ -75,6 +76,7 @@
 ($f_jqlx)={"name":"精确练习","source":"(repourl)/提升/精确练习.flow.txt","finder":"提升"}
 ($f_mpjj)={"name":"门派进阶","source":"(repourl)/提升/门派进阶.flow.txt","finder":"提升"}
 ($f_yzdy)={"name":"研制绿丹","source":"(repourl)/杂务/研制丹药/研制绿丹.flow.txt","finder":"研制丹药"},{"name":"研制蓝丹","source":"(repourl)/杂务/研制丹药/研制蓝丹.flow.txt","finder":"研制丹药"},{"name":"研制黄丹","source":"(repourl)/杂务/研制丹药/研制黄丹.flow.txt","finder":"研制丹药"},{"name":"研制紫丹","source":"(repourl)/杂务/研制丹药/研制紫丹.flow.txt","finder":"研制丹药"},{"name":"研制橙丹","source":"(repourl)/杂务/研制丹药/研制橙丹.flow.txt","finder":"研制丹药"},{"name":"研制突破","source":"(repourl)/杂务/研制丹药/研制突破.flow.txt","finder":"研制丹药"}
+($f_sjxl)={"name":"书架香炉","source":"(repourl)/杂务/书架香炉.flow.txt","finder":"根文件夹"}
 ($f_yywd)={"name":"圆月弯刀","source":"(repourl)/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
 ($f_gzm)={"name":"古宗门躺尸","source":"(repourl)/副本/古宗门躺尸版.flow.txt","finder":"根文件夹"}
 ($f_chqcm)={"name":"慈航七重门","source":"(repourl)/副本/慈航七重门.flow.txt","finder":"根文件夹"}
@@ -118,6 +120,8 @@
 [if] (flowYZDY)==导入
   @js WorkflowConfig.createFinder("研制丹药")
   ($f_list)=(f_list),(f_yzdy)
+[if] (flowSJXL)==导入
+  ($f_list)=(f_list),(f_sjxl)
 [if] (flowYYWD)==导入
   ($f_list)=(f_list),(f_yywd)
 [if] (flowGZM)==导入

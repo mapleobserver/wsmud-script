@@ -1,0 +1,62 @@
+[if] (HCplan) == null
+  ($HCplan) = 书架和香炉
+[if] (HCcycle) == null
+  ($HCcycle) = 是
+[if] (HCchangsheng) == null
+  ($HCchangsheng) = 是
+[if] (HCposui) == null
+  ($HCposui) = 1
+@cmdDelay 100
+#select ($HCplan) = 请确保自己能自由进出书房<br/>&nbsp*&nbsp摸取方案,书架和香炉|只书架|只香炉,(HCplan)
+#select ($HCcycle) = 是否每30秒尝试一次直到搜到,是|否,(HCcycle)
+#select ($HCchangsheng) = 是否有长生诀,是|否,(HCchangsheng)
+#input ($HCposui) = 需要将皇城-广场设置为传送点<br/>&nbsp*&nbsp皇城-广场在破碎虚空的位置,(HCposui)
+#config
+
+[if] (HCchangsheng) == 是
+  ($cs) = true
+[else if] (HCchangsheng) == 否
+  ($cs) = false
+[if] (HCplan) == 书架和香炉
+  ($sj) = true
+  ($xl) = true
+[if] (HCplan) == 只书架
+  ($sj) = true
+  ($xl) = false
+[if] (HCplan) == 只香炉
+  ($sj) = false
+  ($xl) = true
+<---
+[if] (:mpPer) < 0.1
+  [if] (cs)
+    enable force changshengjue
+    perform force.zhen
+  [else]
+    @renew
+--->
+[while] (sj) || (xl)
+  stopstate;psxk (HCposui);
+  [if] (sj) && (xl)
+    go west;go north;lu ding;
+    @tip 转悠了几圈|找到($zdxl)一
+    @wait 500
+    go east;go east;lu sj;
+    @tip 转悠了几圈|找到($zdsj)一排
+  [if] (xl) && !(sj)
+    go west;go north;look ding;lu ding;
+    @tip 转悠了几圈|找到($zdxl)一
+  [if] (sj) && !(xl)
+    go north;go east;look sj;lu sj;
+    @tip 转悠了几圈|找到($zdsj)一排
+  [if] (zdsj) != null
+    ($sj) = false
+  [if] (zdxl) != null
+    ($xl) = false
+  @await 500
+  $zdwk
+  [if] !(sj) && !(xl)
+    [exit]
+  [if] (HCcycle) == 否
+    [exit]
+  @print 等待30秒继续尝试。
+  @wait 30000
