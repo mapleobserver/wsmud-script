@@ -1,7 +1,7 @@
 //~silent
 //基于原版修改
-($localVer) = 2021032601
-($changeLog) = 1.新增【出特殊词条后闭关】功能。
+($localVer) = 2021033001
+($changeLog) = 1.新增【出特殊词条后闭关】功能。2.修复bug。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -218,7 +218,7 @@ stopstate
     [if] (add)==-1 && (ZCSpc) !=null
       @js ($add)="(prop)".indexOf("(ZCSpc)")
       [if] (add) !=-1 && (ZCxl) == 是
-        (xl)=1
+        ($xl)=1
     [if] (add) !=-1
       zc prop (skill) add
       @tip 增加属性|不能再添加($finish)
@@ -243,6 +243,11 @@ stopstate
     [if] (qn)>=(max) || (xl) == 1
       ($finish)=1
     ($sum)=0
+
+  [if] (xl) == 1
+    tm 已推出特殊词条，停止推演。
+    @print <ord>已推出特殊词条，停止推演。</ord>
+    [break]
 
   ($num) =1
   [while] (:state)==推演
