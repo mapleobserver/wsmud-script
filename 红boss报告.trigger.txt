@@ -2,8 +2,8 @@
 // 查询Boss
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
-($changeLog) = 新增【只打组队本】和【Boss刷新发声提醒】功能；新增【跳过天僧庞斑】选项。
-($localVer) = 2021031001
+($changeLog) = 优化练习状态下的操作；新增【只打组队本】和【Boss刷新发声提醒】功能；新增【跳过天僧庞斑】选项。
+($localVer) = 2021033001
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -25,7 +25,7 @@
 [if] (:state) == 闭关
   ($action) = $zdwk
 [else if] (:state) == 练习
-  ($action) = dazuo
+  ($action) = $to 住房-练功房;$wait 1000;dazuo
 [if] (content)==boss || (content)==b
   [if] (name)==(:name)
     ($mycall) = true
