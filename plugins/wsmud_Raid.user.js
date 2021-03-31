@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.41
+// @version         2.4.42
 // @date            23/12/2018
-// @modified        02/03/2021
+// @modified        31/03/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1709,6 +1709,7 @@
         name: null,
         grade: null,
         family: null,
+        energy: 0,
         money: 0,
 
         hp: 0,
@@ -2024,6 +2025,10 @@
                     }
                     if (data.family != null) {
                         Role.family = data.family;
+                    }
+                    if (data.jingli != null) {
+                        var dd = data.jingli.split("/");
+                        Role.energy = dd[0];
                     }
                 }
             });
@@ -2604,6 +2609,7 @@
             ":name": Role.name,
             ":grade": Role.grade,
             ":family": Role.family,
+            ":energy": Role.energy,
             ":money": Role.money,
             ":hp": Role.hp,
             ":maxHp": Role.maxHp,
