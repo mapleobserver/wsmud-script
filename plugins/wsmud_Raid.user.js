@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.42
+// @version         2.4.43
 // @date            23/12/2018
-// @modified        31/03/2021
+// @modified        04/04/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -2018,7 +2018,7 @@
         },
         _monitorInfo: function () {
             WG.add_hook("dialog", function (data) {
-                if (data.dialog == "score") {
+                if (data.dialog == "score" && data.id == Role.id) {
                     if (data.level != null) {
                         var dd = data.level.replace(/<\/?.+?>/g, "");
                         Role.grade = dd.replace(/ /g, "");
