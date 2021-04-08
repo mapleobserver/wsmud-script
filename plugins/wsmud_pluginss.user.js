@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.167
+// @version      0.0.32.168
 // @date         01/07/2018
-// @modified     06/04/2021
+// @modified     08/04/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -7102,6 +7102,26 @@
                         count: data.count
                     }
                     packData.push(item)
+                } else if (data.dialog == 'pack' && data.jldesc != undefined) {
+                    let jl = data.jldesc.match(/<(.*)>(.*)<\/.*><br\/>精炼<(hig|hic|hiy|hiz|hio|ord)>＋(.*)\s</i);
+                    //console.log(jl)
+                    if (jl) {
+                        let l = jl[1];
+                        let n = `<${l}>` + jl[2] + `</${l}>`;
+                        let j = parseInt(jl[4]);
+                        let c = 13 - j;
+                        //let cmd = `jinglian ${data.id} ok[${c}]`
+                        let cmd = [];
+                        for (let i =0; i < c; i++) {
+                            cmd.push(`jinglian ${data.id} ok;`);
+                        }
+                        var htmlj = `<div class="item-commands"><span class="jinglian">精炼6星 => ${n}</span></div>`;
+                        messageAppend(htmlj);
+                        $(".jinglian").off("click");
+                        $(".jinglian").on('click', () => {
+                            WG.SendCmd(cmd);
+                        });
+                    }
                 }
                 if (data.dialog == 'score') {
 
