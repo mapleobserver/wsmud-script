@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.155
+// @version      0.0.32.167
 // @date         01/07/2018
-// @modified     12/03/2021
+// @modified     06/04/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -730,17 +730,9 @@
     //停止后动作
     var auto_command = null;
     //装备列表
-    var eqlist = {
-        1: [],
-        2: [],
-        3: []
-    };
+    var eqlist = {};
     //{'unarmed':'','force':'','dodge':'','sword':'','blade':'','club':'','staff':'','whip':'','parry':''}
-    var skilllist = {
-        1: {},
-        2: {},
-        3: {}
-    };
+    var skilllist = {};
     //自动施法黑名单
     var unauto_pfm = '';
     //自动施法开关
@@ -753,7 +745,7 @@
     var auto_updateStore = "关";
     //自动重连
     var auto_relogin = "关";
-    var autoeq = 0;
+    var autoeq = "";
     //自命令数组  type 0 原生 1 自命令 2js
     //[{"name":"name","zmlRun":"zzzz","zmlShow":"1","zmlType":"0"}]
     var zml = [];
@@ -3359,7 +3351,9 @@
                     WG.findboss(data, boss_name, function (bid) {
                         if (bid != -1) {
                             next = 999;
-                            WG.eqhelper(autoeq);
+                            if (autoeq != "") {
+                                WG.eqhelper(autoeq);
+                            }
                             setTimeout(() => {
                                 WG.Send("kill " + bid);
                                 //WG.Send("select " + bid);
@@ -3495,15 +3489,23 @@
             callback('');
         },
         eqx: null,
+
         eqhelper(type, enaskill = 0) {
+            var deepCopy = function (source) {
+                var result = {};
+                for (var key in source) {
+                    result[key] = typeof source[key] === 'object' ? deepCopy(source[key]) : source[key];
+                }
+                return result;
+            }
             if (type == undefined || type == 0 || type > eqlist.length) {
                 return;
             }
-            if (eqlist == null || eqlist[type] == "") {
+            if (eqlist == null || eqlist[type] == null || eqlist[type] == "") {
                 messageAppend("套装未保存,保存当前装备作为套装" + type + "!", 1);
                 WG.eqx = WG.add_hook("dialog", (data) => {
                     if (data.dialog == "pack" && data.eqs != undefined) {
-                        eqlist[type] = data.eqs;
+                        eqlist[type] = deepCopy(data.eqs);
                         GM_setValue(role + "_eqlist", eqlist);
                         messageAppend("套装" + type + "保存成功!", 1);
                         WG.remove_hook(WG.eqx);
@@ -3543,8 +3545,9 @@
                         myEqs = myEqs + ski.id;
                     }
                 }
+                let tsMsg = "套装"
                 if (enaskill === 0) {
-                    for (let i = 1; i < eqlist[type].length; i++) {
+                    for (let i = 1; i < 11; i++) {
                         if (eqlist[type][i] != null && myEqs.indexOf(eqlist[type][i].id) < 0) {
                             p_cmds += ("$wait 20;eq " + eqlist[type][i].id + ";");
                         }
@@ -3562,27 +3565,33 @@
                             }
                         }
                     }
+                    tsMsg = "技能"
+                    $("span[command=skills]").click();
                 }
 
-                p_cmds = p_cmds + '$wait 40;look3 1';
+                p_cmds = p_cmds + '$wait 40;cha;look3 1';
 
                 WG.eqx = WG.add_hook('text', function (data) {
                     if (data.type == 'text') {
 
                         if (data.msg.indexOf('没有这个玩家') >= 0) {
-                            messageAppend("套装或技能装备成功" + type + "!", 1);
+                            messageAppend(tsMsg + "装备成功" + type + "!", 1);
+                            if (enaskill == 1) {
+                                $("span[command=skills]").click();
+                            }
                             WG.remove_hook(WG.eqx);
                         }
                     }
                 });
+
                 WG.SendCmd(p_cmds);
             }
         },
         eqhelperdel: function (type) {
             eqlist = GM_getValue(role + "_eqlist", eqlist);
             skilllist = GM_getValue(role + "_skilllist", skilllist);
-            eqlist[type] = [];
-            skilllist[type] = {};
+            delete eqlist[type];
+            delete skilllist[type];
             GM_setValue(role + "_eqlist", eqlist);
             GM_setValue(role + "_skilllist", skilllist);
             messageAppend("清除套装 技能" + type + "设置成功!", 1);
@@ -3600,6 +3609,99 @@
             });
             WG.Send("pack");
             messageAppend("取消所有装备成功!", 1);
+        },
+        eqloader: function () {
+            let tmp_eqlist = GM_getValue(role + "_eqlist", null);
+
+            var subItems = {
+
+            };
+            for (let item in tmp_eqlist) {
+                subItems[item] = { name: "装备" + item, icon: "fa-compress", callback: function () { WG.eqhelper(item, 0) } }
+                subItems[item + "sk"] = { name: "技能" + item, icon: "fa-magic", callback: function () { WG.eqhelper(item, 1) } }
+                subItems[item + "del"] = { name: "删除组" + item, icon: "fa-remove", callback: function () { WG.eqhelperdel(item) } }
+            }
+            subItems['setting'] = { name: "套装管理", icon: "edit", callback: function () { WG.eqhelperui() } }
+            var dfd = jQuery.Deferred();
+            setTimeout(function () {
+                dfd.resolve(subItems);
+            }, 20);
+            //setTimeout(function () {
+            //    dfd.reject(errorItems);
+            //}, 1000);
+            return dfd.promise();
+
+        },
+
+        eqhelperui: function () {
+            messageClear();
+            var a = UI.skillsPanel;
+            messageAppend(a);
+            new Vue({
+                el: "#skillsPanelUI",
+                data: {
+                    role: role,
+                    eqlist: {},
+                    eqlistdel: {},
+                },
+                created() {
+                    this.eqlist = GM_getValue(role + "_eqlist", {});
+                    console.log(this.eqlist)
+                },
+                mounted() {
+                    $('#eqskills-opts').val("none");
+                    var that = this;
+                    $("#eqskills-opts").change(function () {
+                        switch ($('#eqskills-opts').val()) {
+                            case "save":
+                                that.saveUI();
+                                break;
+                            case "delete":
+                                that.eqlist = {};
+                                that.eqlistdel = GM_getValue(role + "_eqlist", {});
+                                that.role = "<< 返回";
+                                break;
+                            case "uneqall":
+                                WG.uneqall();
+                                break;
+                            case "none":
+                            default:
+                                break;
+                        };
+                    });
+                },
+                methods: {
+                    eq: function (name) {
+                        WG.eqhelper(name, 0)
+                    },
+                    eqs: function (name) {
+                        WG.eqhelper(name, 1)
+                    },
+                    save: function (name) {
+                        WG.eqhelper(name)
+                        setTimeout(() => {
+                            this.eqlist = GM_getValue(role + "_eqlist", {});
+                            WG.eqhelperui()
+                        }, 300);
+                    },
+                    deleq: function (name) {
+                        WG.eqhelperdel(name)
+                        setTimeout(() => {
+                            WG.eqhelperui()
+                        }, 200);
+                    },
+                    show: function () {
+                        WG.eqhelperui()
+                    },
+                    saveUI: function () {
+                        var name = prompt("请输入需要保存的名字", "套装名");
+                        if (name != null) {
+                            this.save(name)
+                        }
+                    }
+
+                }
+            });
         },
 
         fight_listener: undefined,
@@ -4848,10 +4950,9 @@
                 autoKsBoss = WG.switchReversal($(this));
                 GM_setValue(role + "_autoKsBoss", autoKsBoss);
             });
-            $('#auto_eq').change(function () {
+            $('#auto_eq').focusout(function () {
                 autoeq = $('#auto_eq').val();
                 GM_setValue(role + "_auto_eq", autoeq);
-
             });
             $('#autopfmswitch').click(function () {
                 auto_pfmswitch = WG.switchReversal($(this));
@@ -5575,6 +5676,14 @@
             await WG.sleep(parseInt(n));
             WG.SendCmd(cmds);
         },
+	batwait: async function (idx = 0, n, cmds) {
+            if(G.in_fight){
+                cmds = T.recmd(idx, cmds);
+                console.log("延时:" + n + "ms,延时触发:" + cmds);
+                await WG.sleep(parseInt(n));
+                WG.SendCmd(cmds);
+            }
+        },
         killall: async function (idx = 0, n = null, cmds) {
             cmds = T.recmd(idx, cmds);
             console.log("叫杀");
@@ -5619,6 +5728,12 @@
             } else {
                 WG.eqhelper(n, 1);
             }
+            await WG.sleep(100);
+            WG.SendCmd(cmds);
+        },
+        eqdel: async function (idx = 0, n, cmds) {
+            cmds = T.recmd(idx, cmds);
+            WG.eqhelperdel(n);
             await WG.sleep(100);
             WG.SendCmd(cmds);
         },
@@ -6212,15 +6327,8 @@
                 + UI.html_lninput("wudao_pfm", "武道自动攻击(用半角逗号分隔)：")
                 + UI.html_switch('getitemShow', '显示获得物品：', 'getitemShow')
                 + UI.html_switch('marry_kiss', '自动喜宴：', "automarry")
-                + UI.html_switch('ks_Boss', '自动传到boss：', "autoKsBoss") + `
-                <div class="setting-item" >
-                <span><label for="auto_eq">BOSS击杀时自动换装： </label><select id="auto_eq" style="width:80px">
-                        <option value="0">关</option>
-                        <option value="1">套装1</option>
-                        <option value="2">套装2</option>
-                        <option value="3">套装3</option>
-                    </select>
-                </span> </div> `
+                + UI.html_switch('ks_Boss', '自动传到boss：', "autoKsBoss")
+                + UI.html_lninput("auto_eq", "BOSS击杀时自动换装：")
                 + UI.html_lninput("ks_pfm", "BOSS叫杀延时(ms)： ")
                 + UI.html_lninput("ks_wait", "BOSS击杀等待延迟(s)： ")
                 + UI.html_switch('autopfmswitch', '自动施法开关：', 'auto_pfmswitch')
@@ -6263,6 +6371,44 @@
                 ` <h3>系统</h3>
             `
         },
+        skillsPanel: `<div class="item-commands" style="text-align:center" id='skillsPanelUI'>
+                <div style="margin-top:0.5em">
+                    <div style="width:8em;float:left;text-align:left;padding:0px 0px 0px 2em;height:1.23em" id="wsmud_raid_left" @click='show'><wht>{{role}}</wht></div>
+                    <div style="width:calc(100% - 16em);float:left;height:1.23em"><hig>套装列表</hig></div>
+                    <div style="width:8em;float:left;text-align:right;padding:0px 2em 0px 0px;height:1.23em" id="wsmud_raid_right">
+                    <select style="width:80px" id="eqskills-opts">
+                        <option value="none">选择操作</option>
+                        <option value="save">新建套装</option>
+                        <option value="delete">删除套装</option>
+                        <option value="uneqall">脱光装备</option>
+                    </select></div>
+                </div>
+                <br><br>
+				<div class="item-commands">
+                <span class="zdy-item"  v-for="(item, index) in eqlistdel" @click='deleq(index)'
+                        style="width: 120px;">
+                        <div class="eqsname" style="width: 100%;">删除{{index}}</div>
+                </span>
+				</div>
+				<div class="item-commands">
+                <span class="zdy-item"  v-for="(item, index) in eqlist" @click='eq(index)'
+                        style="width: 120px;">
+                        <div class="eqsname" style="width:100%;">装备套装:{{index}}</div>
+                </span>
+
+				</div>
+                <br>
+				<div class="item-commands">
+                    <span class="zdy-item"  v-for="(item, index) in eqlist" @click='eqs(index)'
+                        style="width: 120px;">
+                        <div class="eqsname" style="width: 100%;">装备技能:{{index}}</div>
+                </span>
+				</div>
+                 <br>
+
+                </div>
+        `,
+
         zmlsetting: `<div class='zdy_dialog' style='text-align:right;width:280px' id="zmldialog">
     <div class="setting-item"><span><label for="zml_name"> 输入自定义命令名称:</label></span><span><input id="zml_name"
                 style='width:80px' type="text" name="zml_name" value="" v-model="singnalzml.name"></span></div>
@@ -6573,7 +6719,17 @@
         score: undefined,
         jy: 0,
         qn: 0,
-        enable_skills: [],
+        enable_skills: [{ type: "unarmed", name: "none" },
+        { type: "force", name: "none" },
+        { type: "parry", name: "none" },
+        { type: "dodge", name: "none" },
+        { type: "sword", name: "none" },
+        { type: "throwing", name: "none" },
+        { type: "blade", name: "none" },
+        { type: "whip", name: "none" },
+        { type: "club", name: "none" },
+        { type: "staff", name: "none" },],
+
         eqs: []
     };
 
@@ -6583,13 +6739,13 @@
             WG.add_hook("items", function (data) {
                 WG.saveRoomstate(data);
             });
-            var sendStore=false;
+            var sendStore = false;
             WG.add_hook(['dialog', 'text'], function (data) {
                 if (data.type == "dialog") {
                     if (WG.packup_listener == null && data.id != null && data.store != null) {
-                        if (sendStore){
+                        if (sendStore) {
                             WG.SendCmd("store")
-                            sendStore=false;
+                            sendStore = false;
                         }
                     }
                     var stores = data.stores;
@@ -6604,11 +6760,11 @@
                         store_list = store_list.concat(zdy_item_store2.split(","));
                     }
                 }
-                else{
+                else {
                     auto_updateStore = GM_getValue(role + "_auto_updateStore", auto_updateStore);
                     if (WG.sort_hook == null && auto_updateStore == "开" && data.msg.indexOf("书架") < 0 &&
                         (/^你把(.+)存入仓库。$/.test(data.msg) || /^你从仓库里取出(.+)。$/.test(data.msg))) {
-                        sendStore= true;
+                        sendStore = true;
 
                     }
                 }
@@ -6638,9 +6794,20 @@
                         for (let item of data.items) {
                             if (item.name.indexOf("基本") >= 0) {
                                 if (item.enable_skill) {
-                                    G.enable_skills.push({ name: item.enable_skill, type: item.id })
+                                    for (let eitem of G.enable_skills) {
+                                        if (eitem.type == item.id) {
+                                            eitem.name = item.enable_skill
+                                            break;
+                                        }
+                                    }
                                 } else {
-                                    G.enable_skills.push({ name: 'none', type: item.id })
+                                    for (let eitem of G.enable_skills) {
+                                        if (eitem.type == item.id) {
+                                            eitem.name = 'none'
+                                            break;
+                                        }
+                                    }
+                                    // G.enable_skills.push({ name: 'none', type: item.id })
                                 }
                             }
                         }
@@ -6649,6 +6816,7 @@
                         for (let item of G.enable_skills) {
                             if (item.type == data.id) {
                                 item.name = data.enable
+                                break;
                             }
                         }
                     }
@@ -7069,7 +7237,7 @@
                         (data.msg.indexOf("得到") >= 0 &&
                             data.msg.indexOf("郭襄在得到倚天剑") == -1 &&
                             data.msg.indexOf("长白山得到剑谱") == -1)
-                        ) {
+                    ) {
                         messageAppend(data.msg);
                     }
                 }
@@ -7425,6 +7593,7 @@
     $(document).ready(function () {
         $('head').append('<link href="https://cdn.staticfile.org/jquery-contextmenu/3.0.0-beta.2/jquery.contextMenu.min.css" rel="stylesheet">');
         $('head').append('<link href="https://cdn.staticfile.org/layer/2.3/skin/layer.css" rel="stylesheet">');
+        $('head').append('<link href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">');
         $('body').append(UI.codeInput);
 
         setTimeout(() => {
@@ -7535,378 +7704,260 @@
                 y: 1
             });
         });
-        $.contextMenu({
-            selector: '.container',
-            items: {
-                "关闭自动": {
-                    name: "关闭自动",
-                    visible: function (key, opt) {
-                        return timer != 0;
-                    },
-                    callback: function (key, opt) {
-                        WG.timer_close();
-                    },
-                },
-                "自动": {
-                    name: "自动",
-                    visible: function (key, opt) {
-                        return timer == 0;
-                    },
-                    "items": {
-                        "自动武道": {
-                            name: "自动武道",
-                            callback: function (key, opt) {
-                                WG.wudao_auto();
-                            },
-                        },
-                        "自动小树林": {
-                            name: "自动小树林",
-                            callback: function (key, opt) {
-                                WG.grove_auto();
-                            }
-                        },
-                        "自动整理并清包": {
-                            name: "自动整理并清包",
-                            callback: function (key, opt) {
-                                WG.sell_all();
-                            }
-                        },
-                        "自动比试": {
-                            name: "自动比试",
-                            visible: function (key, opt) {
-                                return WG.fight_listener == undefined;
-                            },
-                            callback: function (key, opt) {
-                                WG.auto_fight();
-                            },
-                        },
-                        "关闭比试": {
-                            name: "关闭比试",
-                            visible: function (key, opt) {
-                                return WG.fight_listener != undefined;
-                            },
-                            callback: function (key, opt) {
-                                WG.auto_fight();
-                            },
-                        },
-                        "自动使用道具": {
-                            name: "自动使用道具",
-                            callback: function (key, opt) {
-                                WG.auto_useitem();
-                            },
-                        },
-                        "自动研药": {
-                            name: "自动研药",
-                            callback: function (key, opt) {
-                                WG.auto_Development_medicine();
-                            },
-                        },
-                        "一键日常": {
-                            name: "一键日常",
-                            callback: function (key, opt) {
-                                WG.oneKeyDaily();
-                            },
-                        },
-                        "一键请安": {
-                            name: "一键请安",
-                            callback: function (key, opt) {
-                                WG.oneKeyQA();
-                            },
-                        },
-                        "一键扫荡": {
-                            name: "一键扫荡",
-                            callback: function (key, opt) {
-                                WG.oneKeySD();
-                            },
-                        },
+        function makeTp(mp = 0) {
 
-                        "一键当铺购买": {
-                            name: "一键当铺购买",
-                            callback: function (key, opt) {
-                                WG.tnBuy();
-                            },
-                        },
-                    },
-                },
-                "换装设置": {
-                    name: "换装设置",
-                    "items": {
-                        "xx0": {
-                            name: "套装1设或装",
-                            callback: function (key, opt) {
-                                WG.eqhelper(1);
-                            },
-                        },
-                        "xxx0": {
-                            name: "技能1设或装",
-                            callback: function (key, opt) {
-                                WG.eqhelper(1, 1);
-                            },
-                        },
-                        "xx1": {
-                            name: "清除套装1设置",
-                            callback: function (key, opt) {
-                                WG.eqhelperdel(1);
-                            },
-                        },
-                        "yy0": {
-                            name: "套装2设或装",
-                            callback: function (key, opt) {
-                                WG.eqhelper(2);
-                            },
-                        }, "yyy1": {
-                            name: "技能2设或装",
-                            callback: function (key, opt) {
-                                WG.eqhelper(2, 1);
-                            },
-                        },
-                        "yy1": {
-                            name: "清除套装2设置",
-                            callback: function (key, opt) {
-                                WG.eqhelperdel(2);
-                            },
-                        },
-                        "zz0": {
-                            name: "套装3设或备",
-                            callback: function (key, opt) {
-                                WG.eqhelper(3);
-                            },
-                        }, "zzz1": {
-                            name: "技能3设或装",
-                            callback: function (key, opt) {
-                                WG.eqhelper(3, 1);
-                            },
-                        },
-                        "zz1": {
-                            name: "清除套装3设置",
-                            callback: function (key, opt) {
-                                WG.eqhelperdel(3);
-                            },
-                        },
-                        "uneq": {
-                            name: "取消所有装备",
-                            callback: function (key, opt) {
-                                WG.uneqall();
-                            },
-                        },
+            var mptp = {
+                "豪宅": "住房",
+                "衙门": "扬州城-衙门正厅",
+                "镖局": "扬州城-镖局正厅",
+                "当铺": "扬州城-当铺",
+                "擂台": "扬州城-擂台",
+                "药铺": "扬州城-药铺"
+            }
+            if (mp == 1) {
+                mptp = {
+                    "武当": "武当派-广场",
+                    "少林": "少林派-广场",
+                    "华山": "华山派-镇岳宫",
+                    "峨眉": "峨眉派-金顶",
+                    "逍遥": "逍遥派-青草坪",
+                    "丐帮": "丐帮-树洞内部",
+                    "武馆": "扬州城-扬州武馆",
+                    "杀手楼": "杀手楼-大门"
+                }
+                let myDate = new Date();
+                if (myDate.getHours() >= 17) {
+                    mptp = {
+                        "武当": "武当派-后山小院",
+                        "少林": "少林派-方丈楼",
+                        "华山": "华山派-客厅",
+                        "峨眉": "峨眉派-清修洞",
+                        "逍遥": "逍遥派-地下石室",
+                        "丐帮": "丐帮-林间小屋",
+                        "武馆": "扬州城-扬州武馆",
+                        "杀手楼": "杀手楼-大门"
                     }
-                },
-                "自命令,自定监控": {
-                    name: "自命令,自定监控",
-                    callback: function (key, opt) {
-                        WG.zmlztjk();
-                    },
-                },
-                "手动喜宴": {
-                    name: "手动喜宴",
-                    callback: function (key, opt) {
-                        console.log("当前自动状态:" + stopauto);
-                        WG.xiyan();
-                    },
-                },
-                "快捷传送": {
-                    name: "常用地点",
-                    "items": {
-                        "mp0": {
-                            name: "豪宅",
-                            callback: function (key, opt) {
-                                WG.go("住房");
-                            },
-                        },
-                        "mp11": {
-                            name: "衙门",
-                            callback: function (key, opt) {
-                                WG.go("扬州城-衙门正厅");
-                            },
-                        },
-                        "mp12": {
-                            name: "镖局",
-                            callback: function (key, opt) {
-                                WG.go("扬州城-镖局正厅");
-                            },
-                        },
-                        "mp1": {
-                            name: "当铺",
-                            callback: function (key, opt) {
-                                WG.go("扬州城-当铺");
-                            },
-                        },
-                        "mp2": {
-                            name: "擂台",
-                            callback: function (key, opt) {
-                                WG.go("扬州城-擂台");
-                            },
-                        },
-                        "mp6": {
-                            name: "药铺",
-                            callback: function (key, opt) {
-                                WG.go("扬州城-药铺");
-                            },
-                        },
-                        "mp7": {
-                            name: "武庙疗伤",
-                            callback: function (key, opt) {
-                                WG.go("扬州城-武庙");
-                                WG.Send("liaoshang");
-                            },
-                        }
-
-                    },
-                },
-                "门派传送": {
-                    name: "门派传送",
-                    "items": {
-                        "mp0": {
-                            name: "武当",
-                            callback: function (key, opt) {
-                                let myDate = new Date();
-                                if (myDate.getHours() >= 17) {
-                                    WG.go("武当派-后山小院");
-                                } else {
-                                    WG.go("武当派-广场");
-                                }
-                            },
-                        },
-                        "mp1": {
-                            name: "少林",
-                            callback: function (key, opt) {
-                                let myDate = new Date();
-                                if (myDate.getHours() >= 17) {
-                                    WG.go("少林派-方丈楼");
-                                } else {
-                                    WG.go("少林派-广场");
-                                }
-                            },
-                        },
-                        "mp2": {
-                            name: "华山",
-                            callback: function (key, opt) {
-                                let myDate = new Date();
-                                if (myDate.getHours() >= 17) {
-                                    WG.go("华山派-客厅");
-                                } else {
-                                    WG.go("华山派-镇岳宫");
-                                }
-                            },
-                        },
-                        "mp3": {
-                            name: "峨眉",
-                            callback: function (key, opt) {
-                                let myDate = new Date();
-                                if (myDate.getHours() >= 17) {
-                                    WG.go("峨眉派-清修洞");
-                                } else {
-                                    WG.go("峨眉派-金顶")
-                                }
-                            },
-                        },
-                        "mp4": {
-                            name: "逍遥",
-                            callback: function (key, opt) {
-                                let myDate = new Date();
-                                if (myDate.getHours() >= 17) {
-                                    WG.go("逍遥派-地下石室");
-                                } else {
-                                    WG.go("逍遥派-青草坪");
-                                }
-                            },
-                        },
-                        "mp5": {
-                            name: "丐帮",
-                            callback: function (key, opt) {
-                                let myDate = new Date();
-                                if (myDate.getHours() >= 17) {
-                                    WG.go("丐帮-林间小屋");
-                                } else {
-                                    WG.go("丐帮-树洞内部");
-                                }
-                            },
-                        },
-                        "mp6": {
-                            name: "武馆",
-                            callback: function (key, opt) {
-                                WG.go("扬州城-扬州武馆");
-                            },
-                        },
-                        "mp7": {
-                            name: "杀手楼",
-                            callback: function (key, opt) {
-                                WG.go("杀手楼-大门");
-                            },
-                        }
-                    },
-                },
-                "打开仓库": {
-                    name: "打开仓库",
-                    callback: function (key, opt) {
-                        if (WG.at("扬州城-钱庄")) {
-                            WG.Send("store");
-                        } else {
-                            WG.go("扬州城-钱庄");
-                        }
-                    },
-                },
-                "切换菜单": {
-                    name: "切换菜单",
-                    callback: function (key, opt) {
-                        let p = 'on'
-                        if (inzdy_btn) {
-                            p = 'off'
-                        }
-                        WG.zdy_btnshow(p);
-                    },
-                },
-                "简单工具": {
-                    name: "简单工具",
-                    callback: function (key, opt) {
-                        WG.calc();
-                    },
-                },
-                "调试BOSS": {
-                    name: "调试BOSS",
-                    visible: false,
-                    callback: function (key, opt) {
-                        WG.kksBoss({
-                            content: "听说呼符出现在逍遥派-地下石室一带。"
-                        });
-                    },
-                },
-                "流程菜单Raid.js": {
-                    name: "流程菜单Raid.js",
-                    callback: function (key, opt) {
-                        if (unsafeWindow && unsafeWindow.ToRaid) {
-                            unsafeWindow.ToRaid.menu();
-                        } else {
-                            messageAppend("插件未安装,请访问 https://greasyfork.org/zh-CN/scripts/375851-wsmud-raid 下载并安装");
-                            window.open("https://greasyfork.org/zh-CN/scripts/375851-wsmud-raid ", '_blank').location;
-                        }
-                    }
-                },
-                "设置": {
-                    name: "设置",
-                    callback: function (key, opt) {
-                        WG.setting();
-                    },
-                },
-                "打开面板": {
-                    name: "打开面板",
-                    visible: function (key, opt) {
-                        return $('.WG_log').css('display') == 'none';
-                    },
-                    callback: function (key, opt) {
-                        WG.showhideborad();
-                    },
-                },
-                "关闭面板": {
-                    name: "关闭面板",
-                    visible: function (key, opt) {
-                        return $('.WG_log').css('display') != 'none';
-                    },
-                    callback: function (key, opt) {
-                        WG.showhideborad();
-                    },
                 }
             }
+            var subItems = {};
+
+            for (let item in mptp) {
+                subItems[item] = { name: item, callback: function () { WG.go(mptp[item]); } }
+            }
+            if (mp == 0) {
+                subItems['wmls'] = { name: "武庙疗伤", callback: function () { WG.go("扬州城-武庙"); WG.Send("liaoshang"); } }
+            }
+            var dfd = jQuery.Deferred();
+            setTimeout(function () {
+                dfd.resolve(subItems);
+            }, 20);
+            return dfd.promise();
+        }
+
+        function createSomeMenu() {
+            return {
+                items: {
+                    "关闭自动": {
+                        name: "关闭自动",
+                        visible: function (key, opt) {
+                            return timer != 0;
+                        },
+                        callback: function (key, opt) {
+                            WG.timer_close();
+                        },
+                    },
+                    "自动": {
+                        name: "自动",
+                        visible: function (key, opt) {
+                            return timer == 0;
+                        },
+                        "items": {
+                            "自动武道": {
+                                name: "自动武道",
+                                callback: function (key, opt) {
+                                    WG.wudao_auto();
+                                },
+                            },
+                            "自动小树林": {
+                                name: "自动小树林",
+                                callback: function (key, opt) {
+                                    WG.grove_auto();
+                                }
+                            },
+                            "自动整理并清包": {
+                                name: "自动整理并清包",
+                                callback: function (key, opt) {
+                                    WG.sell_all();
+                                }
+                            },
+                            "自动比试": {
+                                name: "自动比试",
+                                visible: function (key, opt) {
+                                    return WG.fight_listener == undefined;
+                                },
+                                callback: function (key, opt) {
+                                    WG.auto_fight();
+                                },
+                            },
+                            "关闭比试": {
+                                name: "关闭比试",
+                                visible: function (key, opt) {
+                                    return WG.fight_listener != undefined;
+                                },
+                                callback: function (key, opt) {
+                                    WG.auto_fight();
+                                },
+                            },
+                            "自动使用道具": {
+                                name: "自动使用道具",
+                                callback: function (key, opt) {
+                                    WG.auto_useitem();
+                                },
+                            },
+                            "自动研药": {
+                                name: "自动研药",
+                                callback: function (key, opt) {
+                                    WG.auto_Development_medicine();
+                                },
+                            },
+                            "一键日常": {
+                                name: "一键日常",
+                                callback: function (key, opt) {
+                                    WG.oneKeyDaily();
+                                },
+                            },
+                            "一键请安": {
+                                name: "一键请安",
+                                callback: function (key, opt) {
+                                    WG.oneKeyQA();
+                                },
+                            },
+                            "一键扫荡": {
+                                name: "一键扫荡",
+                                callback: function (key, opt) {
+                                    WG.oneKeySD();
+                                },
+                            },
+
+                            "一键当铺购买": {
+                                name: "一键当铺购买",
+                                callback: function (key, opt) {
+                                    WG.tnBuy();
+                                },
+                            },
+                        },
+                    },
+                    "换装设置": {
+                        name: "换装设置",
+                        callback: function (key, opt) {
+                            WG.eqhelperui();
+                        },
+                    },
+                    "换装": {
+                        name: "换装",
+                        items: WG.eqloader()
+                    },
+                    "自命令,自定监控": {
+                        name: "自命令,自定监控",
+                        callback: function (key, opt) {
+                            WG.zmlztjk();
+                        },
+                    },
+                    "手动喜宴": {
+                        name: "手动喜宴",
+                        callback: function (key, opt) {
+                            console.log("当前自动状态:" + stopauto);
+                            WG.xiyan();
+                        },
+                    },
+                    "快捷传送": {
+                        name: "常用地点",
+                        "items": makeTp(0)
+                    },
+                    "门派传送": {
+                        name: "门派传送",
+                        "items": makeTp(1)
+                    },
+                    "打开仓库": {
+                        name: "打开仓库",
+                        callback: function (key, opt) {
+                            if (WG.at("扬州城-钱庄")) {
+                                WG.Send("store");
+                            } else {
+                                WG.go("扬州城-钱庄");
+                            }
+                        },
+                    },
+                    "切换菜单": {
+                        name: "切换菜单",
+                        callback: function (key, opt) {
+                            let p = 'on'
+                            if (inzdy_btn) {
+                                p = 'off'
+                            }
+                            WG.zdy_btnshow(p);
+                        },
+                    },
+                    "简单工具": {
+                        name: "简单工具",
+                        callback: function (key, opt) {
+                            WG.calc();
+                        },
+                    },
+                    "调试BOSS": {
+                        name: "调试BOSS",
+                        visible: false,
+                        callback: function (key, opt) {
+                            WG.kksBoss({
+                                content: "听说呼符出现在逍遥派-地下石室一带。"
+                            });
+                        },
+                    },
+                    "流程菜单Raid.js": {
+                        name: "流程菜单Raid.js",
+                        callback: function (key, opt) {
+                            if (unsafeWindow && unsafeWindow.ToRaid) {
+                                unsafeWindow.ToRaid.menu();
+                            } else {
+                                messageAppend("插件未安装,请访问 https://greasyfork.org/zh-CN/scripts/375851-wsmud-raid 下载并安装");
+                                window.open("https://greasyfork.org/zh-CN/scripts/375851-wsmud-raid ", '_blank').location;
+                            }
+                        }
+                    },
+                    "设置": {
+                        name: "设置",
+                        callback: function (key, opt) {
+                            WG.setting();
+                        },
+                    },
+                    "打开面板": {
+                        name: "打开面板",
+                        visible: function (key, opt) {
+                            return $('.WG_log').css('display') == 'none';
+                        },
+                        callback: function (key, opt) {
+                            WG.showhideborad();
+                        },
+                    },
+                    "关闭面板": {
+                        name: "关闭面板",
+                        visible: function (key, opt) {
+                            return $('.WG_log').css('display') != 'none';
+                        },
+                        callback: function (key, opt) {
+                            WG.showhideborad();
+                        },
+                    }
+                }
+            }
+        }
+        $.contextMenu({
+            selector: '.container',
+            build: function ($trigger, e) {
+                //从 trigger 中获取动态创建的菜单项及回掉
+                return createSomeMenu();
+            }
+
         });
     });
 })();
