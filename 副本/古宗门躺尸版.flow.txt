@@ -1,7 +1,8 @@
 //~silent
 //躺尸过古宗门副本
 //四区白三三
-//更新时间：2021031201 - 12:41
+//更新时间：2021040801 - 10:18
+@print <hiy>建议关掉内置出招、起手触发，避免不要急慢慢来卡房间</hiy>
 @cmdDelay 500
 [if] (:room 副本区域,忧愁谷) == true
   @print <ord>正在副本中，流程终止。</ord>
@@ -163,7 +164,7 @@ cr gmp/shanmen
 [while] true
   @until (:combating) == true || (:combating) == false
   [if] (:combating) == true
-    $waitpfm sword.wu
+    $stoppfm;$waitpfm sword.wu
   @until (:combating) == false || (:living) == false
   [if] (:living) == false
     @await 3000
