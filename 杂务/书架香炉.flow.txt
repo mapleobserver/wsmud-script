@@ -1,3 +1,5 @@
+// 更新内容：修复武庙打坐恢复内力后卡住的bug；优化搜索物品的提示信息判断
+// 更新时间：2020-04-16 08:37
 [if] (HCplan) == null
   ($HCplan) = 书架和香炉
 [if] (HCcycle) == null
@@ -33,21 +35,22 @@
     perform force.zhen
   [else]
     @renew
+    [continue]
 --->
 [while] (sj) || (xl)
   stopstate;psxk (HCposui);
   [if] (sj) && (xl)
     go west;go north;lu ding;
-    @tip 转悠了几圈|找到($zdxl)一
+    @tip 除了木雕就是大型的铜鼎|找到($zdxl)一|深吸一口($zdxl)冒出的缕缕青烟
     @wait 500
     go east;go east;lu sj;
-    @tip 转悠了几圈|找到($zdsj)一排
+    @tip 似乎被人捷足先登|找到($zdsj)一排|没找到什么($zdsj)顺走的东西
   [if] (xl) && !(sj)
     go west;go north;look ding;lu ding;
-    @tip 转悠了几圈|找到($zdxl)一
+    @tip 除了木雕就是大型的铜鼎|找到($zdxl)一|深吸一口($zdxl)冒出的缕缕青烟
   [if] (sj) && !(xl)
     go north;go east;look sj;lu sj;
-    @tip 转悠了几圈|找到($zdsj)一排
+    @tip 似乎被人捷足先登|找到($zdsj)一排|没找到什么($zdsj)顺走的东西
   [if] (zdsj) != null
     ($sj) = false
   [if] (zdxl) != null
