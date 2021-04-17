@@ -1,7 +1,7 @@
 //~silent
 //基于原版修改
-($localVer) = 2021033001
-($changeLog) = 1.新增【出特殊词条后闭关】功能。2.修复bug。
+($localVer) = 2021041701
+($changeLog) = 1.香炉自动补充和递增。2.推演计数方式新增【根据等级递增】功能。3.新增【出特殊词条后闭关】功能。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -33,6 +33,8 @@
   ($ZCFy)=是
 [if] (ZCSkill) == null
   ($ZCSkill)=内功
+[if] (ZCNumType) == null
+  ($ZCNumType)=保持不变
 [if] (ZCNum) == null
   ($ZCNum)=4
 [if] (ZCMaxqn) == null
@@ -55,6 +57,7 @@
 #input ($ZCProp)=普通词条(完全匹配，|隔开，限定只拿百分比后面加%),(ZCProp)
 #input ($ZCSpc)=特殊词条(模糊匹配),(ZCSpc)
 #select ($ZCXlu)=香炉,无|沉香木鼎|麝香铜鼎|龙涎香熏|龙脑古鼎,(ZCXlu)
+#select ($ZCNumType)=选【等级递增】时计数值可设定为词条等级的下一级。<br/>&nbsp*&nbsp比如现在词条等级为50，计数就设51。<br/>&nbsp*&nbsp流程一开始会先1跳1停直到词条升级再按递增方式推演。<br/>&nbsp*&nbsp计数方式,根据等级递增|保持不变,(ZCNumType)
 #input ($ZCNum)=计数,(ZCNum)
 #input ($ZCMaxqn)=总消耗潜能(万),(ZCMaxqn)
 #config
@@ -179,21 +182,48 @@ stopstate
   zc typeadd (skill)
   zc typeadd (skill) ok
   @await 2000
-
+// 潜能最大值
 ($max)=(ZCMaxqn)*10000
-
+// 分解词条数组
 [if](ZCProp)!=null&&(ZCProp)!=none
   @js ($zcp)=("\""+"(ZCProp)"+"\"").replace(/\|/g,"\"|\"").split("|")
-
+// 计数赋值
+($tyNum) = (ZCNum)
+// 开始
 stopstate
-[if] (ZCXlu)!=无 && {b(ZCXlu)}? != null
-  use {b(ZCXlu)}?
+[if] (ZCXlu)!=无
+  ($xluNow) = (ZCXlu)
+  use {b(xluNow)}?
+  @await 500
 ($sum)=0
+// 判断香炉情况，自动递增香炉等级。
 [while] true
+  [if] (:status xlu,(:id))==false
+    [if] (ZCXlu)!=无
+      get {r(xluNow)}?
+      [while] true
+        use {b(xluNow)}?
+        @tip 点燃($one)<($tag1)>($xluNow)</($tag2)>放到地上|已经没法($xluEnd)了|你身上($xluNo)这个东西
+        [if] (xluNo) != null || (xluEnd) != null
+          ($xlus) = '沉香木鼎','麝香铜鼎','龙涎香熏','龙脑古鼎'
+          ($xluNo) = null
+          ($xluEnd) = null
+          @js ($xluN) = var x=[(xlus)];x.indexOf("(xluNow)")
+          [if] (xluN)<3
+            ($xluN) = (xluN)+1
+            @js ($xluNow) = var x=[(xlus)];x[(xluN)]
+            @print <hiy>更换香炉类型为【(xluNow)】。</hiy>
+          [else]
+            @print <hiy>香炉已全部用尽。</hiy>
+            [break]
+        [else]
+          [break]
+// 检查冰心飞翼
   [if] (ZCFood) == 是 && (:status food)==false && {b冰心丹}? != null
     use {b冰心丹}?
   [if] (ZCFy) == 是 && (:status fy)==false
     use (:eq0)
+// 开始推演
   zc typelv (skill)
   ($prop)=null
   @tip 盘膝坐下|属性：($gd)<cyn>($prop)<
@@ -201,7 +231,7 @@ stopstate
     [if](sum)==1
       ($sum)=2
     ($add)=-1
-
+// 判断是否添加新词条
     [if](ZCProp)!=null&&(ZCProp)!=none
       @js ($num)=[(zcp)].length
       [while] (num)>0
@@ -230,7 +260,7 @@ stopstate
     [else]
       zc prop (skill) ban
       @js WG.Send("tm 放弃[(prop)]")
-
+// 获取潜能消耗值
   [if](sum)==2
     zc typedel (skill)
     @tip 武道书，($qn)潜能，
@@ -243,22 +273,34 @@ stopstate
     [if] (qn)>=(max) || (xl) == 1
       ($finish)=1
     ($sum)=0
-
+// 已推出特殊词条后的动作
   [if] (xl) == 1
     tm 已推出特殊词条，停止推演。
     @print <ord>已推出特殊词条，停止推演。</ord>
     [break]
-
+// 循环推演
   ($num) =1
   [while] (:state)==推演
     @tip 有了更深入的理解|潜能不够($finish)
     say 已推演(num)次 (:hour):(:minute):(:second)
     ($num)=(num)+1
-    [if] (num) > (ZCNum)||(finish)!=null
+    [if] (ZCNumType)==根据等级递增 && (levelup)!=获得
+      ($tyNum)=1
+    [else if] (ZCNumType)==根据等级递增 && (levelup)==获得
+      //@print (levelup)
+      //($levelup)=持续
+      //($num)=(ZCNum)+1
+      ($tyNum)=(ZCNum)
+    //@print num:(num),tyNum:(tyNum),ZCNum:(ZCNum)
+    [if] (num)>(tyNum) || (finish)!=null
+      [if] (tyNum)>=(ZCNum)
+        ($ZCNum)=(ZCNum)+1
+        tm 词条已升级，下一轮计数为(ZCNum)。
       ($num) =0
       [if](sum)==0
         ($sum)=1
       stopstate
+      @tip 品阶($levelup)实质提升|属性($levelup)提升
       [break]
 
   [if](finish)!= null
