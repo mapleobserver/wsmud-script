@@ -1,7 +1,7 @@
 // 生成练习代码，自动填入系统设置中，代码长度最多200。
 // 四区白三三
-($localVer) = 2021041901
-($changeLog) = 修改代码字符最大值为300；保存练习房间的选择；修正技能数量最大值为62
+($localVer) = 2021041902
+($changeLog) = 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
@@ -37,7 +37,7 @@
 #config
 ($reset) = true
 [while] true
-  [if] (len) != null && (len) > 300
+  [if] (len) != null && (len) > 400
     ($len) = 0
     ($list) = null
     #input ($info) = <ord>练习代码太长无法保存，请重新选择</ord>,👇👇👇
@@ -119,7 +119,7 @@
       @js ($list) = '(list)'+','+'(after)'
     @print (list)
     @js ($len) = '(list)'.length
-    [if] (len) > 300
+    [if] (len) > 400
       [continue]
     [else]
       setting auto_work (list);
