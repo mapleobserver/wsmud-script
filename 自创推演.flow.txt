@@ -1,7 +1,7 @@
 //~silent
 //基于原版修改
-($localVer) = 2021041701
-($changeLog) = 1.香炉自动补充和递增。2.推演计数方式新增【根据等级递增】功能。3.新增【出特殊词条后闭关】功能。
+($localVer) = 2021041901
+($changeLog) = 1.香炉自动补充和递增。2.推演计数方式新增【根据等级递增】功能。3.新增【出特殊词条后闭关】功能。4.修复bug。
 ($flowName) = 自创推演
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
@@ -83,6 +83,10 @@
   #select ($entry5)=普通词条5（有特殊词条可选无）,无|(propAry),(entry5)
   #select ($entryspc)=特殊词条（不需要则选无）,无|(spcAry),(entryspc)
   #config
+  [(entry1)==null]($entry1)=暂时不推
+  [(entry2)==null]($entry2)=暂时不推
+  [(entry3)==null]($entry3)=暂时不推
+  [(entry4)==null]($entry4)=暂时不推
   ($ZCProp) = (entry1)|(entry2)|(entry3)|(entry4)
   [if] (entry5) != 无 && (entry5) != null
     ($ZCProp) = (ZCProp)|(entry5)
@@ -293,7 +297,7 @@ stopstate
       ($tyNum)=(ZCNum)
     //@print num:(num),tyNum:(tyNum),ZCNum:(ZCNum)
     [if] (num)>(tyNum) || (finish)!=null
-      [if] (tyNum)>=(ZCNum)
+      [if] (tyNum)>=(ZCNum) && (ZCNumType)==根据等级递增 && (levelup)==获得
         ($ZCNum)=(ZCNum)+1
         tm 词条已升级，下一轮计数为(ZCNum)。
       ($num) =0
