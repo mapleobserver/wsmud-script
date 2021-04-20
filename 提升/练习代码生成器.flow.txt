@@ -3,22 +3,27 @@
 // 四区白三三
 ($localVer) = 2021041903
 ($changeLog) = 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
+($flowName) = 练习代码生成器
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
-@js ($remoteVer) = var v = (version);v.lxdm
-[if] (localVer) != (remoteVer)
-  @js WG.SendCmd("tm 当前练习代码生成器版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"练习代码生成器","source":"(repourl)/提升/练习代码生成器.flow.txt","finder":"提升"}
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.lxdm
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+  ($f_ss)={"name":"(flowName)","source":"(repourl)/提升/(flowName).flow.txt","finder":"提升"}
   @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
   @wait 1000
-  ($log) = 练习代码生成器已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  ($log) = (flowName)已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
   @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
   [exit]
 [else]
-  ($log) = 开始运行练习代码生成器，当前版本【(remoteVer)】。更新内容：(changeLog)
+  [if] (remoteVer) == null
+    ($log) = 获取远程版本失败，维持当前版本不变。
+  [else]
+   ($log) = 开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
