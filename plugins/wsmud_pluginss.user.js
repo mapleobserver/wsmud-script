@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.170
+// @version      0.0.32.171
 // @date         01/07/2018
-// @modified     19/04/2021
+// @modified     20/04/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -727,6 +727,8 @@
     var getitemShow = null;
     //自命令展示方式
     var zmlshowsetting = 0;
+    //背包已满提示方式
+    var bagFull = 0;
     //停止后动作
     var auto_command = null;
     //装备列表
@@ -4889,7 +4891,7 @@
             $('#unauto_pfm').off('change')
             $('#getitemShow').off('click')
             $("#zmlshowsetting").off('change')
-
+            $("#bagFull").off('change')
             $('#autorelogin').off('click')
             $('#autoupdateStore').off('click')
             $('#saveAddr').off('click')
@@ -4984,6 +4986,10 @@
                 zmlshowsetting = $('#zmlshowsetting').val();
                 GM_setValue(role + "_zmlshowsetting", zmlshowsetting);
                 WG.zml_showp();
+            });
+            $("#bagFull").change(function () {
+                bagFull = $('#bagFull').val();
+                GM_setValue(role + "_bagFull", bagFull);
             });
             $('#getitemShow').click(function () {
                 getitemShow = WG.switchReversal($(this));
@@ -5195,6 +5201,7 @@
             $('#autoupdateStore').val(auto_updateStore);
             $('#autorelogin').val(auto_relogin);
             $("#zmlshowsetting").val(zmlshowsetting);
+            $("#bagFull").val(bagFull);
             $('#getitemShow').val(getitemShow);
             $('#unauto_pfm').val(unauto_pfm);
             $('#store_info').val(zdy_item_store);
@@ -6132,6 +6139,11 @@
             FakerTTS.playtts(n);
             WG.SendCmd(cmds);
         },
+        beep: async function(idx, n, cmds) {
+            cmds = T.recmd(idx, cmds);
+            Beep();
+            WG.SendCmd(cmds);
+        },
         music: function (idx, n, cmds) {
             cmds = T.recmd(idx, cmds);
             var music = new MusicBox({
@@ -6327,7 +6339,14 @@
                 + UI.html_lninput("wudao_pfm", "武道自动攻击(用半角逗号分隔)：")
                 + UI.html_switch('getitemShow', '显示获得物品：', 'getitemShow')
                 + UI.html_switch('marry_kiss', '自动喜宴：', "automarry")
-                + UI.html_switch('ks_Boss', '自动传到boss：', "autoKsBoss")
+                + UI.html_switch('ks_Boss', '自动传到boss：', "autoKsBoss") + `
+                <div class="setting-item">
+                <span> <label for="bagFull"> 背包已满提示： </label><select id="bagFull" style="width:80px">
+                    <option value="0"> 文字提醒 </option>
+                    <option value="1"> 提示音 </option>
+                    <option value="2"> 语音提醒 </option>
+                </select>
+                </span></div> `
                 + UI.html_lninput("auto_eq", "BOSS击杀时自动换装：")
                 + UI.html_lninput("ks_pfm", "BOSS叫杀延时(ms)： ")
                 + UI.html_lninput("ks_wait", "BOSS击杀等待延迟(s)： ")
@@ -7298,6 +7317,15 @@
                     }
                 }
                 if (data.type == 'text') {
+                    if (data.msg.indexOf(`${role}身上东西太多了`) >= 0 || data.msg.indexOf("你身上东西太多了") >= 0 || data.msg.indexOf("你拿不下那么多东西。") >= 0) {
+                        WG.Send("tm 友情提示：请检查是否背包已满！");
+                        messageAppend("友情提示：请检查是否背包已满！", 1);
+                        if (bagFull == 1) {
+                            Beep();
+                        } else if (bagFull == 2) {
+                            FakerTTS.playtts(`${role}，请检查是否背包已满！`);
+                        }
+                    }
                     if (data.msg.indexOf("长得") >= 0 && data.msg.indexOf("看起来") >= 0) {
                         let s = data.msg.split("\n")[0].split(" ");
                         let name = s[s.length - 1];
@@ -7486,6 +7514,7 @@
 
             zdyskilllist = GM_getValue(role + "_zdyskilllist", zdyskilllist);
             zdyskills = GM_getValue(role + "_zdyskills", zdyskills);
+            bagFull = GM_getValue(role + "_bagFull", bagFull);
             WG.zdy_btnListInit();
 
         }
@@ -7567,6 +7596,9 @@
             }
         }
     }
+    function Beep() {
+        document.getElementById("beep-alert").play();
+    }
     class MusicBox {
         constructor(options) {
             let defaults = {
@@ -7631,6 +7663,9 @@
         $('head').append('<link href="https://cdn.staticfile.org/layer/2.3/skin/layer.css" rel="stylesheet">');
         $('head').append('<link href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">');
         $('body').append(UI.codeInput);
+        $("body").append(
+            $(`<audio id="beep-alert" preload="auto"></audio>`).append(`<source src="https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script/plugins/complete.mp3" type="audio/mpeg">`)
+        );
 
         setTimeout(() => {
             var server = document.createElement('script');
@@ -7679,6 +7714,7 @@
         unsafeWindow.roomData = roomData;
         unsafeWindow.MusicBox = MusicBox;
         unsafeWindow.FakerTTS = FakerTTS;
+        unsafeWindow.Beep = Beep;
         unsafeWindow.WSStore = store;
         unsafeWindow.imgShow = imgShow;
 
