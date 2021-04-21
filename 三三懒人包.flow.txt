@@ -53,7 +53,7 @@
 
 // 特殊流程
 #input ($info3)=👇<hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz>👇,愉快游戏🎮
-#select ($flowSJXL)=[<hiz书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
+#select ($flowSJXL)=[<hiz>书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
 #select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
 #select ($flowGZM)=[<hiz>古宗门躺尸</hiz>],导入|跳过,跳过
 //#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
