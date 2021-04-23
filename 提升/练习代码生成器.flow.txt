@@ -1,29 +1,45 @@
 //~silent
 // 生成练习代码，自动填入系统设置中，代码长度最多200。
 // 四区白三三
-($localVer) = 2021041903
-($changeLog) = 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
+($localVer) = 2021042301
+($changeLog) = 🆕 优化版本检查过程。🌟 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
 ($flowName) = 练习代码生成器
+($flowCode) = lxdm
+($flowPath) = 提升
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 //@print (version)
 [if] (version) != null
-  @js ($remoteVer) = var v = (version);v.lxdm
+  @js ($remoteVer) = var v = (version);v.(flowCode)
 [if] (localVer) < (remoteVer) && (remoteVer) != null
-  @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"(flowName)","source":"(repourl)/提升/(flowName).flow.txt","finder":"提升"}
-  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
-  @wait 1000
-  ($log) = (flowName)已更新至最新版【(remoteVer)】，即将自动运行。本次更新内容：(changeLog)
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowPath) = 根文件夹
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowPath)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @wait 1500
+    ($log) = ✅(flowName)已更新至最新版【(remoteVer)】，即将自动运行。
+  [else]
+    ($log) = ⭕(flowName)暂时无法正常更新至【(remoteVer)】，直接运行当前版本【(localVer)】。
+    ($UPnum) = null
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
-  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
-  [exit]
+  [if] (UPnum) != null
+    @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+    [exit]
 [else]
+  ($UPnum) = null
   [if] (remoteVer) == null
-    ($log) = 获取远程版本失败，维持当前版本不变。
+    ($log) = ⚠️获取远程版本失败，维持当前版本不变。
   [else]
-   ($log) = 开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
+    ($log) = 🚀开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
