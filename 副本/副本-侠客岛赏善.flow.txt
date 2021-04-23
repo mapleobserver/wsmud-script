@@ -1,4 +1,4 @@
-//raid.flow
+//~silent
 //四区白三三
 //建议先把基础技能熟练度练至90%以上，换好悟性装备再运行流程,节约时间
 [if] (Fight_before) == null
