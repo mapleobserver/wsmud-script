@@ -1,3 +1,4 @@
+//~silent
 // 对四区沧浪、四区白三三两位大佬的圆月弯刀流程进行了整合
 // 四区-黑白郎君&&沧浪&&白三三
 // 2021-02-22 10:05
@@ -5,27 +6,46 @@
 // 1.8、修改正常结婚和超龄结婚的差异操作，减少可能存在的bug。
 // 1.9、优化拿草的后续判断；进地窖后不选择直接叫杀避免小楼面板变高。
 // 1.10、优化进地窖的方式，避免出招过多导致卡住没进去。
-($localVer) = 2021022201
+($localVer) = 2021042301
 ($changeLog) = 优化选择拿草的后续判断；进地窖后不选择是否放过，直接叫杀避免小楼的面板变高。
+($flowName) = 圆月弯刀
+($flowCode) = yywd
+($flowPath) = 副本
+($flowFinder) = 根文件夹
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
-//@print (version)
-@js ($remoteVer) = var v = (version);v.yywd
-[if] (localVer) != (remoteVer) && (remoteVer) != null
-  @js WG.SendCmd("tm 当前圆月弯刀版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"圆月弯刀","source":"(repourl)/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
-  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
-  @wait 1500
-  ($log) = 圆月弯刀已更新至最新版【(remoteVer)】，即将自动运行。
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.(flowCode)
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    [if] (flowFinder) == null
+      ($flowFinder) = 根文件夹
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @wait 1500
+    ($log) = ✅(flowName)已更新至最新版【(remoteVer)】，即将自动运行。
+  [else]
+    ($log) = ⭕(flowName)暂时无法正常更新至【(remoteVer)】，直接运行当前版本【(localVer)】。
+    ($UPnum) = null
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
-  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
-  [exit]
+  [if] (UPnum) != null
+    @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+    [exit]
 [else]
+  ($UPnum) = null
   [if] (remoteVer) == null
-    ($log) = 获取远程版本失败，维持当前版本不变。
+    ($log) = ⚠️获取远程版本失败，维持当前版本不变。
   [else]
-    ($log) = 开始运行圆月弯刀，当前版本【(remoteVer)】。更新内容：(changeLog)
+    ($log) = 🚀开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
