@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.171
+// @version      0.0.32.172
 // @date         01/07/2018
-// @modified     20/04/2021
+// @modified     28/04/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -741,6 +741,8 @@
     var auto_pfmswitch = "开";
     //自动转发路径
     var auto_rewardgoto = "关";
+    //显示昏迷信息
+    var busy_info = "关";
     //仓库位置
     var saveAddr = "关";
     //自动更新仓库数据
@@ -4969,6 +4971,11 @@
                 auto_rewardgoto = WG.switchReversal($(this));
                 GM_setValue(role + "_auto_rewardgoto", auto_rewardgoto);
             });
+
+            $('#busyinfo').click(function () {
+                busy_info = WG.switchReversal($(this));
+                GM_setValue(role + "_busy_info", busy_info);
+            });
             $('#saveAddr').click(function () {
                 saveAddr = WG.switchReversal($(this));
                 GM_setValue(role + "_saveAddr", saveAddr);
@@ -5197,6 +5204,7 @@
             $('#auto_eq').val(autoeq);
             $('#autopfmswitch').val(auto_pfmswitch);
             $('#autorewardgoto').val(auto_rewardgoto);
+            $('#busyinfo').val(busy_info);
             $('#saveAddr').val(saveAddr);
             $('#autoupdateStore').val(auto_updateStore);
             $('#autorelogin').val(auto_relogin);
@@ -6352,6 +6360,7 @@
                 + UI.html_lninput("ks_wait", "BOSS击杀等待延迟(s)： ")
                 + UI.html_switch('autopfmswitch', '自动施法开关：', 'auto_pfmswitch')
                 + UI.html_switch('autorewardgoto', '开启转发路径：', 'auto_rewardgoto')
+                + UI.html_switch('busyinfo', '显示昏迷信息：', 'busy_info')
                 + UI.html_switch('saveAddr', '使用豪宅仓库：', "saveAddr")
                 + UI.html_input("unauto_pfm", "自动施法黑名单(填技能代码，使用半角逗号分隔)：")
 
@@ -7084,6 +7093,26 @@
                             "count": data.count
                         });
                     }
+                    if(busy_info==='开'){
+                        if (data.id == G.id) {
+                            if (data.action == 'add') {
+                                if (data.sid == 'busy' || data.sid == 'faint') {
+                                    var _id = data.id;
+                                    messageAppend(`你被${data.name}了${data.duration / 1000}秒`,2,0);
+                                    if (data.name == '绊字诀') return;
+                                }
+                            }
+                        } else {
+                            if (data.action == 'add') {
+                                if (data.sid == 'busy' || data.sid == 'faint' || data.sid == 'chidun' || data.sid == 'unarmed') {
+                                    let npc = G.items.get(data.id)
+                                    messageAppend(`${npc.name}被${data.name}了${data.duration / 1000}秒`,2,0);
+                                }
+                            }
+                        }
+                    }
+
+
                 }
             });
             WG.add_hook("state", function (data) {
@@ -7455,6 +7484,7 @@
             unauto_pfm = GM_getValue(role + "_unauto_pfm", unauto_pfm);
             auto_pfmswitch = GM_getValue(role + "_auto_pfmswitch", auto_pfmswitch);
             auto_rewardgoto = GM_getValue(role + "_auto_rewardgoto", auto_rewardgoto);
+            busy_info = GM_getValue(role + "_busy_info", busy_info);
             saveAddr = GM_getValue(role + "_saveAddr", saveAddr);
             auto_updateStore = GM_getValue(role + "_auto_updateStore", auto_updateStore);
             auto_relogin = GM_getValue(role + "_auto_relogin", auto_relogin);
