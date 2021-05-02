@@ -1,32 +1,45 @@
-//raid.flow
+//~silent
 //帮战清号令
 //四区白三三
-#select ($ZBmp) = 请选择进攻门派,武当派|丐帮|华山派|峨眉派|少林派|逍遥派,(ZBmp)
+[if] (BPZmp) == null
+  ($BPZmp) = 武当派
+[if] (BPZact) == null || (BPZact) != 闭关
+  ($BPZact) = 掌门房间
+#select ($BPZmp) = 请选择进攻门派,武当派|丐帮|华山派|峨眉派|少林派|逍遥派,(BPZmp)
+#select ($BPZact) = 清完号令后动作,掌门房间|闭关,(BPZact)
 #config
+
 [if] (arg0) != null
-    ($ZBmp) = (arg0)
+    ($BPZmp) = (arg0)
+[if] (arg1) != null
+    ($BPZact) = (arg1)
+[if] (BPZmp) == null
+    ($BPZmp) = 武当派
+[if] (BPZact) == null || (BPZact) != 闭关
+    ($BPZact) = 掌门房间
+
 stopstate
 @await 500
 $startpfm
 ($red)=上古
 [if] (arg0) != null
-    ($ZBmp)=(arg0)
-[if] (ZBmp) == 丐帮
+    ($BPZmp)=(arg0)
+[if] (BPZmp) == 丐帮
     ($bang)=洪七公
     jh fam 6 start
-[else if] (ZBmp) == 武当派
+[else if] (BPZmp) == 武当派
     ($bang)=张三丰
     jh fam 1 start
-[else if] (ZBmp) == 华山派
+[else if] (BPZmp) == 华山派
     ($bang)=岳不群
     jh fam 3 start
-[else if] (ZBmp) == 少林派
+[else if] (BPZmp) == 少林派
     ($bang)=玄难
     jh fam 2 start
-[else if] (ZBmp) == 峨眉派
+[else if] (BPZmp) == 峨眉派
     ($bang)=灭绝
     jh fam 4 start
-[else if] (ZBmp) == 逍遥派
+[else if] (BPZmp) == 逍遥派
     ($bang)=逍遥子
     jh fam 5 start
 @wait 100
@@ -37,7 +50,7 @@ $startpfm
     [if] "(mpr)" == "null"
         @await 100
         [while] true
-            ($mpc) = {r(ZBmp)}?
+            ($mpc) = {r(BPZmp)}?
             [if] "(mpc)" != "null"
                 [if] (:maxHp (mpc)) == 2000000 || (:maxHp (mpc)) == 200000 || (:maxHp (mpc)) == 40000 || (:maxHp (mpc)) == 2000
                     kill (mpc)
@@ -50,12 +63,18 @@ $startpfm
 [else if] {r岳不群}? != null
     @await 500
     [if] ($hsover) == true
-        [exit]
+        [if] (BPZact) == 闭关
+            $zdwk
+        [else]
+            [exit]
 [else]
-    [exit]
+    [if] (BPZact) == 闭关
+        $zdwk
+    [else]
+        [exit]
 --->
 @cmdDelay 500
-[if] (ZBmp) == 武当派
+[if] (BPZmp) == 武当派
     jh fam 1 start
     go north
     go south;go west
@@ -73,7 +92,7 @@ $startpfm
     go north
     go north
     go north
-[else if] (ZBmp) == 华山派
+[else if] (BPZmp) == 华山派
     ($hsover) = false
     jh fam 3 start
     go eastup
@@ -100,7 +119,7 @@ $startpfm
     jumpup
     ($hsover) = true
     $to 华山派-客厅
-[else if] (ZBmp) == 少林派
+[else if] (BPZmp) == 少林派
     jh fam 2 start
     go north
     go west
@@ -120,7 +139,7 @@ $startpfm
     go west
     go east;go north
     go north
-[else if] (ZBmp) == 峨眉派
+[else if] (BPZmp) == 峨眉派
     jh fam 4 start
     go northup
     go east
@@ -136,7 +155,7 @@ $startpfm
     go north;go north;go west
     go east;go north
     go north
-[else if] (ZBmp) == 逍遥派
+[else if] (BPZmp) == 逍遥派
     jh fam 5 start
     go north
     go north
@@ -150,7 +169,7 @@ $startpfm
     go south
     jh fam 5 start;go down
     go down
-[else if] (ZBmp) == 丐帮
+[else if] (BPZmp) == 丐帮
     jh fam 6 start
     go down
     go east
