@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.2.1
+// @version     0.1.2.2
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -28,9 +28,9 @@
         state: "data.state",
         data_autokill_xy: true,
         layout_left: true,
-        Beep: function() {
-            document.getElementById("beep").play();
-        },
+        // Beep: function() {
+        //     document.getElementById("beep").play();
+        // },
     };
     unsafeWindow.funny = funny;
     let fn = {
@@ -83,9 +83,9 @@
             fn.scroll(".content-message");
             return false;
         },
-        beep: function() {
-            document.getElementById("beep").play();
-        },
+        // beep: function() {
+        //     document.getElementById("beep").play();
+        // },
     };
     unsafeWindow.fn = fn;
     let listener = {
@@ -199,10 +199,10 @@
         } else if (/只留下一堆玄色石头/.test(data) && data.includes("你")) {
             let a = data.match(/只见(.*)发出一阵白光/);
             $(".content-message pre").append(`你分解了 => ${a[1]}\n`)
-        } else if (/你身上东西太多了|你拿不下那么多东西。/.test(data)) {
-            $(".content-message pre").append(`<hir>友情提示：请检查是否背包已满！</hir>`);
-            fn.send(`tm 友情提示：请检查是否背包已满！`);
-            fn.beep();
+        // } else if (/你身上东西太多了|你拿不下那么多东西。/.test(data)) {
+        //     $(".content-message pre").append(`<hir>友情提示：请检查是否背包已满！</hir>`);
+        //     fn.send(`tm 友情提示：请检查是否背包已满！`);
+        //     fn.beep();
         } else if (/你身上没有挖矿工具。/.test(data)) {
             // SendCommand([]);//小号没有铁镐的情况
         } else if (/你的最大内力增加了/.test(data)) {
@@ -375,27 +375,27 @@
             //     }
             // }
 
-            if (data.jldesc) {
-                let jl = data.jldesc.match(/<hio>(.*)<\/hio><br\/>精炼<(hig|hic|hiy|hiz|hio|ord)>＋(.*)\s</i);
-                if (jl) {
-                    let n = "<hio>" + jl[1] + "</hio>";
-                    let j = parseInt(jl[3]);
-                    let c = 13 - j;
-                    let cmd = [];
-                    for (let i = 0; i < c; i ++) {
-                        cmd.push(`jinglian ${data.id} ok`);
-                        cmd.push(500);
-                    }
-                    $(".content-message pre").append(
-                        $(`<div class="item-commands"></div>`).append(
-                            $(`<span>精炼6星 => ${n}</span>`).click(() => {
-                                fn.send(cmd);
-                            }),
-                        ),
-                    );
-                    fn.scroll(".content-message");
-                }
-            }
+            // if (data.jldesc) {
+            //     let jl = data.jldesc.match(/<hio>(.*)<\/hio><br\/>精炼<(hig|hic|hiy|hiz|hio|ord)>＋(.*)\s</i);
+            //     if (jl) {
+            //         let n = "<hio>" + jl[1] + "</hio>";
+            //         let j = parseInt(jl[3]);
+            //         let c = 13 - j;
+            //         let cmd = [];
+            //         for (let i = 0; i < c; i ++) {
+            //             cmd.push(`jinglian ${data.id} ok`);
+            //             cmd.push(500);
+            //         }
+            //         $(".content-message pre").append(
+            //             $(`<div class="item-commands"></div>`).append(
+            //                 $(`<span>精炼6星 => ${n}</span>`).click(() => {
+            //                     fn.send(cmd);
+            //                 }),
+            //             ),
+            //         );
+            //         fn.scroll(".content-message");
+            //     }
+            // }
         }
     });
 
@@ -534,8 +534,8 @@
     $(document).ready(function() {
         //GM_addStyle(`.room_desc{overflow:hidden;white-space:nowrap;}`);
         GM_addStyle(`.content-bottom{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}`);
-        $("body").append(
-            $(`<audio id="beep" preload="auto"></audio>`).append(`<source src="http://47.102.126.255/wav/complete.wav">`)
-        );
+        // $("body").append(
+        //     $(`<audio id="beep" preload="auto"></audio>`).append(`<source src="http://47.102.126.255/wav/complete.wav">`)
+        // );
     });
 })();
