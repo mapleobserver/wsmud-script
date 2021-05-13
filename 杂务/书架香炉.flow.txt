@@ -1,6 +1,48 @@
 //~silent
-// 更新内容：可使用剑心加速搜索；修复武庙打坐恢复内力后卡住的bug；优化搜索物品的提示信息判断
-// 更新时间：2020-04-23 15:51
+($localVer) = 2021051301
+($changeLog) = 🌟 皇城搜索书架香炉，可使用长生恢复内力、慈航加速搜索。
+($flowName) = 书架香炉
+($flowCode) = sjxl
+($flowPath) = 杂务
+($flowFinder) = 根文件夹
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.(flowCode)
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    [if] (flowFinder) == null
+      ($flowFinder) = 根文件夹
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @wait 1500
+    ($log) = ✅(flowName)已更新至最新版【(remoteVer)】，即将自动运行。
+  [else]
+    ($log) = ⭕(flowName)暂时无法正常更新至【(remoteVer)】，直接运行当前版本【(localVer)】。
+    ($UPnum) = null
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  [if] (UPnum) != null
+    @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+    [exit]
+[else]
+  ($UPnum) = null
+  [if] (remoteVer) == null
+    ($log) = ⚠️获取远程版本失败，维持当前版本不变。
+  [else]
+    ($log) = 🚀开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
+
 [if] (HCplan) == null
   ($HCplan) = 书架和香炉
 [if] (HCcycle) == null
@@ -13,7 +55,7 @@
   ($HCposui) = 1
 @cmdDelay 350
 #select ($HCplan) = 请确保自己能自由进出书房<br/>&nbsp*&nbsp摸取方案,书架和香炉|只书架|只香炉,(HCplan)
-#select ($HCcycle) = 是否每30秒尝试一次直到搜到,是|否,(HCcycle)
+#select ($HCcycle) = 重复尝试直到搜到,是|否,(HCcycle)
 #select ($HCchangsheng) = 是否用长生诀回蓝,是|否,(HCchangsheng)
 #select ($HCcihang) = 使用剑心加速搜索,不使用|慈航剑典|自创内功,(HCcihang)
 #input ($HCposui) = 需要将皇城-广场设置为传送点<br/>&nbsp*&nbsp皇城-广场在破碎虚空的位置,(HCposui)
@@ -56,7 +98,7 @@ stopstate
   [if] (force) != null && (:status force)==false
     @perform force.xin
     @until (:status force)==true
-  psxk (HCposui)
+  jh fam 0 start;psxk (HCposui)
   [if] (sj) && (xl)
     go west;go north;lu ding;
     @tip 这里没啥可以看的了|除了木雕就是大型的铜鼎|找到($zdxl)一|深吸一口($zdxl)冒出的缕缕青烟
@@ -64,12 +106,13 @@ stopstate
     go east;go east;lu sj;
     @tip 这里没啥可以看的了|似乎被人捷足先登|找到($zdsj)一排|没找到什么($zdsj)顺走的东西
   [if] (xl) && !(sj)
-    go west;go north;look ding;lu ding;
+    go west;go north;lu ding;
     @tip 这里没啥可以看的了|除了木雕就是大型的铜鼎|找到($zdxl)一|深吸一口($zdxl)冒出的缕缕青烟
   [if] (sj) && !(xl)
-    go north;go east;look sj;lu sj;
+    go north;go east;lu sj;
     @tip 这里没啥可以看的了|似乎被人捷足先登|找到($zdsj)一排|没找到什么($zdsj)顺走的东西
   [if] (zdsj) != null
+    use {b书架}?
     ($sj) = false
   [if] (zdxl) != null
     ($xl) = false
@@ -79,6 +122,15 @@ stopstate
       [continue]
   @await 500
   $zdwk
+  [if] (cs) = true
+    @wait 10000
+    @cd force.zhen
+    ($force0) = (:kf_nei)
+    stopstate;enable force changshengjue
+    @perform force.zhen
+    @until (:cd force.zhen)==true
+    enable force (force0)
+    $zdwk
   [if] !(sj) && !(xl)
     [exit]
   [if] (HCcycle) == 否
@@ -86,6 +138,6 @@ stopstate
   [if] (force) != null
     @cd force.xin
   [else]
-    @print 等待30秒继续尝试。
-    @await 30000
+    @print 等待15秒继续尝试。
+    @await 15000
   stopstate
