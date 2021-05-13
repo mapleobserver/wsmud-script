@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_funny
 // @namespace   suqing.fun
-// @version     0.3.34
+// @version     0.3.35
 // @author      SuQing, 白三三
 // @match       http://*.wsmud.com/*
 // @exclude     http://*.wsmud.com/news/*
@@ -1140,7 +1140,7 @@ unsafeWindow.say = say;
     $("body").append(
       $(`<div class="left"></div>`),
       $(`<div class="right"></div>`),
-      $(`<audio id="beep" preload="auto"></audio>`).append(`<source src="http://47.102.126.255/wav/complete.wav">`)
+      $(`<audio id="beep" preload="auto"></audio>`).append(`<source src="https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script/plugins/complete.mp3" type="audio/mpeg">`)
     );
     /********************RIGHT********************/
     {
@@ -1613,7 +1613,7 @@ unsafeWindow.say = say;
           AddContent(
             $(`<span></span>`).append(
               $(`<hiy>如无声音，请检查音源地址是否可以正常访问。\n</hiy>`),
-              $(`<hiy>http://47.102.126.255/wav/complete.wav\n</hiy>`),
+              $(`<hiy>https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script/plugins/complete.mp3\n</hiy>`),
               $(`<hic>反正有VPN的肯定会响，如遇特殊情况，请自行调低音量。\n</hic>`),
               $(`<span>Safari浏览器需要修改此网站设置为允许自动播放媒体。\n</span>`)
             )
