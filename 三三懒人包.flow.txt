@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021042301
+($localVer) = 2021051301
 ($changeLog) = 🆕 优化版本检查过程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
@@ -64,7 +64,7 @@
 
 // 触发
 #input ($info2)=👇<hiz>以下是触发</hiz>👇,愉快游戏🎮
-#select ($triggerRedBoss)=[<hiz>红boss报告</hiz>]武神红boss辅助触发(任意频道输入b或者谣言刷新时出现辅助按钮),导入|跳过,跳过
+#select ($triggerRedBoss)=[<ord>♻️红boss报告</ord>]武神红boss辅助触发(任意频道输入b或者谣言刷新时出现辅助按钮),导入|跳过,跳过
 #select ($triggerFoodFy)=[<hiz>续药飞翼</hiz>]古墓打坐续蕴象，练习领悟续冰心飞翼徽章，可改参数设置无鼓舞时停止练习,导入|跳过,跳过
 #select ($triggerXWZZ)=[<hiz>卸武自装</hiz>]被下武器后自动重新装备,导入|跳过,跳过
 #select ($triggerCMS)=[<hiz>帮战橙满伤</hiz>]满伤停止出招自动脱战(精简版只保留丐帮武当),导入|跳过,跳过
@@ -73,7 +73,7 @@
 
 // 特殊流程
 #input ($info3)=👇<hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz>👇,愉快游戏🎮
-#select ($flowSJXL)=[<hiz>书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
+#select ($flowSJXL)=[♻️<hiz>书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
 #select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
 #select ($flowGZM)=[<hiz>古宗门躺尸</hiz>],导入|跳过,跳过
 //#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
