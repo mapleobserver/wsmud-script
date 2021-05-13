@@ -1,5 +1,5 @@
 //~silent
-($localVer) = 2021051301
+($localVer) = 2021051302
 ($changeLog) = 🌟 皇城搜索书架香炉，可使用长生恢复内力、慈航加速搜索。
 ($flowName) = 书架香炉
 ($flowCode) = sjxl
@@ -112,7 +112,8 @@ stopstate
     go north;go east;lu sj;
     @tip 这里没啥可以看的了|似乎被人捷足先登|找到($zdsj)一排|没找到什么($zdsj)顺走的东西
   [if] (zdsj) != null
-    use {b书架}?
+    [if] "{b书架g}?" != "null"
+      use {b书架}?
     ($sj) = false
   [if] (zdxl) != null
     ($xl) = false
