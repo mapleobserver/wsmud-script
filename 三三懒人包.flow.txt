@@ -1,8 +1,8 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021051301
-($changeLog) = 🆕 优化版本检查过程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
+($localVer) = 2021051401
+($changeLog) = 🆕 优化显示效果。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
 ($flowPath) = 根文件夹
@@ -44,27 +44,23 @@
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
-#input ($info0)=👉<hiz>当前流程版本为(localVer)，以下有♻️标志的流程有自更新功能</hiz>👈,自动更新🚀
-#input ($info1)=👉<hiz>第一次使用前，如已有同名流程，请先手动删除</hiz>👈,挖矿愉快😊
-#select ($flowZDRC)=[♻️<hiz>自动日常</hiz>]师门、养精、追捕、打塔、副本、请安,导入|跳过,跳过
-#select ($flowZCTY)=[♻️<hiz>自创推演</hiz>]武神自创推演,导入|跳过,跳过
+#select ($flowZDRC)=🚀 <hiz>当前流程版本为(localVer)</hiz><br/>&nbsp*&nbsp🍥 <hiz>以下有♻️标志的流程有自更新功能</hiz><br/>&nbsp*&nbsp🍰 <hiz>第一次使用前，如已有同名流程，请先手动删除</hiz><br/>&nbsp*&nbsp[♻️<ord>自动日常</ord>]师门-追捕-打塔-副本-请安,导入|跳过,跳过
+#select ($flowZCTY)=⚠️ <ord>等级递增方式目前只适用于提升第1个词条</ord><br/>&nbsp*&nbsp[♻️<hiz>自创推演</hiz>]武神自创推演,导入|跳过,跳过
 //#select ($flowZDZB)=[♻️<hiz>自动追捕</hiz>]自动寻路追捕逃犯<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowZDWD)=[♻️<hiz>自动武道</hiz>]自动打武道塔<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
-#select ($flowKSSD)=[♻️<hiz>快速扫荡</hiz>]批量扫荡副本,导入|跳过,跳过
+#select ($flowKSSD)=🍺 <ord>副本</ord><br/>&nbsp*&nbsp[♻️<hiz>快速扫荡</hiz>]批量扫荡副本,导入|跳过,跳过
 #select ($flowTDFB)=[<hiz>偷渡副本</hiz>]快进快出副本积累次数,导入|跳过,跳过
-//#select ($flowJRRC)=[♻️<hiz>节日日常</hiz>]自动日常免费扫荡版<ord>(有免费扫荡活动才用)</ord>,导入|跳过,跳过
-#select ($flowYJSG)=[♻️<hiz>一键收割</hiz>]收割、安排随从(可自动组队随从去花园),导入|跳过,跳过
-#select ($flowZDCBT)=[<hiz>自动藏宝图</hiz>]自动使用藏宝图挖宝,导入|跳过,跳过
-#select ($flowLXDM)=[♻️<hiz>练习代码生成器</hiz>]自动生成练习代码并填入系统设置,导入|跳过,跳过
-#select ($flowYJXX)=[♻️<hiz>一键学习</hiz>]自动学习门派技能,导入|跳过,跳过
-#select ($flowJQLX)=[♻️<hiz>精确练习</hiz>]自动练习技能,导入|跳过,跳过
+#select ($flowYJXX)=⛩ <ord>门派技能</ord><br/>&nbsp*&nbsp[♻️<hiz>一键学习</hiz>]自动学习门派技能,导入|跳过,跳过
 #select ($flowMPJJ)=[♻️<hiz>门派进阶</hiz>]门派武功自动进阶,导入|跳过,跳过
+#select ($flowLXDM)=🍔 <ord>练习技能</ord><br/>&nbsp*&nbsp[♻️<hiz>练习代码生成器</hiz>]自动生成练习代码并填入系统设置,导入|跳过,跳过
+#select ($flowJQLX)=[♻️<hiz>精确练习</hiz>]自动练习技能,导入|跳过,跳过
+#select ($flowYJSG)=🌱 <ord>杂务</ord><br/>&nbsp*&nbsp[♻️<hiz>一键收割</hiz>]收割、安排随从(可自动组队随从去花园),导入|跳过,跳过
+#select ($flowZDCBT)=[<hiz>自动藏宝图</hiz>]自动使用藏宝图挖宝,导入|跳过,跳过
 #select ($flowYZDY)=[<hiz>研制丹药</hiz>]自动研制绿蓝黄紫橙丹药和突破丹,导入|跳过,跳过
 
 // 触发
-#input ($info2)=👇<hiz>以下是触发</hiz>👇,愉快游戏🎮
-#select ($triggerRedBoss)=[<ord>♻️红boss报告</ord>]武神红boss辅助触发(任意频道输入b或者谣言刷新时出现辅助按钮),导入|跳过,跳过
+#select ($triggerRedBoss)=🥕 <ord>触发</ord><br/>&nbsp*&nbsp[<ord>♻️红boss报告</ord>]武神红boss辅助触发，任意频道输入b或者谣言刷新时出现辅助按钮,导入|跳过,跳过
 #select ($triggerFoodFy)=[<hiz>续药飞翼</hiz>]古墓打坐续蕴象，练习领悟续冰心飞翼徽章，可改参数设置无鼓舞时停止练习,导入|跳过,跳过
 #select ($triggerXWZZ)=[<hiz>卸武自装</hiz>]被下武器后自动重新装备,导入|跳过,跳过
 #select ($triggerCMS)=[<hiz>帮战橙满伤</hiz>]满伤停止出招自动脱战(精简版只保留丐帮武当),导入|跳过,跳过
@@ -72,12 +68,9 @@
 #select ($triggerXYMJG)=[<hiz>襄阳满军功</hiz>]襄阳打满500军功后自动清包撤离(可自己删减是否等蒙哥),导入|跳过,跳过
 
 // 特殊流程
-#input ($info3)=👇<hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz>👇,愉快游戏🎮
-#select ($flowSJXL)=[♻️<hiz>书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
+#select ($flowSJXL)=🍑 <hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz><br/>&nbsp*&nbsp[♻️<hiz>书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
 #select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
 #select ($flowGZM)=[<hiz>古宗门躺尸</hiz>],导入|跳过,跳过
-//#select ($flowCHQCM)=[<hiz>慈航七重门</hiz>]自动走七重门,导入|跳过,跳过
-//#select ($flowZSDJM)=[<hiz>战神殿解谜</hiz>]战神殿解谜进门,导入|跳过,跳过
 
 #config
 ($USE_kswd)=null
