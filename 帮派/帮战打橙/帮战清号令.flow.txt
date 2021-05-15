@@ -62,7 +62,7 @@ $startpfm
         @await 500
 [else if] {r岳不群}? != null
     @await 500
-    [if] ($hsover) == true
+    [if] (hsover) == true
         [if] (BPZact) == 闭关
             $zdwk
         [else]
