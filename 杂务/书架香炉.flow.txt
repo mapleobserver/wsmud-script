@@ -1,5 +1,5 @@
 //~silent
-($localVer) = 2021051302
+($localVer) = 2021053001
 ($changeLog) = 🌟 皇城搜索书架香炉，可使用长生恢复内力、慈航加速搜索。
 ($flowName) = 书架香炉
 ($flowCode) = sjxl
@@ -123,15 +123,16 @@ stopstate
       [continue]
   @await 500
   $zdwk
+  @wait 5000
   [if] (cs) = true
-    @wait 10000
-    @cd force.zhen
-    ($force0) = (:kf_nei)
-    stopstate;enable force changshengjue
-    @perform force.zhen
-    @until (:cd force.zhen)==true
-    enable force (force0)
-    $zdwk
+    [if] (HCcihang)!= 不使用 ||(:mpPer) <= 0.5
+        @cd force.zhen
+        ($force0) = (:kf_nei)
+        stopstate;enable force changshengjue
+        @perform force.zhen
+        @until (:cd force.zhen)==true
+        enable force (force0)
+        $zdwk
   [if] !(sj) && !(xl)
     [exit]
   [if] (HCcycle) == 否
