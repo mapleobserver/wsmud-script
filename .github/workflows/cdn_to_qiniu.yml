@@ -13,7 +13,6 @@ jobs:
         region: cn-south-1
         bucket: wsmud
         exclude: .github,.vscode,.DS_Store,.gitignore
-        dist: public
       env:
         UPTOC_UPLOADER_AK: ${{ secrets.UPTOC_UPLOADER_QINIU_AK }}
         UPTOC_UPLOADER_SK: ${{ secrets.UPTOC_UPLOADER_QINIU_SK }}
