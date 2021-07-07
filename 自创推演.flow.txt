@@ -1,7 +1,7 @@
 //~silent
-//基于原版修改
-($localVer) = 2021042301
-($changeLog) = 🆕 优化版本检查过程。🌟 1.香炉自动补充和递增。2.推演计数方式新增【根据等级递增】功能。3.新增【出特殊词条后闭关】功能。4.修复bug。
+//基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
+($localVer) = 2021070701
+($changeLog) = 🆕 新增和优化多项推演功能。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.推演时可开启自动重连。5.增加停止推演按钮（师门按钮旁）。6.语音提醒。
 ($flowName) = 自创推演
 ($flowCode) = zcty
 ($flowPath) = 根文件夹
@@ -43,6 +43,7 @@
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
+// 流程
 @cmdDelay 0
 [if] (ZCFood) == null
   ($ZCFood)=是
@@ -50,10 +51,6 @@
   ($ZCFy)=是
 [if] (ZCSkill) == null
   ($ZCSkill)=内功
-[if] (ZCNumType) == null
-  ($ZCNumType)=保持不变
-[if] (ZCNum) == null
-  ($ZCNum)=4
 [if] (ZCMaxqn) == null
   ($ZCMaxqn)=100000
 [if] (ZCProp) == null
@@ -64,51 +61,64 @@
   ($ZCXlu)=无
 [if] (ZCxl) == null
   ($ZCxl)=是
+[if] (TYPriorNum) == null || (TYPriorNum) == 10
+  ($TYPriorNum)=平均
+[if] (ZCEntryLv) == null
+  ($ZCEntryLv)=0
+[if] (ZCAlertType) == null
+  ($ZCAlertType)=关闭
+[if] (ZCAlertWay) == null
+  ($ZCAlertWay)=提示音
 
-#select ($zcEntry)=<hiz>重新设定词条（开启前先选择推演部位👇）</hiz>,开启|关闭,关闭
+#select ($zcEntrySet)=当前词条设置：<br/>&nbsp*&nbsp<hiz>如果要重新设定词条（开启前先选择推演部位👇）</hiz>,正常推演|重设词条|清空重推,正常推演
 #select ($ZCSkill)=要推演的技能部位,内功|鞭法|棍法|剑法|刀法|杖法|招架|拳脚|暗器|轻功,(ZCSkill)
-#select ($zcReset)=⚠️<ord>重置推演部位</ord>（清除已有词条重新开始）⚠️,是|否,否
+#select ($TYPriorNum)=推演方式提供两种选择：<br/>&nbsp*&nbsp1️⃣ 平均提升所有词条等级；<br/>&nbsp*&nbsp2️⃣ 指定优先推演指定词条（从上到下6个词条选1个）<br/>&nbsp*&nbsp请选择推演方式,平均|1|2|3|4|5|6,(TYPriorNum)
+#input ($ZCEntryLv)=词条限定等级（所有或指定词条推到该等级后停止，填0为不限制）,(ZCEntryLv)
+#input ($ZCProp)=<hiz>上次普通词条设置为：(ZCProp)</hiz><br/>&nbsp*&nbsp普通词条(完全匹配，用|隔开，限百分比后加%，限非百分比加d),(ZCProp)
+#input ($ZCSpc)=特殊词条(模糊匹配),(ZCSpc)
+#select ($ZCxl)=<hiz>出特殊词条后闭关</hiz>,是|否,(ZCxl)
 #select ($ZCFood)=冰心,是|否,(ZCFood)
 #select ($ZCFy)=飞翼,是|否,(ZCFy)
-#select ($ZCxl)=出特殊词条后闭关,是|否,(ZCxl)
-#input ($ZCProp)=普通词条(完全匹配，|隔开，限定只拿百分比后面加%),(ZCProp)
-#input ($ZCSpc)=特殊词条(模糊匹配),(ZCSpc)
 #select ($ZCXlu)=香炉,无|沉香木鼎|麝香铜鼎|龙涎香熏|龙脑古鼎,(ZCXlu)
-#select ($ZCNumType)=选【等级递增】时计数值可设定为词条等级的下一级。<br/>&nbsp*&nbsp比如现在词条等级为50，计数就设51。<br/>&nbsp*&nbsp流程一开始会先1跳1停直到词条升级再按递增方式推演。<br/>&nbsp*&nbsp计数方式,根据等级递增|保持不变,(ZCNumType)
-#input ($ZCNum)=计数,(ZCNum)
 #input ($ZCMaxqn)=总消耗潜能(万),(ZCMaxqn)
+#select ($relogin)=<hio>开启自动重连防止掉线</hio>,开启|关闭,开启
+#select ($ZCAlertType)=推出词条和结束时发出通知,全部通知|结束时通知|关闭,(ZCAlertType)
+#select ($ZCAlertWay)=通知方式,语音播报|提示音,(ZCAlertWay)
 #config
 
-[if] (zcEntry)==开启
+// 配置词条
+[if] (zcEntrySet)==重设词条
   [if] (ZCSkill)==内功
-    ($propAry)=臂力|命中|攻击%|命中%|最终伤害%|忽视对方防御%|绝招冷却时间%|暴击%|练习效率%|攻速%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|绝招释放时间%|学习效率%|打坐效率%|攻击|绝招冷却时间|攻速|绝招释放时间|忙乱|根骨|身法|悟性|防御|招架|躲闪
-    ($spcAry)=吸血（太玄）|不灭（混沌）|战神|反震|守护|剑心
+    ($propAry)=不推演|臂力d|命中d|攻击%|命中%|最终伤害%|忽视对方防御%|绝招冷却时间%|暴击%|练习效率%|攻击速度%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|绝招释放时间%|学习效率%|打坐效率%|攻击d|绝招冷却时间d|攻击速度d|绝招释放时间d|忙乱d|根骨d|身法d|悟性d|防御d|招架d|躲闪d
+    ($spcAry)=不推演|吸血（太玄）|不灭（混沌）|战神|反震|守护|剑心
   [else if] (ZCSkill)==鞭法 || (ZCSkill)==棍法 || (ZCSkill)==剑法 || (ZCSkill)==刀法 || (ZCSkill)==杖法 || (ZCSkill)==拳脚 || (ZCSkill)==暗器
-    ($propAry)=攻击|命中|臂力|攻击%|命中%|最终伤害%|忽视对方防御%|暴击%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|根骨|身法|悟性|防御|招架|躲闪
-    ($spcAry)=弱化|溅射|吸血|穿透|无情|嗜血|内伤（入魔）
+    ($propAry)=不推演|攻击d|命中d|臂力d|攻击%|命中%|最终伤害%|忽视对方防御%|暴击%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|根骨d|身法d|悟性d|防御d|招架d|躲闪d
+    ($spcAry)=不推演|弱化|溅射|吸血|穿透|无情|嗜血|内伤（入魔）
   [else if] (ZCSkill)==招架
-    ($propAry)=攻击|命中|臂力|命中%|根骨|身法|悟性|防御|招架|躲闪|暴击伤害%|内力消耗%|练习效率%|学习效率%|打坐效率%|防御%|招架%|躲闪%|气血%
-    ($spcAry)=反击（移花）|乾坤|纵横
+    ($propAry)=不推演|攻击d|命中d|臂力d|命中%|根骨d|身法d|悟性d|防御d|招架d|躲闪d|暴击伤害%|内力消耗%|练习效率%|学习效率%|打坐效率%|防御%|招架%|躲闪%|气血%
+    ($spcAry)=不推演|反击（移花）|乾坤|纵横
   [else if] (ZCSkill)==轻功
-    ($propAry)=攻击|臂力|命中|命中%|防御|招架|躲闪|根骨|身法|悟性|防御%|招架%|躲闪%|气血%|暴击伤害%|内力消耗%|练习效率%|学习效率%|打坐效率%
-    ($spcAry)=反击|灵动|专注
-  #input ($info)= <hiz>当前选择部位：</hiz><ord>👉(ZCSkill)👈</ord>,🐱
-  #select ($entry1)=普通词条1,(propAry),(entry1)
+    ($propAry)=不推演|攻击d|臂力d|命中d|命中%|防御d|招架d|躲闪d|根骨d|身法d|悟性d|防御%|招架%|躲闪%|气血%|暴击伤害%|内力消耗%|练习效率%|学习效率%|打坐效率%
+    ($spcAry)=不推演|反击|灵动|专注
+  #select ($entry1)=<hiz>当前选择部位：</hiz><ord>👉(ZCSkill)👈</ord><br/>&nbsp*&nbsp普通词条1,(propAry),(entry1)
   #select ($entry2)=普通词条2,(propAry),(entry2)
   #select ($entry3)=普通词条3,(propAry),(entry3)
   #select ($entry4)=普通词条4,(propAry),(entry4)
-  #select ($entry5)=普通词条5（有特殊词条可选无）,无|(propAry),(entry5)
-  #select ($entryspc)=特殊词条（不需要则选无）,无|(spcAry),(entryspc)
+  #select ($entry5)=普通词条5（有特殊词条可选不推演）,(propAry),(entry5)
+  #select ($entryspc)=特殊词条（不需要则选不推演）,(spcAry),(entryspc)
   #config
-  [(entry1)==null]($entry1)=暂时不推
-  [(entry2)==null]($entry2)=暂时不推
-  [(entry3)==null]($entry3)=暂时不推
-  [(entry4)==null]($entry4)=暂时不推
+
+  // 处理词条设置
+  [(entry1)==null]($entry1)=不推演
+  [(entry2)==null]($entry2)=不推演
+  [(entry3)==null]($entry3)=不推演
+  [(entry4)==null]($entry4)=不推演
+  [(entryspc)==null]($entryspc)=不推演
   ($ZCProp) = (entry1)|(entry2)|(entry3)|(entry4)
-  [if] (entry5) != 无 && (entry5) != null
+  [if] (entry5) != 不推演 && (entry5) != null && (entryspc) == 不推演
     ($ZCProp) = (ZCProp)|(entry5)
-  [if] (entryspc)==无 || (entryspc)==null
-    ($ZCSpc) = 暂时不推
+  [if] (entryspc)==不推演
+    ($ZCSpc) = 不推演
   [else]
     [if] (entryspc)==吸血（太玄）
       ($ZCSpc)=攻击力的内功伤害
@@ -148,9 +158,22 @@
       ($ZCSpc)=躲闪成功后增加
     [else if] (entryspc)==专注
       ($ZCSpc)=战斗中提升躲闪
+  @await 500
+  @print 设定完毕，准备重启流程...
   @js ManagedPerformerCenter.start("自创推演", FlowStore.get("自创推演"));
+  @print 重启流程。
   [exit]
+
+// 开启自动重连防止掉线
+[if] (relogin) == 开启
+  @js WG.zmlfire({"name":"自动重连","zmlRun":"GM_setValue(role+'_auto_relogin','开')","zmlShow":0,"zmlType":"2"})
+
 stopstate
+
+// 平均方式推演预处理
+[if] (TYPriorNum)==平均
+  ($TYPriorNum) = 10
+
 // 卸掉已装备自创部位
 [if] (:kf_nei) == (:id)
   enable force none
@@ -173,6 +196,7 @@ stopstate
 [if] (:kf_an) == (:id)
   enable throwing none
 
+// 设定技能位置
 ($skill)=force
 [if] (ZCSkill) == 鞭法
   ($skill)=whip
@@ -193,8 +217,14 @@ stopstate
 [else if] (ZCSkill) == 刀法
   ($skill)=blade
 
-// 是否重置推演部位
-[if] (zcReset) == 是
+// 获取自创秘籍id
+[while] (bookID)== null
+  zc typedel (skill)
+  @tip 移除($tag1)>($book)<($tag2)类型
+  ($bookID)={b(book)}?
+
+// 是否清空已有词条重新推演
+[if] (zcEntrySet) == 清空重推
   @await 2000
   @print <hig>根据设置，重置<hio>【(ZCSkill)】</hio>部位词条。</hig>
   zc typedel (skill)
@@ -208,17 +238,30 @@ stopstate
 // 分解词条数组
 [if](ZCProp)!=null&&(ZCProp)!=none
   @js ($zcp)=("\""+"(ZCProp)"+"\"").replace(/\|/g,"\"|\"").split("|")
-// 计数赋值
-($tyNum) = (ZCNum)
-// 开始
+($logStart) = 即将开始推演【(ZCSkill)】，设定词条为【(ZCProp)|(ZCSpc)】
+@js WG.Send("tm (logStart)")
+@print <hic>(logStart)</hic>
+// 放香炉
 stopstate
 [if] (ZCXlu)!=无
   ($xluNow) = (ZCXlu)
   use {b(xluNow)}?
   @await 500
+
+// 当前一轮结束后是否停止（false停止），生成停止推演按钮
+($TYEnable)=true
+@js $(`.ty_button`).remove();$(`.sm_button`).before(`<span class='zdy-item ty_button'><hio>停止推演</hio></span>`)
+@js $('.ty_button').on('click', function(){ToRaid.perform(`//~silent\n($TYEnable)=false\n@print <ord>⚠️ 下一次升级后停止推演。</ord>\ntm ⚠️ 下一次升级后停止推演。`);})
+@print <hio>👇 点击【停止推演】将在词条下一次升级后停止推演。</hio>
+
+// 开启潜能监控
+@js WG.remove_hook(WG.zcinfo_hook);WG.zcinfo_hook=WG.add_hook('text', data=>data.msg.indexOf('增加其它可装备类型')>=0?WG.zcinfo=data.msg:0)
+@js WG.remove_hook(WG.qn_hook);WG.qn_hook=WG.add_hook('dialog', data=>data.dialog=='score'?WG.qn=data.pot:-1)
+
+// 开始
 ($sum)=0
-// 判断香炉情况，自动递增香炉等级。
 [while] true
+  // 判断香炉情况，自动递增香炉等级。
   [if] (:status xlu,(:id))==false
     [if] (ZCXlu)!=无
       get {r(xluNow)}?
@@ -239,94 +282,134 @@ stopstate
             [break]
         [else]
           [break]
-// 检查冰心飞翼
+  // 检查冰心飞翼
   [if] (ZCFood) == 是 && (:status food)==false && {b冰心丹}? != null
     use {b冰心丹}?
   [if] (ZCFy) == 是 && (:status fy)==false
     use (:eq0)
-// 开始推演
-  zc typelv (skill)
-  ($prop)=null
-  @tip 盘膝坐下|属性：($gd)<cyn>($prop)<
+
+  // 计算已消耗潜能、已消耗但尚未应用到词条上的剩余潜能、升到下一级所需潜能
+  zc typedel (skill)
+  @tip 武道书，($real_cost)潜能，
+  packitem zc2 (bookID)
+  @await 1000
+  @js ($entrys)=WG.zcinfo.match(/可装备为(ZCSkill)(.+?)可装备为|可装备为(ZCSkill)(.+?)增加其它可装备类型/)[0].match(/\((\d+)\)/g).map(x=>parseInt(x.slice(1, -1)))
+  @js ($cost)=eval([(entrys)].map(x=>x*(x-1)*50000).join("+"))
+  ($cost) = (cost) + 100000
+  [if] (skill) == force && (real_cost) == 0
+    ($cost) = (cost) + 100000
+  @js ($rest_qn)='(real_cost)'-'(cost)'
+  @js ($entry_num)=let l=[(entrys)].length;l<(TYPriorNum)?l:(TYPriorNum)
+  @js ($next_qn)=[(entrys)]['(entry_num)'-1]*100000-'(rest_qn)'
+  // 指定词条等级
+  @js ($entrys_len) = [(entrys)].length
+  [if] (TYPriorNum)==10
+    [if] (entrys_len)==6
+      @js ($entrys_last)=[(entrys)][5]
+  [else]
+    @js ($entry_last)=[(entrys)]['(TYPriorNum)'-1]
+  [if] (entrys_last) >= (ZCEntryLv)
+    ($logLv) = 已达到预设词条等级【(ZCEntryLv)】，停止推演。
+    @print <hio>(logLv)</hio>
+    tm (logLv)
+    ($finish)=3
+
+  // 开始推演
+  [if] (finish) == null
+    zc typelv (skill)
+    ($prop)=null
+    @tip 盘膝坐下|属性：($gd)<cyn>($prop)<
   [if](prop)!=null
     [if](sum)==1
       ($sum)=2
     ($add)=-1
-// 判断是否添加新词条
+    // 判断是否添加新词条
     [if](ZCProp)!=null&&(ZCProp)!=none
       @js ($num)=[(zcp)].length
       [while] (num)>0
         ($num)=(num)-1
         @js ($op)=[(zcp)][(num)]
-        @js ($pe)="(op)".indexOf("%")
+        @js ($pe)="(op)".search(/.*%/)
         [if] (pe)!=-1
           @js ($op)="(op)".replace("%","")
           @js ($add)="(prop)".search(/(op)：.*%/)
         [else]
-          @js ($add)="(prop)".indexOf("(op)"+"：")
+          @js ($pe)="(op)".search(/.*d/)
+          [if] (pe)!=-1
+            @js ($op)="(op)".replace("d","")
+            @js ($ps)="(prop)".search(/(op)：.*%/)
+            [if] (ps)==-1
+              @js ($add)="(prop)".indexOf("(op)"+"：")
+          [else]
+            @js ($add)="(prop)".indexOf("(op)"+"：")
         [if] (add) !=-1
           [break]
     [if] (add)==-1 && (ZCSpc) !=null
       @js ($add)="(prop)".indexOf("(ZCSpc)")
       [if] (add) !=-1 && (ZCxl) == 是
         ($xl)=1
+    // 添加或放弃词条
     [if] (add) !=-1
       zc prop (skill) add
       @tip 增加属性|不能再添加($finish)
-      @js WG.Send("tm 💡添加[(prop)]")
       [if] (finish) == null
-        ($newprop) = new
+        ($logProp) = 添加词条【(prop)】
       [else]
-        ($newprop) = full
+        ($logProp) = 词条已满，无法添加【(prop)】
+      @js WG.Send("tm 💡 (logProp) (:hour):(:minute):(:second)")
+      @print <hio>(logProp)</hio>
+      [if] (ZCAlertType)==全部通知
+        [if] (ZCAlertWay)==语音播报
+          $tts (:name)，(logProp)
+        [else if] (ZCAlertWay)==提示音
+          @beep
     [else]
       zc prop (skill) ban
-      @js WG.Send("tm 放弃[(prop)]")
-// 获取潜能消耗值
+      @js WG.Send("tm 放弃词条【(prop)】 (:hour):(:minute):(:second)")
+  // 潜能消耗值
   [if](sum)==2
     zc typedel (skill)
     @tip 武道书，($qn)潜能，
-    tm (ZCSkill)已推演~(qn)潜能
-    [if] (newprop) == new
-      @print <hig>💡(:hour):(:minute):(:second) 添加[<hio>(prop)</hio>]，已推演~(qn)潜能</hig>
-    [else if] (newprop) == full && (finish) != null
-      @print <hig>⚠️(:hour):(:minute):(:second) <ord>词条已满</ord>无法添加[<hio>(prop)</hio>]，已推演~(qn)潜能</hig>
-    ($newprop) = null
     [if] (qn)>=(max) || (xl) == 1
       ($finish)=1
     ($sum)=0
-// 已推出特殊词条后的动作
+  // 已推出特殊词条后的动作
   [if] (xl) == 1
-    tm 已推出特殊词条，停止推演。
-    @print <ord>已推出特殊词条，停止推演。</ord>
+    ($log) = 已推出特殊词条，停止推演。
+    tm (log)
+    @print (log)
     [break]
-// 循环推演
+  // 循环推演
   ($num) =1
+  tm 自创(ZCSkill)潜能【(real_cost)】，未使用潜能【(rest_qn)】，词条等级【(entrys)】 (:hour):(:minute):(:second);
+  tm 推演(ZCSkill)第【(entry_num)】条属性，升级需要【(next_qn)】潜能 (:hour):(:minute):(:second);
+  score
+  @await 500
+  @js ($start_qn)=WG.qn
   [while] (:state)==推演
     @tip 有了更深入的理解|潜能不够($finish)
-    say 已推演(num)次 (:hour):(:minute):(:second)
-    ($num)=(num)+1
-    [if] (ZCNumType)==根据等级递增 && (levelup)!=获得
-      ($tyNum)=1
-    [else if] (ZCNumType)==根据等级递增 && (levelup)==获得
-      //@print (levelup)
-      //($levelup)=持续
-      //($num)=(ZCNum)+1
-      ($tyNum)=(ZCNum)
-    //@print num:(num),tyNum:(tyNum),ZCNum:(ZCNum)
-    [if] (num)>(tyNum) || (finish)!=null
-      [if] (tyNum)>=(ZCNum) && (ZCNumType)==根据等级递增 && (levelup)==获得
-        ($ZCNum)=(ZCNum)+1
-        tm 词条已升级，下一轮计数为(ZCNum)。
-      ($num) =0
+    score
+    @await 500
+    @js ($now_qn)=WG.qn
+    ($done_qn)=(start_qn)-(now_qn)
+    say 已推演(done_qn)潜能 (:hour):(:minute):(:second)
+    [if] (done_qn) >= (next_qn) || (finish) != null
+      ($num) = 0
       [if](sum)==0
         ($sum)=1
       stopstate
-      @tip 品阶($levelup)实质提升|属性($levelup)提升
       [break]
-
-  [if](finish)!= null
+  
+  // 根据TYEnable判断是否继续推演
+  [if] (TYEnable)==false || (finish)!=null
     [break]
 
 [if] (ZCXlu)!=无
   get {r(ZCXlu)}?
 xiulian
+[if] (ZCAlertType) != 关闭
+  [if] (ZCAlertWay)==语音播报
+    $tts (:name)，推演已结束
+  [else if] (ZCAlertWay)==提示音
+    @beep
+@js WG.remove_hook(WG.zcinfo_hook);WG.remove_hook(WG.qn_hook);$(`.ty_button`).remove();
