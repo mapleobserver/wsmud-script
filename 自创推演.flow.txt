@@ -311,7 +311,7 @@ stopstate
     [if] (entrys_len)==6
       @js ($entrys_last)=[(entrys)][5]
   [else]
-    @js ($entry_last)=[(entrys)]['(priorNum)'-1]
+    @js ($entrys_last)=[(entrys)]['(priorNum)'-1]
   [if] (entrys_last) != null && (entrys_last) >= (ZCEntryLv) && (ZCEntryLv) != 0 && (ZCEntryLv) != null
     ($logLv) = 已达到预设词条等级【(ZCEntryLv)】，停止推演。
     @print <hio>(logLv)</hio>
