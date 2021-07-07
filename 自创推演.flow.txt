@@ -7,6 +7,9 @@
 ($flowPath) = 根文件夹
 ($flowFinder) = 根文件夹
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+[if] (UPnum) = 1
+  @print 未获取到最新版本，使用备用地址尝试...
+  ($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)
