@@ -1,15 +1,12 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
-($localVer) = 2021070705
+($localVer) = 2021070901
 ($changeLog) = 🆕 新增和优化多项推演功能。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.增加停止推演按钮（师门按钮旁）。7.语音提醒。
 ($flowName) = 自创推演
 ($flowCode) = zcty
 ($flowPath) = 根文件夹
 ($flowFinder) = 根文件夹
 ($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
-[if] (UPnum) = 1
-  @print 未获取到最新版本，使用备用地址尝试...
-  ($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)
@@ -17,6 +14,9 @@
   [if] (UPnum) == null
     ($UPnum) = 0
   [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
     ($UPnum) = (UPnum) + 1
     [if] (flowPath) != 根文件夹 && (flowPath) != null
       ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
@@ -413,7 +413,7 @@ stopstate
     [break]
 
 [if] (ZCXlu)!=无
-  get {r(ZCXlu)}?
+  get {r(xluNow)}?
 xiulian
 [if] (ZCAlertType) != 关闭
   [if] (ZCAlertWay)==语音播报
