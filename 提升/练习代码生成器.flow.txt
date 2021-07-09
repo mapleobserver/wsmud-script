@@ -1,8 +1,8 @@
 //~silent
-// 生成练习代码，自动填入系统设置中，代码长度最多200。
+// 生成练习代码，自动填入系统设置中，代码长度最多400。
 // 四区白三三
-($localVer) = 2021042301
-($changeLog) = 🆕 优化版本检查过程。🌟 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
+($localVer) = 2021070901
+($changeLog) = 🆕 新增批量指定等级选项。🌟 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
 ($flowName) = 练习代码生成器
 ($flowCode) = lxdm
 ($flowPath) = 提升
@@ -15,6 +15,9 @@
   [if] (UPnum) == null
     ($UPnum) = 0
   [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
     ($UPnum) = (UPnum) + 1
     [if] (flowPath) != 根文件夹 && (flowPath) != null
       ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
@@ -56,7 +59,7 @@
 
 //选择练习方式
 [(LXtype)==null]($LXtype)=练至上限
-#select ($LXtype) = 练习方式,指定等级|练至上限,(LXtype)
+#select ($LXtype) = 练习方式,批量指定等级|指定等级|练至上限,(LXtype)
 #config
 ($reset) = true
 [while] true
@@ -77,7 +80,10 @@
   [(fb)!=-1]($lx_after)=不加
   #select ($lx_after) = 是否添加练习结束后命令,不加|闭关|挖矿,(lx_after)
   //选择需要练习的技能
-  #input ($target_level) = 当前技能上限,(level)
+  [if] (LXtype) == 批量指定等级
+    #input ($target_level) = 当前方式为<hiz>(LXtype)</hiz>，技能上限 (level) <br/>&nbsp*&nbsp<ord>请修改指定等级</ord>,(level)
+  [else]
+    #input ($target_level) = 当前技能上限,(level)
   ($_i) = 0
   [while] (_i) < 62
     @js ($s(_i)) = $(".skill-item").eq('(_i)').attr('skid')
@@ -98,13 +104,19 @@
 
   // 生成代码
   ($_j) = 0
-  @print (s(_j)),(l(_j))
+  //@print (s(_j)),(l(_j))
   [while] (_j) < (_i)
     [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
       ($type) = base
     [else]
       ($type) = skill
-    [if] (LXtype) == 指定等级
+    [if] (LXtype) == 批量指定等级
+      [if] (target_level) < (level)
+        [if] (k(_j)) != 跳过
+          @js ($l(_j)) = (target_level)
+      [else]
+        ($LXtype) = 练至上限
+    [if] (LXtype) == 指定等级 || (LXtype) == 批量指定等级
       [if] (l(_j)) != null && (l(_j)) > (ln(_j))
         [if] (list) != null
           [if] (type) == base

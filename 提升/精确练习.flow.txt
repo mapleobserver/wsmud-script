@@ -1,8 +1,8 @@
 //~silent
 // 挂机自动练习
 // 四区白三三
-($localVer) = 2021042301
-($changeLog) = 可自定义练习结束后执行命令；新增手动填写技能的功能，按从上到下顺序练习；可自定义练习技能；可批量关闭触发并在练习结束后重新开启；原地防掉线功能。
+($localVer) = 2021070901
+($changeLog) = 🆕 新增批量指定等级选项。🌟 可自定义练习结束后执行命令；新增手动填写技能的功能，按从上到下顺序练习；可自定义练习技能；可批量关闭触发并在练习结束后重新开启；原地防掉线功能。
 ($flowName) = 精确练习
 ($flowCode) = jqlx
 ($flowPath) = 提升
@@ -15,6 +15,9 @@
   [if] (UPnum) == null
     ($UPnum) = 0
   [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
     ($UPnum) = (UPnum) + 1
     [if] (flowPath) != 根文件夹 && (flowPath) != null
       ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
@@ -61,16 +64,15 @@
   ($LXEnd) = 原地防掉线
   ($LXtts) = 打开
 [(OffLxTriggers) == null]($OffLxTriggers) = 续冰心,续飞翼,续药飞翼,鼓舞续药飞翼,续药飞翼徽章,补冰心,补飞翼
-[(Chiyao) == null]($Chiyao) = 否
-[(Feiyi) == null]($Feiyi) = 否
+[(Chiyao) == null]($Chiyao) = 是
+[(Feiyi) == null]($Feiyi) = 是
 [(LXEnd) == null]($LXEnd) = 闭关或挖矿
 [LXAfter] == null]($LXAfter) = $zdwk
 [(LXtts) == null]($LXtts) = 关闭
 [(Type) == null]($Type) = 练至上限
 
 //选择练习方式、其它选项
-#input ($info) = <ord>当前技能上限为(level)级</ord>,👇👇👇
-#select ($Type) = 练习方式,指定等级|练至上限|手动填写,(Type)
+#select ($Type) = <ord>当前技能上限为(level)级</ord><br/>&nbsp*&nbsp练习方式,批量指定等级|指定等级|练至上限|手动填写,(Type)
 #input ($LXBefore) = 练习前执行命令(用英文;隔开),(LXBefore)
 #input ($OffLxTriggers)=关闭触发(多个触发名字用英文逗号隔开),(OffLxTriggers)
 #select ($LXMap) = 练习地点,住房-练功房|帮会-练功房|原地不动,(LXMap)
@@ -82,10 +84,12 @@
 #config
 
 //获取技能列表、根据练习方式显示不同选项
-[if] (Type) == 指定等级 || (Type) == 练至上限
+[if] (Type) == 指定等级 || (Type) == 练至上限 || (Type) == 批量指定等级
   #input ($info1) = 练习方式：<ord>(Type)</ord>；上限等级：<ord>(level)</ord>；吃冰心丹：<ord>(Chiyao)</ord>；补飞翼：<ord>(Feiyi)</ord>,👇👇👇
   [if] (Type) == 指定等级
     #input ($info2) = <ord>需要练习哪些技能，在右边输入框中填入指定等级即可，不练习的保持不变。</ord>,👇👇👇
+  [if] (Type) == 批量指定等级
+    #input ($batchLxLevel) = 批量练习到指定等级,(level)
   ($_i) = 0
   [while] (_i) < 62
     @js ($s(_i)) = $(".skill-item").eq('(_i)').attr('skid')
@@ -167,7 +171,10 @@
 ($_j) = 0
 [while] (_j) < (_i)
   [if] (k(_j)) == 练习 || (manType) == 练至上限
-    @js ($l(_j)) = (level)
+    [if] (Type) == 批量指定等级
+      @js ($l(_j)) = (batchLxLevel)
+    [else]
+      @js ($l(_j)) = (level)
   [if] (l(_j)) != null && (l(_j)) > (ln(_j)) && (s(_j)) != null
     //技能id
     [if] (s(_j))==force || (s(_j))==unarmed || (s(_j))==dodge || (s(_j))==parry || (s(_j))==sword || (s(_j))==blade || (s(_j))==whip || (s(_j))==throwing || (s(_j))==staff || (s(_j))==club || (s(_j))==bite
