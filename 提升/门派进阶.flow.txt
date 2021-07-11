@@ -1,7 +1,7 @@
 //~silent
 // 自动领悟门派进阶书籍
 // 四区白三三
-($localVer) = 2021070201
+($localVer) = 2021071101
 ($changeLog) = 技能不足1000级时跳过。
 ($flowName) = 门派进阶
 ($flowCode) = mpjj
@@ -15,6 +15,9 @@
   [if] (UPnum) == null
     ($UPnum) = 0
   [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
     ($UPnum) = (UPnum) + 1
     [if] (flowPath) != 根文件夹 && (flowPath) != null
       ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
@@ -47,7 +50,7 @@
 [if] (lianxi_map) == null
   ($lianxi_map) = 住房-练功房
 [if] (chiyao) == null
-  ($chiyao) = 否
+  ($chiyao) = 是
 //获取门派数据
 @toolbar jh
 @toolbar score
@@ -93,6 +96,13 @@ stopstate
 $to (lianxi_map)
 //循环匹配技能
 ($num)=0
+<===
+tm 开启防掉线功能
+@print 开启防掉线功能
+[while] true
+  tm (:hour):(:minute):(:second) 正在进阶门派技能
+  @await 30000
+===>
 [while] (num) < 4
   ($fail) = null
   @toolbar jh
@@ -116,4 +126,6 @@ $to (lianxi_map)
         @beep
   ($num) = (num) + 1
 @recoverSSAuto
+[(:status food) == false && {b冰心丹}? != null]use {b冰心丹}?
+[(:status fy) == false]use (:eq0)
 dazuo
