@@ -2,7 +2,7 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021051201
+($localVer) = 2021071401
 ($changeLog) = 🆕 新增【阴阳谷偷渡】；🌟 call方式调用时，根据副本模式判断流程是否转为正常运行模式。武道塔快速模式新增天地诀回蓝选项。新增【古宗门遗址】副本和单独扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -16,6 +16,9 @@
   [if] (UPnum) == null
     ($UPnum) = 0
   [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
     ($UPnum) = (UPnum) + 1
     [if] (flowPath) != 根文件夹 && (flowPath) != null
       ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
@@ -552,7 +555,8 @@ stopstate
         [if] (wdlevel) >= (WudaoWaitCDLevel)
           @cd (WudaoWaitCDExp)
       [else if] (WudaoMode) == 快速模式
-        [if] (:mpPer) <= 0.2
+        [(wdfail) == null]($wdfail) = 0
+        [if] (:mpPer) <= 0.2 || (wdfail) > 3
           [if] (WudaoRenew) == null
             ($WudaoRenew) = 天地诀
           [if] (WudaoRenew) == 天地诀
@@ -581,6 +585,8 @@ stopstate
               @await 500
             @dazuo
             jh fam 9 start;go enter
+          [if] (wdfail) > 3
+            ($wdfail) = 0
           @await 2000
         //stopstate
         [if] (:hpPer) <= 0.01
@@ -592,8 +598,10 @@ stopstate
         @await 500
       @until (:combating) == false && (:free) == true && (:status faint) == false && (:status miss) == false
       [if] {r武道塔守护者}? != null
+        [(WudaoMode) == 快速模式]($wdfail) = (wdfail) + 1
         [continue]
       [else]
+        [(WudaoMode) == 快速模式]($wdfail) = 0
         ($wdlevel) = (wdlevel) + 1
         go up
     [if] (WudaoMode) == 正常模式 || (RCMode) == 春节模式
