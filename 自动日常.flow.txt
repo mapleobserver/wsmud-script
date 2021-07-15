@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021071401
-($changeLog) = 🆕 新增【阴阳谷偷渡】；🌟 call方式调用时，根据副本模式判断流程是否转为正常运行模式。武道塔快速模式新增天地诀回蓝选项。新增【古宗门遗址】副本和单独扫荡。
+($localVer) = 2021071501
+($changeLog) = 🆕 武道塔恢复方式新增【逆天道】。🌟 call方式调用时，根据副本模式判断流程是否转为正常运行模式。武道塔快速模式新增天地诀回蓝选项。新增【古宗门遗址】副本和单独扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -123,7 +123,7 @@
 [if] (WudaoBefore) == null
   ($WudaoBefore) = $eq 1
 #select ($WudaoMode)=武道塔模式<ord>(快速模式建议至少已有血刀九阴)</ord>,正常模式|快速模式|只打塔主,(WudaoMode)
-#select ($WudaoRenew)=<hiz>快速模式</hiz>恢复内力方式,武庙恢复|天地诀,(WudaoRenew)
+#select ($WudaoRenew)=<hiz>快速模式</hiz>恢复内力方式,武庙恢复|天地诀|逆天道,(WudaoRenew)
 #input ($WudaoBefore)=打塔前执行命令(用英文;隔开),(WudaoBefore)
 #input ($WudaoWaitCDExp)=打塔等待以下技能冷却,(WudaoWaitCDExp)
 #input ($WudaoWaitCDLevel)=从此层开始，等待技能冷却,(WudaoWaitCDLevel)
@@ -559,18 +559,23 @@ stopstate
         [if] (:mpPer) <= 0.2 || (wdfail) > 3
           [if] (WudaoRenew) == null
             ($WudaoRenew) = 天地诀
-          [if] (WudaoRenew) == 天地诀
+          [if] (WudaoRenew) != 武庙恢复
             ($wdforce)=(:kf_nei)
-            enable force changshengjue
-            [if] (:kf_nei) != changshengjue
+            [if] (WudaoRenew) == 天地诀
+              enable force changshengjue
+              ($renewSkill) = force.zhen
+            [else if] (WudaoRenew) == 逆天道
+              enable force nitiandao
+              ($renewSkill) = force.nian
+            [if] (:kf_nei) != changshengjue && (:kf_nei) != nitiandao
               ($WudaoRenew) = 武庙恢复
               [if] (wdforce) != null
                 enable force (wdforce)
               @print <hiy>无法装备长生诀，改回武庙恢复模式。</hiy>
             [else]
-              @cd force.zhen
-              @perform force.zhen
-              @tip 你的($less)不够，无法使用【天地决】|转瞬间重获新生
+              @cd (renewSkill)
+              @perform (renewSkill)
+              @tip 你的($less)不够，无法使用|转瞬间重获新生
               enable force (wdforce)
               [if] (less) != null
                 ($less) = null
