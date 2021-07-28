@@ -1,5 +1,5 @@
 //~silent
-($localVer) = 2021053001
+($localVer) = 20210728001
 ($changeLog) = 🌟 皇城搜索书架香炉，可使用长生恢复内力、慈航加速搜索。
 ($flowName) = 书架香炉
 ($flowCode) = sjxl
@@ -13,6 +13,9 @@
   [if] (UPnum) == null
     ($UPnum) = 0
   [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
     ($UPnum) = (UPnum) + 1
     [if] (flowPath) != 根文件夹 && (flowPath) != null
       ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
@@ -42,6 +45,14 @@
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
+//检测状态
+@js ($fbroom) = '(:room)'.indexOf('副本区域')
+[if] (fbroom) != -1 || (:state)==推演 || (:state)==领悟
+  ($alert_start) = 正在(:state)，停止流程！
+  [(fbroom) != -1]($alert_start) = 正在副本中，停止流程！
+  @js WG.SendCmd("tm (alert_start)")
+  @print <ord>(alert_start)</ord>
+  [exit]
 
 [if] (HCplan) == null
   ($HCplan) = 书架和香炉
@@ -78,15 +89,18 @@
 [if] (HCplan) == 只香炉
   ($sj) = false
   ($xl) = true
+
+($force0) = (:kf_nei)
+
 <---
 [if] (:mpPer) <= 0.2
   [if] (cs)
-    ($force0) = (:kf_nei)
+    ($force1) = (:kf_nei)
     enable force changshengjue
     @cd force.zhen
     @perform force.zhen
     @until (:cd force.zhen)==true
-    enable force (force0)
+    enable force (force1)
   [else]
     @renew
     [continue]
@@ -96,8 +110,14 @@ stopstate
   enable force (force)
 [while] (sj) || (xl)
   [if] (force) != null && (:status force)==false
+    @cd force.xin
     @perform force.xin
-    @until (:status force)==true
+    @tip 这里($cant)战斗|你晋入($jianxin)的无上道境
+    [if] (cant) != null
+      ($cant) = null
+      jh fam 0 start
+      @await 1000
+      @perform force.xin
   jh fam 0 start;psxk (HCposui)
   [if] (sj) && (xl)
     go west;go north;lu ding;
@@ -127,15 +147,19 @@ stopstate
   [if] (cs) = true
     [if] (HCcihang)!= 不使用 ||(:mpPer) <= 0.5
         @cd force.zhen
-        ($force0) = (:kf_nei)
+        ($force1) = (:kf_nei)
         stopstate;enable force changshengjue
         @perform force.zhen
         @until (:cd force.zhen)==true
-        enable force (force0)
+        enable force (force1)
         $zdwk
   [if] !(sj) && !(xl)
+    stopstate;enable force (force0)
+    $zdwk
     [exit]
   [if] (HCcycle) == 否
+    stopstate;enable force (force0)
+    $zdwk
     [exit]
   [if] (force) != null
     @cd force.xin
