@@ -1,5 +1,5 @@
 //~silent
-($localVer) = 20210728001
+($localVer) = 20210802001
 ($changeLog) = 🌟 皇城搜索书架香炉，可使用长生恢复内力、慈航加速搜索。
 ($flowName) = 书架香炉
 ($flowCode) = sjxl
@@ -164,6 +164,6 @@ stopstate
   [if] (force) != null
     @cd force.xin
   [else]
-    @print 等待15秒继续尝试。
-    @await 15000
+    @print 等待20秒继续尝试。
+    @await 20000
   stopstate
