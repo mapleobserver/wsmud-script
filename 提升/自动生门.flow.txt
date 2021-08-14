@@ -1,0 +1,72 @@
+// 四区 清和
+@cmdDelay 500
+
+#input ($swordName) = 使用的剑类武器名称,玉箫
+#select ($eqArmour) = 需要装备的衣服,软猬甲|曙光佛衣|无,软猬甲
+#select ($eqShoes) = 需要装备的鞋子,真武道靴|无,真武道靴
+#select ($eqOrnaments) = 需要装备的饰品,龙骨舍利|磐石护符|无,龙骨舍利
+#select ($force) = 使用的免伤内功,长生诀|其他|无,长生诀
+#select ($unarmed) = 使用的免伤拳脚,神照经|其他|无,神照经
+#select ($dodge) = 使用的免伤轻功,明玉功|其他|无,明玉功
+#select ($parry) = 使用的免伤招架,北冥神功|其他|无,无
+#config
+[if] (force) == 其他 || (unarmed) == 其他 || (dodge) == 其他 || (parry) == 其他
+  tm 请自行更换不在选项列表的技能，再重新打开流程，将该选项设为无。
+  [exit]
+
+
+stopstate
+$stoppfm
+
+[if] (force) == 长生诀
+  enable force changshengjue
+[if] (unarmed) == 神照经
+  enable unarmed shenzhaojing
+[if] (dodge) == 明玉功
+  enable dodge mingyugong
+[if] (parry) == 北冥神功
+  enable parry beimingshengong2
+[if] (eqArmour) != 无
+  eq {b(eqArmour)}?
+[if] (eqShoes) != 无
+  eq {b(eqShoes)}?
+[if] (eqOrnaments) != 无
+  eq {b(eqOrnaments)}?
+
+@wait 3000
+
+[if] (:weapon sword) == false
+  eq {b(swordName)}?
+[if] (:weapon sword) == false
+  tm 装备的武器不是剑类，自动退出流程。
+  [exit]
+
+@wait 3000
+
+// 装备唐诗剑法
+($sword0) = (:kf_jian)
+enable sword tangshijianfa
+[if] (:kf_jian) != tangshijianfa
+    tm (:name)的技能栏未找到唐诗剑法，已自动退出流程。
+    enable sword (sword0)
+    [exit]
+
+@wait 3000
+@renew
+@wait 3000
+cr chanzong/shanmen 1 0
+[while] (:combating) == false
+  @await 50
+  go north
+@perform sword.wu
+@tip 你似乎听到禅院内部有些异响，衣袂声起，几个压阵的僧人迅速向铜楼方向而去。
+go north;go northwest;jumpdown
+@liaoshang
+shengmen
+@tip 死了|恭喜你踏入($bingo)生门
+
+[if] (bingo) == null
+  tm (:name)免伤不足，请检查装备+技能是否达到了106免伤(面板90+)。
+[else]
+  tm 自动过生门已完成，将自动完成副本前往闭关。
+  cr over;$zdwk

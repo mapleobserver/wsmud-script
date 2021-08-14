@@ -1,0 +1,115 @@
+// 武当禅宗僧王线流程
+// 四区 清和
+
+#select ($stage) = 阶段,全自动|进本前|进本后|钟楼等待|打天僧,全自动
+#select ($yao) = 要使用的丹药,黄玄灵|紫玄灵|黄凝神|紫凝神,紫玄灵
+#config
+
+// 确定丹药数量
+[if] (yao) == 黄玄灵 && {b玄灵丹y#}? == null || {b玄灵丹y#}? <= 5
+    tm 背包内黄玄灵丹数量不足，建议至少6颗。
+    [exit]
+[else if] (yao) == 紫玄灵 && {b玄灵丹p#}? == null || {b玄灵丹p#}? <= 4
+    tm 背包内紫玄灵丹数量不足，建议至少5颗。
+    [exit]
+[else if] (yao) == 黄凝神 && {b凝神丹y#}? == null || {b凝神丹y#}? <= 10
+    tm 背包内黄凝神丹数量不足，建议至少11颗。
+    [exit]
+[else if] (yao) == 紫凝神 && {b凝神丹p#}? == null || {b凝神丹p#}? <= 5
+    tm 背包内紫凝神丹数量不足，建议至少6颗。
+    [exit]
+[if] (yao) == 黄玄灵
+    ($food) = use {b玄灵丹y}
+[if] (yao) == 紫玄灵
+    ($food) = use {b玄灵丹p}
+[if] (yao) == 黄凝神
+    ($food) = use {b凝神丹y}
+[if] (yao) == 紫凝神
+    ($food) = use {b凝神丹p}
+
+@cmdDelay 500
+stopstate
+[if] (stage) == 全自动 || (stage) == 进本前
+    // 装备唐诗剑法
+    ($sword0) = (:kf_jian)
+    enable sword tangshijianfa
+    [if] (:kf_jian) != tangshijianfa
+        tm (:name)没有唐诗剑法;$tts (:name)没有唐诗剑法
+        enable sword (sword0)
+        $zdwk
+        [exit]
+
+    // 装备橙真武剑
+    //@toolbar pack
+    uneq (:eq0)
+    [if] {b真武剑o}? == null
+        tm (:name)的背包内未找到橙真武剑;$tts (:name)的背包内未找到橙真武剑
+        $zdwk
+        [exit]
+    [else]
+        eq {b真武剑o}?
+        @await 3000
+
+    @renew
+    cr chanzong/shanmen 1 0
+
+[if] (stage) == 全自动 || (stage) == 进本后
+    go north[3]
+    go north[3]
+    go north[3]
+    go north[3]
+    go north
+    @perform sword.wu
+    @tip <hir>你似乎听到禅院内部有些异响，衣袂声起，几个压阵的僧人迅速向铜楼方向而去。</hir>
+    go north;go northwest
+
+[if] (stage) == 全自动 || (stage) == 钟楼等待
+    enable sword taijijian2
+    //setting auto_pfm force.cui,sword.chan,parry.yi,unarmed.qi,unarmed.liu,sword.lian;
+    @tip 你看到一个黑影扑向铜殿，打开铜殿的大门跑了进去，四周衣袂声不断响起，大群僧兵围向小小的铜殿，那里似乎是禅院及其重要的场所。
+    go southeast;go north[2]
+    ($xzl) = {r徐子陵}
+    (food)
+    kill (xzl)
+    @perform force.cui,sword.chan,parry.yi,unarmed.qi,unarmed.liu,sword.lian
+    [while] true
+        [if] (:status food) == false
+            (food)
+        [if] (:status busy,(xzl)) == false
+            @perform sword.chan
+        [if] (:status force) == false
+            @perform force.cui
+        [if] (:status force) == true && (:status yihua) == false
+            @perform parry.yi
+        [if] (:status force) == true && (:cd sword.lian) == false
+            @perform sword.lian
+        [if] (:exist (xzl)) == false
+            [break]
+        @await 500
+    go south[2];go northwest;jumpdown
+[if] (stage) == 全自动 || (stage) == 打天僧
+    enable sword tangshijianfa
+    ($ts) = {r天僧}
+    @liaoshang
+    fight (ts)
+    @perform sword.wu
+    @until (:combating) == false
+    @liaoshang
+    enable sword taijijian2
+    (food)
+    kill (ts);perform force.cui;perform sword.chan;perform parry.yi;perform sword.lian
+    [while] true
+        [if] (:status food) == false
+            (food)
+        [if] (:status busy,(ts)) == false
+            @perform sword.chan
+        [if] (:status force) == false
+            @perform force.cui
+        [if] (:status force) == true && (:status yihua) == false
+            @perform parry.yi
+        [if] (:status force) == true && (:cd sword.lian) == false
+            @perform sword.lian
+        [if] (:exist (ts)) == false
+            [break]
+        @await 200
+    $tts 天僧已死 请替天僧收尸
