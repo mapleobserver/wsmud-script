@@ -1,12 +1,13 @@
 //~silent
 // 对四区沧浪、四区白三三两位大佬的圆月弯刀流程进行了整合
 // 四区-黑白郎君&&沧浪&&白三三
-// 2021-02-22 10:05
-// 1.7、优化离开副本的过程，避免命令过多卡地图。
-// 1.8、修改正常结婚和超龄结婚的差异操作，减少可能存在的bug。
-// 1.9、优化拿草的后续判断；进地窖后不选择直接叫杀避免小楼面板变高。
-// 1.10、优化进地窖的方式，避免出招过多导致卡住没进去。
-($localVer) = 2021042301
+// 2021-09-19 07:30
+// 1.7 优化离开副本的过程，避免命令过多卡地图。
+// 1.8 修改正常结婚和超龄结婚的差异操作，减少可能存在的bug。
+// 1.9 优化拿草的后续判断；进地窖后不选择直接叫杀避免小楼面板变高。
+// 1.10 优化进地窖的方式，避免出招过多导致卡住没进去。
+// 1.11 优化选项说明文字。
+($localVer) = 2021091901
 ($changeLog) = 优化选择拿草的后续判断；进地窖后不选择是否放过，直接叫杀避免小楼的面板变高。
 ($flowName) = 圆月弯刀
 ($flowCode) = yywd
@@ -20,6 +21,9 @@
   [if] (UPnum) == null
     ($UPnum) = 0
   [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
     ($UPnum) = (UPnum) + 1
     [if] (flowPath) != 根文件夹 && (flowPath) != null
       ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
@@ -68,9 +72,9 @@
 ($num) = 0
 ($repeat) = 1
 
-#input ($TodayNum) = 今天已完成次数(如果不清楚就不要改),(TodayNum)
-#select ($status) = 确认状态,已完成|未装备武器,(status)
-#select ($method) = 选择剧情,残页|武器|正常结婚|超龄结婚|杀小楼|拿草,(method)
+#input ($TodayNum) = <ord>🙏 衷心建议先看几遍副本攻略再使用本流程。</ord><br/>&nbsp*&nbsp今天已完成次数(如果不清楚就不要改),(TodayNum)
+#select ($status) = 确认状态，是否已装备刀剑、技能装备是否都调整好,已完成|未装备武器,(status)
+#select ($method) = <hiz>超龄剧情可拿5残页或紫刀；20-40岁可正常结婚，否则选超龄；面板够可选杀小楼多拿残页；拿草就是只拿草。</hiz><br/>&nbsp*&nbsp选择剧情,超龄剧情拿残页|超龄剧情拿紫武器|正常结婚|超龄结婚|杀小楼|拿草,(method)
 #select ($YYAfterAction) = 剧情结束后操作,杀小楼|出副本,(YYAfterAction)
 #config
 
@@ -243,7 +247,7 @@ team out
             @print ***************************************
             @print ------------可以进入小楼了-------------
             @print ***************************************
-            [if] (method) == 残页
+            [if] (method) == 超龄剧情拿残页
                 go north
                 @tip 告辞
                 answer s1
@@ -285,7 +289,7 @@ team out
                 go south[2]
                 go south[2]
                 ($TotalKills) = (TotalKills) + 1
-            [if] (method) == 武器
+            [if] (method) == 超龄剧情拿紫武器
                 go north
                 @tip 青青呢
                 answer s2
