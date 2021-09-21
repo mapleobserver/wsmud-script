@@ -1,13 +1,13 @@
 //~silent
 // 对四区沧浪、四区白三三两位大佬的圆月弯刀流程进行了整合
 // 四区-黑白郎君&&沧浪&&白三三
-// 2021-09-19 15:27
+// 2021-09-21 09:33
 // 1.7 优化离开副本的过程，避免命令过多卡地图。
 // 1.8 修改正常结婚和超龄结婚的差异操作，减少可能存在的bug。
 // 1.9 优化拿草的后续判断；进地窖后不选择直接叫杀避免小楼面板变高。
 // 1.10 优化进地窖的方式，避免出招过多导致卡住没进去。
 // 1.11 优化选项说明文字。
-($localVer) = 2021091902
+($localVer) = 2021092101
 ($changeLog) = 优化选择拿草的后续判断；进地窖后不选择是否放过，直接叫杀避免小楼的面板变高。
 ($flowName) = 圆月弯刀
 ($flowCode) = yywd
@@ -130,6 +130,10 @@ team out
         ($yyforce) = enable force yinyangjiuzhuan
 
 [while] (num) < (repeat)
+    [if] (:mpPer) < 0.3
+      $to 扬州城-武庙
+      @dazuo
+      go east
     enable force none
     enable force (force)
     cr wuyue/qingcheng/shanlu
