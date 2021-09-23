@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021080501
+($localVer) = 2021092301
 ($changeLog) = 🆕 优化显示效果。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
@@ -69,7 +69,7 @@
 
 // 特殊流程
 #select ($flowSJXL)=🍑 <hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz><br/>&nbsp*&nbsp[♻️<hiz>书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
-#select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]内有攻略，只到谷底，可选择剧情或者直接砍小楼,导入|跳过,跳过
+#select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]可选择剧情或者直接砍小楼，建议熟悉攻略后再使用,导入|跳过,跳过
 #select ($flowGZM)=[<hiz>古宗门躺尸</hiz>],导入|跳过,跳过
 
 #config
