@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021092301
-($changeLog) = 🆕 新增【慈航困难偷渡】和【战神殿困难偷渡】。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
+($localVer) = 2021092501
+($changeLog) = 🆕 新增精力溢出检测；新增【慈航困难偷渡】和【战神殿困难偷渡】。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -193,15 +193,7 @@
 
 // 获取角色名
 [if] (TTSover) == 播报
-  ($myName) = (:name)
-  [if] (myName) == null
-    stopstate
-    @await 1000
-    @toolbar jh
-    @toolbar score
-    @js $(`span[for=0]`).click()
-    @js ($myName) = $(".dialog-title").text().split(/\s+/).pop()
-  $tts 开始(myName)的自动日常。
+  $tts 开始(:name)的自动日常。
 
 // 停止，清包
 @stopSSAuto
@@ -811,6 +803,30 @@ greet master
 stopstate
 taskover signin;taskover zz1;taskover zz2
 
+// 检查精力
+[(:grade) == 百姓]($jlUp) = 1000
+[(:grade) == 武士]($jlUp) = 2000
+[(:grade) == 武师]($jlUp) = 3000
+[(:grade) == 宗师]($jlUp) = 5000
+[(:grade) == 武圣]($jlUp) = 7000
+[(:grade) == 武帝]($jlUp) = 10000
+[(:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀神 ||(:grade) == 兵主 || (:grade) == 战神]($jlUp) = 15000
+[if] (:grade) == 百姓 || (:grade) == 武士 || (:grade) == 武师
+  ($jlOver) = 300
+[else if] (:grade) == 宗师 || (:grade) == 武圣
+  ($jlOver) = 500
+[else]
+  ($jlOver) = 1000
+
+@toolbar jh
+@toolbar score
+@await 1000
+score
+@await 500
+[if] (jlUp) - (:energy) >= (jlOver) && (jlUp) != null
+  ($alert_jl) = ⚡️ 当前精力 (:energy)/(jlUp)，即将溢出不再增加，请及时使用。
+@toolbar jh
+
 // 结束收益统计
 [if] (RecordG) == 是
   recordGains->
@@ -842,3 +858,8 @@ taskover signin;taskover zz1;taskover zz2
   @js $(`.state-bar`).before($(`<div id=report_prog><ord>(report)</ord></div>`).click(() => $('#report_prog').remove()))
 [if] (TTSover) == 播报
   $tts (bobao)
+[if] (alert_jl) != null
+  @js $('#report_jl').remove()
+  @js $(`.state-bar`).before($(`<div id=report_jl><ord>(alert_jl)</ord></div>`).click(() => $('#report_jl').remove()))
+  @await 1000
+  @js alert("(alert_jl)")
