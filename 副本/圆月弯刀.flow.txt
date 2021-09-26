@@ -1,14 +1,14 @@
 //~silent
 // 对四区沧浪、四区白三三两位大佬的圆月弯刀流程进行了整合
 // 四区-黑白郎君&&沧浪&&白三三
-// 2021-09-21 09:33
+// 2021-09-26 09:13
 // 1.7 优化离开副本的过程，避免命令过多卡地图。
 // 1.8 修改正常结婚和超龄结婚的差异操作，减少可能存在的bug。
 // 1.9 优化拿草的后续判断；进地窖后不选择直接叫杀避免小楼面板变高。
 // 1.10 优化进地窖的方式，避免出招过多导致卡住没进去。
 // 1.11 优化选项说明文字。
-($localVer) = 2021092101
-($changeLog) = 优化选择拿草的后续判断；进地窖后不选择是否放过，直接叫杀避免小楼的面板变高。
+($localVer) = 2021092601
+($changeLog) = 🆕 进地窖砍完小楼后总次数会清零重置；拿橙刀后终止流程避免浪费精力。
 ($flowName) = 圆月弯刀
 ($flowCode) = yywd
 ($flowPath) = 副本
@@ -236,12 +236,18 @@ team out
                     answer s2
                 [else if] (YYProp) == 拿橙刀
                     answer s1
+                    ($getblade) = true
                 go up
+                ($anew) = true
             @until (:room) == 忧愁谷-小楼
             @await 1000
             go south[2]
             go south[2]
-            ($TotalKills) = (TotalKills) + 1
+            [if] (anew) == true
+                ($anew) = false
+                ($TotalKills) = 0
+            [else]
+                ($TotalKills) = (TotalKills) + 1
         [else]
             @tip 青青看了你一眼转身跟了过去。
             go west
@@ -288,12 +294,18 @@ team out
                             answer s2
                         [else if] (YYProp) == 拿橙刀
                             answer s1
+                            ($getblade) = true
                         go up
+                        ($anew) = true
                 @until (:room) == 忧愁谷-小楼
                 @await 1000
                 go south[2]
                 go south[2]
-                ($TotalKills) = (TotalKills) + 1
+                [if] (anew) == true
+                    ($anew) = false
+                    ($TotalKills) = 0
+                [else]
+                    ($TotalKills) = (TotalKills) + 1
             [if] (method) == 超龄剧情拿紫武器
                 go north
                 @tip 青青呢
@@ -401,12 +413,16 @@ team out
     [else]
         ($info1) = 今日已完成 (TodayNum) 次。
         ($info2) = 总击杀楼哥 (TotalKills) 次。
+    [if] (getblade) == true
+        ($info3) = 橙刀已到手，终止流程。
+        @print <hio>(info3)</hio>
+        tm (info3)
     @print <ord>(info1)</ord>
     @print <ord>(info2)</ord>
     tm (info1)
     tm (info2)
     ($num) = (num) + 1
-    [if] (TodayNum) > 9
+    [if] (TodayNum) > 9 || (getblade) == true
         [break]
 @js ($yyfb)='(:room)'.indexOf('忧愁谷')
 [if] (yyfb) == -1
