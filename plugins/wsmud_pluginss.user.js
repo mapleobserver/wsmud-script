@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.184
+// @version      0.0.32.186
 // @date         01/07/2018
-// @modified     01/08/2021
+// @modified     22/09/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -3070,19 +3070,7 @@
                         WG.wsdelaytest();
                     },
                     onekeyyaota: function () {
-                        WG.SendCmd("jh fam 9 start;$wait 250;go enter;$wait 250;go up;")
-                        setTimeout( function(){
-                            var ltId="";
-                            for (let i = 0; i < roomData.length; i++) {
-                                if (roomData[i].name && roomData[i].name.indexOf("疯癫的老头") >= 0) {
-                                    ltId=roomData[i].id
-                                }
-                            }
-                            WG.SendCmd("ggdl "+ltId+";$wait 250;go north;$wait 250;go north;$wait 250;go north;$wait 250;go north;$wait 250;go north;$wait 250;go north;$wait 250;look shi;$wait 250;tiao1 shi;tiao3 shi;$wait 250;tiao1 shi;tiao3 shi;$wait 250;tiao2 shi;$wait 250;go north;")
-                            //setTimeout( function(){
-                                //WG.SendCmd("flyto muyuan")
-                            //}, 3 * 1000 )
-                        }, 1 * 1000 )
+                        T.goyt();
                     }
                 }
             })
@@ -4365,21 +4353,30 @@
             });
 
         },
-        ytjk_func: function (){
-            WG.add_hook("room", (data) => {
+        ytjk_func:function (){
+            WG.add_hook("room",async function (data) {
                 if (G.yaotaFlag&&data.path != 'zc/mu/shishenta'){
+                    $('.channel pre').append("<hig>【插件】"+"第 "+G.yaotaCount+" 次妖塔共获得 "+G.yaoyuan +" 点妖元，结束时间: "+ dateFormat("YYYY-mm-dd HH:MM", new Date())+"。<br><hig>")
                     $('.tm').append("<hig>【插件】"+"第 "+G.yaotaCount+" 次妖塔共获得 "+G.yaoyuan +" 点妖元，结束时间: "+ dateFormat("YYYY-mm-dd HH:MM", new Date())+"。<br><hig>")
-                    if(G.selfStatus.indexOf("faint")<0 && G.selfStatus.indexOf("busy")<0&&G.selfStatus.indexOf("rash")<0){
-                        WG.SendCmd("tm 第 "+G.yaotaCount+" 次妖塔圆满完成，撒花~~~~~")
-                    }
-                    $('#yt_prog').remove()
-                    G.yaotaFlag=false;
-                    G.yaoyuan = 0;
+                    setTimeout(async function(){
+                        while(G.selfStatus.indexOf("faint")>=0 || G.selfStatus.indexOf("busy")>=0 || G.selfStatus.indexOf("rash")>=0){
+                            await WG.sleep(1000)
+                        }
+                        if (G.yaoyuan == 261){
+                            WG.SendCmd("tm 第 "+G.yaotaCount+" 次妖塔圆满完成，撒花~~~~~")
+                        }else{
+                            WG.SendCmd("tm 第 "+G.yaotaCount+" 次妖塔遗憾收场，撒花~~~~~")
+                        }
+                        $('#yt_prog').remove()
+                        G.yaotaFlag=false;
+                        G.yaoyuan = 0;
 
+                    },0)
                 }
                 if (data.path == 'zc/mu/shishenta'){
                     $(`.state-bar`).before(`<div id=yt_prog>开始攻略妖塔</div>`)
                     G.yaotaCount=G.yaotaCount+1;
+                    $('.channel pre').append("<hig>【插件】"+"开始第 "+G.yaotaCount+" 次攻略妖塔，现在时间是:"+ dateFormat("YYYY-mm-dd HH:MM", new Date())+"。<br><hig>")
                     $('.tm').append("<hig>【插件】"+"开始第 "+G.yaotaCount+" 次攻略妖塔，现在时间是:"+ dateFormat("YYYY-mm-dd HH:MM", new Date())+"。<br><hig>")
                     G.yaoyuan = 0;
                     G.yaotaFlag=true;
@@ -5832,13 +5829,24 @@
             await WG.sleep(parseInt(n));
             WG.SendCmd(cmds);
         },
-	batwait: async function (idx = 0, n, cmds) {
+	    batwait: async function (idx = 0, n, cmds) {
             if(G.in_fight){
                 cmds = T.recmd(idx, cmds);
                 console.log("延时:" + n + "ms,延时触发:" + cmds);
                 await WG.sleep(parseInt(n));
                 WG.SendCmd(cmds);
             }
+        },
+        goyt: async function () {
+            WG.SendCmd("jh fam 9 start;go enter;go up;")
+            await WG.sleep(1000);
+            var ltId="";
+            for (let i = 0; i < roomData.length; i++) {
+                if (roomData[i].name && roomData[i].name.indexOf("疯癫的老头") >= 0) {
+                    ltId=roomData[i].id
+                }
+            }
+            WG.SendCmd("ggdl "+ltId+";go north;go north;go north;go north;$wait 250;go north;go north;look shi;tiao1 shi;tiao3 shi;$wait 250;tiao1 shi;tiao3 shi;tiao2 shi;go north;")
         },
         killall: async function (idx = 0, n = null, cmds) {
             cmds = T.recmd(idx, cmds);
