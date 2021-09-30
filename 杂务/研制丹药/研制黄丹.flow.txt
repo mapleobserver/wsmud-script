@@ -39,7 +39,7 @@ lianyao2 stop
 @wait 1000
 lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -60,7 +60,7 @@ lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {熟地黄}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -77,7 +77,7 @@ lianyao2 stop
 @wait 1000
 lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -106,7 +106,7 @@ lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 看上去快要成型了
@@ -121,9 +121,9 @@ lianyao2 add {九香虫}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -142,11 +142,11 @@ lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 看上去快要成型了
 lianyao2 stop
 @tip 恭喜你研制成功|恭喜你炼制出
@@ -161,7 +161,7 @@ lianyao2 add {反天刀}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {虹鳟}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {九香虫}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -203,14 +203,14 @@ lianyao2 add {九香虫}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {虹鳟}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 看上去快要成型了
 lianyao2 stop
 @tip 恭喜你研制成功|恭喜你炼制出
 @wait 1000
 lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {九香虫}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -218,11 +218,11 @@ lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 看上去快要成型了
 lianyao2 stop
 @tip 恭喜你研制成功|恭喜你炼制出
@@ -241,7 +241,7 @@ lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 看上去快要成型了
 lianyao2 stop
 @tip 恭喜你研制成功|恭喜你炼制出
@@ -279,16 +279,16 @@ lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 看上去快要成型了
 lianyao2 stop
 @tip 恭喜你研制成功|恭喜你炼制出
 @wait 1000
 lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -326,7 +326,7 @@ lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {熟地黄}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -343,9 +343,9 @@ lianyao2 stop
 @wait 1000
 lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -353,7 +353,7 @@ lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {茯苓}
 @tip 看上去快要成型了
@@ -370,11 +370,11 @@ lianyao2 add {九香虫}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {络石藤}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 看上去快要成型了
 lianyao2 stop
 @tip 恭喜你研制成功|恭喜你炼制出
@@ -383,11 +383,11 @@ lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {熟地黄}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {九香虫}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -400,13 +400,13 @@ lianyao2 stop
 @wait 1000
 lianyao2 start 3
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {冬虫夏草}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {熟地黄}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
