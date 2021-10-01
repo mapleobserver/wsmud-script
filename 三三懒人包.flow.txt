@@ -1,8 +1,8 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021092301
-($changeLog) = 🆕 优化显示效果。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
+($localVer) = 2021100101
+($changeLog) = 🆕 新增古代宗门流程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
 ($flowPath) = 根文件夹
@@ -70,6 +70,7 @@
 // 特殊流程
 #select ($flowSJXL)=🍑 <hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz><br/>&nbsp*&nbsp[♻️<hiz>书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
 #select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]可选择剧情或者直接砍小楼，建议熟悉攻略后再使用,导入|跳过,跳过
+#select ($flowGDZM)=[♻️<hiz>古代宗门</hiz>]持续补充功能中，建议熟悉攻略后再使用,导入|跳过,跳过
 #select ($flowGZM)=[<hiz>古宗门躺尸</hiz>],导入|跳过,跳过
 
 #config
@@ -91,9 +92,10 @@
 ($f_yzdy)={"name":"研制绿丹","source":"(repourl)/杂务/研制丹药/研制绿丹.flow.txt","finder":"研制丹药"},{"name":"研制蓝丹","source":"(repourl)/杂务/研制丹药/研制蓝丹.flow.txt","finder":"研制丹药"},{"name":"研制黄丹","source":"(repourl)/杂务/研制丹药/研制黄丹.flow.txt","finder":"研制丹药"},{"name":"研制紫丹","source":"(repourl)/杂务/研制丹药/研制紫丹.flow.txt","finder":"研制丹药"},{"name":"研制橙丹","source":"(repourl)/杂务/研制丹药/研制橙丹.flow.txt","finder":"研制丹药"},{"name":"研制突破","source":"(repourl)/杂务/研制丹药/研制突破.flow.txt","finder":"研制丹药"}
 ($f_sjxl)={"name":"书架香炉","source":"(repourl)/杂务/书架香炉.flow.txt","finder":"根文件夹"}
 ($f_yywd)={"name":"圆月弯刀","source":"(repourl)/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
+($f_gdzm)={"name":"古代宗门","source":"(repourl)/副本/古代宗门.flow.txt","finder":"根文件夹"}
 ($f_gzm)={"name":"古宗门躺尸","source":"(repourl)/副本/古宗门躺尸版.flow.txt","finder":"根文件夹"}
-($f_chqcm)={"name":"慈航七重门","source":"(repourl)/副本/慈航七重门.flow.txt","finder":"根文件夹"}
-($f_zsdjm)={"name":"战神殿解谜","source":"(repourl)/副本/战神殿解谜.flow.txt","finder":"根文件夹"}
+//($f_chqcm)={"name":"慈航七重门","source":"(repourl)/副本/慈航七重门.flow.txt","finder":"根文件夹"}
+//($f_zsdjm)={"name":"战神殿解谜","source":"(repourl)/副本/战神殿解谜.flow.txt","finder":"根文件夹"}
 
 
 [if] (flowZDRC)==导入
@@ -137,6 +139,8 @@
   ($f_list)=(f_list),(f_sjxl)
 [if] (flowYYWD)==导入
   ($f_list)=(f_list),(f_yywd)
+[if] (flowGDZM)==导入
+  ($f_list)=(f_list),(f_gdzm)
 [if] (flowGZM)==导入
   ($f_list)=(f_list),(f_gzm)
 [if] (flowCHQCM)==导入

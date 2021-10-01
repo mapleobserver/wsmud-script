@@ -1,0 +1,317 @@
+// 白三三
+// 版本检测
+// 2021-10-01 17:20
+($localVer) = 2021100101
+($changeLog) = 📝 可以从古大陆或移花宫进入。目前只做了掌门扳指和练功服路线，其余路线待做。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
+($flowName) = 古代宗门
+($flowCode) = gdzm
+($flowPath) = 副本
+($flowFinder) = 根文件夹
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.(flowCode)
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    [if] (flowFinder) == null
+      ($flowFinder) = 根文件夹
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @wait 1500
+    ($log) = ✅(flowName)已更新至最新版【(remoteVer)】，即将自动运行。
+  [else]
+    ($log) = ⭕(flowName)暂时无法正常更新至【(remoteVer)】，直接运行当前版本【(localVer)】。
+    ($UPnum) = null
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  [if] (UPnum) != null
+    @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+    [exit]
+[else]
+  ($UPnum) = null
+  [if] (remoteVer) == null
+    ($log) = ⚠️获取远程版本失败，维持当前版本不变。
+  [else]
+    ($log) = 🚀开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
+  //@js WG.SendCmd("tm (log)")
+  //@print <ord>(log)</ord>
+// 预处理
+@cmdDelay 500
+@js alert('(changeLog)')
+@js messageClear();messageAppend('(changeLog)',1,0)
+
+// 检查移花宫装备
+[if] {b★★★★★★邀月的手镯}? != null
+  ($yihua) = 邀月的手镯
+[else if] {b★★★★★★涟星的冰玉簪}? != null
+  ($yihua) = 涟星的冰玉簪
+[else]
+  @print <ord>没有移花宫六星手镯或冰玉簪，流程终止。</ord>
+  [exit]
+// 预设进入方式
+[if] (GZMway) == null
+  [if] (:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀皇 || (:grade) == 兵主 || (:grade) == 战神
+    ($GZMway) = 古大陆
+  [else]
+    ($GZMway) = 移花宫
+[if] {b宗门指环}? == null
+  ($GZMway) = 移花宫
+
+// 检查秘籍
+[if] {b真言手印秘籍}? != null
+  ($book) = 真言手印秘籍
+[else]
+  ($book) = 手动填写
+
+// 菜单
+[(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴
+#select ($GZMway) = 进入古代宗门方式,古大陆|移花宫,(GZMway)
+#select ($type) = 选择路线,掌门扳指|练功服,(type)
+#input ($book) = 给大长老的秘籍名字,(book)
+#select ($yihua) = 掌门扳指和练功服路线要给小师妹的物品,邀月的手镯|涟星的冰玉簪,(yihua)
+#input ($MHTriggers) = 关闭触发(多个触发名字用英文逗号隔开),(MHTriggers)
+#config
+
+// 检查宗门指环
+[if] {b宗门指环}? == null && (GZMway) == 古大陆
+  ($GZMway) = 移花宫
+  @print <ord>没有<hig>宗门指环</hig>，进入方式改为移花宫。</ord>
+// 检查进入方式
+[if] (GZMway) == null
+  ($ready1) =false
+  @print <ord>没有选择进入古代宗门的方式，流程终止。</ord>
+// 检查物品
+[if] (type) == 掌门扳指 || (type) == 练功服
+  // 检查秘籍
+  @js ($miji) = '(book)'.indexOf('秘籍')
+  [if] (miji) == -1
+    ($book) = (book)秘籍
+  [if] {b(book)o}? == null
+    ($ready2) = false
+    @print <ord>没有<hio>(book)</hio>（<hiy>重新准备时请自己确保已学习该秘籍并且有备份，或者用手抄本</hiy>），流程终止。</ord>
+  // 检查移花宫装备
+  [if] (yihua) != null
+    [if] {b★★★★★★(yihua)y}? == null
+      ($ready3) = false
+      @print <ord>没有<hiy>★★★★★★(yihua)</hiy>，流程终止。</ord>
+
+[if] (ready1) == false || (ready2) == false || (ready3) == false
+  $zdwk
+  [exit]
+
+stopstate
+team out
+@renew
+
+// 古大陆
+[if] (GZMway) == 古大陆
+  jh fam 9 start
+  go enter
+  go up
+  @tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
+  [if] (pass) != null
+    @print <ord>不符合前往古大陆要求，流程终止。</ord>
+    $zdwk
+    [exit]
+  ggdl {r疯癫的老头}
+  go north[3]
+  go north[3]
+  look shi
+  tiao1 shi;tiao3 shi
+  tiao1 shi;tiao3 shi
+  tiao2 shi
+  go north
+
+// 移花宫
+[else if] (GZMway) == 移花宫
+  @cmdDelay 1500
+  jh fb 22 start2;cr huashan/yihua/shandao 1 0
+  [while] (xuanwo) != true
+    <---
+    [if] {r神秘的尸体}? != null
+      [if] {b宗门指环}? == null
+        get all from {r神秘的尸体}?
+      ($xuanwo) = true
+      @cmdDelay 500
+      [break]
+    --->
+    go south[5]
+    go south[5]
+    go south[5]
+    $killall
+    go south
+    go south
+    $killall
+    go south
+    $killall
+    go southeast
+    $killall
+    @until (:combating) == false
+    go northwest;go southwest
+    $killall
+    @until (:combating) == false
+    look hua
+    @tip 你数了下大概有($number)朵花
+    go southeast
+    look bed;pushstart bed;pushleft bed[(number)]
+    @await 2000
+    pushright bed[8]
+    @await 2000
+    go down
+    fire;go west
+    $killall
+    @until (:combating) == false
+    go west
+    go west
+    go north
+    go north
+    go north
+    go north
+    @print <ord>未找到尸体，请重试。</ord>
+    cr;cr over
+    $zdwk
+    [exit]
+
+look xuanwo
+[if] (GZMway) == 古大陆
+  tiao xuanwo
+[else if] (GZMway) == 移花宫
+  tiao xuanwo ok
+go north
+
+//进入副本
+cr gumen/shanmen
+go west
+// 护山大阵
+packitem tzdl {b宗门指环}?
+@tip 你却从明暗交错的光影中看到($distance)面似乎可以走出去
+[if] (distance) == 东
+  go east
+[else if] (distance) == 南
+  go south
+[else if] (distance) == 西
+  go west
+[else if] (distance) == 北
+  go north
+// 进入宗门
+go west[2]
+// 掌门扳指
+[if] (type) == 掌门扳指 || (type) == 练功服
+  // 关闭自动出招和所有起手触发
+  $stoppfm
+  setting auto_pfm 0
+  enable force none;enable sword none
+  enable unarmed none;uneq (:eq0)
+  [if] (MHTriggers) != null
+    @js ($tgs)=var ts=("\""+"(MHTriggers)"+"\"").replace(/，/g,",");ts.replace(/,/g,"\",\"").split(",")
+    @js ($tl)=[(tgs)].length
+    ($num)=0
+    [while] (num)<(tl)
+      @js ($t)=[(tgs)][(num)]
+      @js ToRaid.perform(`//~silent\n@off (t)`);
+      ($num)=(num)+1
+    @print 已关闭指定触发：(MHTriggers)
+  // 见大师兄
+  go west[2]
+  @liaoshang
+  fight {r大师兄}?
+  @tip 可以告诉我一些宗门的事情吗
+  answer {r大师兄}? 2
+  @until (:combating) == false && (:free) == true && (:status faint) == false && (:status miss) == false && (:status tysp) == false
+  go east;go north
+  @tip 大师兄托我来交还秘籍
+  answer {r大长老}? 2
+  give {r大长老}? 1 {b(book)}?
+  @tip 这本书不像是从这里借出的
+  @print ***************************************
+  @print (:hour):(:minute):(:second) 此处需等待10分钟
+  @print ***************************************
+  @wait 600000
+  @print ***************************************
+  @print 可以去找大师兄了
+  @print ***************************************
+  go south;go west
+  @tip 大长老喊你过去
+  answer {r大师兄}? 1
+  go east;go north
+  @tip 这些东西应该对你有用
+  answer {r大长老}? 1
+  go south;go west
+  @tip 把秘籍给他
+  answer {r大师兄}? 1
+  @tip 下次带你去个好玩的地方
+  @print ***************************************
+  @print (:hour):(:minute):(:second) 此处需等待10分钟，直到大师兄找你对话
+  @print ***************************************
+  @await 600000
+  @print ***************************************
+  @print 可以去找大师兄了
+  @print ***************************************
+  go north;go south
+  @tip 带你去个好地方
+  answer {r大师兄}? 1
+  @tip 这条小路只有我知道
+  answer {r大师兄}? 1
+  @tip 这个瀑布别看不大
+  answer {r大师兄}? 1
+  @tip 遥想万年后却化为一片废墟
+  [if] (type) == 掌门扳指 || (type) == 练功服
+    answer {r大师兄}? 1
+    @until (:room) == 上古宗门(万年前)-练武场(副本区域)
+    go south
+    @tip 你就是最近和大师兄打的火热的那位师兄吧
+    answer {r小师妹}? 2
+    give {r小师妹}? 1 {b★★★★★★(yihua)}?
+    @print ***************************************
+    @print (:hour):(:minute):(:second) 此处需等待10分钟，直到小师妹找你对话
+    @print ***************************************
+    @await 600000
+    @print ***************************************
+    @print 可以去找小师妹了
+    @print ***************************************
+    go north;go south
+    @tip 带你去个好玩的地方
+    [if] (type) == 掌门扳指
+      answer {r小师妹}? 1
+      @tip 你们来到一个瀑布下面
+      look teng
+      open teng
+      @tip 就是这个雕像
+      look hu
+      //@tip 底座有个手掌大小的插槽
+      fl hu
+      @tip 我们去别的地方玩吧
+      answer {r小师妹}? 2
+      @tip 好不容易找个保镖
+      @tip 区区一个令牌
+      look teng
+      open teng
+      look hu
+      fl hu
+      @tip 岩壁露出一个黑幽幽的洞口
+      go down
+      @tip 你就是大长老所说的外来人
+      answer {r掌门}? 1
+      @tip 这件器物就拜托你代为保管
+      get all from {r妖王的尸体}?
+      @print <hiy>掌门扳指路线已完成，流程即将结束。</hiy>
+    [else if] (type) == 练功服
+      answer {r小师妹}? 2
+      @tip 这是我找大长老求了很久才给我的
+      @print <hiy>练功服路线已完成，流程即将结束。</hiy>
+
+// 结束副本
+cr;cr over
+$zdwk
