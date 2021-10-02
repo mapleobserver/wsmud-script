@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021092601
-($changeLog) = 🆕 新增精力溢出检测；新增【慈航困难偷渡】和【战神殿困难偷渡】。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
+($localVer) = 2021100201
+($changeLog) = 🆕 修复只打塔主和节日模式的冲突；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -64,7 +64,9 @@
 // 自动日常模式
 [if] (RCMode) == null
   ($RCMode) = 正常模式
-#select ($RCMode) = 当前模式<ord>(RCMode)</ord>，自动日常的执行模式,正常模式|春节模式,(RCMode)
+[if] (RCMode) == 春节模式
+  ($RCMode) = 节日免费模式
+#select ($RCMode) = 当前模式<ord>(RCMode)</ord>，自动日常的执行模式,正常模式|节日免费模式,(RCMode)
 // 是否统计收益
 [if] (RecordG) == null
   ($RecordG) = 是
@@ -237,7 +239,7 @@ stopstate
   @toolbar tasks
   @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
 ($zbtemp) = (ZByes)
-[if] (RCMode) == 春节模式 && (zbtemp) == 正常模式
+[if] (RCMode) == 节日免费模式 && (zbtemp) == 正常模式
   //($zbtemp) = (ZByes)
   ($zbtemp) = 快速扫荡
 [if] (currentN) < 20 && (zbtemp) == 快速扫荡
@@ -491,7 +493,7 @@ stopstate
         go east
         go up
 ($zb) = false
-//[if] (RCMode) == 春节模式 && (zbtemp) != null
+//[if] (RCMode) == 节日免费模式 && (zbtemp) != null
   //($ZByes) = (zbtemp)
 @js $('#zb_prog').remove()
 @cmdDelay
@@ -501,7 +503,8 @@ stopstate
 
 // 武道塔
 ($currentN) = null
-[if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式  || (RCMode) == 春节模式
+[if] (WudaoMode) != 只打塔主
+//[if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式  || (RCMode) == 节日免费模式
   @toolbar jh
   @toolbar tasks
   @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
@@ -612,12 +615,12 @@ stopstate
         [(WudaoMode) == 快速模式]($wdfail) = 0
         ($wdlevel) = (wdlevel) + 1
         go up
-    [if] (WudaoMode) == 正常模式 || (RCMode) == 春节模式
+    [if] (WudaoMode) == 正常模式 || (RCMode) == 节日免费模式
       ($num)=0
       jh fam 9 start
       ask2 {r守门人}
       @tip 用不着快速挑战了|不用快速挑战|快速挑战需要($num)张扫荡符
-      [if] (num) > 0 && (RCMode) != 春节模式
+      [if] (num) > 0 && (RCMode) != 节日免费模式
         [if] {b扫荡符#}? < (num) || {b扫荡符}? == null
           shop 0 (num)
       ask2 {r守门人};ask3 {r守门人}
