@@ -1,8 +1,8 @@
 // 白三三
 // 版本检测
-// 2021-10-01 21:23
-($localVer) = 2021100103
-($changeLog) = 📝 可以从古大陆或移花宫进入。目前只做了掌门扳指和练功服路线，其余路线待做。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
+// 2021-10-02 13:02
+($localVer) = 2021100201
+($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、打妖王，其余路线待做。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 打妖王请设置更换装备技能的命令。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
 ($flowName) = 古代宗门
 ($flowCode) = gdzm
 ($flowPath) = 副本
@@ -76,10 +76,11 @@
 // 菜单
 [(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴
 #select ($GZMway) = 进入古代宗门方式,古大陆|移花宫,(GZMway)
-#select ($type) = 选择路线,掌门扳指|练功服|武道书,(type)
+#select ($type) = 选择路线,掌门扳指|练功服|武道书|掌门令牌（探龙偷掌门）|打妖王,(type)
 #input ($book) = 给大长老的秘籍名字,(book)
 #select ($yihua) = 掌门扳指和练功服路线要给小师妹的物品,邀月的手镯|涟星的冰玉簪,(yihua)
 #input ($MHTriggers) = 关闭触发(多个触发名字用英文逗号隔开),(MHTriggers)
+#input ($GZMbosseq) = 打妖王前更换装备技能(用英文;隔开),(GZMbosseq)
 #config
 
 // 检查宗门指环
@@ -90,9 +91,17 @@
 [if] (GZMway) == null
   ($ready1) =false
   @print <ord>没有选择进入古代宗门的方式，流程终止。</ord>
-// 检查物品
-[if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书
-  // 检查秘籍
+// 检查打妖王路线是否有令牌、更换装备技能命令是否设置。
+[if] (type) == 打妖王
+  [if] {b掌门令牌o}? == null
+    ($lingpai) = false
+  [else]
+    ($lingpai) = true
+  [if] (GZMbosseq) == null
+    ($ready0) = false
+    @print <ord>没有设置打妖王前更换装备技能的命令，流程终止。</ord>
+// 检查秘籍
+[if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 掌门令牌（探龙偷掌门） || (lingpai) == false
   @js ($miji) = '(book)'.indexOf('秘籍')
   [if] (miji) == -1
     ($book) = (book)秘籍
@@ -104,11 +113,21 @@
   [if] (yihua) != null && {b★★★★★★(yihua)y}? == null
     ($ready3) = false
     @print <ord>没有<hiy>★★★★★★(yihua)</hiy>，流程终止。</ord>
+// 掌门令牌（探龙偷掌门）路线检查是否有掌门扳指
+[if] (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
+  [if] {b掌门扳指o}? == null
+    ($eqjz) = (:eq5)
+    stopstate;uneq (:eq5)
+    [if] {b掌门扳指o}? == null
+      ($ready4) = false
+      @print <ord>没有<hio>掌门扳指</hio>，流程终止。</ord>
 
-[if] (ready1) == false || (ready2) == false || (ready3) == false
+[if] (ready0) == false || (ready1) == false || (ready2) == false || (ready3) == false || (ready4) == false
   $zdwk
   [exit]
 
+tm 本次副本路线：(type)
+@print 🚌 本次副本路线：<hio>(type)</hio>
 stopstate
 team out
 @renew
@@ -205,8 +224,8 @@ packitem tzdl {b宗门指环}?
   go north
 // 进入宗门
 go west[2]
-// 掌门扳指、练功服、武道书
-[if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书
+// 掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、打妖王
+[if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
   // 关闭自动出招和所有起手触发
   $stoppfm
   setting auto_pfm 0
@@ -245,8 +264,8 @@ go west[2]
   answer {r大师兄}? 1
   go east;go north
   @tip 这些东西应该对你有用
-  // 大长老三选一
-  [if] (type) == 掌门扳指 || (type) == 练功服
+  // 大长老三选一，涉及路线：掌门扳指、练功服、掌门令牌（探龙偷掌门）、打妖王
+  [if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
     answer {r大长老}? 1
     go south;go west
     @tip 把秘籍给他
@@ -267,7 +286,7 @@ go west[2]
     @tip 这个瀑布别看不大
     answer {r大师兄}? 1
     @tip 遥想万年后却化为一片废墟
-    // 掌门扳指、练功服
+    // 涉及路线：掌门扳指、练功服、随从、掌门令牌（师妹方式）
     [if] (type) == 掌门扳指 || (type) == 练功服
       answer {r大师兄}? 1
       @until (:room) == 上古宗门(万年前)-练武场(副本区域)
@@ -312,8 +331,60 @@ go west[2]
         answer {r小师妹}? 2
         @tip 这是我找大长老求了很久才给我的
         @print <hiy>练功服路线已完成，流程即将结束。</hiy>
-    // 主线，和大师兄去悬崖
-  // 大长老三选一
+    // 主线，和大师兄去悬崖，涉及路线：掌门令牌、打妖王
+    [else if] (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
+      answer {r大师兄}? 2
+      @tip 平原上有一座繁华的神殿
+      answer {r大师兄}? 2
+      @tip 你赶紧拉着还在张大嘴巴的震撼中的大师兄从原路返回
+      @until (:room) == 上古宗门(万年前)-练武场(副本区域)
+      eq {b掌门扳指o}?
+      go west
+      @tip 你愿意帮我个忙吗
+      answer {r大长老}? 1
+      @tip 你可以自行做决定
+      go east
+      @tip 我去帮大长老做事
+      go west
+      go west
+      @tip 我只是来看看
+      answer {r掌门}? 2
+      // 换装备技能
+      enable unarmed feilongshou
+      ($tlnum) = 0
+      [while] (tlnum) < 3
+        @cd unarmed.luo
+        @perform unarmed.luo
+        @await 500
+        ($tlnum) = (tlnum) + 1
+      [if] {b掌门令牌o}? == null
+        @print 未偷到掌门令牌，请手动尝试或检查探龙手是否等级过低。
+        @print 等待手动偷令牌或离开副本……
+        @until {b掌门令牌o}? != null || (:room 副本区域) == false
+      // 主线，打妖王
+      [if] (type) == 打妖王
+        go west
+        go southeast
+        // 换打妖王的装备技能
+        @liaoshang
+        (GZMbosseq)
+        @await 6000
+        look teng;open teng
+        look hu;fl hu
+        @tip 岩壁露出一个黑幽幽的洞口
+        go down
+        @tip 终于想要结束了吗
+        answer {r妖王}? 1
+        @until (:combating) == true
+        @until (:combating) == false || (:living) == false
+        [if] (:living) == false
+          @print 打不过妖王，请复活重新配置装备技能，或者结束副本。
+          @beep
+        [else]
+          @tip 这里有几样东西也许对你有用
+          // 三选一，拿元晶，主线100%
+          answer {r掌门}? 2
+  // 大长老三选一，涉及路线：武道书
   [else if] (type) == 武道书
     answer {r大长老}? 3
     @print <hiy>武道书路线已完成，流程即将结束。</hiy>
