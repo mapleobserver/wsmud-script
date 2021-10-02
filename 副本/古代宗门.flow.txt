@@ -1,8 +1,8 @@
 // 白三三
 // 版本检测
-// 2021-10-02 13:02
-($localVer) = 2021100201
-($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、打妖王，其余路线待做。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 打妖王请设置更换装备技能的命令。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
+// 2021-10-03 05:31
+($localVer) = 2021100301
+($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、掌门令牌（师妹方式）、打妖王，其余路线待做。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 打妖王请设置更换装备技能的命令。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
 ($flowName) = 古代宗门
 ($flowCode) = gdzm
 ($flowPath) = 副本
@@ -76,7 +76,7 @@
 // 菜单
 [(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴
 #select ($GZMway) = 进入古代宗门方式,古大陆|移花宫,(GZMway)
-#select ($type) = 选择路线,掌门扳指|练功服|武道书|掌门令牌（探龙偷掌门）|打妖王,(type)
+#select ($type) = 选择路线,掌门扳指|练功服|武道书|掌门令牌（探龙偷掌门）|掌门令牌（师妹方式）|打妖王,(type)
 #input ($book) = 给大长老的秘籍名字,(book)
 #select ($yihua) = 掌门扳指和练功服路线要给小师妹的物品,邀月的手镯|涟星的冰玉簪,(yihua)
 #input ($MHTriggers) = 关闭触发(多个触发名字用英文逗号隔开),(MHTriggers)
@@ -89,29 +89,35 @@
   @print <ord>没有<hig>宗门指环</hig>，进入方式改为移花宫。</ord>
 // 检查进入方式
 [if] (GZMway) == null
-  ($ready1) =false
+  ($ready) =false
   @print <ord>没有选择进入古代宗门的方式，流程终止。</ord>
-// 检查打妖王路线是否有令牌、更换装备技能命令是否设置。
-[if] (type) == 打妖王
+// 检查打妖王、随从小师妹、掌门令牌（师妹方式）路线是否有令牌、更换装备技能命令是否设置。
+[if] (type) == 打妖王 || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
   [if] {b掌门令牌o}? == null
     ($lingpai) = false
   [else]
     ($lingpai) = true
-  [if] (GZMbosseq) == null
-    ($ready0) = false
+  [if] (GZMbosseq) == null && (type) == 打妖王
+    ($ready) = false
     @print <ord>没有设置打妖王前更换装备技能的命令，流程终止。</ord>
+  [if] (lingpai) == false && (type) == 随从小师妹
+    ($ready) = false
+    @print <ord>没有掌门令牌，无法进行随从小师妹路线，流程终止。</ord>
+  [if] (lingpai) == true && (type) == 掌门令牌（师妹方式）
+    ($ready) = false
+    @print <ord>掌门令牌（师妹方式）路线中，背包不能有令牌，请选择其它路线用掉令牌或存仓，流程终止。</ord>
 // 检查秘籍
-[if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 掌门令牌（探龙偷掌门） || (lingpai) == false
+[if] (lingpai) == false || (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 掌门令牌（探龙偷掌门） || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
   @js ($miji) = '(book)'.indexOf('秘籍')
   [if] (miji) == -1
     ($book) = (book)秘籍
   [if] {b(book)o}? == null
-    ($ready2) = false
+    ($ready) = false
     @print <ord>没有<hio>(book)</hio>（<hiy>重新准备时请自己确保已学习该秘籍并且有备份，或者用手抄本</hiy>），流程终止。</ord>
 // 检查移花宫装备
-[if] (type) == 掌门扳指 || (type) == 练功服
+[if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
   [if] (yihua) != null && {b★★★★★★(yihua)y}? == null
-    ($ready3) = false
+    ($ready) = false
     @print <ord>没有<hiy>★★★★★★(yihua)</hiy>，流程终止。</ord>
 // 掌门令牌（探龙偷掌门）路线检查是否有掌门扳指
 [if] (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
@@ -119,10 +125,10 @@
     ($eqjz) = (:eq5)
     stopstate;uneq (:eq5)
     [if] {b掌门扳指o}? == null
-      ($ready4) = false
+      ($ready) = false
       @print <ord>没有<hio>掌门扳指</hio>，流程终止。</ord>
 
-[if] (ready0) == false || (ready1) == false || (ready2) == false || (ready3) == false || (ready4) == false
+[if] (ready) == false
   $zdwk
   [exit]
 
@@ -224,8 +230,8 @@ packitem tzdl {b宗门指环}?
   go north
 // 进入宗门
 go west[2]
-// 掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、打妖王
-[if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
+// 掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、掌门令牌（师妹方式）、打妖王、随从小师妹
+[if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王 || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
   // 关闭自动出招和所有起手触发
   $stoppfm
   setting auto_pfm 0
@@ -264,8 +270,8 @@ go west[2]
   answer {r大师兄}? 1
   go east;go north
   @tip 这些东西应该对你有用
-  // 大长老三选一，涉及路线：掌门扳指、练功服、掌门令牌（探龙偷掌门）、打妖王
-  [if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
+  // 大长老三选一，涉及路线：掌门扳指、练功服、掌门令牌（探龙偷掌门）、掌门令牌（师妹方式）、打妖王、随从小师妹
+  [if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王 || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
     answer {r大长老}? 1
     go south;go west
     @tip 把秘籍给他
@@ -274,22 +280,16 @@ go west[2]
     @print ***************************************
     @print (:hour):(:minute):(:second) 此处需等待10分钟，直到大师兄找你对话
     @print ***************************************
-    @await 600000
+    @wait 600000
     @print ***************************************
     @print 可以去找大师兄了
     @print ***************************************
     go north;go south
     @tip 带你去个好地方
-    answer {r大师兄}? 1
-    @tip 这条小路只有我知道
-    answer {r大师兄}? 1
-    @tip 这个瀑布别看不大
-    answer {r大师兄}? 1
-    @tip 遥想万年后却化为一片废墟
     // 涉及路线：掌门扳指、练功服、随从、掌门令牌（师妹方式）
-    [if] (type) == 掌门扳指 || (type) == 练功服
-      answer {r大师兄}? 1
-      @until (:room) == 上古宗门(万年前)-练武场(副本区域)
+    [if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
+      answer {r大师兄}? 2
+      //@until (:room) == 上古宗门(万年前)-练武场(副本区域)
       go south
       @tip 你就是最近和大师兄打的火热
       answer {r小师妹}? 2
@@ -297,42 +297,53 @@ go west[2]
       @print ***************************************
       @print (:hour):(:minute):(:second) 此处需等待10分钟，直到小师妹找你对话
       @print ***************************************
-      @await 600000
+      @wait 600000
       @print ***************************************
       @print 可以去找小师妹了
       @print ***************************************
       go north;go south
       @tip 带你去个好玩的地方
-      [if] (type) == 掌门扳指
+      [if] (type) == 掌门扳指 || (type) == 掌门令牌（师妹方式）|| (type) == 随从小师妹
         answer {r小师妹}? 1
         @tip 你们来到一个瀑布下面
         look teng
         open teng
         @tip 就是这个雕像
         look hu
-        //@tip 底座有个手掌大小的插槽
         fl hu
-        @tip 我们去别的地方玩吧
-        answer {r小师妹}? 2
-        @tip 好不容易找个保镖
-        @tip 区区一个令牌
-        look teng
-        open teng
-        look hu
-        fl hu
-        @tip 岩壁露出一个黑幽幽的洞口
-        go down
-        @tip 你就是大长老所说的外来人
-        answer {r掌门}? 1
-        @tip 这件器物就拜托你代为保管
-        get all from {r妖王的尸体}?
-        @print <hiy>掌门扳指路线已完成，流程即将结束。</hiy>
+        [if] (type) == 掌门扳指 || (type) ==掌门令牌（师妹方式）
+          @tip 我们去别的地方玩吧
+          answer {r小师妹}? 2
+          @tip 好不容易找个保镖
+          @tip 区区一个令牌
+          [if] (type) == 掌门扳指
+            look teng
+            open teng
+            look hu
+            fl hu
+            @tip 岩壁露出一个黑幽幽的洞口
+            go down
+            @tip 你就是大长老所说的外来人
+            answer {r掌门}? 1
+            @tip 这件器物就拜托你代为保管
+            get all from {r妖王的尸体}?
+            @print <hiy>掌门扳指路线已完成，流程即将结束。</hiy>
+          [else if] (type) == 掌门令牌（师妹方式）
+            @print <hiy>掌门令牌（师妹方式）路线已完成，流程即将结束。</hiy>
+
       [else if] (type) == 练功服
         answer {r小师妹}? 2
         @tip 这是我找大长老求了很久才给我的
         @print <hiy>练功服路线已完成，流程即将结束。</hiy>
-    // 主线，和大师兄去悬崖，涉及路线：掌门令牌、打妖王
+
+    // 主线，和大师兄去悬崖，涉及路线：掌门令牌（探龙偷掌门）、打妖王
     [else if] (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
+      answer {r大师兄}? 1
+      @tip 这条小路只有我知道
+      answer {r大师兄}? 1
+      @tip 这个瀑布别看不大
+      answer {r大师兄}? 1
+      @tip 遥想万年后却化为一片废墟
       answer {r大师兄}? 2
       @tip 平原上有一座繁华的神殿
       answer {r大师兄}? 2
