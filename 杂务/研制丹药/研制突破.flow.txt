@@ -28,7 +28,7 @@ lianyao2 add {石楠叶}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {茯苓}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
@@ -36,7 +36,7 @@ lianyao2 add {石楠叶}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {罗汉鱼}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
-lianyao2 add {沉香}
+lianyao2 add {沉香b}
 @tip 控制着火候|丹炉里火力渐盛|看上去快要成型了
 lianyao2 add {鲂鱼}
 @tip 看上去快要成型了
