@@ -1,8 +1,8 @@
 // 白三三
 // 版本检测
-// 2021-10-03 11:03
-($localVer) = 2021100302
-($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、打妖王、随从小师妹，其余路线待做。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 探龙偷掌门需要5500级探龙手，打妖王请设置更换装备技能的命令。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
+// 2021-10-03 16:11
+($localVer) = 2021100303
+($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、打妖王、随从小师妹、购买物资。\n🛒 可以做路线任务顺便购买物资，也可以只购买不做其它事情。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 探龙偷掌门需要5500级探龙手，打妖王请设置更换装备技能的命令。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
 ($flowName) = 古代宗门
 ($flowCode) = gdzm
 ($flowPath) = 副本
@@ -64,7 +64,7 @@
     ($GZMway) = 古大陆
   [else]
     ($GZMway) = 移花宫
-[if] {b宗门指环}? == null
+[if] {b宗门指环}? == null && {b掌门扳指o}? == null && {b长老指环p}? == null
   ($GZMway) = 移花宫
 
 // 检查秘籍
@@ -76,30 +76,27 @@
 // 菜单
 [(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴
 #select ($GZMway) = 进入古代宗门方式,古大陆|移花宫,(GZMway)
-#select ($type) = 选择路线,掌门扳指|练功服|武道书|掌门令牌（探龙偷掌门）|掌门令牌（师妹方式）|打妖王|随从小师妹,(type)
+#select ($type) = 选择路线,掌门扳指|练功服|武道书|掌门令牌（探龙偷掌门）|掌门令牌（师妹方式）|打妖王|随从小师妹|购买物资,(type)
 #input ($book) = 给大长老的秘籍名字,(book)
 #select ($yihua) = 掌门扳指和练功服路线要给小师妹的物品,邀月的手镯|涟星的冰玉簪,(yihua)
 #input ($MHTriggers) = 关闭触发(多个触发名字用英文逗号隔开),(MHTriggers)
-#input ($GZMbosseq) = 打妖王前更换装备技能(用英文;隔开),(GZMbosseq)
+#select ($shopping) = <hiz>如果只想买东西不做其它，请选择路线【购买物资】</hiz><br/>&nbsp*&nbsp🛒 顺路购买物资,不买|只买玄晶|只买元晶|全都要,不买
 #config
 
 // 检查宗门指环
-[if] {b宗门指环}? == null && (GZMway) == 古大陆
+[if] {b宗门指环}? == null && {b掌门扳指o}? == null && {b长老指环p}? == null && (GZMway) == 古大陆
   ($GZMway) = 移花宫
   @print <ord>没有<hig>宗门指环</hig>，进入方式改为移花宫。</ord>
 // 检查进入方式
 [if] (GZMway) == null
   ($ready) =false
   @print <ord>没有选择进入古代宗门的方式，流程终止。</ord>
-// 检查打妖王、随从小师妹、掌门令牌（师妹方式）路线是否有令牌、更换装备技能命令是否设置。
+// 检查打妖王、随从小师妹、掌门令牌（师妹方式）路线是否有令牌
 [if] (type) == 打妖王 || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
   [if] {b掌门令牌o}? == null
     ($lingpai) = false
   [else]
     ($lingpai) = true
-  [if] (GZMbosseq) == null && (type) == 打妖王
-    ($ready) = false
-    @print <ord>没有设置打妖王前更换装备技能的命令，流程终止。</ord>
   [if] (lingpai) == false && (type) == 随从小师妹
     ($ready) = false
     @print <ord>没有掌门令牌，无法进行随从小师妹路线，流程终止。</ord>
@@ -127,7 +124,21 @@
     [if] {b掌门扳指o}? == null
       ($ready) = false
       @print <ord>没有<hio>掌门扳指</hio>，流程终止。</ord>
+// 购买物资路线检查是否选择购买内容
+[if] (type) == 购买物资 && (shopping) == 不买
+  ($ready) = false
+  @print <ord>购买物资未选择购买物品，流程终止。</ord>
+// 打妖王路线二级菜单
+[if] (type) == 打妖王
+  #select ($yaowang) = <ord>如果已经通过其它路线获得橙装，奖励物品将变成紫色品质。</ord><br/>&nbsp*&nbsp🏆 打死妖王后奖励物品三选一,练功服|元晶|指环,元晶
+  #input ($GZMbosseq) = 打妖王前更换装备技能(用英文;隔开),(GZMbosseq)
+  #config
+  // 检查打妖王前更换装备技能命令
+  [if] (GZMbosseq) == null
+    ($ready) = false
+    @print <ord>没有设置打妖王前更换装备技能的命令，流程终止。</ord>
 
+// 未准备完善则终止。
 [if] (ready) == false
   $zdwk
   [exit]
@@ -164,7 +175,7 @@ team out
   [while] (xuanwo) != true
     <---
     [if] {r神秘的尸体}? != null
-      [if] {b宗门指环}? == null
+      [if] {b宗门指环}? == null && {b掌门扳指o}? == null && {b长老指环p}? == null
         get all from {r神秘的尸体}?
       ($xuanwo) = true
       @cmdDelay 500
@@ -218,7 +229,10 @@ go north
 cr gumen/shanmen
 go west
 // 护山大阵
-packitem tzdl {b宗门指环}?
+[{b掌门扳指o}? != null]($ring) = {b掌门扳指o}?
+[{b长老指环p}? != null]($ring) = {b长老指环p}?
+[{b宗门指环}? != null]($ring) = {b宗门指环}?
+packitem tzdl (ring)
 @tip 你却从明暗交错的光影中看到($distance)面似乎可以走出去
 [if] (distance) == 东
   go east
@@ -230,6 +244,20 @@ packitem tzdl {b宗门指环}?
   go north
 // 进入宗门
 go west[2]
+go west[2]
+[if] (shopping) != 不买 || (type) == 购买物资
+  go north
+  list {r长老}?
+  [if] (shopping) == 只买玄晶 || (shopping) == 全都要
+    buy 10000 {d玄晶}? from {r长老}?
+  [if] (shopping) == 只买元晶 || (shopping) == 全都要
+    buy 1 {d元晶}? from {r长老}?
+    buy 1 {d元晶}? from {r长老}?
+    buy 1 {d元晶}? from {r长老}?
+    buy 1 {d元晶}? from {r长老}?
+    buy 1 {d元晶}? from {r长老}?
+  @await 3000
+  go south
 // 掌门扳指、练功服、武道书、掌门令牌（探龙偷掌门）、掌门令牌（师妹方式）、打妖王、随从小师妹
 [if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王 || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
   // 关闭自动出招和所有起手触发
@@ -246,8 +274,7 @@ go west[2]
       @js ToRaid.perform(`//~silent\n@off (t)`);
       ($num)=(num)+1
     @print 已关闭指定触发：(MHTriggers)
-  // 见大师兄
-  go west[2]
+  // 比试大师兄
   @liaoshang
   fight {r大师兄}?
   @tip 可以告诉我一些宗门的事情吗
