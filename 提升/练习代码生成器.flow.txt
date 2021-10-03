@@ -1,8 +1,8 @@
 //~silent
 // 生成练习代码，自动填入系统设置中，代码长度最多400。
 // 四区白三三
-($localVer) = 2021070901
-($changeLog) = 🆕 新增批量指定等级选项。🌟 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
+($localVer) = 2021100301
+($changeLog) = 🆕 新增批量指定等级选项；优化逻辑判断。🌟 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
 ($flowName) = 练习代码生成器
 ($flowCode) = lxdm
 ($flowPath) = 提升
@@ -112,7 +112,7 @@
       ($type) = skill
     [if] (LXtype) == 批量指定等级
       [if] (target_level) < (level)
-        [if] (k(_j)) != 跳过
+        [if] (k(_j)) != 跳过 && (k(_j)) != null
           @js ($l(_j)) = (target_level)
       [else]
         ($LXtype) = 练至上限
