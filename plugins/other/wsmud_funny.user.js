@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_funny
 // @namespace   suqing.fun
-// @version     0.3.35
+// @version     0.3.36
 // @author      SuQing, 白三三
 // @match       http://*.wsmud.com/*
 // @exclude     http://*.wsmud.com/news/*
@@ -610,9 +610,9 @@ unsafeWindow.say = say;
           // wd2 = b[4];
           // /可以重置/.test(b[2]) ? wd3 = "<hig>可以重置</hig>" : wd3 = "已经重置";
           // /已经/.test(b[7]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
-          const a = task.desc.match(/副本：<...>(\d+)\/20<....>/);
+          const a = task.desc.match(/精力消耗：<...>(\d+)\/200<....>/);
           if (a) {
-            fb = parseInt(a[1]) < 20 ? `<hig>${a[1]}</hig>` : a[1];
+            fb = parseInt(a[1]) < 200 ? `<hig>${a[1]}</hig>` : a[1];
           }
 
           const b = task.desc.match(/武道塔(.+)，进度(\d+)\/(\d+)<....>/);
@@ -659,7 +659,7 @@ unsafeWindow.say = say;
         }
       });
       let html = `门派请安 => ${qa}\n武道之塔 => ${wd}\n`;
-      html += `日常副本 => ${fb}/20\n师门任务 => ${sm1}/20 ${sm2}连\n`;
+      html += `精力消耗 => ${fb}/200\n师门任务 => ${sm1}/20 ${sm2}连\n`;
       html += `衙门追捕 => ${ym1}/20 ${ym2}连\n每周运镖 => ${yb1}/20 ${yb2}连\n`;
       html += `襄阳守城 => ${xy}/1 门派BOSS => ${mpb}/1\n`;
       html += `武道塔主 => ${wdtz}\n`;

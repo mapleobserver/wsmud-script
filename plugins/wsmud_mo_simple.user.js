@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_mo_simple
 // @namespace   mos
-// @version     0.1.2.2
+// @version     0.1.2.3
 // @author      sq, 白三三
 // @match       http://*.wsmud.com/*
 // @homepage    https://greasyfork.org/zh-CN/scripts/394530-wsmud-mo-simple
@@ -228,14 +228,14 @@
             data.items.forEach(item => {
                 if (item.state === 2) fn.send(`taskover ${item.id}`); // 自动完成
                 if (item.id === "signin") {
-                    let a = item.desc.match(/师门任务：(.*)，副本：<(.*)>(.*)\/20<(.*)>/);
+                    let a = item.desc.match(/师门任务：(.*)，精力消耗：<(.*)>(.*)\/200<(.*)>/);
                     let b = item.desc.match(/(.*)武道塔(.*)，进度(\d+)\/(\d+)<(.*)/);
                     let c = item.desc.match(/<.+?>(.+)首席请安<.+?>/);
                     let d = item.desc.match(/尚未协助襄阳守城/);
                     let e = item.desc.match(/尚未挑战门派BOSS/);
                     let f = item.desc.match(/挑战武神BOSS(\d+)次/);
                     let g = item.desc.match(/尚未挑战武道塔塔主/);
-                    (parseInt(a[3]) < 20) ? fb = `<hig>${a[3]}</hig>` : fb = a[3];
+                    (parseInt(a[3]) < 200) ? fb = `<hig>${a[3]}</hig>` : fb = a[3];
                     if (b) {
                         (parseInt(b[3]) < parseInt(b[4])) ? wd1 = `<hig>${b[3]}</hig>` : wd1 = b[3];
                         wd2 = b[4];
@@ -269,7 +269,7 @@
                 }
             });
             let html = `门派请安 => ${qa}\n武道之塔 => ${wd}\n`;
-            html += `日常副本 => ${fb}/20\n师门任务 => ${sm1}/20 ${sm2}连\n`;
+            html += `精力消耗 => ${fb}/200\n师门任务 => ${sm1}/20 ${sm2}连\n`;
             html += `衙门追捕 => ${ym1}/20 ${ym2}连\n每周运镖 => ${yb1}/20 ${yb2}连\n`;
             html += `襄阳守城 => ${xy}/1 门派BOSS => ${mpb}/1\n`
             html += `武道塔主 => ${wdtz}\n`;
