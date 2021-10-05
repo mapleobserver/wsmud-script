@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.189
+// @version      0.0.32.190
 // @date         01/07/2018
-// @modified     01/10/2021
+// @modified     06/10/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -3016,12 +3016,13 @@
                         WG.auto_fight();
                     },
                     onekeysansan: function () {
-                        let mlh = `// 导入三三懒人包流程，方便后续导入操作
+                        let mlh = `//~silent
+                        // 导入三三懒人包流程，方便后续导入操作
                         // 自命令类型选 Raidjs流程
                         // 四区白三三
                         ($f_ss)={"name":"三三懒人包","source":"https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script/三三懒人包.flow.txt","finder":"根文件夹"}
                         @js var time=Date.parse(new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
-                        @awiat 2000
+                        @await 2000
                         tm 【三三懒人包】流程已导入，如果曾用早期版本的懒人包导入过流程，请先删除这些流程后再使用。`;
 
                         if (unsafeWindow && unsafeWindow.ToRaid) {
@@ -4731,12 +4732,12 @@
                         } else {
                             let str = dailylog;
                             str = str.replace(/<(?!\/?p\b)[^>]+>/ig, '');
-                            let str1 = str.split("副本");
+                            let str1 = str.split("精力消耗");
 
                             let n = str1[0].match("：([^%]+)/20")[1];
-                            let n1 = str1[1].match("：([^%]+)/20")[1];
+                            let n1 = str1[1].match("：([^%]+)/200")[1];
                             n = 20 - parseInt(n);
-                            fbnums = 20 - parseInt(n1);
+                            fbnums = 20 - parseInt(n1)/10;
                             messageAppend("还需要" + n + "次师门任务," + fbnums + "次副本,才可签到");
                             if (n != 0) {
                                 //$(".sm_button").click();
