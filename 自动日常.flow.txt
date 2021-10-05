@@ -2,13 +2,14 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021100201
-($changeLog) = 🆕 修复只打塔主和节日模式的冲突；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
+($localVer) = 2021100501
+($changeLog) = 🆕 修复测试服副本识别不出的问题；修复只打塔主和节日模式的冲突；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
 ($flowFinder) = 根文件夹
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)
@@ -641,9 +642,12 @@ stopstate
   stopstate
   @toolbar jh
   @toolbar tasks
-  @task 副本：($tag2)>($fb_com)/20
+  @task 副本：($tag2)>($fb_com)/20|精力消耗：($tag2)>($jl_com)/200
   [if] (FBnum) == null || (FBnum) < 1
     ($FBnum) = 20
+  [if] (jl_com) != null
+    ($fb_com) = (jl_com)/10
+    ($jl_com) = null
   [if] (fb_com) >=(FBnum)
     @print <hiy>当日副本次数已完成(fb_com)次。</hiy>
   [else]
@@ -691,7 +695,10 @@ stopstate
           @toolbar jh
           @toolbar tasks
           @await 500
-          @task 副本：($tag2)>($fb_com)/20
+          @task 副本：($tag2)>($fb_com)/20|精力消耗：($tag2)>($jl_com)/200
+          [if] (jl_com) != null
+            ($fb_com) = (jl_com)/10
+            ($jl_com) = null
     [else if] (FBWay) == 自动
       //脚本自动模式
       stopstate
