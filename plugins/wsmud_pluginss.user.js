@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.186
+// @version      0.0.32.189
 // @date         01/07/2018
-// @modified     22/09/2021
+// @modified     01/10/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -2972,6 +2972,15 @@
                 $('.WG_log').hide();
             }
         },
+        showhidebtn: function () {
+            if ($('.WG_button').css('display') == 'none') {
+                window.localStorage.setItem("closeBtn", "false")
+                $('.WG_button').show();
+            } else {
+                window.localStorage.setItem("closeBtn", "true")
+                $('.WG_button').hide();
+            }
+        },
         calc: function () {
             messageClear();
             var html = UI.jsquivue;
@@ -5607,8 +5616,8 @@
                 if (ytdata.indexOf("一股奇异的能量涌入你的体内，你获得")>= 0){
                     G.yaoyuan=G.yaoyuan+parseInt(ytdata.replace(/[^0-9]/ig,""))
                     $('#yt_prog').html("<hiy>目前已获得 "+G.yaoyuan+" 妖元</hiy>")
-                    if (G.yaoyuan >= 261){
-                        WG.SendCmd("$wait 500;lkfb ok;")
+                    if (G.yaoyuan == 261){
+                        $('#yt_prog').html("<hiy>目前已获得 "+G.yaoyuan+" 妖元，boss出现！</hiy>")
                     }
                 }
             }
@@ -8229,6 +8238,23 @@
                         },
                         callback: function (key, opt) {
                             WG.showhideborad();
+                        },
+                    }, "打开快捷操作栏": {
+                        name: "打开快捷操作栏",
+                        visible: function (key, opt) {
+                            return $('.WG_button').css('display') == 'none';
+                        },
+                        callback: function (key, opt) {
+                            WG.showhidebtn();
+                        },
+                    },
+                    "关闭快捷操作栏": {
+                        name: "关闭快捷操作栏",
+                        visible: function (key, opt) {
+                            return $('.WG_button').css('display') != 'none';
+                        },
+                        callback: function (key, opt) {
+                            WG.showhidebtn();
                         },
                     }
                 }
