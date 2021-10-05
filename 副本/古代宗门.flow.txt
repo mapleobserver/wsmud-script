@@ -1,8 +1,8 @@
 //~silent
 // 白三三
 // 版本检测
-// 2021-10-03 16:37
-($localVer) = 2021100402
+// 2021-10-03 11:56
+($localVer) = 2021100501
 ($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、门派红残页、掌门令牌（探龙偷掌门）、打妖王、随从小师妹、购买物资。\n🛒 可以做路线任务顺便购买物资，也可以只购买不做其它事情。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 探龙偷掌门需要5500级探龙手。打妖王路线如果身上没令牌，会先自动偷掌门，已有令牌则不偷。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
 ($flowName) = 古代宗门
 ($flowCode) = gdzm
@@ -148,6 +148,8 @@ tm 本次副本路线：(type)
 @print 🚌 本次副本路线：<hio>(type)</hio>
 stopstate
 team out
+@tidyBag
+@await 2000
 @renew
 
 // 古大陆
@@ -288,8 +290,11 @@ go west[2]
   go east;go north
   @print 前往藏经阁找大长老
   @tip 大师兄托我来交还秘籍
+  study {b(book)o}?
+  @tip 这本书上的内容对你来说太浅了
+  stopstate
   answer {r大长老}? 2
-  give {r大长老}? 1 {b(book)}?
+  give {r大长老}? 1 {b(book)o}?
   @tip 这本书不像是从这里借出的
   go south;go west
   @print ***************************************
@@ -376,9 +381,9 @@ go west[2]
             answer {r掌门}? 1
             @tip 这件器物就拜托你代为保管
             get all from {r妖王的尸体}?
-            @print <hiy>掌门扳指路线已完成，流程即将结束。</hiy>
+            @print <hiy><hio>掌门扳指路线</hio>已完成，流程即将结束。</hiy>
           [else if] (type) == 掌门令牌（师妹方式）
-            @print <hiy>掌门令牌（师妹方式）路线已完成，流程即将结束。</hiy>
+            @print <hiy><hio>掌门令牌（师妹方式）路线</hio>已完成，流程即将结束。</hiy>
         [else if] (type) == 随从小师妹
           @tip 有股不详的预感
           go down
@@ -392,7 +397,7 @@ go west[2]
       [else if] (type) == 练功服
         answer {r小师妹}? 2
         @tip 这是我找大长老求了很久才给我的
-        @print <hiy>练功服路线已完成，流程即将结束。</hiy>
+        @print <hiy><hio>练功服路线</hio>已完成，流程即将结束。</hiy>
 
     // 主线，和大师兄去悬崖，涉及路线：掌门令牌（探龙偷掌门）、打妖王
     [else if] (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王
@@ -432,6 +437,8 @@ go west[2]
           @print 未偷到掌门令牌，请手动尝试或检查探龙手是否等级过低。
           @print 等待手动偷令牌或离开副本……
           @until {b掌门令牌o}? != null || (:room 副本区域) == false
+        [if] (type) == 掌门令牌（探龙偷掌门）
+          @print <hiy><hio>掌门令牌（探龙偷掌门）路线</hio>已完成，流程即将结束。</hiy>
       // 主线，打妖王
       [if] (type) == 打妖王
         go west
@@ -453,15 +460,22 @@ go west[2]
           @beep
         [else]
           @tip 这里有几样东西也许对你有用
-          // 三选一，拿元晶，主线100%
-          answer {r掌门}? 2
+          // 三选一，主线100%
+          [if] (yaowang) == null || (yaowang) == 元晶
+            ($reward) = 2
+          [if] (yaowang) == 练功服
+            ($reward) = 1
+          [if] (reward) == 指环
+            ($reward) = 3
+          answer {r掌门}? (reward)
+          @print <hiy><hio>打妖王路线</hio>已完成，流程即将结束。</hiy>
   // 大长老三选一，涉及路线：武道书、门派红残页
   [else if] (type) == 武道书
     answer {r大长老}? 3
-    @print <hiy>武道书路线已完成，流程即将结束。</hiy>
+    @print <hiy><hio>武道书路线</hio>已完成，流程即将结束。</hiy>
   [else if] (type) == 门派红残页
     answer {r大长老}? 2
-    @print <hiy>门派红残页路线已完成，流程即将结束。</hiy>
+    @print <hiy><hio>门派红残页路线</hio>已完成，流程即将结束。</hiy>
 // 结束副本
 cr;cr over
 $zdwk
