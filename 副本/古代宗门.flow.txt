@@ -1,8 +1,8 @@
 //~silent
 // 白三三
 // 版本检测
-// 2021-10-06 14:14
-($localVer) = 2021100601
+// 2021-10-06 14:52
+($localVer) = 2021100602
 ($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、门派红残页、掌门令牌（探龙偷掌门）、打妖王、随从小师妹、购买物资。\n🛒 可以做路线任务顺便购买物资，也可以只购买不做其它事情。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 探龙偷掌门需要5500级探龙手。打妖王路线如果身上没令牌，会先自动偷掌门，已有令牌则不偷。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
 ($flowName) = 古代宗门
 ($flowCode) = gdzm
@@ -179,6 +179,7 @@ team out
     <---
     [if] {r神秘的尸体}? != null
       [if] {b宗门指环}? == null && {b掌门扳指o}? == null && {b长老指环p}? == null
+        ($first) = true
         get all from {r神秘的尸体}?
         [if] (:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀皇 || (:grade) == 兵主 || (:grade) == 战神
           ($GZMway) = 古大陆
@@ -233,9 +234,9 @@ team out
     [exit]
 
 look xuanwo
-[if] (GZMway) == 古大陆
+[if] (GZMway) == 古大陆 && (first) != true
   tiao xuanwo
-[else if] (GZMway) == 移花宫
+[else]
   tiao xuanwo ok
 go north
 
