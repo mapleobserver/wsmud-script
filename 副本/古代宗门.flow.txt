@@ -1,8 +1,8 @@
 //~silent
 // 白三三
 // 版本检测
-// 2021-10-06 14:52
-($localVer) = 2021100602
+// 2021-10-06 16:02
+($localVer) = 2021100603
 ($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、门派红残页、掌门令牌（探龙偷掌门）、打妖王、随从小师妹、购买物资。\n🛒 可以做路线任务顺便购买物资，也可以只购买不做其它事情。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 探龙偷掌门需要5500级探龙手。打妖王路线如果身上没令牌，会先自动偷掌门，已有令牌则不偷。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
 ($flowName) = 古代宗门
 ($flowCode) = gdzm
@@ -105,7 +105,7 @@
     ($ready) = false
     @print <ord>掌门令牌（师妹方式）路线中，背包不能有令牌，请选择其它路线用掉令牌或存仓，流程终止。</ord>
 // 检查秘籍
-[if] (lingpai) == false || (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 门派红残页 || (type) == 掌门令牌（探龙偷掌门） || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
+[if] (lingpai) == false || (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 门派红残页 || (type) == 掌门令牌（探龙偷掌门） || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式） || (type) == 打妖王
   @js ($miji) = '(book)'.indexOf('秘籍')
   [if] (miji) == -1
     ($book) = (book)秘籍
@@ -148,8 +148,13 @@ tm 本次副本路线：(type)
 @print 🚌 本次副本路线：<hio>(type)</hio>
 stopstate
 team out
-@tidyBag
-@await 2000
+[if] {b宗门指环}? == null && {b掌门扳指o}? == null && {b长老指环p}? == null
+  @tidyBag
+  @await 2000
+  [if] {b(book)o}? == null && (type) != 购买物资
+    @print <ord>没有<hio>(book)</hio>，请检查是否存入了仓库中或者设置中对秘籍设了存仓。流程终止。</ord>
+    $zdwk
+    [exit]
 @renew
 
 // 古大陆
@@ -296,7 +301,7 @@ go west[2]
   @tip 可以告诉我一些宗门的事情吗
   answer {r大师兄}? 2
   @until (:combating) == false && (:free) == true && (:status faint) == false && (:status miss) == false && (:status tysp) == false
-  @await 5000
+  @await 10000
   go east;go north
   @print 前往藏经阁找大长老
   @tip 大师兄托我来交还秘籍
