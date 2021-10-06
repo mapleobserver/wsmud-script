@@ -1,8 +1,8 @@
 //~silent
 // 白三三
 // 版本检测
-// 2021-10-06 16:02
-($localVer) = 2021100603
+// 2021-10-06 20:33
+($localVer) = 2021100604
 ($changeLog) = 📝 可以从古大陆或移花宫进入。\n🚌 目前路线有：掌门扳指、练功服、武道书、门派红残页、掌门令牌（探龙偷掌门）、打妖王、随从小师妹、购买物资。\n🛒 可以做路线任务顺便购买物资，也可以只购买不做其它事情。\n‼️ 建议先多脱几个技能避免比试打赢大师兄。\n🌺 没有宗门指环会自动改从移花宫进入。\n🔧 自动检测移花宫装备，秘籍默认真言手印，可以自己改。\n⚔️ 探龙偷掌门需要5500级探龙手。打妖王路线如果身上没令牌，会先自动偷掌门，已有令牌则不偷。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
 ($flowName) = 古代宗门
 ($flowCode) = gdzm
@@ -75,6 +75,7 @@
   ($book) = 手动填写
 
 // 菜单
+($repeat) = 1
 [(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴
 #select ($GZMway) = ⛩ 进入古代宗门方式,古大陆|移花宫,(GZMway)
 #select ($type) = <ord>所有路线奖励（除了购买物资）都是一次性的，一轮活动中重复进行不会再给。</ord><br/>&nbsp*&nbsp🚌 选择路线,掌门扳指|练功服|武道书|门派红残页|掌门令牌（探龙偷掌门）|掌门令牌（师妹方式）|打妖王|随从小师妹|购买物资,(type)
@@ -126,9 +127,13 @@
       ($ready) = false
       @print <ord>没有<hio>掌门扳指</hio>，流程终止。</ord>
 // 购买物资路线检查是否选择购买内容
-[if] (type) == 购买物资 && (shopping) == 不买
+[if] (type) == 购买物资
+  #input ($repeat) = 循环购买次数,1
+  #select ($shopping) = <hiz>如果只想买东西不做其它，请选择路线【购买物资】</hiz><br/>&nbsp*&nbsp🛒 顺路购买物资,只买玄晶|只买元晶|全都要,只买玄晶
+  #config
+[if] (repeat) < 1 || (repeat) == null
   ($ready) = false
-  @print <ord>购买物资未选择购买物品，流程终止。</ord>
+  @print <ord>购买物资未设置循环次数，流程终止。</ord>
 // 打妖王路线二级菜单
 [if] (type) == 打妖王
   #select ($yaowang) = <ord>如果已经通过其它路线获得橙装，奖励物品将变成紫色品质。</ord><br/>&nbsp*&nbsp🏆 打死妖王后奖励物品三选一,练功服|元晶|指环,元晶
@@ -157,127 +162,142 @@ team out
     [exit]
 @renew
 
-// 古大陆
-[if] (GZMway) == 古大陆
-  jh fam 9 start
-  go enter
-  go up
-  @tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
-  [if] (pass) != null
-    @print <ord>不符合前往古大陆要求，流程终止。</ord>
-    $zdwk
-    [exit]
-  ggdl {r疯癫的老头}
-  go north[3]
-  go north[3]
-  look shi
-  tiao1 shi;tiao3 shi
-  tiao1 shi;tiao3 shi
-  tiao2 shi
+($num) = 0
+[while] (num) < (repeat)
+  // 古大陆
+  [if] (GZMway) == 古大陆 && (num) == 0
+    jh fam 9 start
+    go enter
+    go up
+    @tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
+    [if] (pass) != null
+      @print <ord>不符合前往古大陆要求，流程终止。</ord>
+      $zdwk
+      [exit]
+    ggdl {r疯癫的老头}
+    go north[3]
+    go north[3]
+    look shi
+    tiao1 shi;tiao3 shi
+    tiao1 shi;tiao3 shi
+    tiao2 shi
+    go north
+
+  // 移花宫
+  [else if] (GZMway) == 移花宫 && (num) == 0
+    @cmdDelay 1500
+    jh fb 22 start2;cr huashan/yihua/shandao 1 0
+    [while] (xuanwo) != true
+      <---
+      [if] {r神秘的尸体}? != null
+        ($first) == null
+        [if] {b宗门指环}? == null && {b掌门扳指o}? == null && {b长老指环p}? == null
+          ($first) = true
+          get all from {r神秘的尸体}?
+          [if] (:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀皇 || (:grade) == 兵主 || (:grade) == 战神
+            ($GZMway) = 古大陆
+        ($xuanwo) = true
+        @cmdDelay 500
+        [break]
+      --->
+      go south[5]
+      go south[5]
+      go south[5]
+      $killall
+      @until (:combating) == false
+      @await 3000
+      go south
+      go south
+      $killall
+      @until (:combating) == false
+      @await 3000
+      go south
+      $killall
+      @until (:combating) == false
+      @await 3000
+      go southeast
+      $killall
+      @until (:combating) == false
+      @await 3000
+      go northwest;go southwest
+      $killall
+      @until (:combating) == false
+      @await 3000
+      look hua
+      @tip 你数了下大概有($number)朵花
+      go southeast
+      look bed;pushstart bed;pushleft bed[(number)]
+      @await 2000
+      pushright bed[8]
+      @await 2000
+      go down
+      fire;go west
+      $killall
+      @until (:combating) == false
+      @await 3000
+      go west
+      go west
+      go north
+      go north
+      go north
+      go north
+      @print <ord>未找到尸体，请重试。</ord>
+      cr;cr over
+      $zdwk
+      [exit]
+  [if] (num) == 0
+    look xuanwo
+    [if] (GZMway) == 古大陆 && (first) != true
+      tiao xuanwo
+    [else]
+      tiao xuanwo ok
   go north
 
-// 移花宫
-[else if] (GZMway) == 移花宫
-  @cmdDelay 1500
-  jh fb 22 start2;cr huashan/yihua/shandao 1 0
-  [while] (xuanwo) != true
-    <---
-    [if] {r神秘的尸体}? != null
-      [if] {b宗门指环}? == null && {b掌门扳指o}? == null && {b长老指环p}? == null
-        ($first) = true
-        get all from {r神秘的尸体}?
-        [if] (:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀皇 || (:grade) == 兵主 || (:grade) == 战神
-          ($GZMway) = 古大陆
-      ($xuanwo) = true
-      @cmdDelay 500
-      [break]
-    --->
-    go south[5]
-    go south[5]
-    go south[5]
-    $killall
-    @until (:combating) == false
-    @await 3000
-    go south
-    go south
-    $killall
-    @until (:combating) == false
-    @await 3000
-    go south
-    $killall
-    @until (:combating) == false
-    @await 3000
-    go southeast
-    $killall
-    @until (:combating) == false
-    @await 3000
-    go northwest;go southwest
-    $killall
-    @until (:combating) == false
-    @await 3000
-    look hua
-    @tip 你数了下大概有($number)朵花
-    go southeast
-    look bed;pushstart bed;pushleft bed[(number)]
-    @await 2000
-    pushright bed[8]
-    @await 2000
-    go down
-    fire;go west
-    $killall
-    @until (:combating) == false
-    @await 3000
-    go west
-    go west
-    go north
-    go north
-    go north
-    go north
-    @print <ord>未找到尸体，请重试。</ord>
-    cr;cr over
-    $zdwk
-    [exit]
-
-look xuanwo
-[if] (GZMway) == 古大陆 && (first) != true
-  tiao xuanwo
-[else]
-  tiao xuanwo ok
-go north
-
-//进入副本
-cr gumen/shanmen
-go west
-// 护山大阵
-[{b掌门扳指o}? != null]($ring) = {b掌门扳指o}?
-[{b长老指环p}? != null]($ring) = {b长老指环p}?
-[{b宗门指环}? != null]($ring) = {b宗门指环}?
-packitem tzdl (ring)
-@tip 你却从明暗交错的光影中看到($distance)面似乎可以走出去
-[if] (distance) == 东
-  go east
-[else if] (distance) == 南
-  go south
-[else if] (distance) == 西
+  //进入副本
+  cr gumen/shanmen
   go west
-[else if] (distance) == 北
-  go north
-// 进入宗门
-go west[2]
-go west[2]
-[if] (shopping) != 不买 || (type) == 购买物资
-  go north
-  list {r长老}?
-  @dialog
-  [if] (shopping) == 只买玄晶 || (shopping) == 全都要
-    buy 10000 {d玄晶}? from {r长老}?
-  [if] (shopping) == 只买元晶 || (shopping) == 全都要
-    buy 1 {d元晶}? from {r长老}?
-    buy 1 {d元晶}? from {r长老}?
-    buy 1 {d元晶}? from {r长老}?
-    buy 1 {d元晶}? from {r长老}?
-    buy 1 {d元晶}? from {r长老}?
-  @await 3000
+  // 护山大阵
+  [{b掌门扳指o}? != null]($ring) = {b掌门扳指o}?
+  [{b长老指环p}? != null]($ring) = {b长老指环p}?
+  [{b宗门指环}? != null]($ring) = {b宗门指环}?
+  ($distance) = null
+  [while] (distance) == null
+    packitem tzdl (ring)
+    @tip 你却从明暗交错的光影中看到($distance)面似乎可以走出去|你已经看到出路了
+    [if] (distance) == 东
+      go east
+    [else if] (distance) == 南
+      go south
+    [else if] (distance) == 西
+      go west
+    [else if] (distance) == 北
+      go north
+  // 进入宗门
+  go west[2]
+  go west[2]
+  [if] (shopping) != 不买 || (type) == 购买物资
+    go north
+    list {r长老}?
+    @dialog
+    [if] (shopping) == 只买玄晶 || (shopping) == 全都要
+      buy 10000 {d玄晶}? from {r长老}?
+    [if] (shopping) == 只买元晶 || (shopping) == 全都要
+      buy 1 {d元晶}? from {r长老}?
+      buy 1 {d元晶}? from {r长老}?
+      buy 1 {d元晶}? from {r长老}?
+      buy 1 {d元晶}? from {r长老}?
+      buy 1 {d元晶}? from {r长老}?
+    @await 3000
+  ($num) = (num) + 1
+  [if] (type) == 购买物资
+    [if] (num) < (repeat)
+      cr;cr over
+    [else if] (num) == (repeat)
+      cr;cr over
+      $zdwk
+      [exit]
+    @print 已购买(num)/(repeat)次物资。
+
   go south
 // 掌门扳指、练功服、武道书、门派红残页、掌门令牌（探龙偷掌门）、掌门令牌（师妹方式）、打妖王、随从小师妹
 [if] (type) == 掌门扳指 || (type) == 练功服 || (type) == 武道书 || (type) == 门派红残页 || (type) == 掌门令牌（探龙偷掌门） || (type) == 打妖王 || (type) == 随从小师妹 || (type) == 掌门令牌（师妹方式）
