@@ -1,7 +1,7 @@
 //~silent
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
 // 四区白三三
-($localVer) = 2021042301
+($localVer) = 2021100701
 ($changeLog) = 副本新增【古宗门遗址】;优化扫荡频次，及时清包避免背包太满变废号。
 ($flowName) = 快速扫荡
 ($flowCode) = kssd
@@ -46,6 +46,10 @@
 
 [if] (SDWay) == null
     ($SDWay) = 直接扫荡
+[if] (RCMode) == 节日免费模式
+    ($AutoBuy) = 不购买
+[else]
+    ($AutoBuy) == 购买
 #input ($info1) = <ord>扫荡开始后无法中止，为避免意外，次数限定最高2000次。</ord>,👇🏻仔细填写👇🏻
 #input ($info2) = <ord>为避免背包太满无法清理，前期副本每100次会自动清理。</ord>,👇🏻仔细填写👇🏻
 #select ($AutoBuy) = 自动补充扫荡符(免费扫荡期间选不购买),购买|不购买,(AutoBuy)
