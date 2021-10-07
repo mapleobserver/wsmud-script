@@ -1,7 +1,10 @@
 //raid.flow
 //四区：白三三
+[(MHskill)==null]($MHskill)=enable force jiuyinshengong
+[(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴
 #input ($MHweapon)=摸红武器id,(MHweapon)
-#input ($Triggers)=关闭触发(多个触发名字用英文逗号隔开),(Triggers)
+#input ($MHskill)=摸红换技能命令(多条命令用英文;隔开),(MHskill)
+#input ($MHtriggers)=关闭触发(多个触发名字用英文逗号隔开),(MHTriggers)
 #config
 
 @cmdDelay 500
@@ -43,8 +46,8 @@ uneq (:eq2);uneq (:eq3);uneq (:eq4);uneq (:eq6);uneq (:eq7);uneq (:eq8);uneq (:e
 eq (MHweapon)
 @on 自爆
 @on 红满伤
-[if] (Triggers) != null
-  @js ($tgs)=var ts=("\""+"(Triggers)"+"\"").replace(/，/g,",");ts.replace(/,/g,"\",\"").split(",")
+[if] (MHTriggers) != null
+  @js ($tgs)=var ts=("\""+"(MHTriggers)"+"\"").replace(/，/g,",");ts.replace(/,/g,"\",\"").split(",")
   @js ($tl)=[(tgs)].length
   ($num)=0
   [while] (num)<(tl)
