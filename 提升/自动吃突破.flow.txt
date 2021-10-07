@@ -1,0 +1,11 @@
+//~silent
+#select ($yao) = 吃什么颜色的突破丹,绿|蓝|黄|紫,绿
+#config
+@cmdDelay 500
+stopstate
+[(yao)==绿]($color)=g
+[(yao)==蓝]($color)=b
+[(yao)==黄]($color)=y
+[(yao)==紫]($color)=p
+[while] {b突破丹(color)}? != null
+  use {b突破丹(color)}?
