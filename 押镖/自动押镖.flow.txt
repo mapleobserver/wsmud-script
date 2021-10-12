@@ -44,7 +44,7 @@
 #select ($EscortXuantie) = 连死三次换玄铁,是|否,(EscortXuantie)
 #select ($WDXuruo) = 死亡后自动到武道塔一百层清除虚弱,打开|关闭,(WDXuruo)
 #select ($EscortXuedao) = 残血使用血刀九阴(不自动疗伤),打开|关闭,(EscortXuedao)
-#select ($EscortForce) = 押镖使用内功,九阴神功|慈航静斋|自创九阴|自创慈航|明玉功|紫霞神功|其它,(EscortForce)
+#select ($EscortForce) = 押镖使用内功,九阴神功|慈航剑典|自创九阴|自创慈航|明玉功|紫霞神功|其它,(EscortForce)
 #select ($EscortJiuyin) = 有九阴或剑心buff时不等九阴剑心CD(请修改需要等待CD的技能),打开|关闭,(EscortJiuyin)
 #input ($EscortWaitCDExp) = 等待CD的技能sid,(EscortWaitCDExp)
 #select ($EscortTangshi) = 唐诗剑法,使用|不使用,(EscortTangshi)
@@ -73,6 +73,7 @@ stopstate
     [if] (:room) != 运镖-青石大道
         [if] (:room) != 运镖-城门
             @tidyBag
+            $to 扬州城-武庙
             @liaoshang
             @cd
             @wait 2000
