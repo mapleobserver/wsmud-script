@@ -1,7 +1,7 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
-($localVer) = 2021100301
-($changeLog) = 🆕 增加内功特殊词条化毒、招架特殊词条专注和星移。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.增加停止推演按钮（师门按钮旁）。7.语音提醒。
+($localVer) = 2021101301
+($changeLog) = 🆕 增加词条属性查看按钮；增加内功震慑词条（待测试）、内功特殊词条化毒、招架特殊词条专注和星移。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.增加停止推演按钮（师门按钮旁）。7.语音提醒。
 ($flowName) = 自创推演
 ($flowCode) = zcty
 ($flowPath) = 根文件夹
@@ -92,7 +92,7 @@
 // 配置词条
 [if] (zcEntrySet)==重设词条
   [if] (ZCSkill)==内功
-    ($propAry)=不推演|臂力d|命中d|攻击%|命中%|最终伤害%|忽视对方防御%|绝招冷却时间%|暴击%|练习效率%|攻击速度%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|绝招释放时间%|学习效率%|打坐效率%|攻击d|绝招冷却时间d|攻击速度d|绝招释放时间d|忙乱d|根骨d|身法d|悟性d|防御d|招架d|躲闪d
+    ($propAry)=不推演|臂力d|命中d|攻击%|命中%|最终伤害%|忽视对方防御%|绝招冷却时间%|暴击%|练习效率%|攻击速度%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|绝招释放时间%|学习效率%|打坐效率%|攻击d|绝招冷却时间d|攻击速度d|绝招释放时间d|忙乱d|根骨d|身法d|悟性d|防御d|招架d|躲闪d|震慑（长生）|震慑（慈航）|震慑（战神）
     ($spcAry)=不推演|吸血（太玄）|不灭（混沌）|战神|反震|守护|剑心|化毒
   [else if] (ZCSkill)==鞭法 || (ZCSkill)==棍法 || (ZCSkill)==剑法 || (ZCSkill)==刀法 || (ZCSkill)==杖法 || (ZCSkill)==拳脚 || (ZCSkill)==暗器
     ($propAry)=不推演|攻击d|命中d|臂力d|攻击%|命中%|最终伤害%|忽视对方防御%|暴击%|内力消耗%|伤害减免%|防御%|招架%|躲闪%|气血%|暴击伤害%|暴击抵抗%|忙乱%|忽视忙乱%|根骨d|身法d|悟性d|防御d|招架d|躲闪d
@@ -268,6 +268,10 @@ stopstate
 @js $('.ty_button').on('click', function(){ToRaid.perform(`//~silent\n($TYEnable)=false\n@print <ord>⚠️ 下一次升级后停止推演。</ord>\ntm ⚠️ 下一次升级后停止推演。`);})
 @print <hio>👇 点击【停止推演】将在词条下一次升级后停止推演。</hio>
 
+// 生成查看词条属性按钮
+@js $(`.ct_button`).remove();$(`.sm_button`).before(`<span class='zdy-item ct_button'><hig>词条属性</hig></span>`)
+@print <hig>👇 点击【词条属性】查看当前推演部位的最新词条信息。</hig>
+
 // 开启潜能监控
 @js WG.remove_hook(WG.zcinfo_hook);WG.zcinfo_hook=WG.add_hook('text', data=>data.msg.indexOf('增加其它可装备类型')>=0?WG.zcinfo=data.msg:0)
 @js WG.remove_hook(WG.qn_hook);WG.qn_hook=WG.add_hook('dialog', data=>data.dialog=='score'?WG.qn=data.pot:-1)
@@ -315,6 +319,21 @@ stopstate
   @js ($rest_qn)='(real_cost)'-'(cost)'
   //tm 词条理论消耗总潜能【(cost)】，推演实际消耗总潜能【(real_cost)】，未使用潜能【(rest_qn)】
   @js ($entry_num)=let l=[(entrys)].length;l<(priorNum)?l:(priorNum)
+
+  // 获得最新词条属性信息
+  @js ($entrysInfo)=var ct=WG.zcinfo.replace(/<.*?>/g,"");ct.replace(/[(|)]/g,"\',\'")
+  @js ($entrysInfo) = "(entrysInfo)".replace(/.*可装备为(ZCSkill)移除提升品阶融合绝招/g,"\'")
+  @js ($entrysInfo) = "(entrysInfo)".replace(/,'绝招：.*/g,"")
+  @js ($entrysInfo) = "(entrysInfo)".replace(/,'增加其它可装备类型.*/g,"")
+  @js ($entrysInfoLen) = [(entrysInfo)].length
+  ($num) = 0
+  ($entrysData) = 自创(ZCSkill)当前属性：
+  [while] (num) < (entrysInfoLen)
+    @js ($entrysP1) = [(entrysInfo)][(num)]
+    @js ($entrysP2) = [(entrysInfo)][(num)+1]
+    ($entrysData) = (entrysData)<br>(entrysP1)（(entrysP2)）
+    ($num) = (num) + 2
+  @js $(`.ct_button`).off('click');$(`.ct_button`).on('click', function(){ToRaid.perform(`//~silent\n@print (entrysData)`);})
   
   // 判断是否存在被覆盖潜能
   @js ($entry_last)=var last=[(entrys)].length-1;[(entrys)][last]*100000
@@ -342,7 +361,8 @@ stopstate
   [if] (finish) == null
     zc typelv (skill)
     ($prop)=null
-    @tip 盘膝坐下|属性：($gd)<cyn>($prop)<
+    ($gdbug) = null
+    @tip 盘膝坐下|属性：($gd)<cyn>($prop)<|属性：($gdbug)放弃
   [if](prop)!=null
     [if](sum)==1
       ($sum)=2
@@ -353,19 +373,31 @@ stopstate
       [while] (num)>0
         ($num)=(num)-1
         @js ($op)=[(zcp)][(num)]
-        @js ($pe)="(op)".search(/.*%/)
-        [if] (pe)!=-1
-          @js ($op)="(op)".replace("%","")
-          @js ($add)="(prop)".search(/(op)：.*%/)
+        @js ($propZhen)="(prop)".indexOf("附近敌人")
+        [if] (propZhen)!=-1
+          @js ($zhenshe)="(op)".indexOf("震慑")
+          [if] (zhenshe)!=-1
+            [if] (op)==震慑（长生）
+              ($op)=伤害
+            [else if] (op)==震慑（慈航）
+              ($op)=躲闪和招架
+            [else if] (op)==震慑（战神）
+              ($op)=防御和免伤
+            @js ($add)="(prop)".indexOf("(op)")
         [else]
-          @js ($pe)="(op)".search(/.*d/)
+          @js ($pe)="(op)".search(/.*%/)
           [if] (pe)!=-1
-            @js ($op)="(op)".replace("d","")
-            @js ($ps)="(prop)".search(/(op)：.*%/)
-            [if] (ps)==-1
-              @js ($add)="(prop)".indexOf("(op)"+"：")
+            @js ($op)="(op)".replace("%","")
+            @js ($add)="(prop)".search(/(op)：.*%/)
           [else]
-            @js ($add)="(prop)".indexOf("(op)"+"：")
+            @js ($pe)="(op)".search(/.*d/)
+            [if] (pe)!=-1
+              @js ($op)="(op)".replace("d","")
+              @js ($ps)="(prop)".search(/(op)：.*%/)
+              [if] (ps)==-1
+                @js ($add)="(prop)".indexOf("(op)"+"：")
+            [else]
+              @js ($add)="(prop)".indexOf("(op)"+"：")
         [if] (add) !=-1
           [break]
     [if] (add)==-1 && (ZCSpc) !=null
@@ -390,6 +422,11 @@ stopstate
     [else]
       zc prop (skill) ban
       @js WG.Send("tm 放弃词条【(prop)】 (:hour):(:minute):(:second)")
+    ($gdbug) = null
+  [if] (gdbug) != null
+    zc prop (skill) ban
+    @print 放弃因bug导致的未知词条 (:hour):(:minute):(:second)
+    @js WG.Send("tm 放弃因bug导致的未知词条 (:hour):(:minute):(:second)")
   // 潜能消耗值
   [if](sum)==2
     zc typedel (skill)
@@ -405,18 +442,51 @@ stopstate
     [break]
   // 循环推演
   ($num) =1
-  tm 自创(ZCSkill)潜能【(real_cost)】，未使用潜能【(rest_qn)】，词条等级【(entrys)】 (:hour):(:minute):(:second);
-  tm 推演(ZCSkill)第【(entry_num)】条属性，升级需要【(next_qn)】潜能 (:hour):(:minute):(:second);
-  score
-  @await 500
-  @js ($start_qn)=WG.qn
+  ($real_cost_p) = (real_cost)
+  [if] (real_cost_p)>=100000000
+    @js ($real_cost_p) = (real_cost_p)/100000000 + '亿'
+  [else if] (real_cost_p)>=10000
+    @js ($real_cost_p) = (real_cost_p)/10000 + '万'
+  ($rest_qn_p) = (rest_qn)
+  [if] (rest_qn_p)>=100000000
+    @js ($rest_qn_p) = (rest_qn_p)/10000 + '亿'
+  [else if] (rest_qn_p)>=10000
+    @js ($rest_qn_p) = (rest_qn_p)/10000 + '万'
+  ($next_qn_p) = (next_qn)
+  [if] (next_qn_p)>=100000000
+    @js ($next_qn_p) = (next_qn_p)/100000000 + '亿'
+  [else if] (next_qn_p)>=10000
+    @js ($next_qn_p) = (next_qn_p)/10000 + '万'
+  tm 自创(ZCSkill)潜能【(real_cost_p)】，未使用潜能【(rest_qn_p)】，词条等级【(entrys)】 (:hour):(:minute):(:second);
+  tm 推演(ZCSkill)第【(entry_num)】条属性，升级需要【(next_qn_p)】潜能 (:hour):(:minute):(:second);
+  ($start_qn)=null
+  ($trytime)=500
+  [while] (start_qn)==null
+    score
+    @await (trytime)
+    @js ($start_qn)=WG.qn
+    [if] (start_qn)==null
+      ($trytime) = (trytime) + 500
   [while] (:state)==推演
     @tip 有了更深入的理解|潜能不够($finish)
-    score
-    @await 500
-    @js ($now_qn)=WG.qn
+    ($now_qn)=null
+    ($trytime)=500
+    [while] (now_qn)==null
+      score
+      @await (trytime)
+      @js ($now_qn)=WG.qn
+      [if] (now_qn)==null
+        ($trytime) = (trytime) + 500
+        [if] (trytime) >= 2000
+          ($trytime) = 500
+
     ($done_qn)=(start_qn)-(now_qn)
-    say 已推演(done_qn)潜能 (:hour):(:minute):(:second)
+    ($done_qn_p)=(done_qn)
+    [if] (done_qn_p)>=100000000
+      @js ($done_qn_p) = (done_qn_p)/100000000 + '亿'
+    [else if] (done_qn_p)>=10000
+      @js ($done_qn_p) = (done_qn_p)/10000 + '万'
+    say 已推演【(done_qn_p)】潜能，升级需要【(next_qn_p)】潜能 (:hour):(:minute):(:second)
     [if] (done_qn) >= (next_qn) || (finish) != null
       ($num) = 0
       [if](sum)==0
@@ -437,4 +507,4 @@ xiulian
     $tts (:name)，推演已结束
   [else if] (ZCAlertWay)==提示音
     @beep
-@js WG.remove_hook(WG.zcinfo_hook);WG.remove_hook(WG.qn_hook);$(`.ty_button`).remove();
+@js WG.remove_hook(WG.zcinfo_hook);WG.remove_hook(WG.qn_hook);$(`.ty_button`).remove();$(`.ct_button`).remove();
