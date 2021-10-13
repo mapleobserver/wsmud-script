@@ -1,7 +1,11 @@
 //~silent
-#select ($yao) = 吃什么颜色的突破丹,绿|蓝|黄|紫,绿
+[{b突破丹p}? != null]($yao)=紫
+[{b突破丹y}? != null]($yao)=黄
+[{b突破丹b}? != null]($yao)=蓝
+[{b突破丹g}? != null]($yao)=绿
+#select ($yao) = 吃什么颜色的突破丹,绿|蓝|黄|紫,(yao)
 #config
-@cmdDelay 500
+@cmdDelay 300
 stopstate
 [(yao)==绿]($color)=g
 [(yao)==蓝]($color)=b
@@ -9,3 +13,4 @@ stopstate
 [(yao)==紫]($color)=p
 [while] {b突破丹(color)}? != null
   use {b突破丹(color)}?
+$zdwk
