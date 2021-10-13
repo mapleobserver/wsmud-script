@@ -21,7 +21,7 @@
   //请安
   @js ($sxqa) = "(taskAll)".match(/尚未首席请安/)
   //副本
-  @js ($fbjd) = "(taskAll)".match(/，副本：(.*)\/20/)[1]
+  @js ($fbjd) = "(taskAll)".match(/，精力消耗：(.*)\/200/)[1]
   //武道塔
   @js ($wdjd) = "(taskAll)".match(/武道塔(.*)，进度(\d+)\/(\d+)，/)
   [if] (wdjd) != null
@@ -59,8 +59,8 @@
   ($info) = 进度：
   [if] (sxqa) != null
     ($info) = (info) 😐尚未请安
-  [if] (fbjd) < 20
-    ($info) = (info) 🍺副本 (fbjd)/20
+  [if] (fbjd) < 200
+    ($info) = (info) 🍺精力消耗 (fbjd)/200
   [if] (smjd1) < 20
     ($info) = (info) 🍗师门 (smjd1)/20
   [if] (zbjd1) < 20
