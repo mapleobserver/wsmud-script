@@ -1,39 +1,45 @@
 @-moz-document domain("wsmud.com") {
     @media screen and (min-width: 1200px){
-    body {
-        width:48%;
-    }
-    .container {
-        flex: 1 0 auto;
-        margin: 0;
-    }
-    .channel {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 24%;
-        min-height: 99%;
-    }
-    .content-message {
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 24%;
-        bottom: 10px;
-    }
-    .map {
-        position: fixed;
-        top: 10%;
-        z-index: 15;
-        border-style: ridge;
-        background: #000000f5;
-        overflow: auto;
-    }
-    .WG_log {
-        flex: 1;
-        overflow-y: auto;
-        max-height: 48em;
-        width: calc(100%);
-    }
-    }
+        body {
+            width:48%;
+        }
+        .container {
+            flex: 1 0 auto;
+            margin: 0;
+        }
+        .channel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 24%;
+            min-height: 99%;
+        }
+        .content-message {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 24%;
+            bottom: 10px;
+        }
+        .map {
+            position: fixed;
+            top: 10%;
+            z-index: 15;
+            border-style: ridge;
+            background: #000000f5;
+            overflow: auto;
+        }
+        .WG_log {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 48em;
+            width: calc(100%);
+        }
+        .settingbox {
+            height: 10rem !important;
+        }
+        .zdy_dialog {
+            width: 540px !important;
+        }
+        }
     }
