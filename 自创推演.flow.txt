@@ -1,12 +1,13 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
-($localVer) = 2021101301
+($localVer) = 2021101501
 ($changeLog) = 🆕 增加词条属性查看按钮；增加内功震慑词条（待测试）、内功特殊词条化毒、招架特殊词条专注和星移。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.增加停止推演按钮（师门按钮旁）。7.语音提醒。
 ($flowName) = 自创推演
 ($flowCode) = zcty
 ($flowPath) = 根文件夹
 ($flowFinder) = 根文件夹
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)
@@ -448,14 +449,10 @@ stopstate
   [else if] (real_cost_p)>=10000
     @js ($real_cost_p) = (real_cost_p)/10000 + '万'
   ($rest_qn_p) = (rest_qn)
-  [if] (rest_qn_p)>=100000000
-    @js ($rest_qn_p) = (rest_qn_p)/10000 + '亿'
-  [else if] (rest_qn_p)>=10000
+  [if] (rest_qn_p)>=10000
     @js ($rest_qn_p) = (rest_qn_p)/10000 + '万'
   ($next_qn_p) = (next_qn)
-  [if] (next_qn_p)>=100000000
-    @js ($next_qn_p) = (next_qn_p)/100000000 + '亿'
-  [else if] (next_qn_p)>=10000
+  [if] (next_qn_p)>=10000
     @js ($next_qn_p) = (next_qn_p)/10000 + '万'
   tm 自创(ZCSkill)潜能【(real_cost_p)】，未使用潜能【(rest_qn_p)】，词条等级【(entrys)】 (:hour):(:minute):(:second);
   tm 推演(ZCSkill)第【(entry_num)】条属性，升级需要【(next_qn_p)】潜能 (:hour):(:minute):(:second);
@@ -482,9 +479,7 @@ stopstate
 
     ($done_qn)=(start_qn)-(now_qn)
     ($done_qn_p)=(done_qn)
-    [if] (done_qn_p)>=100000000
-      @js ($done_qn_p) = (done_qn_p)/100000000 + '亿'
-    [else if] (done_qn_p)>=10000
+    [if] (done_qn_p)>=10000
       @js ($done_qn_p) = (done_qn_p)/10000 + '万'
     say 已推演【(done_qn_p)】潜能，升级需要【(next_qn_p)】潜能 (:hour):(:minute):(:second)
     [if] (done_qn) >= (next_qn) || (finish) != null
@@ -498,7 +493,8 @@ stopstate
   [if] (TYEnable)==false || (finish)!=null
     @print <hio>词条已升级，停止推演。</hio>
     [break]
-
+[if] (real_cost)>=(max)
+  @print <hiy>当前(ZCSkill)推演消耗潜能已超过设置的总消耗潜能(ZCMaxqn)万，如需继续推演，请修改总消耗潜能数值。</hiy>
 [if] (ZCXlu)!=无
   get {r(xluNow)}?
 xiulian
