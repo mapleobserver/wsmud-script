@@ -2,8 +2,8 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021100601
-($changeLog) = 🆕 修复副本识别不出和耗干精力的问题；修复只打塔主和节日模式的冲突；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
+($localVer) = 2021101601
+($changeLog) = 🆕 追捕增加不回武庙恢复的选项；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -50,8 +50,8 @@
   @print <ord>(log)</ord>
 
 // 10月8日自动恢复正常模式
-[if] (:date)>=8 && (:hour)>=5
-  ($RCMode) = 正常模式
+//[if] (:date)>=8 && (:hour)>=5
+//  ($RCMode) = 正常模式
 
 //检测状态
 @js ($fbroom) = '(:room)'.indexOf('副本区域')
@@ -105,9 +105,14 @@
   ($ZBBefore) = $eq 1
 [if] (DieToReset) == null
   ($DieToReset) = 已关闭
+[if] (ZBrenew) == null
+  ($ZBrenew) = 是
+  [if] (:grade) == 武帝 || (:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀皇 || (:grade) == 兵主 || (:grade) == 战神
+    ($ZBrenew) = 否
 #select ($ZByes) = 追捕方式(百姓选跳过),正常模式|快速扫荡|跳过,(ZByes)
 #select ($ZBsx) = 快速扫荡达到上限后处理方式,转为正常模式|自动放弃再扫荡,(ZBsx)
 #input ($ZBBefore) = 追捕前执行命令(用英文;隔开),(ZBBefore)
+#select ($ZBrenew) = 每次追捕是否先回武庙恢复,是|否,(ZBrenew)
 #input ($ZBWaitCD) = 从此次追捕开始，等待技能冷却,(ZBWaitCD)
 #input ($ZBcdskill) = 需要冷却的技能使用英文逗号隔开或以^开头过滤不需要的，填null全部不等冷却,(ZBcdskill)
 #select ($DieToReset) = 死亡自动重置追捕环数,已开启|已关闭,(DieToReset)
@@ -295,10 +300,11 @@ stopstate
   @js $(`.state-bar`).before(`<div id=zb_prog>开始追捕</div>`)
   [while](currentN) < 20
     ($zb) = true
-    [while] (:room) != 扬州城-武庙
-      $to 扬州城-武庙
-      @await 500
-    @liaoshang
+    [if] (ZBrenew) == 是 || (:status xuruo) == true
+      [while] (:room) != 扬州城-武庙
+        $to 扬州城-武庙
+        @await 500
+      @liaoshang
     @until (:status xuruo) == false
     [if](comboN)>=(ZBWaitCD)
       @cd (ZBcdskill)
