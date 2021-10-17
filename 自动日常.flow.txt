@@ -2,8 +2,10 @@
 //自动日常合并版
 //四区白三三
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
-($localVer) = 2021101602
-($changeLog) = 🆕 追捕增加不回武庙恢复和是否到塔顶清虚弱功能；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
+//使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
+
+($localVer) = 2021101701
+($changeLog) = 🆕 优化call方式运行过程；追捕增加不回武庙恢复和是否到塔顶清虚弱功能；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -38,7 +40,11 @@
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
   [if] (UPnum) != null
-    @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+    [if] (arg0) == callmode
+      tm 维持call方式运行
+      @js WG.zmlfire({"name":"重新运行","zmlRun":"//~silent\n@call 自动日常","zmlShow":0,"zmlType":"1"})
+    [else]
+      @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
     [exit]
 [else]
   ($UPnum) = null
@@ -197,10 +203,10 @@
 // 判断运行模式和副本方式
 [if] (callmode) == null
   @js ($fbtd) = "(FBName)".replace(/\(|\)/g,"").indexOf("偷渡")
-  [if] (fbtd) == -1 && (FBWay) == 自动
-    tm 当前副本为自动模式，流程从call方式转为正常模式。
-    @js ManagedPerformerCenter.start("自动日常", FlowStore.get("自动日常"));
-    [exit]
+  //[if] (fbtd) == -1 && (FBWay) == 自动
+    //tm 当前副本为自动模式，流程从call方式转为正常模式。
+    //@js ManagedPerformerCenter.start("自动日常", FlowStore.get("自动日常"));
+    //[exit]
 
 // 获取角色名
 [if] (TTSover) == 播报
@@ -307,8 +313,7 @@ stopstate
         jh fam 9 start;go enter
         $killall
         @until (:combating) == false
-    [if] (ZBrenew) == 是 || (:status xuruo) == true
-      [if] (ZBrenew) == 是 && (ZBxuruo) == 否
+    [if] (ZBrenew) == 是 || (:status xuruo) == true || (type1) != null
       [while] (:room) != 扬州城-武庙
         $to 扬州城-武庙
         @await 500
@@ -361,14 +366,14 @@ stopstate
             @js $('#zb_prog').html(`<hiy>当前追捕任务已完成，进度 (currentN)/20</hiy>`)
           //[if] (hunmi) != null
             //($hunmi) = null
-          relive
-          [if] (type1) != null
+          [while] (:living)==false
             relive
-            [if] (DieToReset) == 已开启
-              [while] (:room) != 扬州城-衙门正厅
-                $to 扬州城-衙门正厅
-                @await 500
-              ask2 {程药发}
+            @await 500
+          [if] (type1) != null && (DieToReset) == 已开启
+            [while] (:room) != 扬州城-衙门正厅
+              $to 扬州城-衙门正厅
+              @await 500
+            ask2 {程药发}
           [break]
         [if] (DieToReset) == 已关闭
           [if] (:hour) == 0 && (start_h) != 0
@@ -719,8 +724,17 @@ stopstate
         [if] (fbexist) == true
           [if] (FBName) != 白驼山(组队)
             team out
-          @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_repeat)=(fb_num)\n'))
-          @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门
+          [if] (callmode) == null
+            ($fb_auto_num) = 0
+            [while] (fb_auto_num) < (fb_num)
+              stopstate
+              $to 扬州城-武庙
+              @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_repeat)=(fb_num)\n'))
+              @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门
+              ($fb_auto_num) = (fb_auto_num) + 1
+          [else]
+            @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_repeat)=(fb_num)\n'))
+            @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门
         [else]
           ($alert_fb) = (FBName)没有自动脚本！
 
