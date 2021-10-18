@@ -1,6 +1,6 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
-($localVer) = 2021101801
+($localVer) = 2021101802
 ($changeLog) = 🆕 潜能不足词条下一次升级会自动停止；增加词条属性查看按钮；增加内功震慑词条（待测试）、内功特殊词条化毒、招架特殊词条专注和星移。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.增加停止推演按钮（师门按钮旁）。7.语音提醒。
 ($flowName) = 自创推演
 ($flowCode) = zcty
@@ -338,10 +338,11 @@ stopstate
 
   // 获得最新词条属性信息
   //@js ($entrysInfo)=var ct=WG.zcinfo.replace(/<.*?>/g,"");ct.replace(/[(|)]/g,"\',\'")
-  @js ($entrysInfo)=var ct1=WG.zcinfo.replace(/<.*?>/g,"");var ct2=ct1.replace(/\(/g,"（");ct2.replace(/\)/g,"）\',\'");
-  @js ($entrysInfo) = "(entrysInfo)".replace(/.*可装备为(ZCSkill)移除提升品阶融合绝招/g,"\'")
-  @js ($entrysInfo) = "(entrysInfo)".replace(/,'绝招：.*/g,"")
-  @js ($entrysInfo) = "(entrysInfo)".replace(/,'增加其它可装备类型.*/g,"")
+  @js ($entrysInfo)=var ct0=WG.zcinfo.replace(/<br\/>/g,"\',\'");var ct1=ct0.replace(/<.*?>/g,"");var ct2=ct1.replace(/\(/g,"（");ct2.replace(/\)/g,"）");
+  @js ($entrysInfo) = "(entrysInfo)".replace(/.*可装备为(ZCSkill)移除提升品阶融合绝招\',/g,"")
+  @js ($entrysInfo) = "(entrysInfo)".replace(/,\'绝招：.*/g,"")
+  @js ($entrysInfo) = "(entrysInfo)".replace(/,\'增加其它可装备类型.*/g,"")
+  //@print (entrysInfo)
   @js ($entrysInfoLen) = [(entrysInfo)].length
   ($num) = 0
   ($entrysData) = 自创(ZCSkill)当前属性：
@@ -353,7 +354,17 @@ stopstate
     @js ($entrysP) = [(entrysInfo)][(num)]
     ($entrysData) = (entrysData)<br>(entrysP)
     ($num) = (num) + 1
-  @js $(`.ct_button`).off('click');$(`.ct_button`).on('click', function(){ToRaid.perform(`//~silent\n@print <hig>当前(ZCSkill)推演设定：<br>🍬 推演词条：(ZCProp)|(ZCSpc)<br>🍼 词条优先推演方式：(TYPriorNum) 🍤 推演词条等级：(ZCEntryLv) 🍔 总消耗潜能：(ZCMaxqn)万<br>🍟 已消耗潜能：(real_cost_p)</hig><br>(entrysData)`);})
+  [if] (real_cost_p)==null
+    ($real_cost_p) = (real_cost)
+    [if] (real_cost_p)>=100000000
+      @js ($real_cost_p) = (real_cost_p)/100000000 + '亿'
+    [else if] (real_cost_p)>=10000
+      @js ($real_cost_p) = (real_cost_p)/10000 + '万'
+  [if] (max)>=100000000
+    @js ($max_p) = (max)/100000000 + '亿'
+  [else if] (max) >=10000
+    @js ($max_p) = (max)/10000 + '万'
+  @js $(`.ct_button`).off('click');$(`.ct_button`).on('click', function(){ToRaid.perform(`//~silent\n@print <hig>当前(ZCSkill)推演设定：<br>🍬 推演词条：(ZCProp)|(ZCSpc)<br>🍼 词条优先推演方式：(TYPriorNum) 🍤 推演词条等级：(ZCEntryLv) 🍔 总消耗潜能：(max_p)<br>🍟 已消耗潜能：(real_cost_p)</hig><br>(entrysData)`);})
   
   // 判断是否存在被覆盖潜能
   @js ($entry_last)=var last=[(entrys)].length-1;[(entrys)][last]*100000
