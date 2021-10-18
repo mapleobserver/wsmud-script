@@ -1,6 +1,6 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
-($localVer) = 2021101601
+($localVer) = 2021101801
 ($changeLog) = 🆕 潜能不足词条下一次升级会自动停止；增加词条属性查看按钮；增加内功震慑词条（待测试）、内功特殊词条化毒、招架特殊词条专注和星移。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.增加停止推演按钮（师门按钮旁）。7.语音提醒。
 ($flowName) = 自创推演
 ($flowCode) = zcty
@@ -73,6 +73,8 @@
   ($ZCAlertType)=关闭
 [if] (ZCAlertWay) == null
   ($ZCAlertWay)=提示音
+[if] (AlertTel) == null
+  ($AlertTel)=开启
 
 #select ($zcEntrySet)=当前词条设置：<br/>&nbsp*&nbsp<hiz>如果要重新设定词条，先选择推演部位，<ord>然后直接点运行进入词条设置界面</ord>👇）</hiz>,正常推演|重设词条|清空重推,正常推演
 #select ($ZCSkill)=要推演的技能部位,内功|鞭法|棍法|剑法|刀法|杖法|招架|拳脚|暗器|轻功,(ZCSkill)
@@ -88,6 +90,7 @@
 #select ($relogin)=<hio>开启自动重连防止掉线</hio>,开启|关闭,开启
 #select ($ZCAlertType)=推出词条和结束时发出通知,全部通知|结束时通知|关闭,(ZCAlertType)
 #select ($ZCAlertWay)=通知方式,语音播报|提示音,(ZCAlertWay)
+#select ($AlertTel)=是否开启远程通知,开启|关闭,(AlertTel)
 #config
 
 // 配置词条
@@ -273,6 +276,12 @@ stopstate
 @js $(`.ct_button`).remove();$(`.sm_button`).before(`<span class='zdy-item ct_button'><hig>词条属性</hig></span>`)
 @print <hig>👇 点击【词条属性】查看当前推演部位的最新词条信息。</hig>
 
+// 生成远程通知设置按钮
+[if] (AlertTel)==开启
+  @print ⚠️ 远程通知为测试功能，使用Server酱/Tele酱服务实现，不懂的话请勿使用，自行搜索了解。
+  @js $('.WG_log pre').append($(`<div class="item-commands"></div>`).append($(`<span class="alerttel">📢 远程通知</span>`)));$('.WG_log')[0].scrollTop = 99999;
+  @js $(".alerttel").on("click", function(){ToRaid.perform(`//~silent\n#select ($AlertTel)=是否开启远程通知,开启|关闭,(AlertTel)\n#select ($AlertTelWay)=通知服务,Server酱|Tele酱,(AlertTelWay)\n#input ($AlertTelToken)=填写通知服务对应Token,(AlertTelToken)\n#input ($AlertTelUrl)=通知服务对应Url（包含https）,(AlertTelUrl)\n#config`);})
+
 // 开启潜能监控
 @js WG.remove_hook(WG.zcinfo_hook);WG.zcinfo_hook=WG.add_hook('text', data=>data.msg.indexOf('增加其它可装备类型')>=0?WG.zcinfo=data.msg:0)
 @js WG.remove_hook(WG.qn_hook);WG.qn_hook=WG.add_hook('dialog', data=>data.dialog=='score'?WG.qn=data.pot:-1)
@@ -310,6 +319,12 @@ stopstate
   // 计算已消耗潜能、已消耗但尚未应用到词条上的剩余潜能、升到下一级所需潜能
   zc typedel (skill)
   @tip 武道书，($real_cost)潜能，
+  [if] (real_cost)>=(max)
+    ($logEnd) = 当前(ZCSkill)推演消耗潜能，已超过设置的总消耗潜能(ZCMaxqn)万。
+    @print <hiy>(logEnd)</hiy>
+    tm (logEnd)
+    ($finish) = 1
+    [break]
   packitem zc2 (bookID)
   @await 1000
   @js ($entrys)=WG.zcinfo.match(/可装备为(ZCSkill)(.+?)可装备为|可装备为(ZCSkill)(.+?)增加其它可装备类型/)[0].match(/\((\d+)\)/g).map(x=>parseInt(x.slice(1, -1)))
@@ -322,7 +337,8 @@ stopstate
   @js ($entry_num)=let l=[(entrys)].length;l<(priorNum)?l:(priorNum)
 
   // 获得最新词条属性信息
-  @js ($entrysInfo)=var ct=WG.zcinfo.replace(/<.*?>/g,"");ct.replace(/[(|)]/g,"\',\'")
+  //@js ($entrysInfo)=var ct=WG.zcinfo.replace(/<.*?>/g,"");ct.replace(/[(|)]/g,"\',\'")
+  @js ($entrysInfo)=var ct1=WG.zcinfo.replace(/<.*?>/g,"");var ct2=ct1.replace(/\(/g,"（");ct2.replace(/\)/g,"）\',\'");
   @js ($entrysInfo) = "(entrysInfo)".replace(/.*可装备为(ZCSkill)移除提升品阶融合绝招/g,"\'")
   @js ($entrysInfo) = "(entrysInfo)".replace(/,'绝招：.*/g,"")
   @js ($entrysInfo) = "(entrysInfo)".replace(/,'增加其它可装备类型.*/g,"")
@@ -330,11 +346,14 @@ stopstate
   ($num) = 0
   ($entrysData) = 自创(ZCSkill)当前属性：
   [while] (num) < (entrysInfoLen)
-    @js ($entrysP1) = [(entrysInfo)][(num)]
-    @js ($entrysP2) = [(entrysInfo)][(num)+1]
-    ($entrysData) = (entrysData)<br>(entrysP1)（(entrysP2)）
-    ($num) = (num) + 2
-  @js $(`.ct_button`).off('click');$(`.ct_button`).on('click', function(){ToRaid.perform(`//~silent\n@print <hig>当前设定：推演词条等级：(ZCEntryLv)，总消耗潜能(ZCMaxqn)万</hig>\n@print <hig>已消耗潜能：(real_cost_p)</hig>\n@print (entrysData)`);})
+    //@js ($entrysP1) = [(entrysInfo)][(num)]
+    //@js ($entrysP2) = [(entrysInfo)][(num)+1]
+    //($entrysData) = (entrysData)<br>(entrysP1)（(entrysP2)）
+    //($num) = (num) + 2
+    @js ($entrysP) = [(entrysInfo)][(num)]
+    ($entrysData) = (entrysData)<br>(entrysP)
+    ($num) = (num) + 1
+  @js $(`.ct_button`).off('click');$(`.ct_button`).on('click', function(){ToRaid.perform(`//~silent\n@print <hig>当前(ZCSkill)推演设定：<br>🍬 推演词条：(ZCProp)|(ZCSpc)<br>🍼 词条优先推演方式：(TYPriorNum) 🍤 推演词条等级：(ZCEntryLv) 🍔 总消耗潜能：(ZCMaxqn)万<br>🍟 已消耗潜能：(real_cost_p)</hig><br>(entrysData)`);})
   
   // 判断是否存在被覆盖潜能
   @js ($entry_last)=var last=[(entrys)].length-1;[(entrys)][last]*100000
@@ -353,9 +372,9 @@ stopstate
   [else]
     @js ($entrys_last)=[(entrys)]['(priorNum)'-1]
   [if] (entrys_last) != null && (entrys_last) >= (ZCEntryLv) && (ZCEntryLv) != 0 && (ZCEntryLv) != null
-    ($logLv) = 已达到预设词条等级【(ZCEntryLv)】，停止推演。
-    @print <hio>(logLv)</hio>
-    tm (logLv)
+    ($logEnd) = 已达到预设词条等级【(ZCEntryLv)】，停止推演。
+    @print <hio>(logEnd)</hio>
+    tm (logEnd)
     ($finish)=3
     [break]
 
@@ -421,6 +440,14 @@ stopstate
           $tts (:name)，(logProp)
         [else if] (ZCAlertWay)==提示音
           @beep
+        // 远程通知
+        [if] (AlertTel) == 开启 && (AlertTelToken) != null
+          [if] (AlertTelWay) == Tele酱
+            @js $.post(`https://(AlertTelUrl)/api/send?sendkey=(AlertTelToken)&text=【推演】(:name)(logProp)`)
+          [else if] (AlertTelWay) == Server酱
+            ($AlertTelUrl) = sctapi.ftqq.com
+            @js $.post(`https://(AlertTelUrl)/(AlertTelToken).send?title=【推演】(:name)(logProp)`)
+        
     [else]
       zc prop (skill) ban
       @js WG.Send("tm 放弃词条【(prop)】 (:hour):(:minute):(:second)")
@@ -438,9 +465,9 @@ stopstate
     ($sum)=0
   // 已推出特殊词条后的动作
   [if] (xl) == 1
-    ($log) = 已推出特殊词条，停止推演。
-    tm (log)
-    @print <hio>(log)</hio>
+    ($logEnd) = 已推出特殊词条，停止推演。
+    tm (logEnd)
+    @print <hio>(logEnd)</hio>
     [break]
   // 循环推演
   ($num) =1
@@ -467,9 +494,9 @@ stopstate
       ($trytime) = (trytime) + 500
   // 判断剩余潜能是否够词条推演到下一级
   [if] (start_qn) < (next_qn) && (start_qn) != null && (next_qn) != null
-    ($logQn) = 当前剩余潜能【(start_qn)】，无法升级词条到下一级，停止推演。
-    @print <hiy>(logQn)</hiy>
-    tm (logQn)
+    ($logEnd) = 当前剩余潜能【(start_qn)】，无法升级词条到下一级，停止推演。
+    @print <hiy>(logEnd)</hiy>
+    tm (logEnd)
     ($finish)=2
     stopstate
     [break]
@@ -500,10 +527,11 @@ stopstate
   
   // 根据TYEnable判断是否继续推演
   [if] (TYEnable)==false || (finish)!=null
-    @print <hio>词条已升级，停止推演。</hio>
+    ($logEnd) = 词条已升级，停止推演。
+    @print <hio>(logEnd)</hio>
+    tm (logEnd)
     [break]
-[if] (real_cost)>=(max)
-  @print <hiy>当前(ZCSkill)推演消耗潜能已超过设置的总消耗潜能(ZCMaxqn)万，如需继续推演，请修改总消耗潜能数值。</hiy>
+// 收起香炉
 [if] (ZCXlu)!=无
   get {r(xluNow)}?
 xiulian
@@ -512,4 +540,12 @@ xiulian
     $tts (:name)，推演已结束
   [else if] (ZCAlertWay)==提示音
     @beep
+  // 远程通知
+  [if] (AlertTel) == 开启 && (AlertTelToken) != null
+    [if] (AlertTelWay) == Tele酱
+      @js $.post(`(AlertTelUrl)/api/send?sendkey=(AlertTelToken)&text=【推演】(:name)(logEnd)`)
+    [else if] (AlertTelWay) == Server酱
+      ($AlertTelUrl) = https://sctapi.ftqq.com
+      @js $.post(`(AlertTelUrl)/(AlertTelToken).send?title=【推演】(:name)(logEnd)`)
+
 @js WG.remove_hook(WG.zcinfo_hook);WG.remove_hook(WG.qn_hook);$(`.ty_button`).remove();$(`.ct_button`).remove();
