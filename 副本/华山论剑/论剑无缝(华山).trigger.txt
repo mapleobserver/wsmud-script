@@ -1,5 +1,5 @@
 //人物刷新：东邪|西毒|南帝|北丐|中神通
-//招架：九剑，拳脚：大嵩阳，内功建议：明玉功
+//招架：移花(推荐)或九剑，拳脚：大嵩阳，内功建议：明玉功
 [if] (:room) == 华山论剑-论剑台(副本区域)
     @wait 50
     [if] (:cd sword.poqi) == false
@@ -7,7 +7,9 @@
     [else if] (:cd unarmed.chan) == false
         @perform unarmed.chan
     [else]
-        [if] (:cd parry.pojian) == false
+        [if] (:cd parry.yi) == false &&  (:kf_zhao) == yihuajiemu
+             @perform parry.yi
+        [else if] (:cd parry.pojian) == false && (:kf_zhao) == dugujiujian2
              @perform parry.pojian
         @until (:cd sword.poqi) == false||(:cd unarmed.chan) == false
         [if] (:cd sword.poqi) == false
