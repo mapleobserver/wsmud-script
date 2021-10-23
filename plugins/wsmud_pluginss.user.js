@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.190
+// @version      0.0.32.191
 // @date         01/07/2018
-// @modified     06/10/2021
+// @modified     10/10/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -1982,72 +1982,9 @@
                         if (WG.smbuyNum == null) {
                             WG.smbuyNum = 0;
                         } else if (WG.smbuyNum > 3) {
-                            if (sm_price == "开") {
-                                let pz = [{}, {}, {}, {}, {}]
-                                tmpObj = $("span[cmd$='giveup']:last").prev();
-                                for (let i = 0; i < 6; i++) {
-                                    if (tmpObj.children().html()) {
-                                        if (tmpObj.html().indexOf('放弃') == -1 &&
-                                            tmpObj.html().indexOf('令牌') >= 0) {
-                                            if (tmpObj.html().indexOf('hig') >= 0) {
-                                                pz[0] = tmpObj;
-                                            }
-                                            if (tmpObj.html().indexOf('hic') >= 0) {
-                                                pz[1] = tmpObj;
-                                            }
-                                            if (tmpObj.html().indexOf('hiy') >= 0) {
-                                                pz[2] = tmpObj;
-                                            }
-                                            if (tmpObj.html().indexOf('hiz') >= 0) {
-                                                pz[3] = tmpObj;
-                                            }
-                                            if (tmpObj.html().indexOf('hio') >= 0) {
-                                                pz[4] = tmpObj;
-                                            }
-                                        }
-                                    }
-                                    tmpObj = tmpObj.prev();
-                                }
-                                let _p = false;
-                                for (let p of pz) {
-                                    if (p.html != undefined) {
-                                        p.click();
-                                        messageAppend("自动上交牌子");
-                                        WG.sm_state = 0;
-                                        _p = true;
-                                        setTimeout(WG.sm, 500);
-                                        return;
-                                    }
-                                }
-                                if (!_p) {
-                                    messageAppend("没有牌子并且无法购买" + item);
-                                    WG.smbuyNum = null;
-                                    if (mysm_loser == "关") {
-                                        WG.sm_state = -1;
-                                        $(".sm_button").text("师门(Q)");
-                                    } else if (mysm_loser == "开") {
-                                        $("span[cmd$='giveup']:last").click();
-                                        messageAppend("放弃任务");
-                                        WG.sm_state = 0;
-                                        setTimeout(WG.sm, 500);
-                                        return;
-                                    }
-                                }
-                            }
-                            else {
-                                messageAppend("无法购买" + item);
-                                WG.smbuyNum = null;
-                                if (mysm_loser == "关") {
-                                    WG.sm_state = -1;
-                                    $(".sm_button").text("师门(Q)");
-                                } else if (mysm_loser == "开") {
-                                    $("span[cmd$='giveup']:last").click();
-                                    messageAppend("放弃任务");
-                                    WG.sm_state = 0;
-                                    setTimeout(WG.sm, 500);
-                                    return;
-                                }
-                            }
+                            WG.sm_state = 5;
+                            setTimeout(WG.sm, 500);
+                            return;
                         }
 
                         WG.go(WG.sm_item.place);
@@ -2055,71 +1992,10 @@
                         WG.sm_state = 3;
                         setTimeout(WG.sm, 500);
                     } else {
-                        if (sm_price == "开") {
-                            let pz = [{}, {}, {}, {}, {}]
-                            tmpObj = $("span[cmd$='giveup']:last").prev();
-                            for (let i = 0; i < 6; i++) {
-                                if (tmpObj.children().html()) {
-                                    if (tmpObj.html().indexOf('放弃') == -1 &&
-                                        tmpObj.html().indexOf('令牌') >= 0) {
-                                        if (tmpObj.html().indexOf('hig') >= 0) {
-                                            pz[0] = tmpObj;
-                                        }
-                                        if (tmpObj.html().indexOf('hic') >= 0) {
-                                            pz[1] = tmpObj;
-                                        }
-                                        if (tmpObj.html().indexOf('hiy') >= 0) {
-                                            pz[2] = tmpObj;
-                                        }
-                                        if (tmpObj.html().indexOf('hiz') >= 0) {
-                                            pz[3] = tmpObj;
-                                        }
-                                        if (tmpObj.html().indexOf('hio') >= 0) {
-                                            pz[4] = tmpObj;
-                                        }
-                                    }
-                                }
-                                tmpObj = tmpObj.prev();
-                            }
-                            let _p = false;
-                            for (let p of pz) {
-                                if (p.html != undefined) {
-                                    p.click();
-                                    messageAppend("自动上交牌子");
-                                    WG.sm_state = 0;
-                                    _p = true;
-                                    setTimeout(WG.sm, 500);
-                                    return;
-                                }
-                            }
-                            if (!_p) {
-                                messageAppend("没有牌子并且无法购买" + item);
-                                WG.smbuyNum = null;
-                                if (mysm_loser == "关") {
-                                    WG.sm_state = -1;
-                                    $(".sm_button").text("师门(Q)");
-                                } else if (mysm_loser == "开") {
-                                    $("span[cmd$='giveup']:last").click();
-                                    messageAppend("放弃任务");
-                                    WG.sm_state = 0;
-                                    setTimeout(WG.sm, 500);
-                                    return;
-                                }
-                            }
-                        } else {
-                            messageAppend("无法购买" + item);
-                            WG.smbuyNum = null;
-                            if (mysm_loser == "关") {
-                                WG.sm_state = -1;
-                                $(".sm_button").text("师门(Q)");
-                            } else if (mysm_loser == "开") {
-                                $("span[cmd$='giveup']:last").click();
-                                messageAppend("放弃任务");
-                                WG.sm_state = 0;
-                                setTimeout(WG.sm, 500);
-                                return;
-                            }
-                        }
+                     
+                        WG.sm_state = 5;
+                        setTimeout(WG.sm, 500);
+                        return;
                     }
                     break;
                 case 3:
@@ -2151,18 +2027,86 @@
                                 setTimeout(WG.sm, 500);
                                 return;
                             } else {
-                                if (mysm_loser == "关") {
-                                    WG.sm_state = -1;
-                                    $(".sm_button").text("师门(Q)");
-                                } else if (mysm_loser == "开") {
+                                if (mysm_loser == "开") {
                                     WG.ungetStore = true;
                                     WG.sm_state = 0;
                                     setTimeout(WG.sm, 500);
+                                }else{
+                                    WG.sm_state = 5;
+                                    // $(".sm_button").text("师门(Q)");
                                 }
                             }
                         }
                     });
                     break;
+                case 5:
+                    var mysm_loser = GM_getValue(roleid + "_sm_loser", sm_loser);
+                    if (sm_price == "开") {
+                        let pz = [{}, {}, {}, {}, {}]
+                        tmpObj = $("span[cmd$='giveup']:last").prev();
+                        for (let i = 0; i < 6; i++) {
+                            if (tmpObj.children().html()) {
+                                if (tmpObj.html().indexOf('放弃') == -1 &&
+                                    tmpObj.html().indexOf('令牌') >= 0) {
+                                    if (tmpObj.html().indexOf('hig') >= 0) {
+                                        pz[0] = tmpObj;
+                                    }
+                                    if (tmpObj.html().indexOf('hic') >= 0) {
+                                        pz[1] = tmpObj;
+                                    }
+                                    if (tmpObj.html().indexOf('hiy') >= 0) {
+                                        pz[2] = tmpObj;
+                                    }
+                                    if (tmpObj.html().indexOf('hiz') >= 0) {
+                                        pz[3] = tmpObj;
+                                    }
+                                    if (tmpObj.html().indexOf('hio') >= 0) {
+                                        pz[4] = tmpObj;
+                                    }
+                                }
+                            }
+                            tmpObj = tmpObj.prev();
+                        }
+                        let _p = false;
+                        for (let p of pz) {
+                            if (p.html != undefined) {
+                                p.click();
+                                messageAppend("自动上交牌子");
+                                WG.sm_state = 0;
+                                _p = true;
+                                setTimeout(WG.sm, 500);
+                                return;
+                            }
+                        }
+                        if (!_p) {
+                            messageAppend("没有牌子并且无法购买");
+                            WG.smbuyNum = null;
+                            if (mysm_loser == "开") {
+                                $("span[cmd$='giveup']:last").click();
+                                messageAppend("放弃任务");
+                                WG.sm_state = 0;
+                                setTimeout(WG.sm, 500);
+                                return;
+                            }else{
+                                WG.sm_state = -1;
+                                $(".sm_button").text("师门(Q)");
+                            }
+                        }
+                    }
+                    else {
+                        messageAppend("无法提交" + item);
+                        WG.smbuyNum = null;
+                        if (mysm_loser == "关") {
+                            WG.sm_state = -1;
+                            $(".sm_button").text("师门(Q)");
+                        } else if (mysm_loser == "开") {
+                            $("span[cmd$='giveup']:last").click();
+                            messageAppend("放弃任务");
+                            WG.sm_state = 0;
+                            setTimeout(WG.sm, 500);
+                            return;
+                        }
+                    }
                 default:
                     break;
             }
