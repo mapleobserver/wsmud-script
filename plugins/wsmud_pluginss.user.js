@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.191
+// @version      0.0.32.192
 // @date         01/07/2018
-// @modified     10/10/2021
+// @modified     23/10/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -750,6 +750,11 @@
     var zmlshowsetting = 0;
     //背包已满提示方式
     var bagFull = 0;
+    //通知推送开关、方式、Token、Url
+    var pushSwitch = "关";
+    var pushType = 0;
+    var pushToken = "";
+    var pushUrl = "https://";
     //停止后动作
     var auto_command = null;
     //装备列表
@@ -4886,6 +4891,10 @@
             _config._shieldswitch = GM_getValue("_shieldswitch", shieldswitch);
             _config._shield = GM_getValue("_shield", shield);
             _config._shieldkey = GM_getValue("_shieldkey", shieldkey);
+            _config._pushSwitch = GM_getValue("_pushSwitch", pushSwitch);
+            _config._pushType = GM_getValue("_pushType", pushType);
+            _config._pushToken = GM_getValue("_pushToken", pushToken);
+            _config._pushUrl = GM_getValue("_pushUrl", pushUrl);
 
             S.uploadUserConfig(G.id, _config, (res) => {
                 if (res == "true") {
@@ -4958,6 +4967,10 @@
             $('#getitemShow').off('click')
             $("#zmlshowsetting").off('change')
             $("#bagFull").off('change')
+            $("pushSwitch").off('click');
+            $("pushType").off('change');
+            $("pushToken").off('change');
+            $("pushUrl").off('change');
             $('#autorelogin').off('click')
             $('#autoupdateStore').off('click')
             $('#saveAddr').off('click')
@@ -5061,6 +5074,22 @@
             $("#bagFull").change(function () {
                 bagFull = $('#bagFull').val();
                 GM_setValue(roleid + "_bagFull", bagFull);
+            });
+            $("#pushSwitch").click(function () {
+                pushSwitch = WG.switchReversal($(this));
+                GM_setValue("_pushSwitch", pushSwitch);
+            });
+            $("#pushType").change(function () {
+                pushType = $('#pushType').val();
+                GM_setValue("_pushType", pushType);
+            });
+            $("#pushToken").focusout(function () {
+                pushToken = $('#pushToken').val();
+                GM_setValue("_pushToken", pushToken);
+            });
+            $("#pushUrl").focusout(function () {
+                pushUrl = $('#pushUrl').val();
+                GM_setValue("_pushUrl", pushUrl);
             });
             $('#getitemShow').click(function () {
                 getitemShow = WG.switchReversal($(this));
@@ -5274,6 +5303,10 @@
             $('#autorelogin').val(auto_relogin);
             $("#zmlshowsetting").val(zmlshowsetting);
             $("#bagFull").val(bagFull);
+            $("#pushSwitch").val(pushSwitch);
+            $("#pushType").val(pushType);
+            $("#pushToken").val(pushToken);
+            $("#pushUrl").val(pushUrl);
             $('#getitemShow').val(getitemShow);
             $('#unauto_pfm').val(unauto_pfm);
             $('#store_info').val(zdy_item_store);
@@ -6458,6 +6491,16 @@
                     <option value="2"> 语音提醒 </option>
                 </select>
                 </span></div> `
+                + UI.html_switch('pushSwitch', '远程通知推送开关(使用@push推送通知，语法参考@print)：', 'pushSwitch') + `
+                <div class="setting-item">
+                <span> <label for="pushType"> 通知推送方式(使用方法自行百度)： </label><select id="pushType" style="width:80px">
+                    <option value="0"> Server酱 </option>
+                    <option value="1"> Bark iOS </option>
+                    <option value="2"> Tele酱 </option>
+                </select>
+                </span></div> `
+                + UI.html_lninput("pushToken", "推送方式对应的Token或Key：")
+                + UI.html_lninput("pushUrl", "推演方式对应的推送网址(末尾不要加斜杠/)：")
                 + UI.html_lninput("auto_eq", "BOSS击杀时自动换装：")
                 + UI.html_lninput("ks_pfm", "BOSS叫杀延时(ms)： ")
                 + UI.html_lninput("ks_wait", "BOSS击杀等待延迟(s)： ")
@@ -7680,6 +7723,12 @@
             zdyskilllist = GM_getValue(roleid + "_zdyskilllist", zdyskilllist);
             zdyskills = GM_getValue(roleid + "_zdyskills", zdyskills);
             bagFull = GM_getValue(roleid + "_bagFull", bagFull);
+            // 通知推送开关、方式、Token、Url
+            pushSwitch = GM_getValue("_pushSwitch", pushSwitch);
+            pushType = GM_getValue("_pushType", pushType);
+            pushToken = GM_getValue("_pushToken", pushToken);
+            pushUrl = GM_getValue("_pushUrl", pushUrl);
+
             WG.zdy_btnListInit();
 
         }
@@ -7760,10 +7809,29 @@
 
             }
         }
-    }
+    };
     function Beep() {
         document.getElementById("beep-alert").play();
-    }
+    };
+    function Push(text) {
+        if (text) {
+            if (pushSwitch != '开' || pushType == null || pushToken == null || pushUrl == null || pushUrl == 'https://') {
+                messageAppend("通知功能未开启或设置不完整。");
+                return;
+            }
+            switch (pushType) {
+                case "0":
+                    $.post(`${pushUrl}/${pushToken}.send?title=${text}`);
+                    break;
+                case "1":
+                    $.post(`${pushUrl}/${pushToken}/武神传说/${encodeURIComponent(text)}`);
+                    break;
+                case "2":
+                    $.post(`${pushUrl}/api/send?sendkey=${pushToken}&text=${text}`);
+                    break;
+            }
+        }
+    };
     class MusicBox {
         constructor(options) {
             let defaults = {
@@ -7880,6 +7948,7 @@
         unsafeWindow.MusicBox = MusicBox;
         unsafeWindow.FakerTTS = FakerTTS;
         unsafeWindow.Beep = Beep;
+        unsafeWindow.Push = Push;
         unsafeWindow.WSStore = store;
         unsafeWindow.imgShow = imgShow;
 
