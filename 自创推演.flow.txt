@@ -1,7 +1,7 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
 @js messageClear();
-($localVer) = 2021102301
+($localVer) = 2021102302
 ($changeLog) = 🆕 潜能不足词条下一次升级会自动停止；增加词条属性查看按钮；增加内功震慑词条（待测试）、内功特殊词条化毒、招架特殊词条专注和星移。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.增加停止推演按钮（师门按钮旁）。7.语音提醒。
 ($flowName) = 自创推演
 ($flowCode) = zcty
@@ -74,8 +74,10 @@
   ($ZCAlertType)=关闭
 [if] (ZCAlertWay) == null
   ($ZCAlertWay)=提示音
-[if] (AlertTel) == null
-  ($AlertTel)=开启
+[if] (ZCAlertPush) == null
+  ($ZCAlertPush)=关闭
+[if] (AlertTel) == 开启
+  ($ZCAlertPush)=开启
 
 #select ($zcEntrySet)=当前词条设置：<br/>&nbsp*&nbsp<hiz>如果要重新设定词条，先选择推演部位，<ord>然后直接点运行进入词条设置界面</ord>👇）</hiz>,正常推演|重设词条|清空重推,正常推演
 #select ($ZCSkill)=要推演的技能部位,内功|鞭法|棍法|剑法|刀法|杖法|招架|拳脚|暗器|轻功,(ZCSkill)
@@ -91,7 +93,7 @@
 #select ($relogin)=<hio>开启自动重连防止掉线</hio>,开启|关闭,开启
 #select ($ZCAlertType)=推出词条和结束时发出通知,全部通知|结束时通知|关闭,(ZCAlertType)
 #select ($ZCAlertWay)=通知方式,语音播报|提示音,(ZCAlertWay)
-#select ($AlertTel)=是否开启远程通知,开启|关闭,(AlertTel)
+#select ($ZCAlertPush)=<hiz>远程通知功能，需先在设置中开启并填写参数，需要plugins版本至少0.0.32.192，raid版本至少2.4.45，不懂的话请勿使用，自行搜索了解。</hiz><br/>&nbsp*&nbsp是否开启远程通知,开启|关闭,(ZCAlertPush)
 #config
 
 // 配置词条
@@ -277,14 +279,6 @@ stopstate
 @js $(`.ct_button`).remove();$(`.sm_button`).before(`<span class='zdy-item ct_button'><hig>词条属性</hig></span>`)
 @print <hig>👇 点击【词条属性】查看当前推演部位的最新词条信息。</hig>
 
-// 生成远程通知设置按钮
-[if] (AlertTel)==开启
-  [if] (AlertTelUrl) == null
-    ($AlertTelUrl) = https://
-  @print ⚠️ 远程通知为测试功能，使用Server酱/Bark iOS/Tele酱服务实现，不懂的话请勿使用，自行搜索了解。
-  @js $('.WG_log pre').append($(`<div class="item-commands"></div>`).append($(`<span class="alerttel">📢 远程通知</span>`)));$('.WG_log')[0].scrollTop = 99999;
-  @js $(".alerttel").on("click", function(){ToRaid.perform(`//~silent\n#select ($AlertTel)=是否开启远程通知,开启|关闭,(AlertTel)\n#select ($AlertTelWay)=通知服务,Server酱|Bark|Tele酱,(AlertTelWay)\n#input ($AlertTelToken)=填写通知服务对应Token或Key,(AlertTelToken)\n#input ($AlertTelUrl)=通知服务对应Url（包含https，末尾不要加斜杠）,(AlertTelUrl)\n#config\n@print 当前远程通知配置：(AlertTelWay)：(AlertTelUrl)/(AlertTelToken)`);})
-
 // 开启潜能监控
 @js WG.remove_hook(WG.zcinfo_hook);WG.zcinfo_hook=WG.add_hook('text', data=>data.msg.indexOf('增加其它可装备类型')>=0?WG.zcinfo=data.msg:0)
 @js WG.remove_hook(WG.qn_hook);WG.qn_hook=WG.add_hook('dialog', data=>data.dialog=='score'?WG.qn=data.pot:-1)
@@ -343,8 +337,8 @@ stopstate
   @js ($entrysInfo)=var ct0=WG.zcinfo.replace(/<br\/>/g,"\',\'");var ct1=ct0.replace(/<.*?>/g,"");var ct2=ct1.replace(/\(/g,"（");ct2.replace(/\)/g,"）");
   @js ($entrysInfo) = "(entrysInfo)".replace(/.*可装备为(ZCSkill)移除提升品阶融合绝招\',/g,"")
   @js ($entrysInfo) = "(entrysInfo)".replace(/,\'绝招：.*/g,"")
-  @js ($entrysInfo) = "(entrysInfo)".replace(/,\'增加其它可装备类型.*/g,"")
-  @js ($entrysInfo) = "(entrysInfo)".replace(/,\'\',\'可装备为.*/g,"")
+  @js ($entrysInfo) = "(entrysInfo)".replace(/(,\'\')?,\'增加其它可装备类型.*/g,"")
+  @js ($entrysInfo) = "(entrysInfo)".replace(/(,\'\')?,\'可装备为.*/g,"")
   //@print (entrysInfo)'
   @js ($entrysInfoLen) = [(entrysInfo)].length
   ($num) = 0
@@ -451,16 +445,9 @@ stopstate
         [else if] (ZCAlertWay)==提示音
           @beep
         // 远程通知
-        [if] (AlertTel) == 开启 && (AlertTelToken) != null
+        [if] (ZCAlertPush) == 开启
           ($logPush) = 【推演】(:name)：(logProp)
-          [if] (AlertTelWay) == Tele酱
-            @js $.post(`(AlertTelUrl)/api/send?sendkey=(AlertTelToken)&text=(logPush)`)
-          [else if] (AlertTelWay) == Server酱
-            [(AlertTelUrl)==null]($AlertTelUrl) = https://sctapi.ftqq.com
-            @js $.post(`(AlertTelUrl)/(AlertTelToken).send?title=(logPush)`)
-          [else if] (AlertTelWay) == Bark
-            [(AlertTelUrl)==null]($AlertTelUrl) = https://api.day.app
-            @js $.post(`(AlertTelUrl)/(AlertTelToken)/武神传说/(logPush)`)
+          @push (logPush)
         
     [else]
       zc prop (skill) ban
@@ -555,16 +542,8 @@ xiulian
   [else if] (ZCAlertWay)==提示音
     @beep
   // 远程通知
-  [if] (AlertTel) == 开启 && (AlertTelToken) != null
+  [if] (ZCAlertPush) == 开启
     ($logPush) = 【推演】(:name)：(logEnd)
-    [if] (AlertTelWay) == Tele酱
-      @js $.post(`(AlertTelUrl)/api/send?sendkey=(AlertTelToken)&text=(logPush)`)
-    [else if] (AlertTelWay) == Server酱
-      [(AlertTelUrl)==null]($AlertTelUrl) = https://sctapi.ftqq.com
-      @js $.post(`(AlertTelUrl)/(AlertTelToken).send?title=(logPush)`)
-    [else if] (AlertTelWay) == Bark
-      [(AlertTelUrl)==null]($AlertTelUrl) = https://api.day.app
-      @js $.post(`(AlertTelUrl)/(AlertTelToken)/武神传说/(logPush)`)
-    @print 当前远程通知配置：(AlertTelWay)：(AlertTelUrl)/(AlertTelToken)
+    @push (logPush)
 
 @js WG.remove_hook(WG.zcinfo_hook);WG.remove_hook(WG.qn_hook);$(`.ty_button`).remove();$(`.ct_button`).remove();
