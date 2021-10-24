@@ -4,6 +4,55 @@
 // 遇到九阳可召唤少林工具人组队上佛光，配合【召唤佛光】触发使用
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，可选择公共或者队伍频道。
 // 2020.12.09 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化多项判断；增强提示信息。
+
+($localVer) = 2021102401
+($changeLog) = 🆕 优化不要急慢慢来的处理方式。🌟 多种方案选择；可配合佛光坦克触发；可远程通知。
+($flowName) = 自动运镖
+($flowCode) = zdyb
+($flowPath) = 根文件夹
+($flowFinder) = 根文件夹
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.(flowCode)
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    [if] (flowFinder) == null
+      ($flowFinder) = 根文件夹
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @wait 1500
+    ($log) = ✅(flowName)已更新至最新版【(remoteVer)】，即将自动运行。
+  [else]
+    ($log) = ⭕(flowName)暂时无法正常更新至【(remoteVer)】，直接运行当前版本【(localVer)】。
+    ($UPnum) = null
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  [if] (UPnum) != null
+    @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+    [exit]
+[else]
+  ($UPnum) = null
+  [if] (remoteVer) == null
+    ($log) = ⚠️获取远程版本失败，维持当前版本不变。
+  [else]
+    ($log) = 🚀开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
+
 [while] (yb_com) == null
     @toolbar jh
     @toolbar tasks
@@ -24,34 +73,44 @@
     ($EscortTangshi) = 不使用
 [if] ($EscortForce) == null
     ($EscortForce) = 九阴神功
+[if] ($EscortForce) == 慈航静斋
+    ($EscortForce) = 慈航剑典
 [if] (EscortJiuyin) == null
     ($EscortJiuyin) = 关闭
-[if] (EscortWaitCDExp) == null
-    ($EscortWaitCDExp) = ^none
+//[if] (EscortWaitCDExp) == null
+//    ($EscortWaitCDExp) = null
 [if] (EscortWeaponID) == null || (EscortWeaponID) == ^none
     ($EscortWeaponID) = null
-[if] (wmTime) == null
-    ($wmTime) = 10000
+[if] (EscortWaitTime) == null
+    ($EscortWaitTime) = 0
+// 远程通知
+[if] (EscortAlertTel) == null
+    ($EscortAlertTel)=关闭
+
 #input ($repeat) = 本次流程押镖次数,(repeat)
 #select ($EscortHpThreshold) = 疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(EscortHpThreshold)
 #select ($EscortMpThreshold) = 打坐，当内力低于百分比,100|90|80|70|60|50|40|30|20|10,(EscortMpThreshold)
 #select ($EscortChangsheng) = 使用长生诀恢复气血内力,打开|关闭,(EscortChangsheng)
-#select ($EscortFoguang) = 遇到九阳召唤少林工具人加佛光,打开|关闭,(EscortFoguang)
+#select ($WDXuruo) = 死亡后自动到武道塔一百层清除虚弱,打开|关闭,(WDXuruo)
+#select ($EscortXuedao) = 残血使用技能(不自动疗伤),打开|关闭,(EscortXuedao)
+#select ($EscortForce) = 押镖使用内功,九阴神功|慈航剑典|自创九阴|自创慈航|明玉功|紫霞神功|其它,(EscortForce)
+#select ($EscortJiuyin) = 有九阴或剑心等force类buff时，不等对应技能CD(请修改需要等待CD的技能),打开|关闭,(EscortJiuyin)
+#input ($EscortWaitCDExp) = 等待CD的技能sid(什么都不等填null),(EscortWaitCDExp)
+#input ($EscortWaitTime) = 打死一个劫匪后等待时间(常常不要急慢慢来的可以改大点，单位毫秒),(EscortWaitTime)
+#select ($EscortFoguang) = <hiz>附加选项（非必要）</hiz><br/>&nbsp*&nbsp遇到九阳召唤少林工具人加佛光,打开|关闭,(EscortFoguang)
 #select ($EscortFoguangChannel) = 在哪个频道召唤坦克,公共|帮派|队伍,(EscortFoguangChannel)
 #input ($EscortFoguangName) = 少林工具人名字,(EscortFoguangName)
 #select ($EscortShenzhao) = 遇到九阳换神照,是|否,(EscortShenzhao)
 #select ($EscortCanXue) = 连死二次后残血叫杀(适用于血刀),是|否,(EscortCanXue)
 #select ($EscortXuantie) = 连死三次换玄铁,是|否,(EscortXuantie)
-#select ($WDXuruo) = 死亡后自动到武道塔一百层清除虚弱,打开|关闭,(WDXuruo)
-#select ($EscortXuedao) = 残血使用血刀九阴(不自动疗伤),打开|关闭,(EscortXuedao)
-#select ($EscortForce) = 押镖使用内功,九阴神功|慈航静斋|自创九阴|自创慈航|明玉功|紫霞神功|其它,(EscortForce)
-#select ($EscortJiuyin) = 有九阴或剑心buff时不等九阴剑心CD(请修改需要等待CD的技能),打开|关闭,(EscortJiuyin)
-#input ($EscortWaitCDExp) = 等待CD的技能sid,(EscortWaitCDExp)
 #select ($EscortTangshi) = 唐诗剑法,使用|不使用,(EscortTangshi)
 #input ($EscortWeaponID) = 切换躺尸武器sid,(EscortWeaponID)
+// 远程通知
+#select ($EscortAlertTel)=<hiz>远程通知功能，需先在设置中开启并填写参数，需要plugins版本至少0.0.32.192，raid版本至少2.4.45，不懂的话请勿使用，自行搜索了解。</hiz><br/>&nbsp*&nbsp流程结束或同一强盗死亡达到5次，开启远程通知,开启|关闭,(EscortAlertTel)
+
 #config
-[if] (EscortJiuyin) == 打开
-    ($EscortXuedao) = 关闭
+//[if] (EscortJiuyin) == 打开
+//    ($EscortXuedao) = 关闭
 [if] (EscortWeaponID) == null
     [if] (EscortXuantie)==是 || (EscortTangshi)==使用
         @print <hiy>未设置剑类武器id，请重新设置！</hiy>
@@ -71,11 +130,16 @@ stopstate
     @js $('#yb_prog').remove()
     @js $(`.state-bar`).before(`<div id="yb_prog">开始运镖</div>`)
     [if] (:room) != 运镖-青石大道
-        [if] (:room) != 运镖-城门
+        [if] (:room 运镖) == false
+            @await 1000
             @tidyBag
-            @liaoshang
+            [while] (:room) != 扬州城-武庙
+                $to 扬州城-武庙
+                @await 500
+            [if] (EscortXuedao) == 关闭 || (:mpPer) < (mpPer)
+                @renew
             @cd
-            @wait 2000
+            @await 2000
             jh fam 0 start;go west[2];go south[2]
             select {林震南};biao {r林震南}
         // 确定已接到任务
@@ -97,17 +161,26 @@ stopstate
                     [exit]
     [while] true
         [if] (:hpPer) < (hpPer) || (:mpPer) < (mpPer)
-            [if] (EscortChangsheng) == 打开 && (EscortXuedao) == 关闭
+            ($renewCS) = 0
+            [if] (:hpPer) < (HpPer)
+                ($renewCS) = 1
+            [if] (:mpPer) < (mpPer)
+                ($renewCS) = (renewCS) + 2
+            [if] (EscortXuedao) == 打开
+                ($renewCS) = (renewCS) + 4
+            [if] (EscortChangsheng) == 打开 && (renewCS) > 0 && (renewCS) != 4 && (renewCS) != 5
                 ($eqforce)=(:kf_nei)
                 enable force changshengjue
                 @cd force.zhen
                 @perform force.zhen
                 @await 500
                 enable force (eqforce)
+                [if] (EscortXuedao) == 打开 && (jiuyang) == null
+                    enable force none;enable force (eqforce)
             [else]
-                [if] (:hpPer) < (hpPer) && (EscortXuedao) == 关闭
+                [if] (renewCS) == 1 || (renewCS) == 3
                     @liaoshang
-                [else if] (:mpPer) < (mpPer)
+                [else if] (renewCS) == 2 || (renewCS) == 3 || (renewCS) == 6 || (renewCS) == 7
                     dazuo
                     @until (:mpPer) >= (mpPer)
                     stopstate
@@ -118,7 +191,8 @@ stopstate
         [if] (EscortShenzhao) == 是 && (quanjiao) != null && (jiuyang) == null && (quanjiao) != shenzhaojing
             enable unarmed (quanjiao)
             @await 1000
-        @cd (EscortWaitCDExp)
+        [if] (EscortWaitCDExp) != null
+            @cd (EscortWaitCDExp)
         [if] (EscortJiuyin) == 打开
             [if] (:status force) == false
                 [(:kf_nei)==jiuyinshengong || (EscortForce)==自创九阴]@cd force.cui
@@ -133,17 +207,24 @@ stopstate
                 ($force) = (:kf_nei)
                 enable force none;enable force (force)
             go east
-        [else if] (EscortXuedao) == 打开 && (jiuyang) == null
+        [else if] (EscortXuedao) == 打开 && (jiuyang) == null && (:status force) == false
             [(:kf_nei)==jiuyinshengong || (EscortForce)==自创九阴]@cd force.cui
             [(:kf_nei)==cihangjiandian || (EscortForce)==自创慈航]@cd force.xin
             [(:kf_nei)==mingyugong || (EscortForce)==明玉功]@cd force.power
             [(:kf_nei)==zixiashengong2 || (EscortForce)==紫霞神功]@cd force.xi
-            ($force) = (:kf_nei)
-            enable force none;enable force (force)
+            ($eqforce) = (:kf_nei)
+            enable force none;enable force (eqforce)
             go east
         [else]
             go east
         [if] (:room) == 运镖-青石大道
+            @tip 不要急，($needwait)来|看起来($qiangdao)想杀死你|你推着镖银风尘仆仆
+            [if] (needwait) != null && (:living) == true
+                ($needwait) = null
+                @print 不要急慢慢来，等一秒再继续
+                @await 1000
+                [continue]
+            //[if] {r的尸体}? != null && {r(:name)的尸体}? == null && (:combating) == false && (:living) == true
             [if] (EscortTangshi) == 使用
                 @cd sword.wu
                 cha none;enable sword (jianfa);eq (weapon)
@@ -165,15 +246,22 @@ stopstate
                 ($numJF) = (numJF) + 1
                 ($info) = 当前运镖流程已完成 <hiy>(num)/(repeat)</hiy> 次，本次已打死 <hiy>(numJF)</hiy> 个劫匪。
                 @print (info)
-                @js $('#yb_prog').html(`(info)`)
+                @js $('#yb_prog').html(`(info)`)    
+                [if] (EscortWaitTime) > 0 && (EscortWaitTime) != null
+                    @await (EscortWaitTime)
                 [continue]
             [if] (:living) == false
                 [(dead)== null]($dead)=0
                 ($dead) = (dead)+1
-                [(dead)>=5 && (EscortFoguang) == 打开]($jiuyang)=yes
+                [(dead)>=4]($jiuyang)=yes
                 ($info) = <ord>累计死亡 (dead) 次！</ord><br>当前运镖流程已完成 <hiy>(num)/(repeat)</hiy> 次，本次已打死 <hiy>(numJF)</hiy> 个劫匪。
                 @print (info)
                 @js $('#yb_prog').html(`(info)`)
+                [if] (dead)>=5
+                    // 远程通知
+                    [if] (EscortAlertTel) == 开启
+                        ($logPush) = 【押镖】(:name)：(info)
+                        @push (logPush)
                 [if] (jiuyang) != null
                     [if] (EscortFoguang) == 打开
                         [if] (dead) >= 5
@@ -181,7 +269,7 @@ stopstate
                         [else]
                             tm 遭遇九阳劫匪，准备召唤佛光
                     [else]
-                        tm 遭遇九阳劫匪！
+                        tm 累计死亡 (dead) 次，可能遭遇九阳劫匪！
                 [while] (:living) == false
                     @await 500
                     relive
@@ -244,7 +332,7 @@ stopstate
                 @tip 你推着镖银风尘仆仆地来到($map)，只要把镖银交给($name)就完成了。
                 ($info) = <hiy>收货人是(name)，准备交镖。</hiy>
                 @js $('#yb_prog').html(`(info)`)
-                @await 500
+                @await 2000
                 [while] true
                     [if] (:room) == 华山派-练武场 || (:room) == 逍遥派-林间小道 || (:room) == 武当派-太子岩 || (:room) == 丐帮-破庙密室 || (:room) == 少林派-练武场 || (:room) == 峨眉派-广场 || (:room) == 杀手楼-练功房
                         [if] (:room) == 华山派-练武场 || (:room) == 逍遥派-林间小道
@@ -283,5 +371,13 @@ stopSSAuto->
 @js $('#yb_prog').remove()
 [if] (EscortTangshi) == 使用
     enable sword (jianfa);eq (weapon)
+// 远程通知
+[if] (EscortAlertTel) == 开启
+    ($logPush) = 【押镖】(:name)：押镖结束。
+    @push (logPush)
+[while] (:room) != 扬州城-武庙
+    $to 扬州城-武庙
+    @await 500
 @renew
+@tidyBag
 $zdwk
