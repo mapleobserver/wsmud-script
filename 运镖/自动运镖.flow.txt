@@ -5,7 +5,7 @@
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，可选择公共或者队伍频道。
 // 2020.12.09 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化多项判断；增强提示信息。
 
-($localVer) = 2021102402
+($localVer) = 2021102403
 ($changeLog) = 🆕 优化不要急慢慢来的处理方式。🌟 多种方案选择；可配合佛光坦克触发；可远程通知。
 ($flowName) = 自动运镖
 ($flowCode) = zdyb
@@ -82,7 +82,7 @@
 [if] (EscortWeaponID) == null || (EscortWeaponID) == ^none
     ($EscortWeaponID) = null
 [if] (EscortWaitTime) == null
-    ($EscortWaitTime) = 0
+    ($EscortWaitTime) = 500
 // 远程通知
 [if] (EscortAlertTel) == null
     ($EscortAlertTel)=关闭
@@ -96,7 +96,7 @@
 #select ($EscortForce) = 押镖使用内功,九阴神功|慈航剑典|自创九阴|自创慈航|明玉功|紫霞神功|其它,(EscortForce)
 #select ($EscortJiuyin) = 有九阴或剑心等force类buff时，不等对应技能CD(请修改需要等待CD的技能),打开|关闭,(EscortJiuyin)
 #input ($EscortWaitCDExp) = 等待CD的技能sid(什么都不等填null),(EscortWaitCDExp)
-#input ($EscortWaitTime) = 打死一个劫匪后等待时间(常常不要急慢慢来的可以改大点，单位毫秒),(EscortWaitTime)
+#input ($EscortWaitTime) = 出现不要急慢慢来的等待时间，单位毫秒),(EscortWaitTime)
 #select ($EscortFoguang) = <hiz>附加选项（非必要）</hiz><br/>&nbsp*&nbsp遇到九阳召唤少林工具人加佛光,打开|关闭,(EscortFoguang)
 #select ($EscortFoguangChannel) = 在哪个频道召唤坦克,公共|帮派|队伍,(EscortFoguangChannel)
 #input ($EscortFoguangName) = 少林工具人名字,(EscortFoguangName)
@@ -221,8 +221,9 @@ stopstate
             @tip 不要急，($needwait)来|看起来($qiangdao)想杀死你|你推着镖银风尘仆仆
             [if] (needwait) != null && (:living) == true
                 ($needwait) = null
-                @print 不要急慢慢来，等一秒再继续
-                @await 1000
+                @print 不要急慢慢来，等一下再继续
+                [if] (EscortWaitTime) > 0 && (EscortWaitTime) != null
+                    @await (EscortWaitTime)
                 [continue]
             //[if] {r的尸体}? != null && {r(:name)的尸体}? == null && (:combating) == false && (:living) == true
             [if] (EscortTangshi) == 使用
@@ -247,8 +248,8 @@ stopstate
                 ($info) = 当前运镖流程已完成 <hiy>(num)/(repeat)</hiy> 次，本次已打死 <hiy>(numJF)</hiy> 个劫匪。
                 @print (info)
                 @js $('#yb_prog').html(`(info)`)    
-                [if] (EscortWaitTime) > 0 && (EscortWaitTime) != null
-                    @await (EscortWaitTime)
+                //[if] (EscortWaitTime) > 0 && (EscortWaitTime) != null
+                //    @await (EscortWaitTime)
                 [continue]
             [if] (:living) == false
                 [(dead)== null]($dead)=0

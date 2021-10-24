@@ -1,13 +1,14 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021100101
-($changeLog) = 🆕 新增古代宗门流程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
+($localVer) = 2021102401
+($changeLog) = 🆕 新增自动运镖、古代宗门流程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
 ($flowPath) = 根文件夹
 ($flowFinder) = 根文件夹
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)
@@ -51,6 +52,7 @@
 //#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
 #select ($flowKSSD)=🍺 <ord>副本</ord><br/>&nbsp*&nbsp[♻️<hiz>快速扫荡</hiz>]批量扫荡副本,导入|跳过,跳过
 #select ($flowTDFB)=[<hiz>偷渡副本</hiz>]快进快出副本积累次数,导入|跳过,跳过
+#select ($flowZDYB)=🚗 <ord>运镖</ord><br/>&nbsp*&nbsp[<hiz>自动运镖</hiz>]自动挂机运镖,导入|跳过,跳过
 #select ($flowYJXX)=⛩ <ord>门派技能</ord><br/>&nbsp*&nbsp[♻️<hiz>一键学习</hiz>]自动学习门派技能,导入|跳过,跳过
 #select ($flowMPJJ)=[♻️<hiz>门派进阶</hiz>]门派武功自动进阶,导入|跳过,跳过
 #select ($flowLXDM)=🍔 <ord>练习技能</ord><br/>&nbsp*&nbsp[♻️<hiz>练习代码生成器</hiz>]自动生成练习代码并填入系统设置,导入|跳过,跳过
@@ -82,7 +84,7 @@
 ($f_zdwd)={"name":"自动武道","source":"(repourl)/自动武道.flow.txt","finder":"根文件夹"}
 ($f_kssd)={"name":"快速扫荡","source":"(repourl)/副本/快速扫荡.flow.txt","finder":"根文件夹"}
 ($f_tdfb)={"name":"偷渡副本","source":"(repourl)/副本/偷渡副本.flow.txt","finder":"根文件夹"}
-($f_jrrc)={"name":"节日日常","source":"(repourl)/节日日常.flow.txt","finder":"根文件夹"}
+($f_zdyb)={"name":"自动运镖","source":"(repourl)/运镖/自动运镖.flow.txt","finder":"根文件夹"}
 ($f_yjsg)={"name":"一键收割","source":"(repourl)/杂务/一键收割.flow.txt","finder":"杂务"}
 ($f_zdcbt)={"name":"自动藏宝图","source":"(repourl)/杂务/自动藏宝图.flow.txt","finder":"杂务"}
 ($f_lxdm)={"name":"练习代码生成器","source":"(repourl)/提升/练习代码生成器.flow.txt","finder":"提升"}
@@ -94,8 +96,6 @@
 ($f_yywd)={"name":"圆月弯刀","source":"(repourl)/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
 ($f_gdzm)={"name":"古代宗门","source":"(repourl)/副本/古代宗门.flow.txt","finder":"根文件夹"}
 ($f_gzm)={"name":"古宗门躺尸","source":"(repourl)/副本/古宗门躺尸版.flow.txt","finder":"根文件夹"}
-//($f_chqcm)={"name":"慈航七重门","source":"(repourl)/副本/慈航七重门.flow.txt","finder":"根文件夹"}
-//($f_zsdjm)={"name":"战神殿解谜","source":"(repourl)/副本/战神殿解谜.flow.txt","finder":"根文件夹"}
 
 
 [if] (flowZDRC)==导入
@@ -112,6 +112,8 @@
   ($f_list)=(f_list),(f_kssd)
 [if] (flowTDFB)==导入
   ($f_list)=(f_list),(f_tdfb)
+[if] (flowZDYB)==导入
+  ($f_list)=(f_list),(f_zdyb)
 [if] (flowJRRC)==导入
   ($f_list)=(f_list),(f_jrrc)
 [if] (flowYJSG)==导入
