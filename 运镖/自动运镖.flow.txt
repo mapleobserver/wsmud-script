@@ -5,11 +5,11 @@
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，可选择公共或者队伍频道。
 // 2020.12.09 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化多项判断；增强提示信息。
 
-($localVer) = 2021102401
+($localVer) = 2021102402
 ($changeLog) = 🆕 优化不要急慢慢来的处理方式。🌟 多种方案选择；可配合佛光坦克触发；可远程通知。
 ($flowName) = 自动运镖
 ($flowCode) = zdyb
-($flowPath) = 根文件夹
+($flowPath) = 运镖
 ($flowFinder) = 根文件夹
 //($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
 ($repourl) = http://wsmud-cdn.if404.com
