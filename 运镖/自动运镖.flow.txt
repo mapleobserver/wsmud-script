@@ -5,7 +5,7 @@
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，可选择公共或者队伍频道。
 // 2020.12.09 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化多项判断；增强提示信息。
 
-($localVer) = 2021102501
+($localVer) = 2021102502
 ($changeLog) = 🆕 优化不要急慢慢来的处理方式。🌟 多种方案选择；可配合佛光坦克触发；可远程通知。
 ($flowName) = 自动运镖
 ($flowCode) = zdyb
@@ -79,6 +79,8 @@
     ($EscortJiuyin) = 关闭
 //[if] (EscortWaitCDExp) == null
 //    ($EscortWaitCDExp) = null
+[if] (EscortSkipCD) == null
+    ($EscortSkipCD) = 关闭
 [if] (EscortWeaponID) == null || (EscortWeaponID) == ^none
     ($EscortWeaponID) = null
 [if] (EscortWaitTime) == null
@@ -94,6 +96,7 @@
 #select ($WDXuruo) = 死亡后自动到武道塔一百层清除虚弱,打开|关闭,(WDXuruo)
 #select ($EscortXuedao) = 残血使用技能(不自动疗伤),打开|关闭,(EscortXuedao)
 #select ($EscortForce) = 押镖使用内功,九阴神功|慈航剑典|自创九阴|自创慈航|明玉功|紫霞神功|其它,(EscortForce)
+#select ($EscortSkipCD) = 无视所有技能冷却<ord>（该选项打开后下面两个CD相关选项均无效</ord>,打开|关闭,(EscortSkipCD)
 #select ($EscortJiuyin) = 有九阴或剑心等force类buff时，不等对应技能CD(请修改需要等待CD的技能),打开|关闭,(EscortJiuyin)
 #input ($EscortWaitCDExp) = 等待CD的技能sid(什么都不等填null),(EscortWaitCDExp)
 #input ($EscortWaitTime) = 出现不要急慢慢来的等待时间，单位毫秒),(EscortWaitTime)
@@ -138,7 +141,8 @@ stopstate
                 @await 500
             [if] (EscortXuedao) == 关闭 || (:mpPer) < (mpPer)
                 @renew
-            @cd
+            [if] (EscortSkipCD) != 打开
+                @cd
             @await 2000
             jh fam 0 start;go west[2];go south[2]
             select {林震南};biao {r林震南}
@@ -191,9 +195,9 @@ stopstate
         [if] (EscortShenzhao) == 是 && (quanjiao) != null && (jiuyang) == null && (quanjiao) != shenzhaojing
             enable unarmed (quanjiao)
             @await 1000
-        [if] (EscortWaitCDExp) != null
+        [if] (EscortWaitCDExp) != null && (EscortSkipCD) != 打开
             @cd (EscortWaitCDExp)
-        [if] (EscortJiuyin) == 打开
+        [if] (EscortJiuyin) == 打开 && (EscortSkipCD) != 打开
             [if] (:status force) == false
                 [(:kf_nei)==jiuyinshengong || (EscortForce)==自创九阴]@cd force.cui
                 [(:kf_nei)==cihangjiandian || (EscortForce)==自创慈航]@cd force.xin
@@ -207,7 +211,7 @@ stopstate
                 ($force) = (:kf_nei)
                 enable force none;enable force (force)
             go east
-        [else if] (EscortXuedao) == 打开 && (jiuyang) == null && (:status force) == false
+        [else if] (EscortXuedao) == 打开 && (jiuyang) == null && (:status force) == false && (EscortSkipCD) != 打开
             [(:kf_nei)==jiuyinshengong || (EscortForce)==自创九阴]@cd force.cui
             [(:kf_nei)==cihangjiandian || (EscortForce)==自创慈航]@cd force.xin
             [(:kf_nei)==mingyugong || (EscortForce)==明玉功]@cd force.power
@@ -287,7 +291,8 @@ stopstate
                     $to 扬州城-武庙
                     @await 500
                 @liaoshang
-                @cd
+                [if] (EscortSkipCD) != 打开
+                    @cd
                 [if] (EscortXuantie) == 是
                     [if] (dead) == 3
                         [if] (:kf_jian) != xuantiejianfa
