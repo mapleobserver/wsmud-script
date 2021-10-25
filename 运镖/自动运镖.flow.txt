@@ -5,7 +5,7 @@
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，可选择公共或者队伍频道。
 // 2020.12.09 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化多项判断；增强提示信息。
 
-($localVer) = 2021102403
+($localVer) = 2021102501
 ($changeLog) = 🆕 优化不要急慢慢来的处理方式。🌟 多种方案选择；可配合佛光坦克触发；可远程通知。
 ($flowName) = 自动运镖
 ($flowCode) = zdyb
@@ -333,7 +333,7 @@ stopstate
                 @tip 你推着镖银风尘仆仆地来到($map)，只要把镖银交给($name)就完成了。
                 ($info) = <hiy>收货人是(name)，准备交镖。</hiy>
                 @js $('#yb_prog').html(`(info)`)
-                @await 2000
+                @await 3000
                 [while] true
                     [if] (:room) == 华山派-练武场 || (:room) == 逍遥派-林间小道 || (:room) == 武当派-太子岩 || (:room) == 丐帮-破庙密室 || (:room) == 少林派-练武场 || (:room) == 峨眉派-广场 || (:room) == 杀手楼-练功房
                         [if] (:room) == 华山派-练武场 || (:room) == 逍遥派-林间小道
@@ -353,7 +353,7 @@ stopstate
                         ($name) = 武当派第四代弟子 道童
                     @until {r(name)}? != null
                     select {r(name)};task yunbiao {r(name)} give
-                    @tip 这是你的报酬|这不是($no)镖银|你有($wrong)事吗|这里(wrong)这个人
+                    @tip 这是你的报酬|这不是($no)镖银|你有($wrong)事吗|这里($wrong)这个人
                     [if] (no) != null || (wrong) != null
                         ($wrong) = null
                         ($no) = null
