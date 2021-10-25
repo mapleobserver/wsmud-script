@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.192
+// @version      0.0.32.193
 // @date         01/07/2018
-// @modified     23/10/2021
+// @modified     25/10/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -754,7 +754,7 @@
     var pushSwitch = "关";
     var pushType = 0;
     var pushToken = "";
-    var pushUrl = "https://";
+    // var pushUrl = "https://";
     //停止后动作
     var auto_command = null;
     //装备列表
@@ -4894,7 +4894,7 @@
             _config._pushSwitch = GM_getValue("_pushSwitch", pushSwitch);
             _config._pushType = GM_getValue("_pushType", pushType);
             _config._pushToken = GM_getValue("_pushToken", pushToken);
-            _config._pushUrl = GM_getValue("_pushUrl", pushUrl);
+            // _config._pushUrl = GM_getValue("_pushUrl", pushUrl);
 
             S.uploadUserConfig(G.id, _config, (res) => {
                 if (res == "true") {
@@ -4970,7 +4970,7 @@
             $("pushSwitch").off('click');
             $("pushType").off('change');
             $("pushToken").off('change');
-            $("pushUrl").off('change');
+            // $("pushUrl").off('change');
             $('#autorelogin').off('click')
             $('#autoupdateStore').off('click')
             $('#saveAddr').off('click')
@@ -5087,10 +5087,10 @@
                 pushToken = $('#pushToken').val();
                 GM_setValue("_pushToken", pushToken);
             });
-            $("#pushUrl").focusout(function () {
-                pushUrl = $('#pushUrl').val();
-                GM_setValue("_pushUrl", pushUrl);
-            });
+            // $("#pushUrl").focusout(function () {
+            //     pushUrl = $('#pushUrl').val();
+            //     GM_setValue("_pushUrl", pushUrl);
+            // });
             $('#getitemShow').click(function () {
                 getitemShow = WG.switchReversal($(this));
                 GM_setValue(roleid + "_getitemShow", getitemShow);
@@ -5306,7 +5306,7 @@
             $("#pushSwitch").val(pushSwitch);
             $("#pushType").val(pushType);
             $("#pushToken").val(pushToken);
-            $("#pushUrl").val(pushUrl);
+            // $("#pushUrl").val(pushUrl);
             $('#getitemShow').val(getitemShow);
             $('#unauto_pfm').val(unauto_pfm);
             $('#store_info').val(zdy_item_store);
@@ -6496,11 +6496,12 @@
                 <span> <label for="pushType"> 通知推送方式(使用方法自行百度)： </label><select id="pushType" style="width:80px">
                     <option value="0"> Server酱 </option>
                     <option value="1"> Bark iOS </option>
-                    <option value="2"> Tele酱 </option>
+                    <option value="2"> PushPlus </option>
+                    <option value="3"> 飞书机器人 </option>
                 </select>
                 </span></div> `
-                + UI.html_lninput("pushToken", "推送方式对应的Token或Key：")
-                + UI.html_lninput("pushUrl", "推演方式对应的推送网址(末尾不要加斜杠/)：")
+                + UI.html_lninput("pushToken", "推送方式对应的Token或Key(只要Key不要填整个网址)：")
+                //+ UI.html_lninput("pushUrl", "推演方式对应的推送网址(末尾不要加斜杠/)：")
                 + UI.html_lninput("auto_eq", "BOSS击杀时自动换装：")
                 + UI.html_lninput("ks_pfm", "BOSS叫杀延时(ms)： ")
                 + UI.html_lninput("ks_wait", "BOSS击杀等待延迟(s)： ")
@@ -7727,7 +7728,7 @@
             pushSwitch = GM_getValue("_pushSwitch", pushSwitch);
             pushType = GM_getValue("_pushType", pushType);
             pushToken = GM_getValue("_pushToken", pushToken);
-            pushUrl = GM_getValue("_pushUrl", pushUrl);
+            //pushUrl = GM_getValue("_pushUrl", pushUrl);
 
             WG.zdy_btnListInit();
 
@@ -7815,19 +7816,36 @@
     };
     function Push(text) {
         if (text) {
-            if (pushSwitch != '开' || pushType == null || pushToken == null || pushUrl == null || pushUrl == 'https://') {
-                messageAppend("通知功能未开启或设置不完整。");
+            if (pushSwitch != '开' || pushType == null || pushToken == null) {
+                messageAppend("通知功能未开启或设置不完整，请在 右键菜单-设置 中设置开启。",1);
                 return;
             }
             switch (pushType) {
+                //Server酱
                 case "0":
-                    $.post(`${pushUrl}/${pushToken}.send?title=${text}`);
+                    $.post(`https://sctapi.ftqq.com/${pushToken}.send?title=${text}`);
                     break;
+                //Bark iOS
                 case "1":
-                    $.post(`${pushUrl}/${pushToken}/武神传说/${encodeURIComponent(text)}`);
+                    $.post(`https://api.day.app/${pushToken}/武神传说/${encodeURIComponent(text)}`);
                     break;
+                //PushPlus
                 case "2":
-                    $.post(`${pushUrl}/api/send?sendkey=${pushToken}&text=${text}`);
+                    // if (pushUrl != "http://www.pushplus.plus") {
+                    //     GM_setValue("_pushUrl", "http://www.pushplus.plus");
+                    //     pushUrl = GM_getValue("_pushUrl", pushUrl);
+                    // }
+                    $.post(`http://www.pushplus.plus/api/send?token=${pushToken}&title=武神传说&content=${text}&template=txt`);
+                    break;
+                //飞书机器人
+                case "3":
+                    // if (pushUrl != "https://open.feishu.cn") {
+                    //     GM_setValue("_pushUrl", "https://open.feishu.cn");
+                    //     pushUrl = GM_getValue("_pushUrl", pushUrl);
+                    // }
+                    var pushJosn = {"msg_type":"text","content":{"text":text}};
+                    $.ajaxSetup({contentType: "application/json; charset=utf-8"});
+                    $.post(`https://open.feishu.cn/open-apis/bot/v2/hook/${pushToken}`, JSON.stringify(pushJosn));
                     break;
             }
         }
