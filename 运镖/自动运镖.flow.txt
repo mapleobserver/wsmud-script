@@ -5,7 +5,7 @@
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，可选择公共或者队伍频道。
 // 2020.12.09 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化多项判断；增强提示信息。
 
-($localVer) = 2021102502
+($localVer) = 2021102601
 ($changeLog) = 🆕 优化不要急慢慢来的处理方式。🌟 多种方案选择；可配合佛光坦克触发；可远程通知。
 ($flowName) = 自动运镖
 ($flowCode) = zdyb
@@ -90,7 +90,7 @@
     ($EscortAlertTel)=关闭
 
 #input ($repeat) = 本次流程押镖次数,(repeat)
-#select ($EscortHpThreshold) = 疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10,(EscortHpThreshold)
+#select ($EscortHpThreshold) = 疗伤，当气血低于百分比,100|90|80|70|60|50|40|30|20|10|5|1,(EscortHpThreshold)
 #select ($EscortMpThreshold) = 打坐，当内力低于百分比,100|90|80|70|60|50|40|30|20|10,(EscortMpThreshold)
 #select ($EscortChangsheng) = 使用长生诀恢复气血内力,打开|关闭,(EscortChangsheng)
 #select ($WDXuruo) = 死亡后自动到武道塔一百层清除虚弱,打开|关闭,(WDXuruo)
@@ -107,7 +107,7 @@
 #select ($EscortCanXue) = 连死二次后残血叫杀(适用于血刀),是|否,(EscortCanXue)
 #select ($EscortXuantie) = 连死三次换玄铁,是|否,(EscortXuantie)
 #select ($EscortTangshi) = 唐诗剑法,使用|不使用,(EscortTangshi)
-#input ($EscortWeaponID) = 切换躺尸武器sid,(EscortWeaponID)
+#input ($EscortWeaponID) = 切换躺尸或玄铁使用的剑类武器id（已经拿剑的话可以不填）,(EscortWeaponID)
 // 远程通知
 #select ($EscortAlertTel)=<hiz>远程通知功能，需先在设置中开启并填写参数，需要plugins版本至少0.0.32.192，raid版本至少2.4.45，不懂的话请勿使用，自行搜索了解。</hiz><br/>&nbsp*&nbsp流程结束或同一强盗死亡达到5次，开启远程通知,开启|关闭,(EscortAlertTel)
 
@@ -356,9 +356,16 @@ stopstate
                             ($name) = (:findName (sxdz))
                     [if] (name) == 道童 && (:room) == 武当派-广场
                         ($name) = 武当派第四代弟子 道童
+                    [if] {r(name)}? == null
+                        @print 【(:room)】【(name)】失踪，等待出现。
                     @until {r(name)}? != null
                     select {r(name)};task yunbiao {r(name)} give
-                    @tip 这是你的报酬|这不是($no)镖银|你有($wrong)事吗|这里($wrong)这个人
+                    @tip 这是你的报酬|这不是($no)镖银|你有($wrong)事吗|这里($wrong)这个人|不要急，($needwait)来
+                    [if] (needwait) != null
+                        ($needwait) = null
+                        @print 不要急慢慢来，等一下再继续
+                        @await 3000
+                        [continue]
                     [if] (no) != null || (wrong) != null
                         ($wrong) = null
                         ($no) = null
