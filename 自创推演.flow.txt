@@ -1,8 +1,8 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
 @js messageClear();
-($localVer) = 2021102402
-($changeLog) = 🆕 增加远程通知功能（需更新插件版本）；潜能不足词条下一次升级会自动停止；增加词条属性查看按钮；增加内功震慑词条、内功特殊词条化毒、招架特殊词条专注和星移。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.增加停止推演按钮（师门按钮旁）。7.语音提醒。
+($localVer) = 2021102701
+($changeLog) = 🆕 增加远程通知功能（需更新插件版本）；增加词条属性查看按钮；增加内功震慑词条、内功特殊词条化毒、招架特殊词条专注和星移。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.停止推演、词条属性功能按钮。7.语音提醒、远程通知。
 ($flowName) = 自创推演
 ($flowCode) = zcty
 ($flowPath) = 根文件夹
@@ -438,7 +438,7 @@ stopstate
       [else]
         ($logProp) = 词条已满，无法添加【(prop)】
       @js WG.Send("tm 💡 (logProp) (:hour):(:minute):(:second)")
-      @print <hio>(logProp)</hio>
+      @print <hio>💡 (logProp)</hio>（(real_cost_p)） (:hour):(:minute):(:second)
       [if] (ZCAlertType)==全部通知
         [if] (ZCAlertWay)==语音播报
           $tts (:name)，(logProp)
@@ -446,7 +446,7 @@ stopstate
           @beep
         // 远程通知
         [if] (ZCAlertPush) == 开启
-          ($logPush) = 【推演】(:name)：(logProp)
+          ($logPush) = 【推演】(:name)：(logProp)（(real_cost_p)）
           @push (logPush)
         
     [else]
