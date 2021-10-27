@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.193
+// @version      0.0.32.194
 // @date         01/07/2018
-// @modified     25/10/2021
+// @modified     27/10/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -6494,9 +6494,9 @@
                 + UI.html_switch('pushSwitch', '远程通知推送开关(使用@push推送通知，语法参考@print)：', 'pushSwitch') + `
                 <div class="setting-item">
                 <span> <label for="pushType"> 通知推送方式(使用方法自行百度)： </label><select id="pushType" style="width:80px">
-                    <option value="0"> Server酱 </option>
+                    <option value="0"> Server酱(限32字符) </option>
                     <option value="1"> Bark iOS </option>
-                    <option value="2"> PushPlus </option>
+                    <option value="2"> PushPlus(支持html标签) </option>
                     <option value="3"> 飞书机器人 </option>
                 </select>
                 </span></div> `
@@ -7831,18 +7831,12 @@
                     break;
                 //PushPlus
                 case "2":
-                    // if (pushUrl != "http://www.pushplus.plus") {
-                    //     GM_setValue("_pushUrl", "http://www.pushplus.plus");
-                    //     pushUrl = GM_getValue("_pushUrl", pushUrl);
-                    // }
-                    $.post(`http://www.pushplus.plus/api/send?token=${pushToken}&title=武神传说&content=${text}&template=txt`);
+                    var pushJosn = {"token":pushToken,"title":"武神传说","content":text};
+                    $.ajaxSetup({contentType: "application/json; charset=utf-8"});
+                    $.post(`http://www.pushplus.plus/send/`, JSON.stringify(pushJosn));
                     break;
                 //飞书机器人
                 case "3":
-                    // if (pushUrl != "https://open.feishu.cn") {
-                    //     GM_setValue("_pushUrl", "https://open.feishu.cn");
-                    //     pushUrl = GM_getValue("_pushUrl", pushUrl);
-                    // }
                     var pushJosn = {"msg_type":"text","content":{"text":text}};
                     $.ajaxSetup({contentType: "application/json; charset=utf-8"});
                     $.post(`https://open.feishu.cn/open-apis/bot/v2/hook/${pushToken}`, JSON.stringify(pushJosn));
