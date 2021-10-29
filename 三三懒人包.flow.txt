@@ -2,7 +2,7 @@
 // 常用流程
 // 四区白三三
 ($localVer) = 2021102901
-($changeLog) = 🆕 新增自动运镖、古代宗门流程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
+($changeLog) = 🆕 新增整理秘籍、自动运镖、古代宗门流程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
 ($flowPath) = 根文件夹
@@ -32,7 +32,7 @@
     ($log) = ⭕(flowName)暂时无法正常更新至【(remoteVer)】，直接运行当前版本【(localVer)】。
     ($UPnum) = null
   @js WG.SendCmd("tm (log)")
-  @print <ord>(log)</ord>
+  @js messageClear();messageAppend('(changeLog)',1,0)
   [if] (UPnum) != null
     @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
     [exit]
@@ -43,7 +43,7 @@
   [else]
     ($log) = 🚀开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
   @js WG.SendCmd("tm (log)")
-  @print <ord>(log)</ord>
+  @js messageClear();messageAppend('(changeLog)',1,0)
 
 #select ($flowZDRC)=🚀 <hiz>当前流程版本为(localVer)</hiz><br/>&nbsp*&nbsp🍥 <hiz>以下有♻️标志的流程有自更新功能</hiz><br/>&nbsp*&nbsp🍰 <hiz>第一次使用前，如已有同名流程，请先手动删除</hiz><br/>&nbsp*&nbsp[♻️<ord>自动日常</ord>]师门-追捕-打塔-副本-请安,导入|跳过,跳过
 #select ($flowZCTY)=⚠️ <ord>现已可推演指定词条。</ord><br/>&nbsp*&nbsp[♻️<hiz>自创推演</hiz>]武神自创推演,导入|跳过,跳过
@@ -52,13 +52,14 @@
 //#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
 #select ($flowKSSD)=🍺 <ord>副本</ord><br/>&nbsp*&nbsp[♻️<hiz>快速扫荡</hiz>]批量扫荡副本,导入|跳过,跳过
 #select ($flowTDFB)=[<hiz>偷渡副本</hiz>]快进快出副本积累次数,导入|跳过,跳过
-#select ($flowZDYB)=🚗 <ord>运镖</ord><br/>&nbsp*&nbsp[<hiz>自动运镖</hiz>]自动挂机运镖,导入|跳过,跳过
+#select ($flowZDYB)=🚗 <ord>运镖</ord><br/>&nbsp*&nbsp[♻️<hiz>自动运镖</hiz>]自动挂机运镖,导入|跳过,跳过
 #select ($flowYJXX)=⛩ <ord>门派技能</ord><br/>&nbsp*&nbsp[♻️<hiz>一键学习</hiz>]自动学习门派技能,导入|跳过,跳过
 #select ($flowMPJJ)=[♻️<hiz>门派进阶</hiz>]门派武功自动进阶,导入|跳过,跳过
 #select ($flowLXDM)=🍔 <ord>练习技能</ord><br/>&nbsp*&nbsp[♻️<hiz>练习代码生成器</hiz>]自动生成练习代码并填入系统设置,导入|跳过,跳过
 #select ($flowJQLX)=[♻️<hiz>精确练习</hiz>]自动练习技能,导入|跳过,跳过
 #select ($flowYJSG)=🌱 <ord>杂务</ord><br/>&nbsp*&nbsp[♻️<hiz>一键收割</hiz>]收割、安排随从(可自动组队随从去花园),导入|跳过,跳过
 #select ($flowZDCBT)=[<hiz>自动藏宝图</hiz>]自动使用藏宝图挖宝,导入|跳过,跳过
+#select ($flowZLMJ)=[♻️<hiz>整理秘籍</hiz>]自动合成秘籍残页存入书架，优先存门派进阶和高品质秘籍,导入|跳过,跳过
 #select ($flowYZDY)=[<hiz>研制丹药</hiz>]自动研制绿蓝黄紫橙丹药和突破丹,导入|跳过,跳过
 
 // 触发
@@ -87,6 +88,7 @@
 ($f_zdyb)={"name":"自动运镖","source":"(repourl)/运镖/自动运镖.flow.txt","finder":"根文件夹"}
 ($f_yjsg)={"name":"一键收割","source":"(repourl)/杂务/一键收割.flow.txt","finder":"杂务"}
 ($f_zdcbt)={"name":"自动藏宝图","source":"(repourl)/杂务/自动藏宝图.flow.txt","finder":"杂务"}
+($f_zlmj)={"name":"整理秘籍","source":"(repourl)/杂务/整理秘籍.flow.txt","finder":"杂务"}
 ($f_lxdm)={"name":"练习代码生成器","source":"(repourl)/提升/练习代码生成器.flow.txt","finder":"提升"}
 ($f_yjxx)={"name":"一键学习","source":"(repourl)/提升/一键学习.flow.txt","finder":"提升"}
 ($f_jqlx)={"name":"精确练习","source":"(repourl)/提升/精确练习.flow.txt","finder":"提升"}
@@ -122,6 +124,9 @@
 [if] (flowZDCBT)==导入
   @js WorkflowConfig.createFinder("杂务")
   ($f_list)=(f_list),(f_zdcbt)
+[if] (flowZLMJ)==导入
+  @js WorkflowConfig.createFinder("杂务")
+  ($f_list)=(f_list),(f_zlmj)
 [if] (flowLXDM)==导入
   @js WorkflowConfig.createFinder("提升")
   ($f_list)=(f_list),(f_lxdm)
@@ -155,42 +160,42 @@
 [if] (f_list) != null
   @js ($l) = [(f_list)].length
   [while] (num)<(l)
-    @js var time = Date.parse( new Date());var f=[(f_list)];var n=f[(num)]["name"];var s=f[(num)]["source"];var fd=f[(num)]["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @js var time = Date.parse( new Date());var f=[(f_list)];var n=f[(num)]["name"];var s=f[(num)]["source"];var fd=f[(num)]["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});messageAppend("导入流程："+fd+" ==> <hiy>"+n+"</hiy>")
     ($num)=(num)+1
 
 //触发
 [if] (triggerRedBoss)==导入
-  @print 导入 <ord>红boss报告</ord> 触发
+  @print 导入触发：<ord>红boss报告</ord>
   @js ($remoteVer) = var v = (version);v.rboss
   @js ($rboss) = [(remoteVer)][1]
   @js unsafeWindow.TriggerCenter.remove("红boss报告")
   @await 350
   @js Server.importTrigger("(rboss)")
 [if] (triggerFoodFy)==导入
-  @print 导入 <hic>续药飞翼</hic> 触发
+  @print 导入触发：<hic>续药飞翼</hic>
   @js unsafeWindow.TriggerCenter.remove("续药飞翼")
   @await 350
   @js Server.importTrigger("白三三·续药飞翼·触发@a15c444b6d236a1a7e040f4cc13b18d1")
   @print <hiy>【徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。【鼓舞】可改参数设置无鼓舞时停止练习</hiy>
   tm 【徽章】使用方法：先装备徽章使用，再换回练习或打坐的饰品，确保徽章在背包里，后续该触发才会对徽章生效。【鼓舞】可改参数设置无鼓舞时停止练习
 [if] (triggerXWZZ)==导入
-  @print 导入 <hic>卸武自装</hic> 触发
+  @print 导入触发：<hic>卸武自装</hic>
   @js unsafeWindow.TriggerCenter.remove("卸武自装")
   @await 350
   @js Server.importTrigger("白三三·卸武自装·触发@33b0009ff0108c92a34841c7174b876a")
 [if] (triggerCMS)==导入
-  @print 导入 <hic>帮战橙满伤</hic> 触发
+  @print 导入触发：<hic>帮战橙满伤</hic>
   @js unsafeWindow.TriggerCenter.remove("橙满伤")
   @await 350
   @js Server.importTrigger("白三三·橙满伤·触发@92ae0deb0926f129d2fab09cd3b3ca0c")
   @js WG.SendCmd("tm 如果满伤脱战过程不想卸武器，请在触发代码中按说明修改参数。")
 [if] (triggerXYJS)==导入
-  @print 导入 <hic>襄阳叫杀</hic> 触发
+  @print 导入触发：<hic>襄阳叫杀</hic>
   @js unsafeWindow.TriggerCenter.remove("襄阳叫杀")
   @await 350
   @js Server.importTrigger("白三三·襄阳叫杀·触发@1989d41b8ac4524944df173752f62ea7")
 [if] (triggerXYMJG)==导入
-  @print 导入 <hic>襄阳满军功</hic> 触发
+  @print 导入触发：<hic>襄阳满军功</hic>
   @js unsafeWindow.TriggerCenter.remove("襄阳满")
   @await 350
   @js Server.importTrigger("白三三·襄阳满·触发@2c8369028e3413d2ba5e2ff6ed1d810f")
