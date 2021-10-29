@@ -1,0 +1,172 @@
+//~silent
+// 四区白三三
+// 自动合成秘籍残页存入书架，优先存门派进阶和高品质秘籍。
+// 版本检查
+($localVer) = 2021102901
+($changeLog) = 自动合成秘籍残页存入书架，优先存门派进阶和高品质秘籍。
+($flowName) = 整理秘籍
+($flowCode) = zlmj
+($flowPath) = 杂务
+($flowFinder) = 杂务
+($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.(flowCode)
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    [if] (flowFinder) == null
+      ($flowFinder) = 根文件夹
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @wait 1500
+    ($log) = ✅(flowName)已更新至最新版【(remoteVer)】，即将自动运行。
+  [else]
+    ($log) = ⭕(flowName)暂时无法正常更新至【(remoteVer)】，直接运行当前版本【(localVer)】。
+    ($UPnum) = null
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  [if] (UPnum) != null
+    @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+    [exit]
+[else]
+  ($UPnum) = null
+  [if] (remoteVer) == null
+    ($log) = ⚠️获取远程版本失败，维持当前版本不变。
+  [else]
+    ($log) = 🚀开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+
+// 参数预处理
+[if] (TidyBook) == null
+  ($TidyBook) = "tidyW":"否","tidyG":"是","tidyB":"是","tidyY":"是","tidyP":"是","tidyO":"是","tidyR":"是","tidyM":"是"
+@js ($tidyW) = var b={(TidyBook)};b.tidyW
+@js ($tidyG) = var b={(TidyBook)};b.tidyG
+@js ($tidyB) = var b={(TidyBook)};b.tidyB
+@js ($tidyY) = var b={(TidyBook)};b.tidyY
+@js ($tidyP) = var b={(TidyBook)};b.tidyP
+@js ($tidyO) = var b={(TidyBook)};b.tidyO
+@js ($tidyR) = var b={(TidyBook)};b.tidyR
+@js ($tidyM) = var b={(TidyBook)};b.tidyM
+
+// 设置菜单
+#select ($tidyW) = 是否存入<wht>白色基础秘籍</wht>,是|否,(tidyW)
+#select ($tidyG) = 是否存入<hig>绿色秘籍</hig>,是|否,(tidyG)
+#select ($tidyB) = 是否存入<hic>蓝色秘籍</hic>,是|否,(tidyB)
+#select ($tidyY) = 是否存入<hiy>黄色秘籍</hiy>,是|否,(tidyY)
+#select ($tidyP) = 是否存入<hiz>紫色秘籍</hiz>,是|否,(tidyP)
+#select ($tidyO) = 是否存入<hio>橙色秘籍</hio>,是|否,(tidyO)
+#select ($tidyR) = 是否存入<ord>红色秘籍</ord>,是|否,(tidyR)
+#select ($tidyM) = 是否存入<hiz>门派进阶秘籍</hiz>,是|否,(tidyM)
+#config
+
+($TidyBook) = "tidyW":"(tidyW)","tidyG":"(tidyG)","tidyB":"(tidyB)","tidyY":"(tidyY)","tidyP":"(tidyP)","tidyO":"(tidyO)","tidyR":"(tidyR)","tidyM":"(tidyM)"
+
+// 秘籍数据
+//($bookW) = '基本内功秘籍','基本拳脚秘籍','基本轻功秘籍','基本招架秘籍','基本剑法秘籍','基本刀法秘籍','基本杖法秘籍','基本棍法秘籍','基本鞭法秘籍','基本暗器秘籍','野兽扑咬秘籍'
+($bookG) = '太祖长拳','唐诗剑法','五虎断门刀','云龙鞭法','意形步法','神龙剑','华山剑法','混元一气','飞檐走壁','伏虎拳','绝门棍','猴拳','云龙身法','云龙心法','秋风拂尘','密宗心法','密宗大手印','冷月神功','金雁功'
+($bookB) = '神龙心法','云龙剑','神形百变','蛇岛奇功','化骨绵掌','胡家刀法','四象步法','金蛇锥法','八卦拳','八卦棍','五毒神功','恒山身法','踏歌行','穿云纵','流云掌','泰山拳法','碧波神功','蟾蜍步法','摘星功','飞星术','青蝠身法','绝情掌','神剑诀','鹰爪功','圣火令法','天南步','身空行','蒙古心法','无常杖'
+($bookY) = '金蛇剑法','金蛇游身掌','金蛇游身步','五毒烟萝步','五毒钩法','千蛛万毒手','白云心法','恒山剑法','天长掌法','狂风快刀','摧心掌','松风剑法','镇岳诀','衡山五神剑','泰山剑法','磐石神功','大嵩阳神掌','嵩山剑法','暗影浮香','落英神剑','三阴蜈蚣爪','七伤拳','移风剑法','天羽奇剑','圣火神功','段家剑','玉女心经','银索金铃','全真剑法','中平枪法','蒙古骑枪'
+($bookP) = '寒冰真气','弹指神通','空明拳','灵蛇杖法','蛤蟆功','化功大法','移花接木','明玉功','参合指','枯木神功','神照经','血海魔功','一阳指','玄虚步','伏魔棍','彼岸剑法','圆月弯刀','先天功'
+($bookO) = '斗转星移','辟邪剑法','葵花神功','不老长春功','九阳神功','乾坤大挪移','六脉神剑','血刀','黯然销魂掌','玄铁剑法','九阴神功','太玄功','无念禅功','伏魔杖','如来神掌','真言手印','灵犀步','天地交征阴阳大悲赋','龙象般若功'
+($bookR) = '长生诀秘籍','慈航剑典秘籍','阴阳九转秘籍','战神图录秘籍','覆雨剑法秘籍','天魔策秘籍'
+($bookM) = '太极拳进阶秘籍','梯云纵进阶秘籍','先天太极进阶秘籍','太极剑法进阶秘籍','混元天罡进阶秘籍','逍遥游进阶秘籍','打狗棒进阶秘籍','降龙十八掌进阶秘籍','劈石破玉拳进阶秘籍','紫霞神功进阶秘籍','狂风快剑进阶秘籍','独孤九剑进阶秘籍','九阴白骨爪进阶秘籍','诸天化身步进阶秘籍','临济十二庄进阶秘籍','倚天剑法进阶秘籍','一指禅进阶秘籍','一苇渡江进阶秘籍','燃木刀法进阶秘籍','金刚不坏体进阶秘籍','北冥神功进阶秘籍','天山六阳掌进阶秘籍','凌波微步进阶秘籍','小无相功进阶秘籍','穿心掌进阶秘籍','杀生决进阶秘籍','踏雪寻梅进阶秘籍','漫天花雨进阶秘籍'
+
+// 预备
+stopstate
+[if] (:room) != 住房-卧室
+  jh fam 0 start;go west;go west;go north;go enter
+  go north
+store
+@dialog
+
+// 整理
+@cmdDelay 800
+($lvNow) = 7
+[while] (lvNow) >= 0
+  [if] (lvNow)==7 && (tidyM)==是
+    ($bookNow)=(bookM)
+  [else if] (lvNow)==6 && (tidyR)==是
+    ($bookNow)=(bookR)
+  [else if] (lvNow)==5 && (tidyO)==是
+    ($count)=200
+    ($bookNow)=(bookO)
+  [else if] (lvNow)==4 && (tidyP)==是
+    ($count)=100
+    ($bookNow)=(bookP)
+  [else if] (lvNow)==3 && (tidyY)==是
+    ($count)=50
+    ($bookNow)=(bookY)
+  [else if] (lvNow)==2 && (tidyB)==是
+    ($count)=30
+    ($bookNow)=(bookB)
+  [else if] (lvNow)==1 && (tidyG)==是
+    ($count)=10
+    ($bookNow)=(bookG)
+  [else if] (lvNow)==0 && (tidyW)==是
+    ($bookNow)=(bookW)
+  [else]
+    ($lvNow) = (lvNow) - 1
+    [continue]
+  
+  //@print 等级(lvNow)，数量(count)
+  @js ($len) = [(bookNow)].length
+  //@print (len)
+  ($num) = 0
+  [while] (num) < (len)
+    @js ($book) = [(bookNow)][(num)]
+    @print (book)
+    ($cmd1) = null
+    [if] (lvNow)==7 || (lvNow)==6 || (lvNow)==0
+      [if] {d(book)#}? == 1
+        qu {d(book)}?
+      [else if] {d(book)#}? != null
+        qu {d(book)#}? {d(book)}?
+      [else]
+        ($num) = (num) + 1
+        [continue]
+      [if] {b(book)#}? == 1
+        sj store {b(book)}?
+      [else if] {b(book)#}? != null
+        sj store {b(book)#}? {b(book)}?
+    [else]
+      // 根据不同颜色秘籍合成数计算数量
+      ($bookPage) = {d(book)残页#}?
+      //@print (book)残页数量：(bookPage)
+      [if] (bookPage) != null
+        @js ($bookNum) = parseInt((bookPage)/(count))
+      [if] (bookNum) > 0 && (bookNum) != null && (bookPage) != null
+        //@print 可合成数量：(bookNum)
+        ($pageNum) = (bookNum)*(count)
+        qu (pageNum) {d(book)残页}?
+        combine {b(book)残页}? (bookNum)
+        [if] {d(book)秘籍}? != null
+          qu {d(book)秘籍#}? {d(book)秘籍}?
+      [if] {b(book)秘籍}? != null
+        sj store {b(book)秘籍#}? {b(book)秘籍}?
+      [else]
+        ($num) = (num) + 1
+        [continue]
+    @tip 放到书架上面|你的书架($full)放满了
+    [if] (full) != null
+      @tm 书架已满，无法存放。
+      @print <hiy>书架已满，无法存放。</hiy>
+      @tidyBag
+      @await 2000
+      $zdwk
+      [exit]
+    ($num) = (num) + 1
+  
+  ($lvNow) = (lvNow) - 1
+$zdwk
