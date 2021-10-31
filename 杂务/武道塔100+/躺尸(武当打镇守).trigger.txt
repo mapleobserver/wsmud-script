@@ -2,6 +2,7 @@
 //先手动换上唐诗剑法，武器用剑（不要用真武），轻功不要装蛇步、腰带换混天腰带或者君子腰减少装死时间。
 //四区白三三
 $stoppfm;$waitpfm sword.wu
+setting auto_pfm 0
 [while] true
     enable sword taijijian2
     @tip 你现在正忙|你决定使用($skill)做为

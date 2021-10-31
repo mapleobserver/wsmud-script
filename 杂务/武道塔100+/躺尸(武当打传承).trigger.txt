@@ -3,6 +3,7 @@
 //传承类似天僧抗性高，缠忙乱短需要蛇步或者玄灵丹
 //四区白三三
 $stoppfm;$waitpfm sword.wu
+setting auto_pfm 0
 [while] true
     enable sword taijijian2
     @tip 你现在正忙|你决定使用($skill)做为
