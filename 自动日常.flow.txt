@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2021102901
+($localVer) = 2021103101
 ($changeLog) = 🆕 优化call方式运行过程；追捕增加不回武庙恢复和是否到塔顶清虚弱功能；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -732,14 +732,14 @@ stopstate
               [while] (:room) != 扬州城-武庙
                 $to 扬州城-武庙
                 @await 1000
-              @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_repeat)=(fb_num)\n'))
+              @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_DungeonRecordGains)=否\n($_repeat)=(fb_num)\n'))
               @until (:room 副本区域) == true
               @await 3000
               @until (:room 副本区域) == false
               @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门 || (:room) == 帮会-练功房
               ($fb_auto_num) = (fb_auto_num) + 1
           [else]
-            @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_repeat)=(fb_num)\n'))
+            @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_DungeonRecordGains)=否\n($_repeat)=(fb_num)\n'))
             @until (:room) == 住房-练功房 || (:room) == 住房-卧室 || (:room) == 住房-院子 || (:room) == 扬州城-大门 || (:room) == 帮会-练功房
         [else]
           ($alert_fb) = (FBName)没有自动脚本！
