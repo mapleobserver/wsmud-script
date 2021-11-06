@@ -8,6 +8,7 @@
 @await 1000
 @perform blade.shi,force.cui
 @until (:status force,(id_wd)) == false
-//@perform unarmed.qi      //如果自动释放无形剑气有失败可能，请自己斟酌是否使用
+//如果自动释放无形剑气有失败可能，请自己斟酌是否使用
+//@perform unarmed.qi
 @perform unarmed.liu,throwing.jiang,blade.xue
 $startpfm
