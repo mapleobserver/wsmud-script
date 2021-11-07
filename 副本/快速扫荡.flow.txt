@@ -1,8 +1,8 @@
 //~silent
 // 用于快速扫荡副本，可选择是否自动购买扫荡符。
 // 四区白三三
-($localVer) = 2021100701
-($changeLog) = 副本新增【古宗门遗址】;优化扫荡频次，及时清包避免背包太满变废号。
+($localVer) = 2021110701
+($changeLog) = 副本新增【古宗门遗址】；优化扫荡频次，及时清包避免背包太满变废号。
 ($flowName) = 快速扫荡
 ($flowCode) = kssd
 ($flowPath) = 副本
@@ -49,7 +49,7 @@
 [if] (RCMode) == 节日免费模式
     ($AutoBuy) = 不购买
 [else]
-    ($AutoBuy) == 购买
+    ($AutoBuy) = 购买
 #input ($info1) = <ord>扫荡开始后无法中止，为避免意外，次数限定最高2000次。</ord>,👇🏻仔细填写👇🏻
 #input ($info2) = <ord>为避免背包太满无法清理，前期副本每100次会自动清理。</ord>,👇🏻仔细填写👇🏻
 #select ($AutoBuy) = 自动补充扫荡符(免费扫荡期间选不购买),购买|不购买,(AutoBuy)
@@ -169,7 +169,7 @@ stopstate
         [if] (repeat) <= 100
             tm 根据设置，开始扫荡【(FBNameQ)】(repeat)次。
             (fbcr) (repeat)
-            @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
+            @tip 扫荡完成|扫荡符($lack)继续扫荡|你的扫荡符($lack)继续扫荡了|你的($jingli)不够
             [break]
         [else]
             ($num) = (repeat) - (sdnum)
@@ -178,7 +178,7 @@ stopstate
             [else if] (num) > 0
                 (fbcr) (num)
             ($sdnum) = (sdnum) + 100
-            @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
+            @tip 扫荡完成|扫荡符($lack)继续扫荡|你的扫荡符($lack)继续扫荡了|你的($jingli)不够
             [if] (num) > 100
                 tm 分批扫荡，目前已扫荡【(FBNameQ)】(sdnum)/(repeat)次。
             [else]
@@ -192,7 +192,7 @@ stopstate
 [if] (lack) != null
     @print <ord>扫荡符不足，已停止。</ord>
     tm 扫荡符不足，已停止。
-[else if] (jingli) != null
+[else if] (jingli) == 精力
     @print <ord>精力不足，已停止。</ord>
     tm 精力不足，已停止。
 [else]
