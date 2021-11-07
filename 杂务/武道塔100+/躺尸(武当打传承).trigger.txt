@@ -8,8 +8,9 @@ setting auto_pfm 0
     enable sword taijijian2
     @tip 你现在正忙|你决定使用($skill)做为
     [if] (skill) != null
+        enable parry yihuajiemu
         //轻功可以根据自己需要更换为蛇步或者暗影等
-        //enable dodge jinsheyoushenbu
+        enable dodge jinsheyoushenbu
         [break]
 ($weapon) = {b真武剑o}?
 @eq (weapon)
