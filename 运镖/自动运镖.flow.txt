@@ -5,7 +5,7 @@
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，可选择公共或者队伍频道。
 // 2020.12.09 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化多项判断；增强提示信息。
 
-($localVer) = 2021110601
+($localVer) = 2021111201
 ($changeLog) = 🆕 优化不要急慢慢来的处理方式；加速有长生时复活后的恢复过程。🌟 多种方案选择；可配合佛光坦克触发；可远程通知。
 ($flowName) = 自动运镖
 ($flowCode) = zdyb
@@ -144,7 +144,9 @@ stopstate
             [if] (EscortSkipCD) != 打开
                 @cd
             @await 2000
-            jh fam 0 start;go west[2];go south[2]
+            [while] (:room) != 扬州城-镖局正厅
+                jh fam 0 start;go west[2];go south[2]
+                @await 1000
             select {林震南};biao {r林震南}
         // 确定已接到任务
             [while] true
@@ -286,10 +288,9 @@ stopstate
                     relive
                 [if] (:status xuruo) == true && (WDXuruo) == 打开
                     @await 2000
-                    jh fam 9 start
-                    go enter
-                    //($force) = (:kf_nei)
-                    //enable force none
+                    [while] (:room 武道塔-第) == false
+                        jh fam 9 start;go enter
+                        @await 500
                     kill {r武道}
                     @until (:combating) == false && (:status faint) == false && (:status missing) == false
                     //enable force (force)
@@ -350,7 +351,9 @@ stopstate
                         team out
                     [else]
                         tm 无指定少林工具人！
-                jh fam 0 start;go west[2];go south[2]
+                [while] (:room) != 扬州城-镖局正厅
+                    jh fam 0 start;go west[2];go south[2]
+                    @await 1000
                 select {林震南};biao {r林震南}
                 task yunbiao {r林震南} begin
         [else]
@@ -381,7 +384,7 @@ stopstate
                         @print 【(:room)】【(name)】失踪，等待出现。
                     @until {r(name)}? != null
                     select {r(name)};task yunbiao {r(name)} give
-                    @tip 这是你的报酬|这不是($no)镖银|你有($wrong)事吗|这里($wrong)这个人|不要急，($needwait)来
+                    @tip 这是你的报酬|你有什么事吗|这不是($no)镖银|你有($wrong)事吗|这里($wrong)这个人|不要急，($needwait)来
                     [if] (needwait) != null
                         ($needwait) = null
                         @print 不要急慢慢来，等一下再继续
