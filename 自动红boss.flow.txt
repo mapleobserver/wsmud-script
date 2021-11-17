@@ -1,6 +1,6 @@
 //~silent
 //白三三
-($localVer) = 2021111704
+($localVer) = 2021111705
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -32,7 +32,7 @@
   [else]
     ($UPnum) = null
   [if] (UPnum) != null
-    @js WG.zmlfire({"name":"重新运行","zmlRun":"//~silent\n@call 自动红boss","zmlShow":0,"zmlType":"1"})
+    @js WG.zmlfire({"name":"重新运行","zmlRun":"//~silent\n@call 自动红boss (bossName),(bossPlace)","zmlShow":0,"zmlType":"1"})
     [exit]
 [else]
   ($UPnum) = null
