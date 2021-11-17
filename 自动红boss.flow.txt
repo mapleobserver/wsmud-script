@@ -1,6 +1,6 @@
 //~silent
 //白三三
-($localVer) = 2021111703
+($localVer) = 2021111704
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -170,6 +170,8 @@ stopstate
     @until (:living) == true
     ($numKill) = (numKill) + 1
   [else]
+    [if] (bossName) == 天僧
+      @until {r<hik>天僧</hik>的尸体} != null
     get all from (bossName)
     @await 3000
     cr;cr over
