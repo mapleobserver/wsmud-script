@@ -1,0 +1,195 @@
+//~silent
+//白三三
+($localVer) = 2021111701
+($changeLog) = 自动寻路打Boss，可设置通知方式。
+($flowName) = 自动红boss
+($flowCode) = zdhboss
+($flowPath) = 根文件夹
+($flowFinder) = 根文件夹
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.(flowCode)
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    [if] (flowFinder) == null
+      ($flowFinder) = 根文件夹
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @wait 1500
+  [else]
+    ($UPnum) = null
+  [if] (UPnum) != null
+    @js WG.zmlfire({"name":"重新运行","zmlRun":"//~silent\n@call 自动红boss","zmlShow":0,"zmlType":"1"})
+    [exit]
+[else]
+  ($UPnum) = null
+
+[if] (arg0) != null
+  ($bossName) = (arg0)
+[if] (arg1) != null
+  ($bossPlace) = (arg1)
+[if] (bossName) == null || (bossPlace) == null
+  #select ($bossName) = Boss名字,浪翻云|庞斑|烛九阴|蚩尤|天僧,(bossName)
+  #select ($bossPlace) = 副本名称,树林|财主家|流氓巷|丽春院|神龙教|温府|五毒教|恒山|青城山|衡山|泰山|嵩山|云梦沼泽|白驼山|星宿海|冰火岛|移花宫|燕子坞|黑木崖|缥缈峰|光明顶|天龙寺|血刀门|古墓派|华山论剑,(bossPlace)
+  [(BossTanlong) == null]($BossTanlong) = 剑心+融合探龙
+  #select ($BossTanlong) = 找到Boss后是否叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)
+  [(BossBefore) == null]($BossBefore) = $usezml 正常
+  #input ($BossBefore) = 进副本前后正常装备技能触发,(BossBefore)
+  [(BossSkill) == null]($BossSkill) = enable force none;$usezml 血剑
+  #input ($BossSkill) = 杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)
+  [(BossWarning) == null]($BossWarning) = 语音播报
+  #select ($BossWarning) = 遭遇问题时发出警报(找到或找不到Boss、被打死2次等),提示音|语音播报|远程通知,(BossWarning)
+  #config
+
+[if] (bossName) == null || (bossPlace) == null
+  @print 无Boss数据，流程终止。
+  [exit]
+[if] (bossPlace) == 黑木崖 && {b青龙堂令牌}? != null && {b白虎堂令牌}? != null && {b风雷堂令牌}? != null && {b火折子}? != null
+  @print <hiy>⚠️ 黑木崖所需物品不足，请先扫荡获取才进去。</hiy>
+  [exit]
+
+@cmdDelay 500
+($fbArrayPath) = "树林":"'cr yz/lw/shangu 0 0','go west','go west','go west'","财主家":"'cr yz/cuifu/caizhu 1 0','go north','go north','look men;open men;go east','go west;go west'","流氓巷":"'cr yz/lmw/xiangzi1 0 0','go east','go north','go south;go east','go east'","丽春院":"'cr yz/lcy/dating 0 0','go up','go east','go west;go west','look tai;tui tai;go enter'","神龙教":"'cr bj/shenlong/haitan 0 0','go north','look bush;kan bush;go north','go north','go north','go south;go east','go east','go north','go north','go north'","温府":"'cr cd/wen/damen 0 0','look tree;climb tree','go north','go northeast','go east','go west;go north','go east','go west;go northwest','go southwest','go west','go east;go south','go west','go east;go north;northeast;go north','look zhuang;tiao zhuang;tiao zhuang','go north'","五毒教":"'cr cd/wudu/damen 0 0','go east','go south','go west','go east;go east','go west;go south','go north;go north','go east','go east','go east','go north','go west'","恒山":"'cr wuyue/hengshan/daziling 0 0','go northup','go northwest','go northup','go southdown;go northwest','go northup','go northup','go north','go north','go south;go west','go north','go south;go east;go east','go north'","青城山":"'cr wuyue/qingcheng/shanlu 0 0','go westup','go north','go northup','go eastup','go northup','go north','go north','go north','go north','go south;go east','go north'","衡山":"'cr wuyue/henshan/hengyang 0 0','go west','go west','go west','go east;go east;go north','go north','go north','go west','go east;go east','go west;go south;go south;go south;go east','go east','go southeast','go south','go east','go south','go south'","泰山":"'cr wuyue/taishan/daizong 0 0','go northup','go northup','go northup','go northup','go northup','go northup','go northup','go northup','go northup'","嵩山":"'cr wuyue/songshan/taishi 0 0','go north','go north','go northup','go northeast','go northup','go northup','go westup','go westup','go eastdown;go eastdown','go northup','go north','go north','go north','go north','go south;go west','go east;go east'","云梦沼泽":"'cr cd/yunmeng/senlin 0 0','go east','go north','go east','go north','look wei;jump wei','go west;go south;go west;go north','look lu;kan lu;go north','go north','go north','go north'","白驼山":"'cr baituo/damen 0 0','go north','go north','go north','go north','go south;go south;go south;go west','go south','go north;go west','go west','go north','go north','go north'","星宿海":"'cr xingxiu/xxh6 0 0','go northeast','go north','go northwest','go southwest','go south','go north;go northeast;go north'","冰火岛":"'cr mj/bhd/haibian 1 0','go west','go west','go west','go west','go east;go east;go east;go east;go north','go north','go north','go north','go out;go west;look dong;zuan dong'","移花宫":"'cr huashan/yihua/shandao 1 0','go south','go south','go south','go south','go southeast','go northwest;go southwest','go southeast','go down','fire;go west','go west','go west','go north','go north'","燕子坞":"'cr murong/anbian 1 0','go east','go east','go east','go east','go east','go east','go west;go north','go east','go west','look pai;bai pai;bai pai;bai pai;go north','go south;go south;go west;go west;go south','go east','go south','go south','go east'","黑木崖":"'cr heimuya/shangu 0 0','go north','go north','go north','go south;go south;go south;go south','go south','go south','go north;go north;go north;go east','go north','go north','go north','go south;go south;go south;go south','go north;go east','push xiazi;go enter','go up','push xiazi;go enter','go up','push xiazi;go enter','go up','go east','go east','circle wan;go down','fire;push;go south','go east'","缥缈峰":"'cr lingjiu/shanjiao 1 0','go northup','go northup','go northup','zou tiesuo','go northup','go north','go north','go north','go west','go east;go east','go west;go north','go west','go east;go east','go west;go north','go north'","光明顶":"'cr mj/shanmen 0 0','go north','go west','go northwest','go north','go east','go east','go east','go west;go west;go west;go north','go north','go north','go east','go east','go west;go north','go east','go east;go west','go west','go south','go east;go north','go north','go north','go west','go north','go north','go south;go west'","天龙寺":"'cr tianlong/damen 1 0','go south','go south','go south','go north;go southwest','go south','go east','go south','go north;go east','go north'","血刀门":"'cr xuedao/shankou 0 0','go south','go east','go west;go south','go eastup','go enter'","古墓派":"'cr gumu/gumukou 1 0','go enter','go east','go north','go south;go east'","华山论剑":"'cr huashan/lunjian/leitaixia 0 0','go up','jump bi','go down','go north','go south;go south','go north;go west','go east;go east'"
+@js ($fbPath) = var fba={(fbArrayPath)};fba.(bossPlace)
+@js ($len) = [(fbPath)].length
+stopstate
+[if] (BossBefore) != null
+  (BossBefore)
+  @await 4000
+@print <hiy>✈️ 开始自动寻路</hiy>
+($num) = 0
+[while] (num) < (len)
+  @js ($path) = [(fbPath)][(num)]
+  ($pathNow) = (:path)
+  ($renum) = 0
+  [while] (:path) == (pathNow) && (:room 移花宫-花径) == false
+    [if] (renum) > 2
+      //tm 遭遇阻拦，叫杀。
+      $killall
+      @until (:combating) == false
+      @await 3000
+      ($renum) = 0
+      [continue]
+    (path)
+    [if] (:combating) == true
+      @until (:combating) == false
+      @await 3000
+    @await 500
+    ($renum) = (renum) + 1
+  [if] {r(bossName)}? != null
+    @print 🎯 已找到 => <ord>(bossName)</ord>
+    [break]
+  [while] (:room 移花宫-花径) == true && (yihua) != true
+    go south
+    @await 500
+    [if] (:room 移花宫-山道) == true
+      go south
+      @await 500
+      [continue]
+    [if] (:room 移花宫-花径) == false
+      ($yihua) = true
+      [if] {r(bossName)}? != null
+        @print 🎯 已找到 => <ord>(bossName)</ord>
+        ($num) = 99
+        [break]
+  [if] (:room 移花宫-邀月宫) == true && (flower) == null
+    look hua
+    @tip 你数了下大概有($flower)朵花
+  [else if] (:room 移花宫-宫主卧室) == true
+    look bed;pushstart bed
+    pushleft bed[(flower)]
+    @await 1000
+    pushright bed[8]
+    @await 1000
+  [else if] (:room 黑木崖-大厅,黑木崖-青龙堂大厅)==true
+    $killall
+    @until (:combating) == false
+    @await 3000
+  @until (:combating) == false
+  @await 500
+  ($num) = (num) + 1
+// 找不到Boss
+[if] (num) == (len) && {r(bossName)}? == null
+  [if] (BossWarning) == 提示音
+    @beep
+  [else if] (BossWarning) == 语音播报
+    $tts (:name)，在(bossPlace)找不到(bossName)。
+  [else if] (BossWarning) == 远程通知
+    @push 【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。
+// 原地等待通知玩家
+[if] (BossTanlong) == 原地等待通知玩家
+  [if] (BossWarning) == 提示音
+    @beep
+  [else if] (BossWarning) == 语音播报
+    $tts (:name)，已在(:room)找到(bossName)。
+  [else if] (BossWarning) == 远程通知
+    @push 【Boss寻踪】(:name)：已在(:room)找到(bossName)。
+  [exit]
+
+// 换装备技能触发
+[if] (BossSkill) != null
+  (BossSkill)
+  @await 4000
+
+// 叫杀
+($numKill) = 0
+[while] (numKill) < 2 && (BossTanlong) != 原地等待通知玩家
+  @cd
+  [if] (BossTanlong) == 剑心+融合探龙
+    @perform force.xin,unarmed.ref
+  [else if] (BossTanlong) == 剑心+正常探龙
+    @perform force.xin,unarmed.luo
+  [else if] (BossTanlong) == 融合探龙
+    @perform unarmed.ref
+  [else if] (BossTanlong) == 正常探龙
+    @perform unarmed.luo
+  $killall
+  @until (:combating) == false || (:living) == false
+  [if] (:living) == false
+    [{b天师符y}?==null]shop 1 1
+    relive locale
+    @until (:living) == true
+    ($numKill) = (numKill) + 1
+  [else]
+    get all from (bossName)
+    @await 3000
+    cr;cr over
+    ($xluAry) = '香炉g','檀香炉b','沉香木鼎y','麝香铜鼎p','龙涎香熏o','龙脑古鼎r'
+    @js ($lenXlu) = [(xluAry)].length
+    ($numXlu) = 0
+    [while] (numXlu) < (lenXlu)
+      @js ($xlu) = [(xluAry)][(numXlu)]
+      ($xlu_1) = {b(xlu)}?
+      ($xlu_2) = {b(xlu)}?# obj.id == "xlu_1" #
+      [if] "(xlu_2)" != "(xlu_1)"
+        packitem hc {b(xlu)}?
+      ($numXlu) = (numXlu) + 1
+    @await 2000
+    @renew
+    @tidyBag
+    @await 2000
+    [if] (BossBefore) != null
+      (BossBefore)
+      @await 4000
+    $zdwk
+    [exit]
+@print <hiy>⚠️ 无法正常击杀(bossName)，通知玩家处理。</hiy>
+[if] (BossWarning) == 提示音
+  @beep
+[else if] (BossWarning) == 语音播报
+  $tts (:name)，无法正常击杀(bossName)。
+[else if] (BossWarning) == 远程通知
+  @push 【Boss警报】(:name)，无法正常击杀(bossName)。
