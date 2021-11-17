@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 增加自动寻路打Boss功能。
-($localVer) = 2021111701
+($localVer) = 2021111702
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -182,7 +182,7 @@
   [if] (localVer) < (rVer) && (remoteVer) != null
     @js ($newT) = [(remoteVer)][1]
     @js messageAppend("<ord>检测到新版本！(localVer) => (rVer)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss update">♻️ 更新 => <hig>红boss报告</hig></span>`)))
-    @js $(".update").on("click", function(){ToRaid.perform(`//~silent\n@js unsafeWindow.TriggerCenter.remove("红boss报告")\n@await 350\n@js Server.importTrigger("(newT)")`);})
+    @js $(".update").on("click", function(){ToRaid.perform(`//~silent\n@js unsafeWindow.TriggerCenter.remove("红boss报告")\n@await 350\n@js Server.importTrigger("(newT)")\n@await 1000\ntm b`);})
   // 检查自动红boss流程是否存在
   @js ($flowGet) = let s=FlowStore.get('自动红boss');s==null?1:0
   [if] (flowGet)==1
