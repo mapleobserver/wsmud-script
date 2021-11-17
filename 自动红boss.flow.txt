@@ -1,6 +1,11 @@
 //~silent
 //白三三
-($localVer) = 2021111801
+[if] (arg0) != null
+  ($bossName) = (arg0)
+[if] (arg1) != null
+  ($bossPlace) = (arg1)
+
+($localVer) = 2021111802
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -37,10 +42,7 @@
 [else]
   ($UPnum) = null
 
-[if] (arg0) != null
-  ($bossName) = (arg0)
-[if] (arg1) != null
-  ($bossPlace) = (arg1)
+
 [if] (bossName) == null || (bossPlace) == null
   #select ($bossName) = <ord>此处主要用于设置参数，平常使用请通过【红boss报告】触发</ord><br/>&nbsp*&nbspBoss名字,浪翻云|庞斑|烛九阴|蚩尤|天僧,(bossName)
   #select ($bossPlace) = 副本名称,树林|财主家|流氓巷|丽春院|神龙教|温府|五毒教|恒山|青城山|衡山|泰山|嵩山|云梦沼泽|白驼山|星宿海|冰火岛|移花宫|燕子坞|黑木崖|缥缈峰|光明顶|天龙寺|血刀门|古墓派|华山论剑,(bossPlace)
