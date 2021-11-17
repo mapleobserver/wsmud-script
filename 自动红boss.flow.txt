@@ -1,6 +1,6 @@
 //~silent
 //白三三
-($localVer) = 2021111705
+($localVer) = 2021111801
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -145,14 +145,13 @@ stopstate
     @push 【Boss寻踪】(:name)：已在(:room)找到(bossName)。
   [exit]
 
-// 换装备技能触发
-[if] (BossSkill) != null
-  (BossSkill)
-  @await 4000
-
 // 叫杀
 ($numKill) = 0
 [while] (numKill) < 2 && (BossTanlong) != 原地等待通知玩家
+  // 换装备技能触发
+  [if] (BossSkill) != null
+    (BossSkill)
+    @await 4000
   @cd
   [if] (BossTanlong) == 剑心+融合探龙
     @perform force.xin,unarmed.ref
