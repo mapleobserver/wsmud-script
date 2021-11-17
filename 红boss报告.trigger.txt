@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 增加自动寻路打Boss功能。
-($localVer) = 2021111702
+($localVer) = 2021111703
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -151,9 +151,9 @@
   [else]
     [if] (team) == true
       @js ($fbcr2) = var f="(fbcr)";f=f.substr(0,f.length-1)+"2"
-      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-auto">🍉 <hic>自动寻路打Boss</hic></span>`),$(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-team">🚌 进入 <hic>(bossPlace)(<hiy>组队</hiy>)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
+      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-auto">🍉 <hiy>自动打Boss</hiy></span>`),$(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-team">🚌 进入 <hic>(bossPlace)(<hiy>组队</hiy>)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
     [else]
-      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-auto">🍉 <hic>自动寻路打Boss</hic></span>`),$(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
+      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-auto">🍉 <hiy>自动打Boss</hiy></span>`),$(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
     [if] (channel) == 谣言
       [if] (BossAlert) == 提示音
         @beep
@@ -186,12 +186,11 @@
   // 检查自动红boss流程是否存在
   @js ($flowGet) = let s=FlowStore.get('自动红boss');s==null?1:0
   [if] (flowGet)==1
-    @print 【自动红boss】流程不存在，自动导入。
-    ($repourl) = http://wsmud-cdn.if404.com
+    @print <hig>【自动红boss】流程不存在，自动导入。</hig>
     @js var time = Date.parse( new Date());$.get('(repourl)/自动红boss.flow.txt',{stamp:time},function(data,status){WorkflowConfig.createWorkflow('自动红boss',data,'根文件夹');});
   [if] (BossTanlong) == null || (BossSkill) == null || (BossWarning) == null
     [(BossTanlong) == null]($BossTanlong) = 剑心+融合探龙
-    #select ($BossTanlong) = 找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)
+    #select ($BossTanlong) = <ord>初次使用，请先设置自动打Boss相关参数</ord><br/>&nbsp*&nbsp找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)
     [(BossBefore) == null]($BossBefore) = $usezml 正常
     #input ($BossBefore) = 进副本前后正常装备技能触发,(BossBefore)
     [(BossSkill) == null]($BossSkill) = enable force none;$usezml 血剑
