@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021111804
+($localVer) = 2021111805
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -126,6 +126,13 @@ stopstate
     $killall
     @until (:combating) == false
     @await 3000
+  [else if] (:room 财主家-后院)==true
+    [if] {b东厢钥匙w}? == null
+      $killall
+      @until (:combating) == false
+      @await 3000
+      ($num) = (num) + 2
+      [continue]
   @until (:combating) == false
   @await 500
   ($num) = (num) + 1
