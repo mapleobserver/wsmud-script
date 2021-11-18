@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 增加自动寻路打Boss功能。
-($localVer) = 2021111703
+($localVer) = 2021111801
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -44,47 +44,46 @@
       ($log) = ✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)
       @js messageAppend("(log)",2,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));$('.(comClass)')[0].scrollTop = 99999;
       //按钮命令
-      @js $(".redboss").off("click")
-      @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|跳过天僧庞斑|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#input ($BossDay)=每周哪几天激活自动跳过Boss功能（默认1234567）<br/>&nbsp*&nbsp<hiz>周一为1，以此类推周日为7</hiz>,(BossDay)\n#select ($BossAlert)=Boss刷新时提醒（远程通知需在plugins设置中先开启）,关闭|提示音|语音播报|远程通知,(BossAlert)\n#select ($BossTanlong)=找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)\n#input ($BossBefore)=进副本前后正常装备技能触发,(BossBefore)\n#input ($BossSkill)=杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)\n#select ($BossWarning)=遭遇问题时发出警报(找不到Boss、被打死2次等),提示音|语音播报|远程通知,(BossWarning)\n#config\ntm b`);})
-      [exit]
-    // 获取已存在的Boss数据
-    [if] (BossInfo) != null
-      @js ($info)=("\""+"(BossInfo)"+"\"").replace(/\|/g,"\"|\"").split("|")
-      @js ($i_date)=[(info)][0]
-      @js ($i_time)=[(info)][1]
-      @js ($bossName)=[(info)][2]
-      @js ($bossPlace)=[(info)][3]
+      ($finish) = true
     [else]
-      ($i_date) = null
-    // 去客栈获取Boss信息
-    [if] (i_date) != (:date) || (bossName) == null || (bossPlace) == null
-      ($i_time)=null
-      [if] (i_date) == notime
-        ($log) = 🔍 已跳过或打过上一个Boss，前往客栈获取最新信息……
+      // 获取已存在的Boss数据
+      [if] (BossInfo) != null
+        @js ($info)=("\""+"(BossInfo)"+"\"").replace(/\|/g,"\"|\"").split("|")
+        @js ($i_date)=[(info)][0]
+        @js ($i_time)=[(info)][1]
+        @js ($bossName)=[(info)][2]
+        @js ($bossPlace)=[(info)][3]
       [else]
-        ($log) = 🔎 无今日数据，前往客栈获取……
-      @js messageAppend("(log)",1,(magPost));
-      [if] (:state) == 推演 || (:state) == 领悟 || (:room 副本区域,忧愁谷) == true
-        [if] (:state) == 推演 || (:state) == 领悟
-          ($log) = ⚠️ (:state)中，暂停前往客栈获取信息。
-        [(:room 副本区域,忧愁谷) == true]($log) = ⚠️ 副本中，暂停前往客栈获取信息。
-        @js messageAppend("<ord>(log)</ord>",1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
-        [exit]
-      stopstate
-      [while] (:room) != 扬州城-有间客栈
-        $to 扬州城-有间客栈
-        @await 500
-      //dating {r店小二}?
-      give {r店小二}? 20000 money
-      @tip 这位客官，我最近听不少人说是在($bossPlace)见到过($bossName)。|这两天也($notime)什么消息|小的听到的消息($all)您老了
-    [if] (notime) != null || (all) != null
-      [if] (notime) != null
-        ($log) = ⏳ Boss尚未刷新，请稍后再试\n⚙️ 当前设置：(bossSet)\n(remain)</ord>
-      [else if] (all) != null
-        ($log) = <hig>✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)</hig>
-      @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
-      [if] (action) != null && (:state) != 闭关 && (:state) != 练习
-        (action)
+        ($i_date) = null
+      // 去客栈获取Boss信息
+      [if] (i_date) != (:date) || (bossName) == null || (bossPlace) == null
+        ($i_time)=null
+        [if] (i_date) == notime
+          ($log) = 🔍 已跳过或打过上一个Boss，前往客栈获取最新信息……
+        [else]
+          ($log) = 🔎 无今日数据，前往客栈获取……
+        @js messageAppend("(log)",1,(magPost));
+        [if] (:state) == 推演 || (:state) == 领悟 || (:room 副本区域,忧愁谷) == true
+          [if] (:state) == 推演 || (:state) == 领悟
+            ($log) = ⚠️ (:state)中，暂停前往客栈获取信息。
+          [(:room 副本区域,忧愁谷) == true]($log) = ⚠️ 副本中，暂停前往客栈获取信息。
+          @js messageAppend("<ord>(log)</ord>",1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
+          [exit]
+        stopstate
+        [while] (:room) != 扬州城-有间客栈
+          $to 扬州城-有间客栈
+          @await 500
+        //dating {r店小二}?
+        give {r店小二}? 20000 money
+        @tip 这位客官，我最近听不少人说是在($bossPlace)见到过($bossName)。|这两天也($notime)什么消息|小的听到的消息($all)您老了
+      [if] (notime) != null || (all) != null
+        [if] (notime) != null
+          ($log) = ⏳ Boss尚未刷新，请稍后再试\n⚙️ 当前设置：(bossSet)\n(remain)</ord>
+        [else if] (all) != null
+          ($log) = <hig>✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)</hig>
+        @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
+        [if] (action) != null && (:state) != 闭关 && (:state) != 练习
+          (action)
   [else]
     [exit]
 // 谣言获取Boss
@@ -138,16 +137,14 @@
     [if] (match) < 0
       ($log) = <hiy>📆 根据每周设定，今日不会【自动跳过Boss】。</hiy>\n⚙️ 当前设置：(bossSet)
       @js messageAppend("(log)",2,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));$('.(comClass)')[0].scrollTop = 99999;
-      //按钮命令
-      @js $(".redboss").off("click")
-      @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|跳过天僧庞斑|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#input ($BossDay)=每周哪几天激活自动跳过Boss功能（默认1234567）<br/>&nbsp*&nbsp<hiz>周一为1，以此类推周日为7</hiz>,(BossDay)\n#select ($BossAlert)=Boss刷新时提醒（远程通知需在plugins设置中先开启）,关闭|提示音|语音播报|远程通知,(BossAlert)\n#select ($BossTanlong)=找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)\n#input ($BossBefore)=进副本前后正常装备技能触发,(BossBefore)\n#input ($BossSkill)=杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)\n#select ($BossWarning)=遭遇问题时发出警报(找不到Boss、被打死2次等),提示音|语音播报|远程通知,(BossWarning)\n#config\ntm b`);})
-      [exit]
+      ($jump) = true
     // 执行自动跳过操作
     [else]
       ($log) = <ord>💎 (BossInfo)\n<hiy>⚠️ 根据设置<ord>【(bossSet)】</ord>，自动跳过当前Boss(bossName)</hiy>\n(remain)</ord>
       @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
-      team out;stopstate;(fbcr) 0;cr over;$wait 1000;(action)
+      team out;stopstate;(fbcr) 0;cr over;$wait 2000;(action)
       ($BossInfo)=notime
+      ($jump) = true
   [else]
     [if] (team) == true
       @js ($fbcr2) = var f="(fbcr)";f=f.substr(0,f.length-1)+"2"
@@ -164,14 +161,14 @@
     [if] (action) != null && (:state) != 闭关 && (:state) != 练习
       (action)
 //按钮命令
-[if] (mycall) == true || (channel) == 谣言
+[if] (mycall) == true || (channel) == 谣言 || (finish) == true || (jump) = true
   @js $(".redboss").off("click")
   @js $(".boss-auto").on("click", function(){ToRaid.perform(`//~silent\n@call 自动红boss (bossName),(bossPlace)`);})
   @js $(".boss-single").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr) 0\n($BossInfo)=notime\n@js messageAppend("🥕 进入单人副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n($BossInfo)=notime\n@js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;(action)\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
-  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|跳过天僧庞斑|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#input ($BossDay)=每周哪几天激活自动跳过Boss功能（默认1234567）<br/>&nbsp*&nbsp<hiz>周一为1，以此类推周日为7</hiz>,(BossDay)\n#select ($BossAlert)=Boss刷新时提醒（远程通知需在plugins设置中先开启）,关闭|提示音|语音播报|远程通知,(BossAlert)\n#select ($BossTanlong)=找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)\n#input ($BossBefore)=进副本前后正常装备技能触发,(BossBefore)\n#input ($BossSkill)=杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)\n#select ($BossWarning)=遭遇问题时发出警报(找不到Boss、被打死2次等),提示音|语音播报|远程通知,(BossWarning)\n#config\ntm b`);})
+  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|跳过天僧庞斑|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#input ($BossDay)=每周哪几天激活自动跳过Boss功能（默认1234567）<br/>&nbsp*&nbsp<hiz>周一为1，以此类推周日为7</hiz>,(BossDay)\n#select ($BossAlert)=Boss刷新时提醒（远程通知需在plugins设置中先开启）,关闭|提示音|语音播报|远程通知,(BossAlert)\n#select ($BossTanlong)=找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)\n#input ($BossBefore)=进副本前后正常装备技能触发,(BossBefore)\n#input ($BossSkill)=杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)\n#select ($BossWarning)=遭遇问题时发出警报(找不到Boss、被打死2次等),不提示|弹窗提醒|提示音|语音播报|远程通知,(BossWarning)\n#config\ntm b`);})
   //检查版本
   //($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
   ($repourl) = http://wsmud-cdn.if404.com
@@ -196,6 +193,6 @@
     [(BossSkill) == null]($BossSkill) = enable force none;$usezml 血剑
     #input ($BossSkill) = 杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)
     [(BossWarning) == null]($BossWarning) = 语音播报
-    #select ($BossWarning) = 遭遇问题时发出警报(找不到Boss、被打死2次等),提示音|语音播报|远程通知,(BossWarning)
+    #select ($BossWarning) = 遭遇问题时发出警报(找不到Boss、被打死2次等),不提示|弹窗提醒|提示音|语音播报|远程通知,(BossWarning)
     #config
   @js $('.(comClass)')[0].scrollTop = 99999;

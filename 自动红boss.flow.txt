@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021111802
+($localVer) = 2021111803
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -53,7 +53,7 @@
   [(BossSkill) == null]($BossSkill) = enable force none;$usezml 血剑
   #input ($BossSkill) = 杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)
   [(BossWarning) == null]($BossWarning) = 语音播报
-  #select ($BossWarning) = 遭遇问题时发出警报(找到或找不到Boss、被打死2次等),提示音|语音播报|远程通知,(BossWarning)
+  #select ($BossWarning) = 遭遇问题时发出警报(找到或找不到Boss、被打死2次等),不提示|弹窗提醒|提示音|语音播报|远程通知,(BossWarning)
   #config
 
 [if] (bossName) == null || (bossPlace) == null
@@ -137,6 +137,10 @@ stopstate
     $tts (:name)，在(bossPlace)找不到(bossName)。
   [else if] (BossWarning) == 远程通知
     @push 【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。
+  [else if] (BossWarning) == 弹窗提示
+    @js alert("【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。")
+  @print <hiy>【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。</hiy>
+  [exit]
 // 原地等待通知玩家
 [if] (BossTanlong) == 原地等待通知玩家
   [if] (BossWarning) == 提示音
@@ -145,6 +149,9 @@ stopstate
     $tts (:name)，已在(:room)找到(bossName)。
   [else if] (BossWarning) == 远程通知
     @push 【Boss寻踪】(:name)：已在(:room)找到(bossName)。
+  [else if] (BossWarning) == 弹窗提示
+    @js alert("【Boss寻踪】(:name)：已在(:room)找到(bossName)。")
+  @print <hiy>【Boss寻踪】(:name)：已在(:room)找到(bossName)。</hiy>
   [exit]
 
 // 叫杀
@@ -202,3 +209,6 @@ stopstate
   $tts (:name)，无法正常击杀(bossName)。
 [else if] (BossWarning) == 远程通知
   @push 【Boss警报】(:name)，无法正常击杀(bossName)。
+[else if] (BossWarning) == 弹窗提示
+  @js alert("【Boss警报】(:name)，无法正常击杀(bossName)。")
+@print <hiy>【Boss警报】(:name)，无法正常击杀(bossName)。</hiy>
