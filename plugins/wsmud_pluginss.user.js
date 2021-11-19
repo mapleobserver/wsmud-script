@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.196
+// @version      0.0.32.197
 // @date         01/07/2018
-// @modified     17/11/2021
+// @modified     19/11/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -753,7 +753,7 @@
     var bagFull = 0;
     //通知推送开关、方式、Token、Url
     var pushSwitch = "关";
-    var pushType = 0;
+    var pushType = "0";
     var pushToken = "";
     // var pushUrl = "https://";
     //停止后动作
@@ -5836,6 +5836,28 @@
             }
             WG.SendCmd("ggdl " + ltId + ";go north;go north;go north;go north;$wait 250;go north;go north;look shi;tiao1 shi;tiao3 shi;$wait 250;tiao1 shi;tiao3 shi;tiao2 shi;go north;")
         },
+        gogzm: async function () {
+            WG.SendCmd("jh fam 9 start;go enter;go up;")
+            await WG.sleep(1000);
+            var ltId = "";
+            for (let i = 0; i < roomData.length; i++) {
+                if (roomData[i].name && roomData[i].name.indexOf("疯癫的老头") >= 0) {
+                    ltId = roomData[i].id
+                }
+            }
+            WG.SendCmd("ggdl " + ltId + ";go north;go north;go north;go north;$wait 250;go north;go north;$wait 250;look shi;tiao1 shi;tiao1 shi;tiao2 shi;$wait 250;jumpdown;")
+        },
+        godddb: async function () {
+            WG.SendCmd("jh fam 9 start;go enter;go up;")
+            await WG.sleep(1000);
+            var ltId = "";
+            for (let i = 0; i < roomData.length; i++) {
+                if (roomData[i].name && roomData[i].name.indexOf("疯癫的老头") >= 0) {
+                    ltId = roomData[i].id
+                }
+            }
+            WG.SendCmd("ggdl " + ltId + ";go north;go north;go north;go north;$wait 250;go north;go down;")
+        },
         killall: async function (idx = 0, n = null, cmds) {
             cmds = T.recmd(idx, cmds);
             console.log("叫杀");
@@ -6497,7 +6519,7 @@
                 <span> <label for="pushType"> 通知推送方式(使用方法自行百度)： </label><select id="pushType" style="width:80px">
                     <option value="0"> Server酱(限32字符) </option>
                     <option value="1"> Bark iOS </option>
-                    <option value="2"> PushPlus(支持html标签) </option>
+                    <option value="2"> PushPlus.plus(支持html标签) </option>
                     <option value="3"> 飞书机器人 </option>
                 </select>
                 </span></div> `
@@ -6840,7 +6862,10 @@
             `<div class='item-commands'><span cmd = "$to 杀手楼-书房" >掌门</span>
              <span cmd = "$to 杀手楼-休息室;" >后勤</span></div>`,
             `<div class='item-commands'><span cmd = "@call 自动襄阳" >自动襄阳</span></div>`,
-            `<div class='item-commands'><span cmd = "@call 自动武道塔" >自动武道塔</span></div>`
+            `<div class='item-commands'><span cmd = "@call 自动武道塔" >自动武道塔</span>
+            <span cmd = "$goyt">妖塔</span>
+            <span cmd = "$gogzm">古宗门</span>
+            <span cmd = "$godddb">大殿底部</span></div>`
         ],
         fbui: function (name, mulit, diffi) {
             let ui = `<div class='item-commands'>`;
@@ -7905,7 +7930,7 @@
                 messageAppend("通知功能未开启或设置不完整，请在 右键菜单-设置 中设置开启。", 1);
                 return;
             }
-            switch (pushType) {
+            switch (String(pushType)) {
                 //Server酱
                 case "0":
                     $.post(`https://sctapi.ftqq.com/${pushToken}.send?title=${text}`);
