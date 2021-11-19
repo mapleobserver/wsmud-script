@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021111805
+($localVer) = 2021111901
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -197,8 +197,8 @@ stopstate
     [while] (numXlu) < (lenXlu)
       @js ($xlu) = [(xluAry)][(numXlu)]
       ($xlu_1) = {b(xlu)}?
-      ($xlu_2) = {b(xlu)}?# obj.id == "xlu_1" #
-      [if] "(xlu_2)" != "(xlu_1)"
+      ($xlu_2) = {b(xlu)}?# obj.id == "(xlu_1)" #
+      [if] "(xlu_2)" != "(xlu_1)" && "(xlu_1)" != "null" && "(xlu_2)" != "null"
         packitem hc {b(xlu)}?
       ($numXlu) = (numXlu) + 1
     @await 2000
