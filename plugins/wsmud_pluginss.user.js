@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.194
+// @version      0.0.32.196
 // @date         01/07/2018
-// @modified     27/10/2021
+// @modified     17/11/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -377,7 +377,8 @@
     var zb_place;
     var next = 0;
     var roomData = [];
-    var packData = [];
+    var packData = []; // 背包数据
+    var storeData = [];// 仓库数据
     var eqData = [];
     var store_list = [];
     var lock_list = [];
@@ -1360,11 +1361,11 @@
             role = $('.role-list .select').text().split(/[\s\n]/).pop();
             roleid = $('.role-list .select').attr('roleid')
             GM_listValues().map(function (key) {
-                if (key.indexOf(role+"_") == 0) {
-                   var tmpVal = key.split(role+"_")[1];
-                   console.log(tmpVal)
-                   GM_setValue(roleid + "_"+tmpVal, GM_getValue(key, null))
-                   GM_deleteValue(key)
+                if (key.indexOf(role + "_") == 0) {
+                    var tmpVal = key.split(role + "_")[1];
+                    console.log(tmpVal)
+                    GM_setValue(roleid + "_" + tmpVal, GM_getValue(key, null))
+                    GM_deleteValue(key)
                 }
             });
 
@@ -1489,11 +1490,11 @@
                         WG.ztjk_func();
                         WG.zml_showp();
                         WG.dsj_func();
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             WG.wsdelaytest();
-                        },1000)
+                        }, 1000)
 
-                        if (G.level&&G.isGod()) {
+                        if (G.level && G.isGod()) {
                             WG.ytjk_func()
                         }
                     } else {
@@ -1643,10 +1644,10 @@
         },
         update_store_hook: undefined,
         wsdelaytest: async function () {
-                        G.wsdelaySetTime=new Date().getTime();
-                        G.wsdelaySetCount=1;
-                        G.wsdelay=undefined;
-                        WG.SendCmd("test");
+            G.wsdelaySetTime = new Date().getTime();
+            G.wsdelaySetCount = 1;
+            G.wsdelay = undefined;
+            WG.SendCmd("test");
         },
         update_store: async function () {
             WG.update_store_hook = WG.add_hook(['dialog', 'text'], (data) => {
@@ -1997,7 +1998,7 @@
                         WG.sm_state = 3;
                         setTimeout(WG.sm, 500);
                     } else {
-                     
+
                         WG.sm_state = 5;
                         setTimeout(WG.sm, 500);
                         return;
@@ -2036,7 +2037,7 @@
                                     WG.ungetStore = true;
                                     WG.sm_state = 0;
                                     setTimeout(WG.sm, 500);
-                                }else{
+                                } else {
                                     WG.sm_state = 5;
                                     // $(".sm_button").text("师门(Q)");
                                 }
@@ -2092,7 +2093,7 @@
                                 WG.sm_state = 0;
                                 setTimeout(WG.sm, 500);
                                 return;
-                            }else{
+                            } else {
                                 WG.sm_state = -1;
                                 $(".sm_button").text("师门(Q)");
                             }
@@ -3678,7 +3679,7 @@
                 el: "#skillsPanelUI",
                 data: {
                     role: role,
-                    roleid:roleid,
+                    roleid: roleid,
                     eqlist: {},
                     eqlistdel: {},
                     eqskills_id: "none"
@@ -3729,7 +3730,7 @@
                                 break;
                             case "delete":
                                 this.eqlist = {};
-                                this.eqlistdel = GM_getValue(this.roleid  + "_eqlist", {});
+                                this.eqlistdel = GM_getValue(this.roleid + "_eqlist", {});
                                 this.role = "<< 返回";
                                 break;
                             case "uneqall":
@@ -4312,33 +4313,33 @@
             });
 
         },
-        ytjk_func:function (){
-            WG.add_hook("room",async function (data) {
-                if (G.yaotaFlag&&data.path != 'zc/mu/shishenta'){
-                    $('.channel pre').append("<hig>【插件】"+"第 "+G.yaotaCount+" 次妖塔共获得 "+G.yaoyuan +" 点妖元，结束时间: "+ dateFormat("YYYY-mm-dd HH:MM", new Date())+"。<br><hig>")
-                    $('.tm').append("<hig>【插件】"+"第 "+G.yaotaCount+" 次妖塔共获得 "+G.yaoyuan +" 点妖元，结束时间: "+ dateFormat("YYYY-mm-dd HH:MM", new Date())+"。<br><hig>")
-                    setTimeout(async function(){
-                        while(G.selfStatus.indexOf("faint")>=0 || G.selfStatus.indexOf("busy")>=0 || G.selfStatus.indexOf("rash")>=0){
+        ytjk_func: function () {
+            WG.add_hook("room", async function (data) {
+                if (G.yaotaFlag && data.path != 'zc/mu/shishenta') {
+                    $('.channel pre').append("<hig>【插件】" + "第 " + G.yaotaCount + " 次妖塔共获得 " + G.yaoyuan + " 点妖元，结束时间: " + dateFormat("YYYY-mm-dd HH:MM", new Date()) + "。<br><hig>")
+                    $('.tm').append("<hig>【插件】" + "第 " + G.yaotaCount + " 次妖塔共获得 " + G.yaoyuan + " 点妖元，结束时间: " + dateFormat("YYYY-mm-dd HH:MM", new Date()) + "。<br><hig>")
+                    setTimeout(async function () {
+                        while (G.selfStatus.indexOf("faint") >= 0 || G.selfStatus.indexOf("busy") >= 0 || G.selfStatus.indexOf("rash") >= 0) {
                             await WG.sleep(1000)
                         }
-                        if (G.yaoyuan == 261){
-                            WG.SendCmd("tm 第 "+G.yaotaCount+" 次妖塔圆满完成，撒花~~~~~")
-                        }else{
-                            WG.SendCmd("tm 第 "+G.yaotaCount+" 次妖塔遗憾收场，撒花~~~~~")
+                        if (G.yaoyuan == 261) {
+                            WG.SendCmd("tm 第 " + G.yaotaCount + " 次妖塔圆满完成，撒花~~~~~")
+                        } else {
+                            WG.SendCmd("tm 第 " + G.yaotaCount + " 次妖塔遗憾收场，撒花~~~~~")
                         }
                         $('#yt_prog').remove()
-                        G.yaotaFlag=false;
+                        G.yaotaFlag = false;
                         G.yaoyuan = 0;
 
-                    },0)
+                    }, 0)
                 }
-                if (data.path == 'zc/mu/shishenta'){
+                if (data.path == 'zc/mu/shishenta') {
                     $(`.state-bar`).before(`<div id=yt_prog>开始攻略妖塔</div>`)
-                    G.yaotaCount=G.yaotaCount+1;
-                    $('.channel pre').append("<hig>【插件】"+"开始第 "+G.yaotaCount+" 次攻略妖塔，现在时间是:"+ dateFormat("YYYY-mm-dd HH:MM", new Date())+"。<br><hig>")
-                    $('.tm').append("<hig>【插件】"+"开始第 "+G.yaotaCount+" 次攻略妖塔，现在时间是:"+ dateFormat("YYYY-mm-dd HH:MM", new Date())+"。<br><hig>")
+                    G.yaotaCount = G.yaotaCount + 1;
+                    $('.channel pre').append("<hig>【插件】" + "开始第 " + G.yaotaCount + " 次攻略妖塔，现在时间是:" + dateFormat("YYYY-mm-dd HH:MM", new Date()) + "。<br><hig>")
+                    $('.tm').append("<hig>【插件】" + "开始第 " + G.yaotaCount + " 次攻略妖塔，现在时间是:" + dateFormat("YYYY-mm-dd HH:MM", new Date()) + "。<br><hig>")
                     G.yaoyuan = 0;
-                    G.yaotaFlag=true;
+                    G.yaotaFlag = true;
                 }
             })
         },
@@ -4686,7 +4687,7 @@
                             let n = str1[0].match("：([^%]+)/20")[1];
                             let n1 = str1[1].match("：([^%]+)/200")[1];
                             n = 20 - parseInt(n);
-                            fbnums = 20 - parseInt(n1)/10;
+                            fbnums = 20 - parseInt(n1) / 10;
                             messageAppend("还需要" + n + "次师门任务," + fbnums + "次副本,才可签到");
                             if (n != 0) {
                                 //$(".sm_button").click();
@@ -4864,7 +4865,7 @@
                         var dds = dd.replace(/ /g, "");
                         var copydata = {
                             player: role,
-							roleid: roleid,
+                            roleid: roleid,
                             level: dds,
                             family: G.pfamily,
                             items: data.items
@@ -5437,7 +5438,7 @@
                 $(".zdwk").on("click", WG.zdwk);
                 $(".auto_perform").on("click", WG.auto_preform_switch);
                 $(".cmd_echo").on("click", WG.cmd_echo_button);
-                if ( G.isGod() ) {
+                if (G.isGod()) {
                     $('.zdy-item.zdwk').html("修炼(Y)");
                 }
             }
@@ -5589,13 +5590,13 @@
             if (G.cmd_echo && data.type != 'time') {
                 console.log(data);
             }
-            if (G.yaotaFlag&&typeof(data.msg)=='string'){
+            if (G.yaotaFlag && typeof (data.msg) == 'string') {
                 let ytdata = data.msg;
-                if (ytdata.indexOf("一股奇异的能量涌入你的体内，你获得")>= 0){
-                    G.yaoyuan=G.yaoyuan+parseInt(ytdata.replace(/[^0-9]/ig,""))
-                    $('#yt_prog').html("<hiy>目前已获得 "+G.yaoyuan+" 妖元</hiy>")
-                    if (G.yaoyuan == 261){
-                        $('#yt_prog').html("<hiy>目前已获得 "+G.yaoyuan+" 妖元，boss出现！</hiy>")
+                if (ytdata.indexOf("一股奇异的能量涌入你的体内，你获得") >= 0) {
+                    G.yaoyuan = G.yaoyuan + parseInt(ytdata.replace(/[^0-9]/ig, ""))
+                    $('#yt_prog').html("<hiy>目前已获得 " + G.yaoyuan + " 妖元</hiy>")
+                    if (G.yaoyuan == 261) {
+                        $('#yt_prog').html("<hiy>目前已获得 " + G.yaoyuan + " 妖元，boss出现！</hiy>")
                     }
                 }
             }
@@ -5663,19 +5664,19 @@
                 }
             }
 
-            if (data.type == 'text' && data.msg == '什么？' && G.wsdelaySetTime != undefined){
-                if (G.wsdelaySetCount<=3){
-                    G.wsdelaySetCount+=1;
-                    if(G.wsdelay == undefined){
-                        G.wsdelay=new Date().getTime()-G.wsdelaySetTime;
-                    }else{
-                        G.wsdelay= (new Date().getTime()-G.wsdelaySetTime+G.wsdelay)/2
+            if (data.type == 'text' && data.msg == '什么？' && G.wsdelaySetTime != undefined) {
+                if (G.wsdelaySetCount <= 3) {
+                    G.wsdelaySetCount += 1;
+                    if (G.wsdelay == undefined) {
+                        G.wsdelay = new Date().getTime() - G.wsdelaySetTime;
+                    } else {
+                        G.wsdelay = (new Date().getTime() - G.wsdelaySetTime + G.wsdelay) / 2
                     }
-                    G.wsdelaySetTime=new Date().getTime()
+                    G.wsdelaySetTime = new Date().getTime()
                     WG.SendCmd("test")
-                }else{
-                    G.wsdelay= (new Date().getTime()-G.wsdelaySetTime+G.wsdelay)/2
-                    WG.SendCmd("tm 服务器到本地来回延迟约 "+ G.wsdelay +" 毫秒")
+                } else {
+                    G.wsdelay = (new Date().getTime() - G.wsdelaySetTime + G.wsdelay) / 2
+                    WG.SendCmd("tm 服务器到本地来回延迟约 " + G.wsdelay + " 毫秒")
                     G.wsdelaySetTime = undefined;
                     G.wsdelaySetCount = undefined;
                 }
@@ -5816,8 +5817,8 @@
             await WG.sleep(parseInt(n));
             WG.SendCmd(cmds);
         },
-	    batwait: async function (idx = 0, n, cmds) {
-            if(G.in_fight){
+        batwait: async function (idx = 0, n, cmds) {
+            if (G.in_fight) {
                 cmds = T.recmd(idx, cmds);
                 console.log("延时:" + n + "ms,延时触发:" + cmds);
                 await WG.sleep(parseInt(n));
@@ -5827,13 +5828,13 @@
         goyt: async function () {
             WG.SendCmd("jh fam 9 start;go enter;go up;")
             await WG.sleep(1000);
-            var ltId="";
+            var ltId = "";
             for (let i = 0; i < roomData.length; i++) {
                 if (roomData[i].name && roomData[i].name.indexOf("疯癫的老头") >= 0) {
-                    ltId=roomData[i].id
+                    ltId = roomData[i].id
                 }
             }
-            WG.SendCmd("ggdl "+ltId+";go north;go north;go north;go north;$wait 250;go north;go north;look shi;tiao1 shi;tiao3 shi;$wait 250;tiao1 shi;tiao3 shi;tiao2 shi;go north;")
+            WG.SendCmd("ggdl " + ltId + ";go north;go north;go north;go north;$wait 250;go north;go north;look shi;tiao1 shi;tiao3 shi;$wait 250;tiao1 shi;tiao3 shi;tiao2 shi;go north;")
         },
         killall: async function (idx = 0, n = null, cmds) {
             cmds = T.recmd(idx, cmds);
@@ -6283,7 +6284,7 @@
             FakerTTS.playtts(n);
             WG.SendCmd(cmds);
         },
-        beep: async function(idx, n, cmds) {
+        beep: async function (idx, n, cmds) {
             cmds = T.recmd(idx, cmds);
             Beep();
             WG.SendCmd(cmds);
@@ -6771,7 +6772,7 @@
     <div class="setting-item">      <div class="item-commands"><span @click="khjscalc" >计算</span></div></div>
     <div class="setting-item"> <label>人花分值：5000 地花分值：6500 天花分值：8000</label></div>
 </div>`,
-    zcjsui: `<div style="width:50%;float:left" class="ZiChuangCalc">
+        zcjsui: `<div style="width:50%;float:left" class="ZiChuangCalc">
     <div class="setting-item"><span>自创等级计算器</span></div>
     <div class="setting-item"> 自创等级:<input type="number" placeholder="自创等级" style="width:50%"
             class="mui-input-speech" v-model="zcsx.level"></div>
@@ -6815,6 +6816,7 @@
             <span cmd = "$to 帮会-大院" > 帮派 </span>
             <span cmd = "$to 扬州城-赌场" > 赌场 </span>
             <span cmd = "$to 扬州城-有间客栈" > 客栈 </span>
+            <span cmd = "$to 扬州城-擂台" > 擂台 </span>
             <span cmd = "$to 扬州城-矿山" > 矿山 </span></div>`,
             `<div class='item-commands'><span cmd = "$to 武当派-后山小院" >掌门</span>
              <span cmd = "$to 武当派-石阶" >后勤</span>
@@ -6910,12 +6912,12 @@
         wk_listener: undefined,
         status: new Map(),
         score: undefined,
-        yaoyuan:0,
-        yaotaFlag:false,
-        yaotaCount:0,
+        yaoyuan: 0,
+        yaotaFlag: false,
+        yaotaCount: 0,
         jy: 0,
         qn: 0,
-        selfStatus:[],
+        selfStatus: [],
         wsdelaySetTime: undefined,
         wsdelaySetCount: undefined,
         wsdelay: undefined,
@@ -6931,8 +6933,8 @@
         { type: "staff", name: "none" },],
 
         eqs: [],
-        isGod:function(){
-            if (G.level!=null){
+        isGod: function () {
+            if (G.level != null) {
                 if (G.level.indexOf('武帝') >= 0 ||
                     G.level.indexOf('武神') >= 0 ||
                     G.level.indexOf('剑神') >= 0 ||
@@ -6940,10 +6942,10 @@
                     G.level.indexOf('兵主') >= 0 ||
                     G.level.indexOf('战神') >= 0) {
                     return true
-                }else{
+                } else {
                     return false
-                    }
-            }else{
+                }
+            } else {
                 return false
             }
         }
@@ -7265,19 +7267,19 @@
                             "count": data.count
                         });
                     }
-                    if(data.id == G.id){
+                    if (data.id == G.id) {
                         if (data.action == 'add') {
                             G.selfStatus.push(data.sid)
-                        }else{
+                        } else {
                             G.selfStatus.remove(data.sid)
                         }
                     }
-                    if(busy_info==='开'){
+                    if (busy_info === '开') {
                         if (data.id == G.id) {
                             if (data.action == 'add') {
                                 if (data.sid == 'busy' || data.sid == 'faint') {
                                     var _id = data.id;
-                                    messageAppend(`你被${data.name}了${data.duration / 1000}秒`,2,0);
+                                    messageAppend(`你被${data.name}了${data.duration / 1000}秒`, 2, 0);
                                     if (data.name == '绊字诀') return;
                                 }
                             }
@@ -7285,7 +7287,7 @@
                             if (data.action == 'add') {
                                 if (data.sid == 'busy' || data.sid == 'faint' || data.sid == 'chidun' || data.sid == 'unarmed') {
                                     let npc = G.items.get(data.id)
-                                    messageAppend(`${npc.name}被${data.name}了${data.duration / 1000}秒`,2,0);
+                                    messageAppend(`${npc.name}被${data.name}了${data.duration / 1000}秒`, 2, 0);
                                 }
                             }
                         }
@@ -7345,6 +7347,89 @@
                         count: data.count
                     }
                     packData.push(item)
+                } else if (data.dialog == 'list' && data.stores != null) {
+                    storeData = data.stores;
+                    // packData.push(item)
+                } else if (data.dialog == 'list' && data.store != null) {
+                    let scan_store =true;
+                    let bag_remove_id = null;
+                    let store_remove_id = null;
+
+                    for (let i = 0; i < packData.length; i++) {
+                        let bag_item = packData[i];
+                        if (bag_item == null) { continue; }
+                        if (bag_item.id == data.id) {     // 道具存于背包时, 先判断数量  若数量为0 删除背包数据,若不为0 修改背包数据 
+                            scan_store = false;            
+                            let over_num = bag_item.count - data.store;
+                            if (over_num == 0) {
+                                // packData.splice(i, 1)
+                                bag_remove_id = i;
+                            }else{
+                                packData[i].count = over_num;
+                            }
+                            break;
+                        } 
+                    }
+                    if (scan_store) {   // 如果不存在于背包时, 添加数据到背包,并判断仓库数量
+                        for (let j = 0; j < storeData.length; j++) {
+                            let store_item = storeData[j];
+                            if (store_item == null) { continue; }
+                            if (store_item.id == data.storeid) {
+                                let item = {
+                                    id: data.id,
+                                    name: store_item.name,
+                                    count: Math.abs(data.store)
+                                }
+                                //更新背包
+                                packData.push(item);
+                                break;
+                            }
+
+                        }
+                    }
+                    //计算仓库数据,若仓库存在该数据 修改其数量,若不存在 则添加,如果计算后数量为0 则删除该条数据
+                    let found_store = true;
+                    for (let j = 0; j < storeData.length; j++) {
+                        let store_item = storeData[j];
+                        if (store_item == null) { continue; }
+                        
+                        if (store_item.id == data.id) {
+                            found_store = false;
+                            let store_count = store_item.count + data.store;
+                            if (store_count === 0) {
+                                // storeData.splice(j, 1)
+                                store_remove_id = j;
+                            } else {
+                                storeData[j].count = store_count;
+                            }
+                            break;
+                        }
+                    
+                    }
+                    if (found_store) {
+                        for (let j = 0; j < packData.length; j++) {
+                            let store_item = packData[j];
+                            if (store_item == null) { continue; }
+                            if (store_item.id === data.id) {
+                                let item = {
+                                    id: data.stroeid,
+                                    name: store_item.name,
+                                    count: Math.abs(data.store)
+                                }
+                                //更新背包
+                                storeData.push(item)
+                                break;
+                            }
+                        }
+                    }
+                    // 移除队列数据
+                    if(bag_remove_id!=null){
+                        packData.splice(bag_remove_id,1)
+                    }
+                    if(store_remove_id!=null){
+                        storeData.splice(store_remove_id,1)
+                    }
+            
                 } else if (data.dialog == 'pack' && data.jldesc != undefined) {
                     let jl = data.jldesc.match(/<(.*)>(.*)<\/.*><br\/>精炼<(hig|hic|hiy|hiz|hio|ord)>＋(.*)\s</i);
                     //console.log(jl)
@@ -7355,7 +7440,7 @@
                         let c = 13 - j;
                         //let cmd = `jinglian ${data.id} ok[${c}]`
                         let cmd = [];
-                        for (let i =0; i < c; i++) {
+                        for (let i = 0; i < c; i++) {
                             cmd.push(`jinglian ${data.id} ok;`);
                         }
                         var htmlj = `<div class="item-commands"><span class="jinglian">精炼6星 => ${n}</span></div>`;
@@ -7817,7 +7902,7 @@
     function Push(text) {
         if (text) {
             if (pushSwitch != '开' || pushType == null || pushToken == null) {
-                messageAppend("通知功能未开启或设置不完整，请在 右键菜单-设置 中设置开启。",1);
+                messageAppend("通知功能未开启或设置不完整，请在 右键菜单-设置 中设置开启。", 1);
                 return;
             }
             switch (pushType) {
@@ -7831,14 +7916,14 @@
                     break;
                 //PushPlus
                 case "2":
-                    var pushJosn = {"token":pushToken,"title":"武神传说","content":text};
-                    $.ajaxSetup({contentType: "application/json; charset=utf-8"});
+                    var pushJosn = { "token": pushToken, "title": "武神传说", "content": text };
+                    $.ajaxSetup({ contentType: "application/json; charset=utf-8" });
                     $.post(`http://www.pushplus.plus/send/`, JSON.stringify(pushJosn));
                     break;
                 //飞书机器人
                 case "3":
-                    var pushJosn = {"msg_type":"text","content":{"text":text}};
-                    $.ajaxSetup({contentType: "application/json; charset=utf-8"});
+                    var pushJosn = { "msg_type": "text", "content": { "text": text } };
+                    $.ajaxSetup({ contentType: "application/json; charset=utf-8" });
                     $.post(`https://open.feishu.cn/open-apis/bot/v2/hook/${pushToken}`, JSON.stringify(pushJosn));
                     break;
             }
