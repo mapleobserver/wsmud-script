@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.46
+// @version         2.4.47
 // @date            23/12/2018
-// @modified        31/10/2021
+// @modified        19/11/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4310,7 +4310,9 @@ look men;open men
             let all = {};
             let keys = GM_listValues();
             keys.forEach(key => {
-                all[key] = GM_getValue(key);
+                if (key != "roles") {
+                    all[key] = GM_getValue(key);
+                }
             });
             if (unsafeWindow.TriggerConfig != null) {
                 const tConfig = unsafeWindow.TriggerConfig.get();
@@ -4334,7 +4336,9 @@ look men;open men
                         }
                         continue;
                     }
-                    GM_setValue(key, config[key]);
+                    if (key != "roles") {
+                        GM_setValue(key, config[key]);
+                    }
                 }
                 alert("wsmud_Raid 配置下载成功！");
             }, _ => {
@@ -5094,6 +5098,7 @@ look men;open men
             <span class = "zdy-item cihang" style="width:120px"> 慈航七重门 </span>
             <span class = "zdy-item zhanshendian" style="width:120px"> 战神殿解谜 </span>
             <span class = "zdy-item guzongmen" style="width:120px"> 古宗门寻路 </span>
+            <span class = "zdy-item cangbaotu" style="width:120px"> 💎 藏宝图寻宝 </span>
             <span class = "zdy-item uploadConfig" style="width:120px"> 上传本地配置 </span>
             <span class = "zdy-item downloadConfig" style="width:120px"> 下载云端配置 </span>
             <span class = "zdy-item uploadFlows" style="width:120px"> 分享角色流程 </span>
@@ -5125,6 +5130,10 @@ look men;open men
             $(".guzongmen").on('click', function () {
                 WG.SendCmd('stopstate');
                 DungeonsShortcuts.guzongmen();
+            });
+            $(".cangbaotu").on('click', function () {
+                WG.SendCmd('stopstate');
+                DungeonsShortcuts.cangbaotu();
             });
             $(".uploadConfig").on('click', _ => {
                 Server.uploadConfig();
@@ -5994,6 +6003,185 @@ look men;open men
     })();
 
     const DungeonsShortcuts = {
+        cangbaotu: function () {
+            let source = `
+[if] {b藏宝图}? == null
+    tm 背包中无藏宝图，取消本次寻宝。
+    [exit]
+@cmdDelay 500
+stopstate
+@toolbar jh
+@toolbar pack
+($money1) = (:money)
+($ebony1) = {b玄晶#}?
+($number)=1
+($cbt_n) = 0
+@stopSSAuto
+<-recordGains
+[while] {b藏宝图}? != null
+    <---
+    ($pos)=null
+    use {b藏宝图}?
+    @tip 发现上面的图案所绘的方位似乎($pos)。|你找到了
+    [if] (pos) == 就在你这里
+        use {b藏宝图}?
+        ($cbt_n) = (cbt_n) + 1
+        [continue]
+    [else if] (pos) == null
+        [continue]
+    --->
+    jh fam (number) start
+    [if] (pos) != 离你所在的位置挺远的
+        // 武当
+        [if] (number)=1
+            [if] (pos) == 在你的北方
+                go north
+                go south;go west;go northup;go north;go east
+            [else if] (pos) == 在你的西方
+                go west
+                go west
+            [else]
+                go west;go northup
+                go north
+                go west
+                go northup
+                go northup
+                go northup
+                [while] (pos) == 在你的北方
+                    go north
+        // 少林
+        [else if] (number)=2
+            [if] (pos) == 在你的北方
+                go north
+                go north
+                go northup
+                go southdown;go northwest;go northeast
+                [while] (pos) == 在你的北方
+                    go north
+            [else if] (pos) == 在你的西北方向
+                go north;go west
+                go east;go north;go northwest
+                go northeast;go north;go west
+                go east;go north;go west
+                go east;go north;go west
+            [else]
+                go north;go east
+                go west;go north;go northeast
+                go northwest;go north;go east
+                go west;go north;go east
+        // 华山
+        [else if] (number)=3
+            [if] (pos) == 在你的北方
+                go westup;go north;go east
+                go west;go north;go east
+            [else if] (pos) == 在你的西北方向
+                go westup;go north
+                go north
+                go north
+            [else if] (pos) == 在你的西方
+                go westup
+                go west
+            [else if] (pos) == 在你东方
+                go eastup
+            [else if] (pos) == 在你的东南方向
+                go eastup;go southup
+                jumpdown
+                go southup
+                go south
+                go east
+            [else]
+                go westup
+                go south
+                go southup
+                go southup
+                break bi;go enter
+                go westup
+                go westup
+                jumpup
+        // 峨眉
+        [else if] (number)=4
+            go west;go south;go west
+            [if] (pos) == 在你东方
+                go east
+                go east
+                go east
+            [else if] (pos) == 在你的西方
+                go west
+            [else if] (pos) == 在你的南方
+                go south
+                go south
+            [else if] (pos) == 在你的北方
+                go north
+                go north
+            [else if] (pos) == 在你的东北方向
+                go east;go north
+                go east
+                go northup
+                go east
+            [else]
+                go east;go south
+                go north;go east;go south
+        // 逍遥
+        [else if] (number)=5
+            [if] (pos) == 在你东方
+                go east
+            [else if] (pos) == 在你的西方
+                go west
+            [else if] (pos) == 在你的南方
+                go south
+                go south
+            [else if] (pos) == 在你的北方
+                go north
+                go north
+            [else if] (pos) == 在你的东北方向
+                go east;go north
+            [else if] (pos) == 在你的东南方向
+                go east;go south
+                go south
+            [else if] (pos) == 在你的西南方向
+                go west;go south
+            [else]
+                go down
+                go down
+        // 丐帮
+        [else]
+            [if] (pos) == 在你东方
+                go down;go east;go east;go east;go up
+                go down;go east;go east;go up
+            [else if] (pos) == 在你的南方
+                go down
+            [else]
+                go down;go east
+                go east
+                go east
+                go east
+                go east
+    [else if] (number)<6
+        ($number) = (number) + 1
+    [else]
+        ($number)=1
+//结束后自动挖矿或者闭关
+@await 1000
+@tidyBag
+@wait 2000
+$zdwk
+recordGains->
+@recoverSSAuto
+@toolbar pack
+($money2) = (:money)
+@js ($income_m) = parseInt(((money2) - (money1))/10000)
+($ebony2) = {b玄晶#}?
+[if] (ebony1) != null
+    ($income_e) = (ebony2) - (ebony1)
+[else]
+    ($income_e) = (ebony2)
+tm 挖宝 (cbt_n) 次，收益 (income_e)个玄晶，(income_m) 两黄金
+@print 挖宝 (cbt_n) 次，收益 <hiy>(income_e)</hiy> 个玄晶，<hiy>(income_m)</hiy> 两黄金
+            `
+            const p = new Performer("藏宝图寻宝", source);
+            p.log(false);
+            p.start();
+        },
         cihang: function () {
             let source = `
 [if] (:room 慈航静斋) == false
