@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.47
+// @version         2.4.48
 // @date            23/12/2018
-// @modified        19/11/2021
+// @modified        22/11/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1723,6 +1723,7 @@
         stores: {}, // {id: object}
         _weaponType: '',
         skills:{},
+        profitInfo :'',
         kongfu: {
             quan: null,
             nei: null,
@@ -2879,6 +2880,7 @@
                 Message.append("&nbsp;&nbsp;* " + name + " <wht>" + gain.count + gain.unit + "</wht>");
                 content += `&nbsp;&nbsp;* ${name} <wht>${gain.count}${gain.unit}</wht><br>`;
             }
+            Role.profitInfo = content;
             layer.open({
                 type: 1,
                 area: ["380px", "300px"],
