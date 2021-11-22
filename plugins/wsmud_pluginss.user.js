@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.197
+// @version      0.0.32.198
 // @date         01/07/2018
-// @modified     19/11/2021
+// @modified     22/11/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -1956,31 +1956,34 @@
                         WG.sm_item = pgoods[itemName];
                     }
 
-                    if (item != undefined && WG.inArray(item, store_list) && sm_getstore == "开") {
-                        if (item.indexOf("hiz") >= 0 || item.indexOf("hio") >= 0) {
-                            sm_any = GM_getValue(roleid + "_sm_any", sm_any);
-                            if (sm_any == "开") {
-                                messageAppend("自动仓库取" + item);
-                                WG.sm_store = item;
-                                WG.sm_state = 4;
-                                setTimeout(WG.sm, 500);
-                                return;
-                            } else {
-                                var a = window.confirm("您确定要交稀有物品吗");
-                                if (a) {
+                    if (item != undefined) {
+                        WG.sm_itemx = item;
+                        if (WG.inArray(item, store_list) && sm_getstore == "开") {
+                            if (item.indexOf("hiz") >= 0 || item.indexOf("hio") >= 0) {
+                                sm_any = GM_getValue(roleid + "_sm_any", sm_any);
+                                if (sm_any == "开") {
                                     messageAppend("自动仓库取" + item);
                                     WG.sm_store = item;
                                     WG.sm_state = 4;
                                     setTimeout(WG.sm, 500);
                                     return;
+                                } else {
+                                    var a = window.confirm("您确定要交稀有物品吗");
+                                    if (a) {
+                                        messageAppend("自动仓库取" + item);
+                                        WG.sm_store = item;
+                                        WG.sm_state = 4;
+                                        setTimeout(WG.sm, 500);
+                                        return;
+                                    }
                                 }
+                            } else {
+                                messageAppend("自动仓库取" + item);
+                                WG.sm_store = item;
+                                WG.sm_state = 4;
+                                setTimeout(WG.sm, 500);
+                                return;
                             }
-                        } else {
-                            messageAppend("自动仓库取" + item);
-                            WG.sm_store = item;
-                            WG.sm_state = 4;
-                            setTimeout(WG.sm, 500);
-                            return;
                         }
                     }
                     if (WG.sm_item != undefined && item.indexOf(WG.sm_item.type) >= 0) {
@@ -2100,7 +2103,7 @@
                         }
                     }
                     else {
-                        messageAppend("无法提交" + item);
+                        messageAppend("无法提交" + WG.sm_itemx);
                         WG.smbuyNum = null;
                         if (mysm_loser == "关") {
                             WG.sm_state = -1;
@@ -7376,7 +7379,7 @@
                     storeData = data.stores;
                     // packData.push(item)
                 } else if (data.dialog == 'list' && data.store != null) {
-                    let scan_store =true;
+                    let scan_store = true;
                     let bag_remove_id = null;
                     let store_remove_id = null;
 
@@ -7384,16 +7387,16 @@
                         let bag_item = packData[i];
                         if (bag_item == null) { continue; }
                         if (bag_item.id == data.id) {     // 道具存于背包时, 先判断数量  若数量为0 删除背包数据,若不为0 修改背包数据 
-                            scan_store = false;            
+                            scan_store = false;
                             let over_num = bag_item.count - data.store;
                             if (over_num == 0) {
                                 // packData.splice(i, 1)
                                 bag_remove_id = i;
-                            }else{
+                            } else {
                                 packData[i].count = over_num;
                             }
                             break;
-                        } 
+                        }
                     }
                     if (scan_store) {   // 如果不存在于背包时, 添加数据到背包,并判断仓库数量
                         for (let j = 0; j < storeData.length; j++) {
@@ -7417,7 +7420,7 @@
                     for (let j = 0; j < storeData.length; j++) {
                         let store_item = storeData[j];
                         if (store_item == null) { continue; }
-                        
+
                         if (store_item.id == data.id) {
                             found_store = false;
                             let store_count = store_item.count + data.store;
@@ -7429,7 +7432,7 @@
                             }
                             break;
                         }
-                    
+
                     }
                     if (found_store) {
                         for (let j = 0; j < packData.length; j++) {
@@ -7448,13 +7451,13 @@
                         }
                     }
                     // 移除队列数据
-                    if(bag_remove_id!=null){
-                        packData.splice(bag_remove_id,1)
+                    if (bag_remove_id != null) {
+                        packData.splice(bag_remove_id, 1)
                     }
-                    if(store_remove_id!=null){
-                        storeData.splice(store_remove_id,1)
+                    if (store_remove_id != null) {
+                        storeData.splice(store_remove_id, 1)
                     }
-            
+
                 } else if (data.dialog == 'pack' && data.jldesc != undefined) {
                     let jl = data.jldesc.match(/<(.*)>(.*)<\/.*><br\/>精炼<(hig|hic|hiy|hiz|hio|ord)>＋(.*)\s</i);
                     //console.log(jl)
