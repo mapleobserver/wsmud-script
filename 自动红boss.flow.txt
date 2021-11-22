@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021112203
+($localVer) = 2021112204
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -193,8 +193,10 @@ stopstate
   @await 1000
   @until (:combating) == false || (:living) == false
   [if] (:living) == false
-    [{b天师符y}?==null]shop 1 1
-    relive locale
+    [while] (:living) == false
+      [{b天师符y}?==null]shop 1 1
+      relive locale
+      @await 1000
     @until (:living) == true
     ($numKill) = (numKill) + 1
   [else]
