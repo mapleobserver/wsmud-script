@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021112201
+($localVer) = 2021112202
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -168,8 +168,19 @@ stopstate
   [if] (BossSkill) != null
     (BossSkill)
     @await 4000
-  @print 等待技能冷却……
+  @print 技能冷却中，稍等片刻后会主动击杀……
   @cd
+  [if] (bossPlace) == 血刀门 && {r血刀老祖}? != null
+    [if] (BossWarning) == 提示音
+      @beep
+    [else if] (BossWarning) == 语音播报
+      $tts (:name)，遇到血刀老祖，请手动处理。
+    [else if] (BossWarning) == 远程通知
+      @push 【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。
+    [else if] (BossWarning) == 弹窗提示
+      @js alert("【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。")
+    @print <hiy>【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。</hiy>
+    [exit]
   [if] (BossTanlong) == 剑心+融合探龙
     @perform force.xin,unarmed.ref
   [else if] (BossTanlong) == 剑心+正常探龙
