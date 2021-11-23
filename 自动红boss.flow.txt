@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021112204
+($localVer) = 2021112301
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -47,7 +47,8 @@
   #select ($bossName) = <ord>此处主要用于设置参数，平常使用请通过【红boss报告】触发</ord><br/>&nbsp*&nbspBoss名字,浪翻云|庞斑|烛九阴|蚩尤|天僧,(bossName)
   #select ($bossPlace) = 副本名称,树林|财主家|流氓巷|丽春院|神龙教|温府|五毒教|恒山|青城山|衡山|泰山|嵩山|云梦沼泽|白驼山|星宿海|冰火岛|移花宫|燕子坞|黑木崖|缥缈峰|光明顶|天龙寺|血刀门|古墓派|华山论剑,(bossPlace)
   [(BossTanlong) == null]($BossTanlong) = 剑心+融合探龙
-  #select ($BossTanlong) = 找到Boss后是否叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)
+  #select ($BossTanlong) = 找到Boss后是否叫杀,原地等待通知玩家|直接叫杀|自定义命令|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)
+  #input ($BossCustomKill) = 叫杀Boss自定义命令（上个选项需选自定义命令，多个命令用英文分号隔开，不要用@开头的命令）,(BossCustomKill)
   [(BossBefore) == null]($BossBefore) = $usezml 正常
   #input ($BossBefore) = 进副本前后正常装备技能触发,(BossBefore)
   [(BossSkill) == null]($BossSkill) = enable force none;$usezml 血剑
@@ -181,14 +182,17 @@ stopstate
       @js alert("【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。")
     @print <hiy>【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。</hiy>
     [exit]
-  [if] (BossTanlong) == 剑心+融合探龙
-    @perform force.xin,unarmed.ref
-  [else if] (BossTanlong) == 剑心+正常探龙
-    @perform force.xin,unarmed.luo
-  [else if] (BossTanlong) == 融合探龙
-    @perform unarmed.ref
-  [else if] (BossTanlong) == 正常探龙
-    @perform unarmed.luo
+  [if] (BossTanlong) != 自定义命令
+    [if] (BossTanlong) == 剑心+融合探龙
+      @perform force.xin,unarmed.ref
+    [else if] (BossTanlong) == 剑心+正常探龙
+      @perform force.xin,unarmed.luo
+    [else if] (BossTanlong) == 融合探龙
+      @perform unarmed.ref
+    [else if] (BossTanlong) == 正常探龙
+      @perform unarmed.luo
+  [else]
+    (BossCustomKill)
   $killall
   @await 1000
   @until (:combating) == false || (:living) == false

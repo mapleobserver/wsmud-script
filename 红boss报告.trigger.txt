@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 增加自动寻路打Boss功能。
-($localVer) = 2021111801
+($localVer) = 2021112301
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -187,7 +187,8 @@
     @js var time = Date.parse( new Date());$.get('(repourl)/自动红boss.flow.txt',{stamp:time},function(data,status){WorkflowConfig.createWorkflow('自动红boss',data,'根文件夹');});
   [if] (BossTanlong) == null || (BossSkill) == null || (BossWarning) == null
     [(BossTanlong) == null]($BossTanlong) = 剑心+融合探龙
-    #select ($BossTanlong) = <ord>初次使用，请先设置自动打Boss相关参数</ord><br/>&nbsp*&nbsp找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)
+    #select ($BossTanlong) = <ord>初次使用，请先设置自动打Boss相关参数</ord><br/>&nbsp*&nbsp找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|自定义命令|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)
+    #input ($BossCustomKill) = 叫杀Boss自定义命令（上个选项需选自定义命令才有效，多个命令用英文分号隔开，不要用@开头的命令）,(BossCustomKill)
     [(BossBefore) == null]($BossBefore) = $usezml 正常
     #input ($BossBefore) = 进副本前后正常装备技能触发,(BossBefore)
     [(BossSkill) == null]($BossSkill) = enable force none;$usezml 血剑
