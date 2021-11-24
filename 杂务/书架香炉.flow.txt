@@ -1,5 +1,5 @@
 //~silent
-($localVer) = 20210802001
+($localVer) = 20211124001
 ($changeLog) = 🌟 皇城搜索书架香炉，可使用长生恢复内力、慈航加速搜索。
 ($flowName) = 书架香炉
 ($flowCode) = sjxl
@@ -65,7 +65,7 @@
 [if] (HCposui) == null
   ($HCposui) = 1
 @cmdDelay 350
-#select ($HCplan) = 请确保自己能自由进出书房<br/>&nbsp*&nbsp摸取方案,书架和香炉|只书架|只香炉,(HCplan)
+#select ($HCplan) = 请确保自己能自由进出书房<br/>&nbsp*&nbsp搜索方案,书架和香炉|只书架|只香炉,(HCplan)
 #select ($HCcycle) = 重复尝试直到搜到,是|否,(HCcycle)
 #select ($HCchangsheng) = 是否用长生诀回蓝,是|否,(HCchangsheng)
 #select ($HCcihang) = 使用剑心加速搜索,不使用|慈航剑典|自创内功,(HCcihang)
@@ -134,6 +134,10 @@ stopstate
   [if] (zdsj) != null
     [if] "{b书架g}?" != "null"
       use {b书架}?
+      @tip 书架已经摆放在你的卧室，目前可以存放($sjNum)本书籍|你家里的($sjFull)已经够大了
+      [if] (sjNum) == 200 || (sjFull) != null
+        ($HCplan) = 只香炉
+        @print <hiy>书架已到达最大上限，搜索方案改为只搜香炉。</hiy>
     ($sj) = false
   [if] (zdxl) != null
     ($xl) = false
