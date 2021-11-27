@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021112301
+($localVer) = 2021112701
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -75,6 +75,7 @@
 @js ($fbPath) = var fba={(fbArrayPath)};fba.(bossPlace)
 @js ($len) = [(fbPath)].length
 stopstate
+team out
 [if] (BossBefore) != null
   (BossBefore)
   @await 4000
@@ -206,7 +207,34 @@ stopstate
   [else]
     [if] (bossName) == 天僧
       @until {r<hik>天僧</hik>的尸体} != null
-    get all from (bossName)
+    get all from {r(bossName)}?
+    get all from {r(bossName)}?
+    @tip 你身上($bagfull)太多了|你拿不下($bagfull)东西|你要从哪拿走什么东西|拿走任何东西|东西就在你身上|里面什么都没有|里面没有东西|尸体里拿出来
+    [if] (bagfull) != null
+      ($bagfull) = null
+      ($weqAry) = '动物皮毛','布衣','铁剑','钢刀','木棍','英雄巾','布鞋','基本'
+      @js ($weqLen) = [(weqAry)].length
+      ($weqNum) = 0
+      [while] (weqNum) < (weqLen)
+        @js ($weq) = [(weqAry)][(weqNum)]
+        [while] {b(weq)w}? != null
+          drop {b(weq)w}?
+        ($weqNum) = (weqNum) + 1
+      @await 1000
+      get all from {r(bossName)}?
+      get all from {r(bossName)}?
+      @tip 你身上($bagfull)太多了|你拿不下($bagfull)东西|你要从哪拿走什么东西|拿走任何东西|东西就在你身上|里面什么都没有|里面没有东西|尸体里拿出来
+    [if] (bagfull) != null
+      [if] (BossWarning) == 提示音
+        @beep
+      [else if] (BossWarning) == 语音播报
+        $tts (:name)，背包已满无法拾取，请尽快处理。
+      [else if] (BossWarning) == 远程通知
+        @push 【Boss拾取】(:name)，背包已满无法拾取，请尽快处理。
+      [else if] (BossWarning) == 弹窗提示
+        @js alert("【Boss拾取】(:name)，背包已满无法拾取，请尽快处理。")
+      @print <hiy>【Boss拾取】(:name)，背包已满无法拾取，请尽快处理。</hiy>
+      [exit]
     @await 3000
     cr;cr over
     ($xluAry) = '香炉g','檀香炉b','沉香木鼎y','麝香铜鼎p','龙涎香熏o','龙脑古鼎r'
