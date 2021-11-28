@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2021112602
-($changeLog) = 🆕 优化call方式运行过程；追捕增加不回武庙恢复和是否到塔顶清虚弱功能；新增精力溢出检测。🌟 请安识别剑神刀皇等称号；武道塔恢复方式新增【逆天道】和【大道无极】；新增【古宗门遗址】副本和单独扫荡。
+($localVer) = 2021112801
+($changeLog) = 🆕 收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -75,9 +75,9 @@
   ($RCMode) = 节日免费模式
 #select ($RCMode) = 当前模式<ord>(RCMode)</ord>，自动日常的执行模式,正常模式|节日免费模式,(RCMode)
 // 是否统计收益
-[if] (RecordG) == null
-  ($RecordG) = 是
-#select ($RecordG) = 是否显示统计收益,是|否,(RecordG)
+[if] (RecordG) == null || (RecordG) = 是
+  ($RecordG) = 正常统计
+#select ($RecordG) = 是否统计收益,正常统计|无弹窗统计|静默统计|否,(RecordG)
 
 // 师门任务
 @toolbar jh
@@ -243,7 +243,7 @@ stopstate
   @await 2000
 
 // 开始统计收益
-[if] (RecordG) == 是
+[if] (RecordG) != 否
   <-recordGains
 
 // 追捕
@@ -873,8 +873,12 @@ score
 @toolbar jh
 
 // 结束收益统计
-[if] (RecordG) == 是
+[if] (RecordG) == 正常统计
   recordGains->
+[else if] (RecordG) == 无弹窗统计
+  recordGains->nopopup
+[else if] (RecordG) == 静默统计
+  recordGains->silent
 @recoverSSAuto
 
 // 日常结束后

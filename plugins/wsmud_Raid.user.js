@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.48
+// @version         2.4.49
 // @date            23/12/2018
-// @modified        22/11/2021
+// @modified        28/11/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1723,7 +1723,7 @@
         stores: {}, // {id: object}
         _weaponType: '',
         skills:{},
-        profitInfo :'',
+        profitInfo : null,
         kongfu: {
             quan: null,
             nei: null,
@@ -2618,6 +2618,7 @@
             ":state": Role.state,            // RoleState
             ":combating": Role.combating,    // true/false
             ":free": Role.isFree,
+            ":gains": Role.profitInfo,
 
             ":room": Room.name,
             ":path": Room.path,
@@ -2862,7 +2863,7 @@
     (function () {
         const executor = new CmdExecutor(cmd => {
             return cmd.indexOf("recordGains->") == 0;
-        }, _ => {
+        }, (_, cmd) => {
             const gains = Role.gains(__RecordGainsFrom, new Date().getTime());
             var result = {};
             gains.forEach(gain => {
@@ -2872,15 +2873,22 @@
                 result[gain.name] = { count: oldCount + gain.count, unit: gain.unit };
             });
             var content = "";
-            Message.clean();
-            Message.append("&nbsp;&nbsp;> 战利品列表如下：");
+            if (cmd.indexOf("recordGains->silent") == -1) {
+                Message.clean();
+                Message.append("&nbsp;&nbsp;> 战利品列表如下：");
+            }
             for (const name in result) {
                 if (!result.hasOwnProperty(name)) continue;
                 const gain = result[name];
-                Message.append("&nbsp;&nbsp;* " + name + " <wht>" + gain.count + gain.unit + "</wht>");
+                if (cmd.indexOf("recordGains->silent") == -1) {
+                    Message.append("&nbsp;&nbsp;* " + name + " <wht>" + gain.count + gain.unit + "</wht>");
+                }
                 content += `&nbsp;&nbsp;* ${name} <wht>${gain.count}${gain.unit}</wht><br>`;
             }
-            Role.profitInfo = content;
+
+            Role.profitInfo = content != "" ? content : null;
+
+            if (cmd.indexOf("recordGains->nopopup") == 0 || cmd.indexOf("recordGains->silent") == 0) return;
             layer.open({
                 type: 1,
                 area: ["380px", "300px"],
