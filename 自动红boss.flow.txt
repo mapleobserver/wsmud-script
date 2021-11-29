@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021112701
+($localVer) = 2021112901
 ($changeLog) = 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -124,7 +124,7 @@ team out
     @await 1000
     pushright bed[8]
     @await 1000
-  [else if] (:room 黑木崖-大厅,黑木崖-青龙堂大厅)==true
+  [else if] (:room 移花宫-桂花廊,移花宫-玫瑰廊,黑木崖-大厅,黑木崖-青龙堂大厅) == true
     $killall
     @until (:combating) == false
     @await 3000
