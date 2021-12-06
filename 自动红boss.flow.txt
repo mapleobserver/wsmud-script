@@ -5,8 +5,8 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021120601
-($changeLog) = 🆕 优化财主家的判断。⭐️ 自动寻路打Boss，可设置通知方式。
+($localVer) = 2021120602
+($changeLog) = 🆕 优化财主家、缥缈峰判断；优化通知功能。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
 ($flowPath) = 根文件夹
@@ -37,7 +37,7 @@
   [else]
     ($UPnum) = null
   [if] (UPnum) != null
-    @js WG.zmlfire({"name":"重新运行","zmlRun":"//~silent\n@call 自动红boss (bossName),(bossPlace)","zmlShow":0,"zmlType":"1"})
+    @js WG.zmlfire({"name":"重启流程","zmlRun":"//~silent\n@call 自动红boss (bossName),(bossPlace)","zmlShow":0,"zmlType":"1"})
     [exit]
 [else]
   ($UPnum) = null
@@ -87,7 +87,11 @@ team out
   ($renum) = 0
   [while] (:path) == (pathNow) && (:room 移花宫-花径,财主家-后院) == false
     [if] (renum) > 2
-      //tm 遭遇阻拦，叫杀。
+      [if] (:room 缥缈峰-百丈涧) == true
+        ($result) = piaomiao
+        ($logResult) = 【Boss寻踪】(:name)：躲闪不足一万，无法通过(bossPlace)。
+        ($num) = 99
+        [break]
       $killall
       @until (:combating) == false
       @await 3000
@@ -101,6 +105,7 @@ team out
     ($renum) = (renum) + 1
   [if] {r(bossName)}? != null
     @print 🎯 已找到 => <ord>(bossName)</ord>
+    ($result) = get
     [break]
   [while] (:room 移花宫-花径) == true && (yihua) != true
     go south
@@ -113,6 +118,7 @@ team out
       ($yihua) = true
       [if] {r(bossName)}? != null
         @print 🎯 已找到 => <ord>(bossName)</ord>
+        ($result) = get
         ($num) = 99
         [break]
   [if] (:room 移花宫-邀月宫) == true && (flower) == null
@@ -141,56 +147,34 @@ team out
       ($num) = (num) + 1
     [if] {r(bossName)}? != null
       @print 🎯 已找到 => <ord>(bossName)</ord>
+      ($result) = get
       ($num) = 99
       [break]
   @until (:combating) == false
   @await 500
   ($num) = (num) + 1
 // 找不到Boss
-[if] (num) == (len) && {r(bossName)}? == null
-  [if] (BossWarning) == 提示音
-    @beep
-  [else if] (BossWarning) == 语音播报
-    $tts (:name)，在(bossPlace)找不到(bossName)。
-  [else if] (BossWarning) == 远程通知
-    @push 【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。
-  [else if] (BossWarning) == 弹窗提示
-    @js alert("【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。")
-  @print <hiy>【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。</hiy>
-  [exit]
+[if] (num) >= (len) && {r(bossName)}? == null && (logResult) != null
+  ($result) = miss
+  ($logResult) = 【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。
 // 原地等待通知玩家
-[if] (BossTanlong) == 原地等待通知玩家
-  [if] (BossWarning) == 提示音
-    @beep
-  [else if] (BossWarning) == 语音播报
-    $tts (:name)，已在(:room)找到(bossName)。
-  [else if] (BossWarning) == 远程通知
-    @push 【Boss寻踪】(:name)：已在(:room)找到(bossName)。
-  [else if] (BossWarning) == 弹窗提示
-    @js alert("【Boss寻踪】(:name)：已在(:room)找到(bossName)。")
-  @print <hiy>【Boss寻踪】(:name)：已在(:room)找到(bossName)。</hiy>
-  [exit]
+[if] (BossTanlong) == 原地等待通知玩家 && (result) == get
+  ($result) = wait
+  ($logResult) = 【Boss寻踪】(:name)：已在(:room)找到(bossName)。
 
 // 叫杀
 ($numKill) = 0
-[while] (numKill) < 2 && (BossTanlong) != 原地等待通知玩家
+[while] (numKill) < 2 && (BossTanlong) != 原地等待通知玩家 && (result) == get
   // 换装备技能触发
   [if] (BossSkill) != null
     (BossSkill)
-    @await 4000
+    @await 5000
   @print 技能冷却中，稍等片刻后会主动击杀……
   @cd
   [if] (bossPlace) == 血刀门 && {r血刀老祖}? != null
-    [if] (BossWarning) == 提示音
-      @beep
-    [else if] (BossWarning) == 语音播报
-      $tts (:name)，遇到血刀老祖，请手动处理。
-    [else if] (BossWarning) == 远程通知
-      @push 【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。
-    [else if] (BossWarning) == 弹窗提示
-      @js alert("【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。")
-    @print <hiy>【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。</hiy>
-    [exit]
+    ($result) = xuedao
+    ($logResult) = 【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。
+    [break]
   [if] (BossTanlong) != 自定义命令
     [if] (BossTanlong) == 剑心+融合探龙
       @perform force.xin,unarmed.ref
@@ -233,16 +217,9 @@ team out
       get all from {r(bossName)}?
       @tip 你身上($bagfull)太多了|你拿不下($bagfull)东西|你要从哪拿走什么东西|拿走任何东西|东西就在你身上|里面什么都没有|里面没有东西|尸体里拿出来
     [if] (bagfull) != null
-      [if] (BossWarning) == 提示音
-        @beep
-      [else if] (BossWarning) == 语音播报
-        $tts (:name)，背包已满无法拾取，请尽快处理。
-      [else if] (BossWarning) == 远程通知
-        @push 【Boss拾取】(:name)，背包已满无法拾取，请尽快处理。
-      [else if] (BossWarning) == 弹窗提示
-        @js alert("【Boss拾取】(:name)，背包已满无法拾取，请尽快处理。")
-      @print <hiy>【Boss拾取】(:name)，背包已满无法拾取，请尽快处理。</hiy>
-      [exit]
+      ($result) = full
+      ($logResult) = 【Boss拾取】(:name)，背包已满无法拾取，请尽快处理。
+      [break]
     @await 3000
     cr;cr over
     ($xluAry) = '香炉g','檀香炉b','沉香木鼎y','麝香铜鼎p','龙涎香熏o','龙脑古鼎r'
@@ -264,13 +241,16 @@ team out
       @await 4000
     $zdwk
     [exit]
-@print <hiy>⚠️ 无法正常击杀(bossName)，通知玩家处理。</hiy>
-[if] (BossWarning) == 提示音
-  @beep
-[else if] (BossWarning) == 语音播报
-  $tts (:name)，无法正常击杀(bossName)。
-[else if] (BossWarning) == 远程通知
-  @push 【Boss警报】(:name)，无法正常击杀(bossName)。
-[else if] (BossWarning) == 弹窗提示
-  @js alert("【Boss警报】(:name)，无法正常击杀(bossName)。")
-@print <hiy>【Boss警报】(:name)，无法正常击杀(bossName)。</hiy>
+[if] (numKill) >= 2
+  ($result) = fail
+  ($logResult) = 【Boss警报】(:name)，无法正常击杀(bossName)。
+[if] (logResult) != null
+  [if] (BossWarning) == 提示音
+    @beep
+  [else if] (BossWarning) == 语音播报
+    $tts (logResult)
+  [else if] (BossWarning) == 远程通知
+    @push (logResult)
+  [else if] (BossWarning) == 弹窗提示
+    @js alert("(logResult)")
+  @print <hiy>(logResult)</hiy>
