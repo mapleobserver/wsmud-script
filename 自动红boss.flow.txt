@@ -5,8 +5,8 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021112901
-($changeLog) = 自动寻路打Boss，可设置通知方式。
+($localVer) = 2021120601
+($changeLog) = 🆕 优化财主家的判断。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
 ($flowPath) = 根文件夹
@@ -85,7 +85,7 @@ team out
   @js ($path) = [(fbPath)][(num)]
   ($pathNow) = (:path)
   ($renum) = 0
-  [while] (:path) == (pathNow) && (:room 移花宫-花径) == false
+  [while] (:path) == (pathNow) && (:room 移花宫-花径,财主家-后院) == false
     [if] (renum) > 2
       //tm 遭遇阻拦，叫杀。
       $killall
@@ -128,13 +128,21 @@ team out
     $killall
     @until (:combating) == false
     @await 3000
-  [else if] (:room 财主家-后院)==true
+  [else if] (:room 财主家-后院) == true
+    $killall
+    @until (:combating) == false
+    @await 3000
     [if] {b东厢钥匙w}? == null
-      $killall
-      @until (:combating) == false
-      @await 3000
-      ($num) = (num) + 2
-      [continue]
+      @print <hiy>没钥匙</hiy>
+      go west
+      ($num) = 99
+    [else]
+      look men;open men;go east
+      ($num) = (num) + 1
+    [if] {r(bossName)}? != null
+      @print 🎯 已找到 => <ord>(bossName)</ord>
+      ($num) = 99
+      [break]
   @until (:combating) == false
   @await 500
   ($num) = (num) + 1
