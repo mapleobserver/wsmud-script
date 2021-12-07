@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.49
+// @version         2.4.50
 // @date            23/12/2018
-// @modified        28/11/2021
+// @modified        7/12/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4332,6 +4332,7 @@ look men;open men
             Server._sync("uploadConfig", { id: Role.id, value: value }, pass => {
                 GM_setClipboard(pass);
                 alert(`wsmud_Raid 配置上传成功，该浏览器所有角色配置会在服务器保存 24 小时。\n配置获取码：${pass}，已复制到系统剪切板。`);
+                Message.append(`<hiy>角色配置获取码：${pass}</hiy>`);
             }, _ => {
                 alert("wsmud_Raid 配置上传失败！");
             });
@@ -4363,6 +4364,7 @@ look men;open men
             Server._sync("uploadFlows", { id: Role.id, value: value }, pass => {
                 GM_setClipboard(pass);
                 alert(`角色流程上传成功，该角色流程会在服务器保存 24 小时。\n角色流程获取码：${pass}，已复制到系统剪切板。`);
+                Message.append(`<hiy>角色流程获取码：${pass}</hiy>`);
             }, _ => {
                 alert("角色流程上传失败！");
             });
@@ -4383,7 +4385,8 @@ look men;open men
             const value = JSON.stringify(triggers);
             Server._sync("uploadTriggers", { id: Role.id, value: value }, pass => {
                 GM_setClipboard(pass);
-                alert(`角色触发器上传成功，该角色流程会在服务器保存 24 小时。\n角色触发器获取码：${pass}，已复制到系统剪切板。`);
+                alert(`角色触发器上传成功，该角色触发会在服务器保存 24 小时。\n角色触发器获取码：${pass}，已复制到系统剪切板。`);
+                Message.append(`<hiy>角色触发获取码：${pass}</hiy>`);
             }, _ => {
                 alert("角色触发器上传失败！");
             });
@@ -4454,6 +4457,7 @@ look men;open men
             Server._sync("uploadSingle", params, token => {
                 GM_setClipboard(token);
                 alert(`${type}分享成功，该${type}会在服务器保存 30 天\n每次下载会延长保存 始于下载时刻的 30 天\n分享码：${token}\n已复制到系统剪切板。`);
+                Message.append(`<hiy>${type}分享码：${token}</hiy>`);
             }, error => {
                 alert(error);
             });
@@ -5108,7 +5112,7 @@ look men;open men
             <span class = "zdy-item cihang" style="width:120px"> 慈航七重门 </span>
             <span class = "zdy-item zhanshendian" style="width:120px"> 战神殿解谜 </span>
             <span class = "zdy-item guzongmen" style="width:120px"> 古宗门寻路 </span>
-            <span class = "zdy-item cangbaotu" style="width:120px"> 💎 藏宝图寻宝 </span>
+            <span class = "zdy-item cangbaotu" style="width:120px"> 藏宝图寻宝 </span>
             <span class = "zdy-item uploadConfig" style="width:120px"> 上传本地配置 </span>
             <span class = "zdy-item downloadConfig" style="width:120px"> 下载云端配置 </span>
             <span class = "zdy-item uploadFlows" style="width:120px"> 分享角色流程 </span>
