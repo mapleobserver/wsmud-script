@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2021112801
+($localVer) = 2021120701
 ($changeLog) = 🆕 收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -568,7 +568,17 @@ stopstate
       [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
         [break]
       [if] (WudaoMode) == 正常模式
-        [if] (wdlevel) >= (WudaoManualMaxLevel)
+        [if] (WudaoManualMaxLevel) >= 100
+          ($WudaoManualMaxLevel) = 100
+        [else]
+          ($wudaoDif) = (finalN) - (WudaoManualMaxLevel)
+          [if] (wudaoDif) == 0
+            ($WudaoManualMaxLevel) = (WudaoManualMaxLevel) - 1
+          [else if] (wudaoDif) < 0
+            ($WudaoManualMaxLevel) = (finalN) - 1
+        [if] (wdlevel) >= (WudaoManualMaxLevel) || (wdlevel) >= 100
+          [break]
+        [if] (:room) == 武道塔-第一百层 || (:room) == 武道塔-塔顶
           [break]
         [if] (:hpPer) < 0.7 || (:mpPer) < 0.3
           @renew
