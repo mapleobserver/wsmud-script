@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.50
+// @version         2.4.51
 // @date            23/12/2018
-// @modified        7/12/2021
+// @modified        8/12/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4333,6 +4333,8 @@ look men;open men
                 GM_setClipboard(pass);
                 alert(`wsmud_Raid 配置上传成功，该浏览器所有角色配置会在服务器保存 24 小时。\n配置获取码：${pass}，已复制到系统剪切板。`);
                 Message.append(`<hiy>角色配置获取码：${pass}</hiy>`);
+                Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${pass}');" >
+                                 我无法复制 </span></div>`);
             }, _ => {
                 alert("wsmud_Raid 配置上传失败！");
             });
@@ -4365,6 +4367,8 @@ look men;open men
                 GM_setClipboard(pass);
                 alert(`角色流程上传成功，该角色流程会在服务器保存 24 小时。\n角色流程获取码：${pass}，已复制到系统剪切板。`);
                 Message.append(`<hiy>角色流程获取码：${pass}</hiy>`);
+                Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${pass}');" >
+                                 我无法复制 </span></div>`);
             }, _ => {
                 alert("角色流程上传失败！");
             });
@@ -4387,6 +4391,8 @@ look men;open men
                 GM_setClipboard(pass);
                 alert(`角色触发器上传成功，该角色触发会在服务器保存 24 小时。\n角色触发器获取码：${pass}，已复制到系统剪切板。`);
                 Message.append(`<hiy>角色触发获取码：${pass}</hiy>`);
+                Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${pass}');" >
+                                 我无法复制 </span></div>`);
             }, _ => {
                 alert("角色触发器上传失败！");
             });
@@ -4458,6 +4464,8 @@ look men;open men
                 GM_setClipboard(token);
                 alert(`${type}分享成功，该${type}会在服务器保存 30 天\n每次下载会延长保存 始于下载时刻的 30 天\n分享码：${token}\n已复制到系统剪切板。`);
                 Message.append(`<hiy>${type}分享码：${token}</hiy>`);
+                Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${token}');" >
+                                 我无法复制 </span></div>`);
             }, error => {
                 alert(error);
             });
@@ -5090,16 +5098,16 @@ look men;open men
             UI._appendHtml("🍱 <hiy>江湖客栈</hiy>", content);
 
             $(".about-something").on('click', function () {
-                window.open("http://wsmud.bobcn.me/category/1", '_blank').location;
+                window.open("https://www.yuque.com/wsmud/doc", '_blank').location;
             });
             $(".about-flow").on('click', function () {
-                window.open("http://wsmud.bobcn.me/category/2", '_blank').location;
+                window.open("https://www.yuque.com/wsmud/doc", '_blank').location;
             });
             $(".about-trigger").on('click', function () {
-                window.open("http://wsmud.bobcn.me/category/9", '_blank').location;
+                window.open("https://www.yuque.com/wsmud/mlonlz/lngs63", '_blank').location;
             });
             $(".about-bug").on('click', function () {
-                window.open("http://wsmud.bobcn.me/category/4", '_blank').location;
+                window.open("https://www.yuque.com/wsmud/doc/gr9gyy", '_blank').location;
             });
             $(".suqingHome").on('click', function () {
                 window.open("https://emeisuqing.github.io/wsmud/", '_blank').location;
