@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2021121201
+($localVer) = 2021121202
 ($changeLog) = 🆕 收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -60,10 +60,10 @@
 //  ($RCMode) = 正常模式
 
 //检测状态
-@js ($fbroom) = '(:room)'.indexOf('副本区域')
-[if] (fbroom) != -1 || (:state)==推演 || (:state)==领悟
+($fbYes) = (:room 副本区域,忧愁谷)
+[if] (fbYes) == true || (:state)==推演 || (:state)==领悟
   ($alert_start) = 正在(:state)，停止自动日常！
-  [(fbroom) != -1]($alert_start) = 正在副本中，停止自动日常！
+  [(fbYes) == true]($alert_start) = 正在副本中，停止自动日常！
   @js WG.SendCmd("tm (alert_start)")
   @print <ord>(alert_start)</ord>
   [exit]
