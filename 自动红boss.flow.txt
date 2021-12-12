@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021120602
+($localVer) = 2021121301
 ($changeLog) = 🆕 优化财主家、缥缈峰判断；优化通知功能。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -154,7 +154,7 @@ team out
   @await 500
   ($num) = (num) + 1
 // 找不到Boss
-[if] (num) >= (len) && {r(bossName)}? == null && (logResult) != null
+[if] (num) >= (len) && {r(bossName)}? == null && (logResult) == null
   ($result) = miss
   ($logResult) = 【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。
 // 原地等待通知玩家
