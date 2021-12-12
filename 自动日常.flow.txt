@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2021120702
+($localVer) = 2021121201
 ($changeLog) = 🆕 收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -332,7 +332,9 @@ stopstate
     [while] (escapee) == null
       ($zbing) = null
       ask1 {程药发}
-      @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯|你的($party)正在进攻|不要急，($needwait)来
+      @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯|你的($party)正在进攻|不要急，($needwait)来|最近没有($zbEnd)的逃犯了，你先休息下吧
+      [if] (zbEnd) != null
+        [break]
       [if] (needwait) != null
         ($needwait) = null
         @await 30000
@@ -355,7 +357,7 @@ stopstate
       ($start_h) = (:hour)
       ($start_m) = (:minute)
     @await 500
-    [while] {r(escapee)}? == null
+    [while] {r(escapee)}? == null && (zbEnd) == null
       [if] (tb) == null
         ($tb) = 0
       <---
