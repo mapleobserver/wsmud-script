@@ -47,6 +47,7 @@
 
 #select ($flowZDRC)=🚀 <hiz>当前流程版本为(localVer)</hiz><br/>&nbsp*&nbsp🍥 <hiz>以下有♻️标志的流程有自更新功能</hiz><br/>&nbsp*&nbsp🍰 <hiz>第一次使用前，如已有同名流程，请先手动删除</hiz><br/>&nbsp*&nbsp[♻️<ord>自动日常</ord>]师门-追捕-打塔-副本-请安,导入|跳过,跳过
 #select ($flowZCTY)=⚠️ <ord>现已可推演指定词条。</ord><br/>&nbsp*&nbsp[♻️<hiz>自创推演</hiz>]武神自创推演,导入|跳过,跳过
+#select ($flowYJXY)=🐟 [♻️<hiz>一键咸鱼</hiz>]将一些繁琐的每周必需的操作一键自动化,导入|跳过,跳过
 //#select ($flowZDZB)=[♻️<hiz>自动追捕</hiz>]自动寻路追捕逃犯<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowZDWD)=[♻️<hiz>自动武道</hiz>]自动打武道塔<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
@@ -81,6 +82,7 @@
 // 流程
 ($f_zdrc)={"name":"自动日常","source":"(repourl)/自动日常.flow.txt","finder":"根文件夹"}
 ($f_zcty)={"name":"自创推演","source":"(repourl)/自创推演.flow.txt","finder":"根文件夹"}
+($f_yjxy)={"name":"一键咸鱼","source":"(repourl)/一键咸鱼.flow.txt","finder":"跟文件夹"}
 ($f_zdzb)={"name":"自动追捕","source":"(repourl)/自动追捕.flow.txt","finder":"根文件夹"}
 ($f_zdwd)={"name":"自动武道","source":"(repourl)/自动武道.flow.txt","finder":"根文件夹"}
 ($f_kssd)={"name":"快速扫荡","source":"(repourl)/副本/快速扫荡.flow.txt","finder":"根文件夹"}
@@ -104,6 +106,8 @@
   ($f_list)=(f_list),(f_zdrc)
 [if] (flowZCTY)==导入
   ($f_list)=(f_list),(f_zcty)
+[if] (flowYJXY)==导入
+  ($f_list)=(f_list),(f_yjxy)
 [if] (flowZDZB)==导入
   ($f_list)=(f_list),(f_zdzb)
 [if] (flowZDWD)==导入
@@ -162,6 +166,10 @@
   [while] (num)<(l)
     @js var time = Date.parse( new Date());var f=[(f_list)];var n=f[(num)]["name"];var s=f[(num)]["source"];var fd=f[(num)]["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});messageAppend("导入流程："+fd+" ==> <hiy>"+n+"</hiy>")
     ($num)=(num)+1
+
+[if] (flowYJXY)==导入
+  @print 使用【一键咸鱼】流程，建议同时导入以下自命令，并设置为快速使用。
+  @print zmlf8faddc06542aa4885407300b1a486e2
 
 //触发
 [if] (triggerRedBoss)==导入

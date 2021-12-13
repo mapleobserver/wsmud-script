@@ -1,0 +1,170 @@
+//~silent
+($localVer) = 2021121301
+($changeLog) = ⭐️ 将一些繁琐的每周操作一键自动化。
+($flowName) = 一键咸鱼
+($flowCode) = yjxy
+($flowPath) = 根文件夹
+($flowFinder) = 根文件夹
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.(flowCode)
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    [if] (flowFinder) == null
+      ($flowFinder) = 根文件夹
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @await 2000
+  [else]
+    ($UPnum) = null
+  [if] (UPnum) != null
+    @js ManagedPerformerCenter.start("(flowName)", FlowStore.get("(flowName)"));
+    [exit]
+[else]
+  ($UPnum) = null
+
+[if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
+  @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
+  [exit]
+[if] (arg0)==襄阳捐钱 || (arg0)==襄阳军功 || (arg0)==xyjg || (arg0)==xyjq
+  stopstate;jh fam 8 start
+  @await 500
+  [if] (:room)==襄阳城-广场
+    juanxian {r郭靖}?;juanxian2 {r郭靖}?
+  $zdwk
+[else if] (arg0)==襄阳报名 || (arg0)==xybm
+  stopstate;jh fam 8 start
+  @await 500
+  [if] (:room)==襄阳城-广场
+    baoming {r郭靖}?
+    @tip 你可以去($xyBM)附近查看敌情|这位($xyBM)已经报名了。|才可以再次($xyOver)襄阳守城|最近没($xyNone)战事
+    [if] (xyBM) != null
+      @print 襄阳已报名，请选择守门位置：
+      @js Message.append(`<div class="item-commands"><span cmd="$wait 350;jh fam 8 start;go north;go north;go north;go north;go north;">⬆️ 守北门</span><span cmd="$wait 350;jh fam 8 start;go south;go south;go south;go south;go south;">⬇️ 守南门</span><span cmd="$wait 350;jh fam 8 start;go east;go east;go east;go east;go east;">➡️ 守东门</span><span cmd="$wait 350;jh fam 8 start;go west;go west;go west;go west;go west;">⬅️ 守西门</span></div>`)
+    [else if] (xyNone) != null
+      @print 襄阳尚未开启。
+      $zdwk
+    [else if] (xyOver) != null
+      @print 襄阳已经完成。
+      $zdwk
+  [else]
+    $zdwk
+[else if] (arg0)==快速运镖 || (arg0)==快速押镖 || (arg0)==ksyb
+  stopstate
+  $to 扬州城-镖局正厅
+  ksyb {r林震南}
+  @tip 最近暂时($done)委托，你先休息下吧|你需要支付($charges)黄金的雇佣费用|只有总镖头才($can)雇佣镖师|如果你不能把镖银($escort)送到|你不是($escort)运镖吗
+  [if] (charges)!=null
+    <-recordGains
+    task yunbiao {r林震南} qkstart
+    @await 11000
+    @tidyBag
+    recordGains->nopopup
+  [else if] (can)!=null
+    tm 运镖环数不到200环，无法快速运镖。
+  [else if] (escort)!=null
+    tm 当前有未完成的运镖任务，无法快速运镖。
+  $zdwk
+[else if] (arg0)==扫荡妖塔 || (arg0)==快速妖塔 || (arg0)==sdyt || (arg0)==ksyt
+  stopstate
+  [if] (:room) != 古大陆-墓园
+    $goyt
+    @until (:room) != 古大陆-墓园
+    @await 1000
+  ss muyuan
+  @tip 你即将消耗一个扫荡符，($jl_yt)精力快速完成一次弑妖塔|你尚未($ytJS)弑妖塔
+  [if] (ytJS) == null
+    saodang muyuan
+    @tip 你消耗一个扫荡符|你的扫荡符不够继续扫荡了。
+  [else]
+    @print 妖塔未解锁，无法扫荡。
+  $zdwk
+[else if] (arg0)==门贡换元晶 || (arg0)==mghyj
+  stopstate
+  ($hqName) = 门派后勤管理员
+  [if] (:family) == 武当派
+    ($hqMap) = 武当派-石阶
+  [else if] (:family) == 少林派
+    ($hqMap) = 少林派-山门殿
+  [else if] (:family) == 华山派
+    ($hqMap) = 华山派-练武场
+  [else if] (:family) == 峨眉派
+    ($hqMap) = 峨眉派-走廊
+  [else if] (:family) == 逍遥派
+    ($hqMap) = 逍遥派-林间小道
+  [else if] (:family) == 丐帮
+    ($hqMap) = 丐帮-暗道
+  [else if] (:family) == 杀手楼
+    ($hqMap) = 杀手楼-休息室
+  [else]
+    ($hqMap) = 扬州城-扬州武馆
+    ($hqName) = 武馆后勤
+  [while] (:room) != (hqMap)
+    $to (hqMap)
+    [if] (:family) == 丐帮
+      @await 300
+      go east
+    @await 500
+  [if] {r(hqName)}? == null
+    @print 后勤失踪，请稍后再试。
+  [else]
+    ask1 {r(hqName)}?
+    @dialog
+    buy 1 {d元晶o}? from {r(hqName)}?
+    @tip 你从门派后勤管理员购买了||这里没有($mgYJ)多的||你没有那么多的($mgGJ)功绩
+    [if] (mgGJ) != null
+      @print 门贡不足，无法购买。
+    [else if] (mgYJ) != null
+      @print 元晶已售空，无法购买。
+    [else]
+      @print 已购买
+    $zdwk
+[else if] (arg0)==擂台报名 || (arg0)==ltbm
+  stopstate;$to 扬州城-擂台
+  @await 500
+  select {r擂台比武报名}?
+  askbiwu {r擂台比武报名}?
+  @tip 你使用当前装备和技能($ltBM)参加比武|你已经报名参加比武，($ltGX)更新你的技能和装备|你已报名或更新状态，请勿连续报名。
+  [if] (ltGX) != null
+    biwu record ok
+  $zdwk
+[else if] (arg0)==藏宝图 || (arg0)==cbt
+  @js DungeonsShortcuts.cangbaotu()
+[else]
+  @print <hiy>🐟 一键咸鱼，目前提供以下功能：</hiy>
+  @js $('.WG_log pre').append($(`<div class="item-commands"></div>`).append($(`<span class="quick_cmd qc_xyjq">🤌 襄阳捐钱</span>`),$(`<span class="quick_cmd qc_ksyb">🦆 快速运镖</span>`),$(`<span class="quick_cmd qc_sdyt">🐉 扫荡妖塔</span>`),$(`<span class="quick_cmd qc_mghyj">🍟 门贡换元晶</span>`),$(`<span class="quick_cmd qc_cbt">💎 藏宝图</span>`)))
+
+  @js $('.WG_log pre').append($(`<div class="item-commands"></div>`).append($(`<span class="quick_cmd qc_xybm">🐘 襄阳报名</span>`),$(`<span class="quick_cmd qc_ltbm">🏆 擂台报名</span>`)))
+
+  @js $(".quick_cmd").off("click")
+  
+  //襄阳捐钱
+  @js $(".qc_xyjq").on("click", function(){ToRaid.perform(`//~silent\n@print 🐟 一键咸鱼 => <hic>襄阳捐钱</hic>\n@call 一键咸鱼 襄阳捐钱`);})
+  //快速运镖
+  @js $(".qc_ksyb").on("click", function(){ToRaid.perform(`//~silent\n@print 🐟 一键咸鱼 => <hic>快速运镖</hic>\n@call 一键咸鱼 快速运镖`);})
+  //扫荡妖塔
+  @js $(".qc_sdyt").on("click", function(){ToRaid.perform(`//~silent\n@print 🐟 一键咸鱼 => <hic>扫荡妖塔</hic>\n@call 一键咸鱼 扫荡妖塔`);})
+  //门贡换元晶
+  @js $(".qc_mghyj").on("click", function(){ToRaid.perform(`//~silent\n@print 🐟 一键咸鱼 => <hic>门贡换元晶</hic>\n@call 一键咸鱼 门贡换元晶`);})
+  //藏宝图
+  @js $(".qc_cbt").on("click", function(){ToRaid.perform(`//~silent\n@print 🐟 一键咸鱼 => <hic>藏宝图</hic>\n@call 一键咸鱼 藏宝图`);})
+
+  //襄阳报名
+  @js $(".qc_xybm").on("click", function(){ToRaid.perform(`//~silent\n@print 🐟 一键咸鱼 => <hic>襄阳报名</hic>\n@call 一键咸鱼 襄阳报名`);})
+  //擂台报名
+  @js $(".qc_ltbm").on("click", function(){ToRaid.perform(`//~silent\n@print 🐟 一键咸鱼 => <hic>擂台报名</hic>\n@call 一键咸鱼 擂台报名`);})
+  
+  @js $('.WG_log')[0].scrollTop = 99999;
