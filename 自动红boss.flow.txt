@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021121303
+($localVer) = 2021121304
 ($changeLog) = 🆕 优化财主家、缥缈峰判断；优化通知功能。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -276,9 +276,8 @@ team out
       ($timeout) = true
   [if] (:combating) == true
     @until (:combating) == false || (:living) == false
+    @print 检测到叫杀Boss，重新计时。
     ($waittime) = 0
-    [if] (:living) == false
-      [continue]
   ($waittime) = (waittime) + 1
   [if] (waittime) > 60 || (timeout) == true || (killover) == true
     [if] (waittime) > 60 || (timeout) == true
