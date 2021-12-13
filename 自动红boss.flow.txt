@@ -161,6 +161,8 @@ team out
 [if] (BossTanlong) == 原地等待通知玩家 && (result) == get
   ($result) = wait
   ($logResult) = 【Boss寻踪】(:name)：已在(:room)找到(bossName)。
+  [if] (BossWarning) == 不提示
+    ($BossWarning) = 提示音
 
 // 叫杀
 ($numKill) = 0
@@ -204,7 +206,7 @@ team out
     @tip 你身上($bagfull)太多了|你拿不下($bagfull)东西|你要从哪拿走什么东西|拿走任何东西|东西就在你身上|里面什么都没有|里面没有东西|尸体里拿出来
     [if] (bagfull) != null
       ($bagfull) = null
-      ($weqAry) = '动物皮毛','布衣','铁剑','钢刀','木棍','英雄巾','布鞋','基本'
+      ($weqAry) = '动物皮毛','布衣','铁剑','钢刀','木棍','英雄巾','布鞋','铁戒指','簪子','长鞭','钓鱼竿','鱼饵','铁棍','铁杖','飞镖','铁镐','基本'
       @js ($weqLen) = [(weqAry)].length
       ($weqNum) = 0
       [while] (weqNum) < (weqLen)
@@ -254,3 +256,44 @@ team out
   [else if] (BossWarning) == 弹窗提示
     @js alert("(logResult)")
   @print <hiy>(logResult)</hiy>
+
+// 等待十分钟
+($waittime) = 0
+($bossID) = {r(bossName)}?
+@print (:hour):(:minute):(:second) 开始等待玩家处理，若10分钟内未处理，将自动退出副本……
+[while] (:room 副本区域) == true && "(bossID)" != "null"
+  @await 10000
+  tm (:hour):(:minute):(:second) 等待玩家处理
+  [if] (result) == full
+    @until {r(bossName)}? == null
+    [break]
+  [if] {r(bossName)}? == null || {r(bossName)}? != (bossID)
+    [if] {r(bossName)}? != (bossID) && {r(bossName)}? != null
+      ($killover) = true
+    [else]
+      @print (:hour):(:minute):(:second) Boss已失踪。
+      ($timeout) = true
+  [if] (:combating) == true
+    @until (:combating) == false || (:living) == false
+    ($waittime) = 0
+    [if] (:living) == false
+      [continue]
+  ($waittime) = (waittime) + 1
+  [if] (waittime) > 60 || (timeout) == true || (killover) == true
+    [if] (waittime) > 60 || (timeout) == true
+      @print (:hour):(:minute):(:second) 超过10分钟未处理，退出副本。
+    [else if] (killover) == true
+      @print (:hour):(:minute):(:second) 已手动打死Boss，退出副本。
+    [while] (:living) == false
+      relive
+    cr;cr over
+    [break]
+[if] (:room 副本区域) == true
+  cr;cr over
+@renew
+@tidyBag
+@await 2000
+[if] (BossBefore) != null
+  (BossBefore)
+  @await 4000
+$zdwk
