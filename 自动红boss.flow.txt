@@ -5,8 +5,8 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021121304
-($changeLog) = 🆕 优化财主家、缥缈峰判断；优化通知功能。⭐️ 自动寻路打Boss，可设置通知方式。
+($localVer) = 2021121401
+($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
 ($flowPath) = 根文件夹
@@ -274,20 +274,32 @@ team out
     [else]
       @print (:hour):(:minute):(:second) Boss已失踪。
       ($timeout) = true
-  [if] (:combating) == true
+  [if] (:combating) == true || (:living) == false
     @until (:combating) == false || (:living) == false
     @print 检测到叫杀Boss，重新计时。
     ($waittime) = 0
   ($waittime) = (waittime) + 1
+  [if] (waittime) == 30
+    @print (:hour):(:minute):(:second) 已等待5分钟，再次通知玩家。
+    ($logWait) = 【Boss等待】(:name)，已等待5分钟，超过10分钟未处理，将自动退出副本。
   [if] (waittime) > 60 || (timeout) == true || (killover) == true
     [if] (waittime) > 60 || (timeout) == true
       @print (:hour):(:minute):(:second) 超过10分钟未处理，退出副本。
+      ($logWait) = 【Boss等待】(:name)，已超过10分钟未处理，自动退出副本。
     [else if] (killover) == true
       @print (:hour):(:minute):(:second) 已手动打死Boss，退出副本。
     [while] (:living) == false
       relive
     cr;cr over
     [break]
+[if] (logWait) != null
+  [if] (BossWarning) == 提示音
+    @beep
+  [else if] (BossWarning) == 语音播报
+    $tts (logWait)
+  [else if] (BossWarning) == 远程通知
+    @push (logWait)
+  @print <hiy>(logWait)</hiy>
 [if] (:room 副本区域) == true
   cr;cr over
 @renew
