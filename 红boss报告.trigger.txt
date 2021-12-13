@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 优化每天5点时段新旧数据的判断；增加自动寻路打Boss功能。
-($localVer) = 2021121401
+($localVer) = 2021121402
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -78,16 +78,15 @@
         @tip 这位客官，我最近听不少人说是在($bossPlace)见到过($bossName)。|这两天也($notime)什么消息|小的听到的消息($all)您老了
       [if] (notime) != null || (all) != null
         [if] (notime) != null
-          ($bossName) = null
           ($BossInfo) = null
           ($log) = ⏳ Boss尚未刷新，请稍后再试\n⚙️ 当前设置：(bossSet)\n(remain)</ord>
         [else if] (all) != null
-          ($bossName) = null
           ($BossInfo) = null
           ($log) = <hig>✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)</hig>
         @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
         [if] (action) != null && (:state) != 闭关 && (:state) != 练习
           (action)
+        [exit]
   [else]
     [exit]
 // 谣言获取Boss
