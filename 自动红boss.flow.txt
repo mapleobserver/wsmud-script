@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021121301
+($localVer) = 2021121302
 ($changeLog) = 🆕 优化财主家、缥缈峰判断；优化通知功能。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
