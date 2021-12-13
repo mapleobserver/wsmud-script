@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021121302
+($localVer) = 2021121303
 ($changeLog) = 🆕 新增整理秘籍、自动运镖、古代宗门流程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
@@ -168,8 +168,12 @@
     ($num)=(num)+1
 
 [if] (flowYJXY)==导入
-  @print 使用【一键咸鱼】流程，建议同时导入以下自命令，并设置为快速使用。
-  @print zmlf8faddc06542aa4885407300b1a486e2
+  @print <hiy>使用【一键咸鱼】流程，建议同时导入以下自命令，并设置为快速使用。</hiy>
+  ($zmlYJXY) = zmlf8faddc06542aa4885407300b1a486e2
+  @print 分享码：(zmlYJXY)
+  @js GM_setClipboard("(zmlYJXY)");
+  @print 已复制到剪贴板，如果剪贴板没有数据，请手动复制。
+  @js Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','(zmlYJXY)');"> 手动复制 </span></div>`);
 
 //触发
 [if] (triggerRedBoss)==导入
