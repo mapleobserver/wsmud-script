@@ -1,252 +1,338 @@
 //~silent
 // raid.flow
 // 基于 auto_zhuibu v2.1，四区白三三修改
-($localVer) = 2020112501
-($changeLog) = 优化追捕判断，动态显示追捕状态。
-@js ($version) = $.ajax({type: "GET", url: "http://wsmud-cdn.if404.com/version.txt", async: false, cache: false}).responseText;
-//@print (version)
-@js ($remoteVer) = var v = (version);v.zdzb
-[if] (localVer) != (remoteVer)
-  @js WG.SendCmd("tm 当前自动追捕版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
-  ($f_ss)={"name":"自动追捕","source":"http://wsmud-cdn.if404.com/自动追捕.flow.txt","finder":"根文件夹"}
-  @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
-  @wait 1000
-  ($log) = 自动追捕已更新至最新版【(remoteVer)】，即将自动运行。
-  @js WG.SendCmd("tm (log)")
-  @print <ord>(log)</ord>
-  @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
-  [exit]
-[else]
-  ($log) = 开始运行自动追捕，当前版本【(remoteVer)】。更新内容：(changeLog)
-  @js WG.SendCmd("tm (log)")
-  @print <ord>(log)</ord>
+($localVer) = 2021121401
+($changeLog) = 更新至2021121401
 
+// 追捕自定义参数
+[if] (ZByes) == null || (ZByes) == 是
+  ($ZByes) = 正常模式
+[if] (ZBsx) == null
+  ($ZBsx) = 转为正常模式
 [if] (ZBWaitCD) == null
-  ($ZBWaitCD) = 31
-[if] (ZBMax) == null
-  ($ZBMax) = 9999999
+  ($ZBWaitCD) = 30
 [if] (ZBcdskill) == null
-  ($ZBcdskill) = ^none
-[if](AZB_action) == null
-  ($AZB_action) = $zdwk
+  ($ZBcdskill) = null
+[if] (ZBBefore) == null
+  ($ZBBefore) = $eq 1
+[if] (DieToReset) == null
+  ($DieToReset) = 已关闭
+[if] (ZBrenew) == null
+  ($ZBrenew) = 是
+  [if] (:grade) == 武帝 || (:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀皇 || (:grade) == 兵主 || (:grade) == 战神
+    ($ZBrenew) = 否
+[if] (ZBxuruo) == null
+  ($ZBxuruo) = 否
+#select ($ZByes) = 追捕方式(百姓选跳过),正常模式|快速扫荡|跳过,(ZByes)
+#select ($ZBsx) = 快速扫荡达到上限后处理方式,转为正常模式|自动放弃再扫荡,(ZBsx)
+#input ($ZBBefore) = 追捕前执行命令(用英文;隔开),(ZBBefore)
+#select ($ZBrenew) = 每次追捕是否先回武庙恢复,是|否,(ZBrenew)
+#select ($ZBxuruo) = 是否到武道塔顶层清虚弱,是|否,(ZBxuruo)
 #input ($ZBWaitCD) = 从此次追捕开始，等待技能冷却,(ZBWaitCD)
-#input ($ZBcdskill) = 需要cd的技能使用英文逗号隔开或^不需要cd的技能,(ZBcdskill)
-#input ($ZBMax) = 最高连续追捕数达到后自动放弃,(ZBMax)
-#select ($DieToReset) = 死亡自动重置,已开启|已关闭,已关闭
-#input ($AZB_action) = 追捕完行为,(AZB_action)
+#input ($ZBcdskill) = 需要冷却的技能使用英文逗号隔开或以^开头过滤不需要的，填null全部不等冷却,(ZBcdskill)
+#select ($DieToReset) = 死亡自动重置追捕环数,已开启|已关闭,(DieToReset)
 #config
 
-<-stopSSAuto
-<-recordGains
+@stopSSAuto
+// 开始统计收益
+[if] (RecordG) != 否
+  <-recordGains
 stopstate
-@cmdDelay 1000
+
+// 追捕
 @toolbar jh
-@toolbar tasks
-@task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
-@js $('#zb_prog').remove()
-@js $(`.state-bar`).before(`<div id=zb_prog>开始追捕</div>`)
-[while](currentN) < 20
-  @renew
-  @until (:status xuruo) == false
-  [if](comboN)>=(ZBMax)
-    [while] (:room) != 扬州城-衙门正厅
-      $to 扬州城-衙门正厅
-      @await 500
-    ask1 {程药发}
-    ask2 {程药发}
-    ($comboN) = 0
-  [if](comboN)>=(ZBWaitCD)
-    @cd (ZBcdskill)
+($currentN) = null
+[while] (currentN) == null
+  @await 500
+  @toolbar tasks
+  @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
+($zbtemp) = (ZByes)
+[if] (RCMode) == 节日免费模式 && (zbtemp) == 正常模式
+  //($zbtemp) = (ZByes)
+  ($zbtemp) = 快速扫荡
+[if] (currentN) < 20 && (zbtemp) == 快速扫荡
+  @print 开始快速追捕
+  stopstate
+  @tidyBag
+  @await 2000
   [while] (:room) != 扬州城-衙门正厅
     $to 扬州城-衙门正厅
     @await 500
-  ($olddir1) = (dir1)
-  ($olddir2) = (dir2)
-  //@print (olddir1)
-  ($escapee) = null
-  [while] (escapee) == null
-    ($zbing) = null
-    ask1 {程药发}
-    @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯
-    [if] (zbing) != null
-      ($zbing) = null
-      [if] (dir1) == null || (dir2) == null || (escapee) == null
-        @await 1000
-        @toolbar jh
-        @toolbar tasks
-        @await 500
-        @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
-    @print <hiy>追捕目标：(escapee) 目标地点：(dir1)-(dir2)</hiy>
-  [if](olddir1) != (dir1) && (olddir2) != (dir2)
-    ($start_h) = (:hour)
-    ($start_m) = (:minute)
-  @await 500
-  [while] {r(escapee)}? == null
-    [if] (tb) == null
-      ($tb) = 0
-    <---
-    @js $('#zb_prog').html(`<hiy>已耗时(tb)分钟</hiy> <ord>追捕目标：(dir1)-(dir2) (escapee)</ord>`)
-    @cmdDelay 1000
-    [if] {r(escapee)}? != null
-      ($type1) = null
-      ($hunmi) = null
-      kill {r(escapee)}?
-      @until {(escapee)的尸体}? != null || {r(escapee)}? ==  null || (:combating) == false || (:living) == false
-      @tip 你的追捕任务($done)了，目前完成($currentN)/20个，已连续完成($comboN)个。|你($type1)死了($type2)|你要攻击谁|追捕任务失败了|你又($hunmi)了知觉
-      [if] (done) != null
-        ($done) = null
-        @js $('#zb_prog').html(`<hiy>当前追捕任务已完成，进度 (currentN)/20</hiy>`)
-      [if] (hunmi) != null
-        ($hunmi) = null
-      relive
-      [if] (type1) != null
-        relive
-        [if] (DieToReset) == 已开启
-          [while] (:room) != 扬州城-衙门正厅
-            $to 扬州城-衙门正厅
-            @await 500
+  [while] true
+    [if] {b扫荡符#}? < 20 || {b扫荡符}? == null
+      [if] (RCMode) == 正常模式
+        shop 0 20
+    ask3 {程药发}
+    @tip 无法($speed)完成|目前完成20/20个|已经完成|你的($sdfnum)符不够
+    [if] (speed) != null || (sdfnum) != null
+      [if] (ZBsx) == 转为正常模式
+        ($alert_zb) = 追捕到达上限，无法快速扫荡，转为正常模式！
+        ($ZByes) = 正常模式
+      [else if] (ZBsx) == 自动放弃再扫荡
+        [if] (comboN) < 200
+          ($alert_zb) = 追捕到达上限，无法快速扫荡，环数低于200环，不自动放弃，转为正常模式！
+          ($ZByes) = 正常模式
+        [else if] (sdfnum) != null
+          ($alert_zb) = 买不起扫荡符，无法快速扫荡，转为正常模式！
+          ($ZByes) = 正常模式
+          ($sdfnum) = null
+        [else]
+          ($alert_zb) = 追捕到达上限，无法快速扫荡，自动放弃再扫荡！
+          ask1 {程药发}
           ask2 {程药发}
-      [break]
-    [if] (DieToReset) == 已关闭
-      [if] (:hour) == 0 && (start_h) != 0
-        ($tb) = 24*60+(:minute)-(start_h)*60-(start_m)
-      [else]
-        ($tb) = (:hour)*60+(:minute)-(start_h)*60-(start_m)
-      [if] (tb) >= 10 || (tb) < 0
-        @print <hiy>追捕超时！</hiy>
-        ($dir1) = null
-        ($dir2) = null
-        ($tb) = null
+          ($speed) = null
+          @await 1000
+          [continue]
+      ($zbtemp) = (ZByes)
+    [else]
+      ($currentN) = 20
+    [break]
+  [if] (alert_zb) != null
+    @print <ord>(alert_zb)</ord>
+    tm (alert_zb)
+[if] (currentN) < 20 && (zbtemp) == 正常模式
+  @print 开始自动追捕
+  @cd
+  stopstate
+  (ZBBefore)
+  @await 5000
+  @tidyBag
+  @await 2000
+  @js $('#zb_prog').remove()
+  @js $(`.state-bar`).before($(`<div id=zb_prog>开始追捕</div>`).click(() => $('#zb_prog').remove()))
+  [while](currentN) < 20
+    ($zb) = true
+    [if] (:status xuruo) == true && (ZBxuruo) == 是
+        jh fam 9 start;go enter
+        $killall
+        @until (:combating) == false
+    [if] (ZBrenew) == 是 || (:status xuruo) == true || (type1) != null
+      [while] (:room) != 扬州城-武庙
+        $to 扬州城-武庙
+        @await 500
+      @liaoshang
+    @until (:status xuruo) == false
+    [if](comboN)>=(ZBWaitCD)
+      @cd (ZBcdskill)
+    [while] (:room) != 扬州城-衙门正厅
+      $to 扬州城-衙门正厅
+      @await 500
+    @await 1000
+    ($olddir1) = (dir1)
+    ($olddir2) = (dir2)
+    //@print (olddir1)
+    ($escapee) = null
+    [while] (escapee) == null
+      ($zbing) = null
+      ask1 {程药发}
+      @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯|你的($party)正在进攻|不要急，($needwait)来|最近没有($zbEnd)的逃犯了，你先休息下吧
+      [if] (zbEnd) != null
         [break]
-    --->
-    //@cmdDelay 1000
-    $to (dir1)-(dir2)
-    [if] (dir1) == 武当派
-      [if](dir2) == 林间小径
-        go south
-      jh fam 1 start
-      go north
-      go south;go west
-      go west
-      go east;go northup
-      go north
-      go east
-      go west;go west
-      go northup
-      go northup
-      go northup
-      go north
-      go north
-      go north
-      go north
-      go north
-      go north
-    [else if] (dir1) == 华山派
-      jh fam 3 start
-      go eastup
-      go southup
-      jumpdown
-      go southup
-      go south
-      go east
-      jh fam 3 start
-      go westup
-      go north
-      go east
-      go west;go north
-      go east
-      go west;go north
-      go south[3];go west
-      go east;go south
-      go southup
-      go southup
-      look bi;break bi;go enter
-      go westup
-      go westup
-      jumpup
-    [else if] (dir1) == 少林派
-      [if](dir2) == 竹林
-        go south
-      jh fam 2 start
-      go north
-      go west
-      go east;go east
-      go west;go north
-      go northup
-      go southdown;go northeast
-      go northwest
-      go southwest
-      go northeast;go north
-      go east
-      go west;go west
-      go east;go north
-      go east
-      go west;go west
-      go east;go north
-      go west
-      go east;go north
-      go north
-    [else if] (dir1) == 峨眉派
-      [if](dir2) == 走廊
+      [if] (needwait) != null
+        ($needwait) = null
+        @await 30000
+        [continue]
+      [if] (party) != null
+        ($party) = null
+        @print <ord>帮战未结束，获取逃犯信息失败，10秒后重试。</ord>
+        @await 10000
+        [continue]
+      [if] (zbing) != null
+        ($zbing) = null
+        [if] (dir1) == null || (dir2) == null || (escapee) == null
+          @await 1000
+          @toolbar jh
+          @toolbar tasks
+          @await 500
+          @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
+      @print <hiy>追捕目标：(escapee) 目标地点：(dir1)-(dir2)</hiy>
+    [if](olddir1) != (dir1) && (olddir2) != (dir2)
+      ($start_h) = (:hour)
+      ($start_m) = (:minute)
+    @await 500
+    [while] {r(escapee)}? == null && (zbEnd) == null
+      [if] (tb) == null
+        ($tb) = 0
+      <---
+      [if] (zb) == true
+        @cmdDelay 1000
+        [if] {r(escapee)}? != null
+          ($type1) = null
+          ($hunmi) = null
+          [if] (:room 武当派-后山小院) == true
+            @await 1000
+          kill {r(escapee)}?
+          @until {(escapee)的尸体}? != null || {r(escapee)}? ==  null || (:combating) == false || (:living) == false
+          @tip 你的追捕任务($done)了，目前完成($currentN)/20个，已连续完成($comboN)个。|你($type1)死了($type2)|你要攻击谁|追捕任务失败了|你又($hunmi)了知觉|不要急，($needwait)来
+          [if] (done) != null
+            ($done) = null
+            @js $('#zb_prog').html(`<hiy>当前追捕任务已完成，进度 (currentN)/20</hiy>`)
+          //[if] (hunmi) != null
+            //($hunmi) = null
+          [while] (:living)==false
+            relive
+            @await 500
+          [if] (type1) != null && (DieToReset) == 已开启
+            [while] (:room) != 扬州城-衙门正厅
+              $to 扬州城-衙门正厅
+              @await 500
+            ask2 {程药发}
+          [break]
+        [if] (DieToReset) == 已关闭
+          [if] (:hour) == 0 && (start_h) != 0
+            ($tb) = 24*60+(:minute)-(start_h)*60-(start_m)
+          [else]
+            ($tb) = (:hour)*60+(:minute)-(start_h)*60-(start_m)
+          @js $('#zb_prog').html(`<hiy>已耗时(tb)分钟</hiy> <ord>追捕目标：(dir1)-(dir2) (escapee)</ord>`)
+          //@print <hiy>已耗时(tb)分钟。</hiy><ord>追捕目标：(escapee) 目标地点：(dir1)-(dir2)</ord>
+          [if] (tb) >= 10 || (tb) < 0
+            @print <hiy>追捕超时！</hiy>
+            ($dir1) = null
+            ($dir2) = null
+            ($tb) = null
+            [break]
+      --->
+      @cmdDelay 1000
+      $to (dir1)-(dir2)
+      [if] (dir1) == 武当派
+        [if](dir2) == 林间小径
+          go south
+        jh fam 1 start
         go north
-        go south[2]
-        go north;go east[2]
-      jh fam 4 start
-      go northup
-      go east
-      go west;go southdown;go west
-      go south
-      go east
-      go east
-      go west;go south
-      go north;go west;go south
-      go north;go west
-      go south
-      go south
-      go north;go north;go west
-      go east;go north
-      go north
-    [else if] (dir1) == 逍遥派
-      [if](dir2) == 林间小道
-        go west;go north
         go south;go west
+        go west
+        go east;go northup
+        go north
+        go east
+        go west;go west
+        go northup
+        go northup
+        go northup
+        go north
+        go north
+        go north
+        go north
+        go north
+        go north
+      [else if] (dir1) == 华山派
+        jh fam 3 start
+        go eastup
+        go southup
+        jumpdown
+        go southup
+        go south
+        go east
+        jh fam 3 start
+        go westup
+        go north
+        go east
+        go west;go north
+        go east
+        go west;go north
+        go south[3];go west
         go east;go south
-      [else if](dir2) == 木屋
-        go south[4]
-      [else if](dir2) == 地下石室
+        go southup
+        go southup
+        look bi;break bi;go enter
+        go westup
+        go westup
+        jumpup
+      [else if] (dir1) == 少林派
+        [if](dir2) == 竹林
+          go north
+        jh fam 2 start
+        go north
+        go west
+        go east;go east
+        go west;go north
+        go northup
+        go southdown;go northeast
+        go northwest
+        go southwest
+        go northeast;go north
+        go east
+        go west;go west
+        go east;go north
+        go east
+        go west;go west
+        go east;go north
+        go west
+        go east;go north
+        go north
+      [else if] (dir1) == 峨眉派
+        [if](dir2) == 走廊
+          go north
+          go south[2]
+          go north;go east[2]
+        jh fam 4 start
+        go northup
+        go east
+        go west;go southdown;go west
+        go south
+        go east
+        go east
+        go west;go south
+        go north;go west;go south
+        go north;go west
+        go south
+        go south
+        go north;go north;go west
+        go east;go north
+        go north
+      [else if] (dir1) == 逍遥派
+        [if](dir2) == 林间小道
+          go west;go north
+          go south;go west
+          go east;go south
+        [else if](dir2) == 木屋
+          go south[4]
+        [else if](dir2) == 地下石室
+          go up
+        jh fam 5 start
+        go north
+        go north
+        jh fam 5 start;go east
+        go north
+        go south;go south
+        go south
+        jh fam 5 start;go west
+        go south
+        jh fam 5 start;go south
+        go south
+        jh fam 5 start;go down
+        go down
+      [else if] (dir1) == 丐帮
+        [if](dir2) == 暗道
+          go east
+          go east[2]
+          go east
+        jh fam 6 start
+        go down
+        go east
+        go east
+        go east
         go up
-      jh fam 5 start
-      go north
-      go north
-      jh fam 5 start;go east
-      go north
-      go south;go south
-      go south
-      jh fam 5 start;go west
-      go south
-      jh fam 5 start;go south
-      go south
-      jh fam 5 start;go down
-      go down
-    [else if] (dir1) == 丐帮
-      [if](dir2) == 暗道
+        go down;go east
         go east
-        go east[2]
-        go east
-      jh fam 6 start
-      go down
-      go east
-      go east
-      go east
-      go up
-      go down;go east
-      go east
-      go up
-recordGains->
-stopSSAuto->
+        go up
+($zb) = false
+//[if] (RCMode) == 节日免费模式 && (zbtemp) != null
+  //($ZByes) = (zbtemp)
+@js $('#zb_prog').remove()
+@cmdDelay
+@await 2000
+@tidyBag
+@await 2000
+
+// 结束收益统计
+[if] (RecordG) == 正常统计
+  recordGains->
+[else if] (RecordG) == 无弹窗统计
+  recordGains->nopopup
+[else if] (RecordG) == 静默统计
+  recordGains->silent
+@recoverSSAuto
+
 @js $('#zb_prog').remove()
 @renew
-//追捕后复原
-@cmdDelay
-@cd
-(AZB_action)
+$zdwk
