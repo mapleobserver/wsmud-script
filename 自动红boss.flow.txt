@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021121401
+($localVer) = 2021121501
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -261,8 +261,15 @@ team out
 // 等待十分钟
 ($waittime) = 0
 ($bossID) = {r(bossName)}?
+($BossInfo) = wait
 @print (:hour):(:minute):(:second) 开始等待玩家处理，若10分钟内未处理，将自动退出副本……
+@js Message.append(`<div class="item-commands"><span class="redboss boss-quit">关闭智能等待</span></div>`)
+@js $(".boss-quit").off("click")
+@js $(".boss-quit").on("click", function(){ToRaid.perform(`//~silent\n@print 即将关闭智能等待……\n($BossInfo) = notime`);})
 [while] (:room 副本区域) == true && "(bossID)" != "null"
+  [if] (BossInfo) != wait
+    @print <hiy>已关闭智能等待，请玩家手动操作。</hiy>
+    [exit]
   @await 10000
   tm (:hour):(:minute):(:second) 等待玩家处理
   [if] (result) == full
@@ -275,10 +282,14 @@ team out
       @print (:hour):(:minute):(:second) Boss已失踪。
       ($timeout) = true
   [if] (:combating) == true || (:living) == false
+    @print 检测到叫杀Boss，重新计时。
+    ($waittime) = 0
     @until (:combating) == false || (:living) == false
     @print 检测到叫杀Boss，重新计时。
     ($waittime) = 0
   ($waittime) = (waittime) + 1
+  [if] (BossInfo) != wait
+    [continue]
   [if] (waittime) == 30
     @print (:hour):(:minute):(:second) 已等待5分钟，再次通知玩家。
     ($logWait) = 【Boss等待】(:name)，已等待5分钟，超过10分钟未处理，将自动退出副本。
@@ -292,6 +303,7 @@ team out
       relive
     cr;cr over
     [break]
+($BossInfo) = notime
 [if] (logWait) != null
   [if] (BossWarning) == 提示音
     @beep
