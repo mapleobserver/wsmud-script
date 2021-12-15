@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 优化每天5点时段新旧数据的判断；增加自动寻路打Boss功能。
-($localVer) = 2021121402
+($localVer) = 2021121501
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -42,7 +42,8 @@
     [if] (num)==null
       ($BossInfo) = null
       ($log) = ✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)
-      @js messageAppend("(log)",2,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));$('.(comClass)')[0].scrollTop = 99999;
+      @js messageAppend("(log)",2,(magPost))
+      @js messageAppend(`<div class="item-commands"><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
       //按钮命令
       ($finish) = true
     [else]
@@ -83,7 +84,8 @@
         [else if] (all) != null
           ($BossInfo) = null
           ($log) = <hig>✅ 本周已打完5次Boss\n⚙️ 当前设置：(bossSet)</hig>
-        @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
+        @js messageAppend("(log)",1,(magPost))
+        @js messageAppend(`<div class="item-commands"><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
         [if] (action) != null && (:state) != 闭关 && (:state) != 练习
           (action)
         [exit]
@@ -139,21 +141,25 @@
     @js ($match) = '(BossDay)'.indexOf('(today)')
     [if] (match) < 0
       ($log) = <hiy>📆 根据每周设定，今日不会【自动跳过Boss】。</hiy>\n⚙️ 当前设置：(bossSet)
-      @js messageAppend("(log)",2,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));$('.(comClass)')[0].scrollTop = 99999;
+      @js messageAppend("(log)",2,(magPost))
+      @js messageAppend(`<div class="item-commands"><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
       ($jump) = true
     // 执行自动跳过操作
     [else]
       ($log) = <ord>💎 (BossInfo)\n<hiy>⚠️ 根据设置<ord>【(bossSet)】</ord>，自动跳过当前Boss(bossName)</hiy>\n(remain)</ord>
-      @js messageAppend("(log)",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)));
+      @js messageAppend("(log)",1,(magPost))
+      @js messageAppend(`<div class="item-commands"><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
       team out;stopstate;(fbcr) 0;cr over;$wait 2000;(action)
       ($BossInfo)=notime
       ($jump) = true
   [else]
     [if] (team) == true
       @js ($fbcr2) = var f="(fbcr)";f=f.substr(0,f.length-1)+"2"
-      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-auto">🍉 <hiy>自动打Boss</hiy></span>`),$(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-team">🚌 进入 <hic>(bossPlace)(<hiy>组队</hiy>)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
+      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost))
+      @js messageAppend(`<div class="item-commands"><span class="redboss boss-auto">🍉 <hiy>自动打Boss</hiy></span><span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span><span class="redboss boss-team">🚌 进入 <hic>(bossPlace)(<hiy>组队</hiy>)</hic> => <ord>寻找Boss</ord></span><span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>跳过Boss</hig></span><span class="redboss boss-refresh">🙉 前往客栈刷新</span><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
     [else]
-      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss boss-auto">🍉 <hiy>自动打Boss</hiy></span>`),$(`<span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span>`),$(`<span class="boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>刷新Boss</hig></span>`),$(`<span class="redboss boss-refresh">🙉 前往客栈刷新</span>`),$(`<span class="redboss boss-setting">⚙️ 设置参数</span>`)))
+      @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost))
+      @js messageAppend(`<div class="item-commands"><span class="redboss boss-auto">🍉 <hiy>自动打Boss</hiy></span><span class="redboss boss-single">🥕 进入 <hic>(bossPlace)</hic> => <ord>寻找Boss</ord></span><span class="redboss boss-skip">🥚 进出 <hic>(bossPlace)</hic> => <hig>跳过Boss</hig></span><span class="redboss boss-refresh">🙉 前往客栈刷新</span><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
     [if] (channel) == 谣言
       [if] (BossAlert) == 提示音
         @beep
@@ -181,8 +187,9 @@
   @js ($rVer) = [(remoteVer)][0]
   [if] (localVer) < (rVer) && (remoteVer) != null
     @js ($newT) = [(remoteVer)][1]
-    @js messageAppend("<ord>检测到新版本！(localVer) => (rVer)</ord>",1,(magPost));$('.(comClass) pre').append($(`<div class="item-commands"></div>`).append($(`<span class="redboss update">♻️ 更新 => <hig>红boss报告</hig></span>`)))
-    @js $(".update").on("click", function(){ToRaid.perform(`//~silent\n@js unsafeWindow.TriggerCenter.remove("红boss报告")\n@await 350\n@js Server.importTrigger("(newT)")\n@await 1000\ntm b`);})
+    @js messageAppend("<ord>检测到新版本！(localVer) => (rVer)</ord>",1,(magPost))
+    @js messageAppend(`<div class="item-commands"><span class="redboss boss-update">♻️ 更新 => <hig>红boss报告</hig></span></div>`);$('.(comClass)')[0].scrollTop = 99999;
+    @js $(".boss-update").on("click", function(){ToRaid.perform(`//~silent\n@js unsafeWindow.TriggerCenter.remove("红boss报告")\n@await 350\n@js Server.importTrigger("(newT)")\n@await 1000\ntm b`);})
   // 检查自动红boss流程是否存在
   @js ($flowGet) = let s=FlowStore.get('自动红boss');s==null?1:0
   [if] (flowGet)==1
