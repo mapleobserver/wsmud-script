@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2021121202
+($localVer) = 2021121501
 ($changeLog) = 🆕 收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -174,7 +174,7 @@
 [if] (GmpSD) == null
   ($GmpSD) = 跳过
 [if] (GmpSDnum) == null
-  ($GmpSDnum) = 10
+  ($GmpSDnum) = 5
 #select ($GmpSD) = <ord>古宗门遗址单独扫荡</ord>,跳过|扫荡,(GmpSD)
 #input ($GmpSDnum) = <ord>古宗门遗址扫荡次数</ord>,(GmpSDnum)
 
@@ -334,6 +334,7 @@ stopstate
       ask1 {程药发}
       @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯|你的($party)正在进攻|不要急，($needwait)来|最近没有($zbEnd)的逃犯了，你先休息下吧
       [if] (zbEnd) != null
+        ($currentN) = 20
         [break]
       [if] (needwait) != null
         ($needwait) = null
@@ -537,9 +538,13 @@ stopstate
 //[if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式  || (RCMode) == 节日免费模式
   @toolbar jh
   @toolbar tasks
-  @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，
+  @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，|今日副本($noWudao)次数
   [if] (reset) == 已 && (currentN) != null && (currentN) == (finalN) && (finalN) != 0
     @print <hiy>当日武道塔已完成。</hiy>
+  [else if] (noWudao) != null && (reset)==null && (currentN)==null && (finalN)==null
+    @print <hiy>检测到玩家已设置为只打塔主，跳过武道塔，流程武道塔模式将更改为只打塔主。</hiy>
+    tm 检测到玩家已设置为只打塔主，跳过武道塔，流程武道塔模式将更改为只打塔主。
+    ($WudaoMode) = 只打塔主
   [else]
     stopstate
     @cd
@@ -818,8 +823,8 @@ stopstate
   look shi
   tiao1 shi;tiao1 shi;tiao2 shi
   jumpdown
-  [if] (GmpSDnum) == null
-    ($GmpSDnum) = 10
+  [if] (GmpSDnum) == null || (GmpSDnum) == 0
+    ($GmpSDnum) = 5
   [if] {b扫荡符#}? < (GmpSDnum) || {b扫荡符}? == null
     [if] (RCMode) == 正常模式
       shop 0 (GmpSDnum)
