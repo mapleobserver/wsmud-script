@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.51
+// @version         2.4.52
 // @date            23/12/2018
-// @modified        8/12/2021
+// @modified        17/12/2021
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -542,7 +542,8 @@
                 const flowName = r[2];
                 let source = FlowStore.get(flowName);
                 if (source == null) {
-                    throw `未找到调用的流程 ${flowName}`;
+                    Message.append(`<ord>未找到调用的流程 ${flowName}</ord>`);
+                    //throw `未找到调用的流程 ${flowName}`;
                 }
                 let callSource = `[if] true\n` + SourceCodeHelper.appendHeader("    ", `${args}\n${source}`);
                 const callId = __CallCounter; __CallCounter += 1;
@@ -4480,7 +4481,8 @@ look men;open men
                 const flow = JSON.parse(data);
                 const result = WorkflowConfig.createWorkflow(flow.name, flow.source, target);
                 if (result == true) {
-                    alert(`导入流程 ${flow.name} 成功！`);
+                    //alert(`导入流程 ${flow.name} 成功！`);
+                    Message.append(`<hiy>导入流程 ${flow.name} 成功！</hiy>`);
                 } else {
                     alert(result);
                 }
@@ -4498,7 +4500,8 @@ look men;open men
                 const trigger = JSON.parse(data);
                 const result = unsafeWindow.TriggerCenter.create(trigger.name, trigger.event, trigger.conditions, trigger.source, trigger.active);
                 if (result == true) {
-                    alert(`导入触发器 ${trigger.name} 成功！`);
+                    //alert(`导入触发器 ${trigger.name} 成功！`);
+                    Message.append(`<hiy>导入触发器 ${trigger.name} 成功！</hiy>`);
                 } else {
                     alert(result);
                 }
@@ -5048,7 +5051,7 @@ look men;open men
             <div id="raidToolbar">
                 <div class="raidToolbar" style="width:calc(100% - 40px);margin:5px 0 5px 0">
                     <span class="raid-item hideRaidToolbar" style="width:10px">\<</span>
-                    <span class="raid-item forum">🍥 <hiy>链接</hiy></span>
+                    <span class="raid-item forum">🐟 <hiy>咸鱼</hiy></span>
                     <span class="raid-item shortcut">🍯 <hiz>捷径</hiz></span>
                     <span class="raid-item trigger">🍟 <hio>触发</hio></span>
                     <span class="raid-item customFlow" id="workflows-button">🥗 <hig>流程</hig></span>
@@ -5088,29 +5091,54 @@ look men;open men
         },
         forum: function () {
             var content = `
-            <span class = "zdy-item about-something" style="width:120px"> 综合讨论 </span>
-            <span class = "zdy-item about-flow" style="width:120px"> <wht>流程讨论</wht> </span>
-            <span class = "zdy-item about-trigger" style="width:120px"> <wht>触发器讨论</wht> </span>
-            <span class = "zdy-item about-bug" style="width:120px"> <wht>Bug 提交</wht> </span>
+            <span class = "zdy-item xianyu-xyjq" style="width:120px"> 🤌 襄阳捐钱 </span>
+            <span class = "zdy-item xianyu-ksyb" style="width:120px"> 🦆 快速运镖 </span>
+            <span class="zdy-item xianyu-sdyt" style="width:120px"> 🐉 扫荡妖塔</span>
+            <span class="zdy-item xianyu-mghyj" style="width:120px"> 🍟 门贡换元晶</span>
+            <br><br>
+            <span class="zdy-item xianyu-xybm" style="width:120px"> 🐘 襄阳报名</span>
+            <span class="zdy-item xianyu-ltbm" style="width:120px"> 🏆 擂台报名</span>
+            <span class="zdy-item xianyu-cbt" style="width:120px"> 💎 藏宝图</span>
             <br><br>
             <hr style="background-color: gray; height: 1px; width: calc(100% - 4em); border: none;"><br>
+            <span class = "zdy-item about-script" style="width:120px"> 🦶 <wht>脚本教程</wht> </span>
+            <!--<span class = "zdy-item about-flow" style="width:120px"> <wht>流程讨论</wht> </span>-->
+            <!--<span class = "zdy-item about-trigger" style="width:120px"> <wht>触发器讨论</wht> </span>-->
+            <span class = "zdy-item about-bug" style="width:120px"> 🐞 <wht>Bug 提交</wht> </span>
+            <!--<br><br>-->
+            <!--<hr style="background-color: gray; height: 1px; width: calc(100% - 4em); border: none;"><br>-->
             <span class = "zdy-item suqingHome" style="width:120px"> 🍿 <hig>苏</hig><hio>轻</hio><hiy>工</hiy><wht>具</wht><hic>包</hic> </span>`;
-            UI._appendHtml("🍱 <hiy>江湖客栈</hiy>", content);
-
-            $(".about-something").on('click', function () {
-                window.open("https://www.yuque.com/wsmud/doc", '_blank').location;
+            // UI._appendHtml("🍱 <hiy>江湖客栈</hiy>", content);
+            UI._appendHtml("🐟 <hiy>一键咸鱼</hiy>", content);
+            $(".xianyu-xyjq").on("click", function () {
+                DungeonsShortcuts.xianyu_xyjq();
             });
-            $(".about-flow").on('click', function () {
-                window.open("https://www.yuque.com/wsmud/doc", '_blank').location;
+            $(".xianyu-ksyb").on("click", function () {
+                DungeonsShortcuts.xianyu_ksyb();
             });
-            $(".about-trigger").on('click', function () {
-                window.open("https://www.yuque.com/wsmud/mlonlz/lngs63", '_blank').location;
+            $(".xianyu-sdyt").on("click", function () {
+                DungeonsShortcuts.xianyu_sdyt();
+            });
+            $(".xianyu-mghyj").on("click", function () {
+                DungeonsShortcuts.xianyu_mghyj();
+            });
+            $(".xianyu-cbt").on("click", function () {
+                DungeonsShortcuts.cangbaotu();
+            });
+            $(".xianyu-xybm").on("click", function () {
+                DungeonsShortcuts.xianyu_xybm();
+            });
+            $(".xianyu-ltbm").on("click", function () {
+                DungeonsShortcuts.xianyu_ltbm();
+            });
+            $(".about-script").on('click', function () {
+                window.open("https://www.yuque.com/wsmud/doc", '_blank').location;
             });
             $(".about-bug").on('click', function () {
                 window.open("https://www.yuque.com/wsmud/doc/gr9gyy", '_blank').location;
             });
             $(".suqingHome").on('click', function () {
-                window.open("https://emeisuqing.github.io/wsmud/", '_blank').location;
+                window.open("https://wsmud-tool.netlify.app/", '_blank').location;
             });
         },
         shortcut: function () {
@@ -6025,8 +6053,206 @@ look men;open men
     })();
 
     const DungeonsShortcuts = {
+        xianyu_xyjq: function() {
+            let source = `
+[if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
+  @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
+  [exit]
+@print 🐟 一键咸鱼 => <hic>襄阳捐钱</hic>
+@cmdDelay 500
+stopstate;jh fam 8 start
+@await 500
+[if] (:room)==襄阳城-广场
+  juanxian {r郭靖}?;juanxian2 {r郭靖}?
+@print 已完成：襄阳捐钱
+$zdwk
+            `
+            const p = new Performer("襄阳捐钱", source);
+            p.log(false);
+            p.start();
+        },
+        xianyu_xybm: function () {
+            let source = `
+[if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
+  @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
+  [exit]
+@print 🐟 一键咸鱼 => <hic>襄阳报名</hic>
+@cmdDelay 500
+stopstate;jh fam 8 start
+@await 500
+[if] (:room)==襄阳城-广场
+  baoming {r郭靖}?
+  @tip 你可以去($xyBM)附近查看敌情|这位($xyBM)已经报名了。|才可以再次($xyOver)襄阳守城|最近没($xyNone)战事
+  [if] (xyBM) != null
+    @print 襄阳已报名，请选择守门位置：
+    @js Message.append('<div class="item-commands"><span cmd="$wait 350;jh fam 8 start;go north;go north;go north;go north;go north;">⬆️ 守北门</span><span cmd="$wait 350;jh fam 8 start;go south;go south;go south;go south;go south;">⬇️ 守南门</span><span cmd="$wait 350;jh fam 8 start;go east;go east;go east;go east;go east;">➡️ 守东门</span><span cmd="$wait 350;jh fam 8 start;go west;go west;go west;go west;go west;">⬅️ 守西门</span></div>')
+  [else if] (xyNone) != null
+    @print 襄阳尚未开启。
+    $zdwk
+  [else if] (xyOver) != null
+    @print 襄阳已经完成。
+    $zdwk
+  [else]
+    $zdwk
+            `
+            const p = new Performer("襄阳报名", source);
+            p.log(false);
+            p.start();
+        },
+        xianyu_ksyb: function () {
+            let source = `
+[if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
+  @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
+  [exit]
+@print 🐟 一键咸鱼 => <hic>快速运镖</hic>
+@cmdDelay 500
+stopstate
+$to 扬州城-镖局正厅
+ksyb {r林震南}
+@tip 最近暂时($done)委托，你先休息下吧|你需要支付($charges)黄金的雇佣费用|只有总镖头才($can)雇佣镖师|如果你不能把镖银($escort)送到|你不是($escort)运镖吗
+[if] (charges)!=null
+  <-recordGains
+  task yunbiao {r林震南} qkstart
+  @await 11000
+  @tidyBag
+  recordGains->nopopup
+[else if] (can)!=null
+  tm 运镖环数不到200环，无法快速运镖。
+[else if] (escort)!=null
+  tm 当前有未完成的运镖任务，无法快速运镖。
+$zdwk 
+            `
+            const p = new Performer("快速运镖", source);
+            p.log(false);
+            p.start();
+        },
+        xianyu_sdyt: function () {
+            let source = `
+[if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
+  @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
+  [exit]
+@print 🐟 一键咸鱼 => <hic>扫荡妖塔</hic>
+@print <hic>如果想自己静默式调用扫荡妖塔功能，请先设定变量 <hiy>SDYTnum</hiy> 的值。</hic>
+[if] (SDYTnum) == 0 || (SDYTnum) == null || (SDYTnum) == undefined
+  @js ($SDYTnum) = prompt("请输入次数，注意：单次消耗精力达到70时将自动停止。","5")
+($sdyt_num) = (SDYTnum)
+($SDYTnum) = null
+[if] (sdyt_num) == 0 || (sdyt_num) == null || (sdyt_num) == undefined
+  @print <ord>扫荡次数为0，取消扫荡。</ord>
+  [exit]
+@print <hiy>计划扫荡(sdyt_num)次妖塔。</hiy>
+stopstate
+[if] (:room) != 古大陆-墓园
+  $goyt
+  @await 1500
+[if] (:room) != 古大陆-墓园
+  @print <ord>无法前往古大陆，请重试或确定当前角色是否已解锁古大陆。</ord>
+  $zdwk
+  [exit]
+[if] {b扫荡符#}? < (sdyt_num) || {b扫荡符}? == null
+  shop 0 (sdyt_num)
+($num) = 0
+@cmdDelay 500
+[while] (num) < (sdyt_num)
+  ss muyuan
+  @tip 你即将消耗一个扫荡符，($jl_yt)精力快速完成一次弑妖塔|你尚未($ytJS)弑妖塔
+  [if] (ytJS) != null
+    @print <hiy>妖塔未解锁，无法扫荡。</hiy>
+    [break]
+  [if] (jl_yt) >= 70
+    @print <ord>单次扫荡精力达到或超过70，自动停止。</ord>
+    [break]
+  [else]
+    saodang muyuan
+    @tip 你消耗一个扫荡符|你的($lack)不够
+    [if] (lack) != null
+      @print <ord>(lack)不足，自动停止扫荡妖塔。</ord>
+      [break]
+  ($num) = (num) + 1
+@await 1000
+$zdwk
+            `
+            const p = new Performer("扫荡妖塔", source);
+            p.log(false);
+            p.start();
+        },
+        xianyu_mghyj: function () {
+            let source = `
+[if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
+  @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
+  [exit]
+@print 🐟 一键咸鱼 => <hic>门贡换元晶</hic>
+@cmdDelay 500
+stopstate
+($hqName) = 门派后勤管理员
+[if] (:family) == 武当派
+  ($hqMap) = 武当派-石阶
+[else if] (:family) == 少林派
+  ($hqMap) = 少林派-山门殿
+[else if] (:family) == 华山派
+  ($hqMap) = 华山派-练武场
+[else if] (:family) == 峨眉派
+  ($hqMap) = 峨眉派-走廊
+[else if] (:family) == 逍遥派
+  ($hqMap) = 逍遥派-林间小道
+[else if] (:family) == 丐帮
+  ($hqMap) = 丐帮-暗道
+[else if] (:family) == 杀手楼
+  ($hqMap) = 杀手楼-休息室
+[else]
+  ($hqMap) = 扬州城-扬州武馆
+  ($hqName) = 武馆后勤
+[while] (:room) != (hqMap)
+  $to (hqMap)
+  [if] (:family) == 丐帮
+    @await 300
+    go east
+  @await 500
+[if] {r(hqName)}? == null
+  @print 后勤失踪，请稍后再试。
+[else]
+  ask1 {r(hqName)}?
+  @dialog
+  buy 1 {d元晶o}? from {r(hqName)}?
+  @tip 你从门派后勤管理员购买了|这里没有($mgYJ)多的|你没有那么多的($mgGJ)功绩
+  [if] (mgGJ) != null
+    @print 门贡不足，无法购买。
+  [else if] (mgYJ) != null
+    @print 元晶已售空，无法购买。
+  [else]
+    @print 已购买一个<hio>元晶</hio>。
+  $zdwk
+            `
+            const p = new Performer("门贡换元晶", source);
+            p.log(false);
+            p.start();
+        },
+        xianyu_ltbm: function () {
+            let source = `
+[if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
+  @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
+  [exit]
+@print 🐟 一键咸鱼 => <hic>擂台报名</hic>
+@cmdDelay 500
+stopstate;$to 扬州城-擂台
+@await 500
+select {r擂台比武报名}?
+askbiwu {r擂台比武报名}?
+@tip 你使用当前装备和技能($ltBM)参加比武|你已经报名参加比武，($ltGX)更新你的技能和装备|你已报名或更新状态，请勿连续报名。
+[if] (ltGX) != null
+  biwu record ok
+$zdwk
+            `
+            const p = new Performer("擂台报名", source);
+            p.log(false);
+            p.start();
+        },
         cangbaotu: function () {
             let source = `
+[if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
+    @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
+    [exit]
+@print 🐟 一键咸鱼 => <hic>藏宝图</hic>
 [if] {b藏宝图}? == null
     tm 背包中无藏宝图，取消本次寻宝。
     [exit]
@@ -6187,7 +6413,7 @@ stopstate
 @tidyBag
 @wait 2000
 $zdwk
-recordGains->
+recordGains->nopopup
 @recoverSSAuto
 @toolbar pack
 ($money2) = (:money)
