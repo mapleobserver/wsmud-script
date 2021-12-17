@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021121303
+($localVer) = 2021121701
 ($changeLog) = 🆕 新增整理秘籍、自动运镖、古代宗门流程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
@@ -47,7 +47,7 @@
 
 #select ($flowZDRC)=🚀 <hiz>当前流程版本为(localVer)</hiz><br/>&nbsp*&nbsp🍥 <hiz>以下有♻️标志的流程有自更新功能</hiz><br/>&nbsp*&nbsp🍰 <hiz>第一次使用前，如已有同名流程，请先手动删除</hiz><br/>&nbsp*&nbsp[♻️<ord>自动日常</ord>]师门-追捕-打塔-副本-请安,导入|跳过,跳过
 #select ($flowZCTY)=⚠️ <ord>现已可推演指定词条。</ord><br/>&nbsp*&nbsp[♻️<hiz>自创推演</hiz>]武神自创推演,导入|跳过,跳过
-#select ($flowYJXY)=🐟 [♻️<hiz>一键咸鱼</hiz>]将一些繁琐的每周必需的操作一键自动化,导入|跳过,跳过
+//#select ($flowYJXY)=🐟 [♻️<hiz>一键咸鱼</hiz>]将一些繁琐的每周必需的操作一键自动化,导入|跳过,跳过
 //#select ($flowZDZB)=[♻️<hiz>自动追捕</hiz>]自动寻路追捕逃犯<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowZDWD)=[♻️<hiz>自动武道</hiz>]自动打武道塔<hiz>(自动日常已包含无需重复导入)</hiz>,导入|跳过,跳过
 //#select ($flowKSWD)=[自动武道]快速打穿99层塔版本(建议至少有九阴血刀),导入|跳过,跳过
