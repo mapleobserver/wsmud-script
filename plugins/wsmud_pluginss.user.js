@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.198
+// @version      0.0.32.202
 // @date         01/07/2018
-// @modified     22/11/2021
+// @modified     16/12/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -3109,6 +3109,7 @@
                 let m = $("#mt").val();
                 let s = $("#st").val();
                 let send = $("#zml_info").val();
+                questname = questname.replaceAll(" ","_");
                 let item = {
                     "name": questname,
                     "type": type,
@@ -4697,6 +4698,7 @@
                                 $(".sm_button").text("停止(Q)");
                                 WG.sm_state = 0;
                                 setTimeout(WG.sm, 200);
+                                return
                             } else {
                                 WG.sm_state = -1;
                             }
@@ -4714,7 +4716,7 @@
             while (WG.sm_state >= 0) {
                 await WG.sleep(2000);
             }
-            if (fbnums <= 0) {
+            if (fbnums <= 0 ) {
                 WG.Send("taskover signin");
                 messageAppend("<hiy>任务完成</hiy>");
                 WG.remove_hook(WG.daily_hook);
@@ -5716,6 +5718,40 @@
                     ws_on_message.apply(this, [p]);
                     return;
                 }
+            }
+            if (data.type == 'cmds') {
+                if(unsafeWindow && unsafeWindow.ToRaid){
+                    if (JSON.stringify(data.items).indexOf('进入副本') >= 0) {
+                        let cr_path = data.items[0].cmd
+                        let sd_path = ''
+                        if(cr_path.indexOf("1 0")>=0){
+                            sd_path = cr_path.replaceAll('1 0','1')
+                        }else{
+                            sd_path = cr_path + " 0"
+                        }
+                        let cp = {}
+                        cp.name = '扫荡指定次数';
+                        cp.cmd = `@js ($sdnum) =prompt("请输入次数,注意:若副本掉落物品过多,请不要输入超过50次,否则可能号没了","10")
+                                    [if] (sdnum)!=null
+                                      ${sd_path} (sdnum)`;
+                        data.items.push(cp);
+                        let toudu = {}
+                        toudu.name = '偷渡指定次数';
+                        toudu.cmd = `@js ($sdnum) =prompt("请输入次数","10")
+                                    [if] (sdnum)!=null
+                                      [while] (sdnum) !=0
+                                        ($sdnum) = (sdnum)-1
+                                        ${cr_path}
+                                        cr over`;
+                        data.items.push(toudu);
+                        let p = deepCopy(msg);
+                        p.data = JSON.stringify(data);
+                        WG.run_hook(data.type, data);
+                        ws_on_message.apply(this, [p]);
+                        return;
+                    }
+                }
+
             }
             WG.run_hook(data.type, data);
 
@@ -7707,6 +7743,7 @@
                         }
                     }
                 }
+               
             });
             WG.add_hook('dialog', function (data) {
                 if (data.dialog == 'jh') {
