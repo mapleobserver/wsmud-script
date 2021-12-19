@@ -5,7 +5,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021121501
+($localVer) = 2021122001
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -156,7 +156,7 @@ team out
 // 找不到Boss
 [if] (num) >= (len) && {r(bossName)}? == null && (logResult) == null
   ($result) = miss
-  ($logResult) = 【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)。
+  ($logResult) = 【Boss寻踪】(:name)：在(bossPlace)找不到(bossName)，即将自动退出副本……
 // 原地等待通知玩家
 [if] (BossTanlong) == 原地等待通知玩家 && (result) == get
   ($result) = wait
@@ -259,14 +259,17 @@ team out
   @print <hiy>(logResult)</hiy>
 
 // 等待十分钟
-($waittime) = 0
-($bossID) = {r(bossName)}?
-($BossInfo) = wait
-@print (:hour):(:minute):(:second) 开始等待玩家处理，若10分钟内未处理，将自动退出副本……
-@js Message.append(`<div class="item-commands"><span class="redboss boss-quit">关闭智能等待</span></div>`)
-@js $(".boss-quit").off("click")
-@js $(".boss-quit").on("click", function(){ToRaid.perform(`//~silent\n@print 即将关闭智能等待……\n($BossInfo) = notime`);})
-[while] (:room 副本区域) == true && "(bossID)" != "null"
+[if] (result) == miss
+  @print (:hour):(:minute):(:second) 副本中找不到(bossName)，即将自动退出副本……
+[else]
+  ($waittime) = 0
+  ($bossID) = {r(bossName)}?
+  ($BossInfo) = wait
+  @print (:hour):(:minute):(:second) 开始等待玩家处理，若10分钟内未处理，将自动退出副本……
+  @js Message.append(`<div class="item-commands"><span class="redboss boss-quit">关闭智能等待</span></div>`)
+  @js $(".boss-quit").off("click")
+  @js $(".boss-quit").on("click", function(){ToRaid.perform(`//~silent\n@print 即将关闭智能等待……\n($BossInfo) = notime`);})
+[while] (:room 副本区域) == true && "(bossID)" != "null" && (result) != miss
   [if] (BossInfo) != wait
     @print <hiy>已关闭智能等待，请玩家手动操作。</hiy>
     [exit]
@@ -314,6 +317,7 @@ team out
   @print <hiy>(logWait)</hiy>
 [if] (:room 副本区域) == true
   cr;cr over
+stopstate
 @renew
 @tidyBag
 @await 2000
