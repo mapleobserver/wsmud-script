@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.202
+// @version      0.0.32.204
 // @date         01/07/2018
-// @modified     16/12/2021
+// @modified     26/12/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -70,6 +70,21 @@
         return fmt;
     }
 
+    //滚动 -- fork from Suqing funny
+    function AutoScroll(name) {
+        if (name) {
+            let scrollTop = $(name)[0].scrollTop;
+            let scrollHeight = $(name)[0].scrollHeight;
+            let height = Math.ceil($(name).height());
+            if (scrollTop < scrollHeight - height) {
+                let add = (scrollHeight - height < 120) ? 1 : Math.ceil((scrollHeight - height) / 120);
+                $(name)[0].scrollTop = scrollTop + add;
+                setTimeout(function () {
+                    AutoScroll(name);
+                }, 1000 / 120);
+            }
+        }
+    }
 
     /**
      * 为数字加上单位：万或亿
@@ -5751,7 +5766,190 @@
                         return;
                     }
                 }
-
+            }
+            //任务进度 -- fork from Suqing funny
+            if (data.type == 'dialog' && data.dialog == 'tasks' && data.items) {
+                let jl, fb, qa, wd, wd1, wd2, wd3, xy, mpb, boss, wdtz, sm1, sm2, ym1, ym2, yb1, yb2;
+                data.items.forEach(task => {
+                    if (task.state === 2) WG.SendCmd(`taskover ${task.id}`);//自动完成
+                    if (task.id === 'signin') {
+                        //精力消耗
+                        const a = task.desc.match(/精力消耗：<...>(\d+)\/200<....>/);
+                        if (a) {
+                            jl = parseInt(a[1]) < 200 ? `<hig>${a[1]}</hig>` : a[1];
+                        }
+                        //武道塔进度
+                        const b = task.desc.match(/武道塔(.+)，进度(\d+)\/(\d+)<....>/);
+                        if (b) {
+                            wd1 = b[2];
+                            wd2 = b[3];
+                            if (wd1 < wd2) wd1 = `<hig>${wd1}</hig>`;
+                            /可以重置/.test(b[1]) ? wd3 = "<hig>可以重置</hig>" : wd3 = "已经重置";
+                            wd = wd1+"/"+wd2+" "+wd3
+                        } else {wd = "只打塔主"}
+                        //首席请安
+                        const c = task.desc.match(/<.+?>(.+)首席请安<.+?>/);
+                        if (c) {
+                            /已经/.test(c[1]) ? qa = "已经请安" : qa = "<hig>尚未请安</hig>";
+                        } else {qa = "无需请安"}
+                        //今日副本次数
+                        const d = task.desc.match(/今日副本完成次数：(\d+)。/);
+                        if (d) {
+                            fb = d[1];
+                        }
+                        //襄阳
+                        const e = task.desc.match(/尚未协助襄阳守城/);
+                        (e) ? xy = `<hig>0</hig>` : xy = 1;
+                        //门派BOSS
+                        const f = task.desc.match(/尚未挑战门派BOSS/);
+                        (f) ? mpb = `<hig>0</hig>` : mpb = 1;
+                        //武神BOSS
+                        const g = task.desc.match(/挑战武神BOSS(\d+)次/);
+                        if (g) {
+                            boss = 5 - parseInt(g[1]);
+                            boss = `<hig>${boss}</hig>`;
+                        }else{
+                            if (G.level && /武神|剑神|刀皇|兵主|战神/.test(G.level)) boss = 5;
+                        }
+                        //武道塔主
+                        const h = task.desc.match(/尚未挑战武道塔塔主/);
+                        (g) ? wdtz = `<hig>0</hig>/1` : wdtz = `已打或未解锁`;
+                    } else if (task.id === 'sm') {
+                        //师门任务
+                        let a = task.desc.match(/目前完成(.*)\/20个，共连续完成(.*)个。/);
+                        (parseInt(a[1]) < 20) ? sm1 = `<hig>${a[1]}</hig>` : sm1 = a[1];
+                        sm2 = a[2];
+                    } else if (task.id === 'yamen') {
+                        //追捕
+                        let a = task.desc.match(/目前完成(.*)\/20个，共连续完成(.*)个。/);
+                        (parseInt(a[1]) < 20) ? ym1 = `<hig>${a[1]}</hig>` : ym1 = a[1];
+                        ym2 = a[2];
+                    } else if (task.id === 'yunbiao') {
+                        //运镖
+                        let a = task.desc.match(/本周完成(.*)\/20个，共连续完成(.*)个。/);
+                        (parseInt(a[1]) < 20) ? yb1 = `<hig>${a[1]}</hig>` : yb1 = a[1];
+                        yb2 = a[2];
+                    }
+                });
+                //合并生成进度数据
+                let taskprog = `门派请安 => ${qa}\n武道之塔 => ${wd}\n`;
+                taskprog += `精力消耗 => ${jl}/200 副本次数 => ${fb}次\n师门任务 => ${sm1}/20 ${sm2}连\n`;
+                taskprog += `衙门追捕 => ${ym1}/20 ${ym2}连\n每周运镖 => ${yb1}/20 ${yb2}连\n`;
+                taskprog += `襄阳守城 => ${xy}/1 门派BOSS => ${mpb}/1\n`;
+                taskprog += `武道塔主 => ${wdtz}\n`;
+                if (boss) taskprog += `武神BOSS => ${boss}/5\n`;
+                $(".remove_taskprog").remove();
+                $(".content-message pre").append(`<span class="remove_taskprog">${taskprog}</span>`);
+                AutoScroll(".content-message pre");
+            }
+            //按指定顺序排序背包 -- fork from Suqing funny
+            let ITEMS = [
+                "师门补给包", "背包扩充石", "小箱子", "随从礼包",
+                "神魂碎片", "武道</hio>", "武道残页", "元晶", "帝魄碎片", "ord", "hir",
+                "玄晶", "养精丹</hig>", "养精丹", "培元丹", "玫瑰花",
+                "扫荡符", "天师符", "叛师符", "洗髓丹", "<hig>喜宴", "<hic>喜宴", "<hiy>喜宴",
+                "师门令牌</hig>", "师门令牌</hic>", "师门令牌</hiy>", "师门令牌</HIZ>", "师门令牌</hio>",//师门令牌排序
+                "碎裂的红宝石", "碎裂的绿宝石", "碎裂的蓝宝石", "碎裂的黄宝石",//宝石排序
+                "红宝石</hic>", "绿宝石</hic>", "蓝宝石</hic>", "黄宝石</hic>",
+                "精致的红宝石", "精致的绿宝石", "精致的蓝宝石", "精致的黄宝石",
+                "完美的红宝石", "完美的绿宝石", "完美的蓝宝石", "完美的黄宝石",
+                "聚气丹</hig>", "聚气丹</hic>", "聚气丹</hiy>", "聚气丹</HIZ>", "聚气丹</hio>",//聚气丹排序
+                "突破丹</hig>", "突破丹</hic>", "突破丹</hiy>", "突破丹</hiz>", "突破丹</hio>",//突破丹排序
+                "残页</hio>", "残页</HIZ>", "残页</hiy>", "残页</hic>", "残页</hig>",//残页排序
+                "鲤鱼", "草鱼", "鲢鱼", "鲮鱼", "鳊鱼", "鲂鱼", "黄金鳉", "黄颡鱼", "太湖银鱼", "虹鳟", "孔雀鱼", "反天刀",//鱼排序
+                "银龙鱼", "黑龙鱼", "罗汉鱼", "巨骨舌鱼", "七星刀鱼", "帝王老虎魟",
+                "当归", "芦荟", "山楂叶", "柴胡", "金银花", "石楠叶", "茯苓", "沉香", "熟地黄", "九香虫", "络石藤", "冬虫夏草",//药材排序
+                "人参", "何首乌", "凌霄花", "灵芝", "天仙藤", "盘龙参",
+                "秘籍</wht>", "秘籍",
+                "四十二章经一", "四十二章经二", "四十二章经三", "四十二章经四", "四十二章经五", "四十二章经六", "四十二章经七", "四十二章经八",
+            ];
+            if (data.type == 'dialog' && data.dialog == 'pack') {
+                //生成快速使用按钮 -- fork from Suqing funny
+                function autoUse(item) {
+                    if (/金创药|养精丹|朱果|潜灵果|背包扩充石|小箱子|师门补给包|随从礼包|技能重置包/.test(item.name)) {
+                        let cmd = ["stopstate"];
+                        let count = item.count;
+                        let zl = "use";
+                        if (/小箱子|师门补给包|随从礼包|技能重置包/.test(item.name)) zl = "open";
+                        for (let i = 0; i < count; i++) {
+                            cmd.push(`$wait 250;${zl} ${item.id}`);
+                        }
+                        $(".content-message pre").append(
+                            $(`<div class="item-commands"><span class="autouse">使用 ${item.name} ${count}次</span></div>`).click(() => WG.SendCmd(cmd)),
+                        );
+                        AutoScroll(".content-message pre");
+                    }
+                }
+                //获得物品后检测生成快速使用按钮 -- fork from Suqing funny
+                if (data.name) {
+                    autoUse(data);
+                }
+                //按指定顺序排序 -- fork from Suqing funny
+                if (data.items) {
+                    let pack_items = [];
+                    ITEMS.forEach(name => {
+                        for (let i =0; i < data.items.length; i++) {
+                            let item = data.items[i];
+                            if (item !==0 && item.name.includes(name)) {
+                                pack_items.push(data.items[i]);
+                                data.items[i] = 0;
+                            }
+                        }
+                    });
+                    data.items.forEach(item => {
+                        if (item !== 0) pack_items.push(item);
+                    });
+                    pack_items.forEach(item => autoUse(item));
+                    data.type = "dialog";
+                    //data.dialog = "pack";
+                    data.items = pack_items;
+                    let p = deepCopy(msg);
+                    p.data = JSON.stringify(data);
+                    WG.run_hook(data.type, data);
+                    ws_on_message.apply(this, [p]);
+                    return;
+                }
+            }
+            if (data.type == 'room') {
+                //精简房间描述、生成功能按钮 -- fork from Suqing funny
+                let room_desc = data.desc;
+                if (room_desc.length > 20) {
+                    let desc0 = room_desc.replace(/<([^<]+)>/g, "");
+                    let desc1 = desc0.substr(0, 20);
+                    let desc2 = desc0.substr(20);
+                    data.desc = `${desc1}<span id="show"> <hic>»»»</hic></span><span id="more" style="display:none">${desc2}</span><span id="hide" style="display:none"> <hiy>«««</hiy></span>`;
+                }
+                if (room_desc.includes("cmd")) {
+                    room_desc = room_desc.replace("<hig>椅子</hig>", "椅子");//新手教程的椅子
+                    room_desc = room_desc.replace("<CMD cmd='look men'>门(men)<CMD>", "<cmd cmd='look men'>门</cmd>");//兵营副本的门
+                    room_desc = room_desc.replace(/span/g, "cmd"); //古墓里的画和古琴是<span>标签
+                    room_desc = room_desc.replace(/"/g, "'"); // "" => ''
+                    room_desc = room_desc.replace(/\((.*?)\)/g, "");//去除括号和里面的英文单词
+                    //console.log(room_desc);
+                    let cmds = room_desc.match(/<cmd cmd='([^']+)'>([^<]+)<\/cmd>/g);
+                    //console.log(cmds);
+                    cmds.forEach(cmd => {
+                        let x = cmd.match(/<cmd cmd='(.*)'>(.*)<\/cmd>/);
+                        data.commands.unshift({ cmd: x[1], name: `<hic>${x[2]}</hic>` });
+                    });
+                    // room_desc = room_desc.replace(/<([^<]+)>/g, "");
+                    cmds.forEach(desc => data.desc = `<hic>${desc}</hic>　${data.desc}`);
+                }
+                let p = deepCopy(msg);
+                p.data = JSON.stringify(data);
+                WG.run_hook(data.type, data);
+                ws_on_message.apply(this, [p]);
+                $("#show").click(() => {
+                    $("#more").show();
+                    $("#show").hide();
+                    $("#hide").show();
+                  });
+                $("#hide").click(() => {
+                    $("#more").hide();
+                    $("#show").show();
+                    $("#hide").hide();
+                });
+                return;
             }
             WG.run_hook(data.type, data);
 
@@ -6560,6 +6758,8 @@
                     <option value="1"> Bark iOS </option>
                     <option value="2"> PushPlus.plus(支持html标签) </option>
                     <option value="3"> 飞书机器人 </option>
+                    <option value="4"> Qmsg私聊 </option>
+                    <option value="5"> Qmsg群聊 </option>
                 </select>
                 </span></div> `
                 + UI.html_lninput("pushToken", "推送方式对应的Token或Key(只要Key不要填整个网址)：")
@@ -7209,7 +7409,6 @@
                         WG.clean_dps();
                     }
 
-
                 } else if (data.type == "items") {
                     G.items = new Map();
                     for (var i = 0; i < data.items.length; i++) {
@@ -7237,7 +7436,8 @@
                                 hp: item.hp,
                                 mp: item.mp,
                                 p: item.p,
-                                damage: 0
+                                damage: 0,
+                                status: item.status
                             });
                         }
 
@@ -7356,6 +7556,24 @@
                             }
                         }
                     }
+                    let item = G.items.get(data.id)
+                    if (item == null) {
+                         return;
+                    }
+                    if (data.action == 'add') {
+                        if (item.status == null) {
+                             item.status = [];
+                        }
+                        item.status.push({ sid: data.sid, name: data.name, duration: data.duration, overtime: 0 });
+                    } else if (data.action == 'remove') {
+                        for (let i = 0; i < item.status.length; i++) {
+                            let s = item.status[i];
+                            if (s.sid == data.sid) {
+                                item.status.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
 
 
                 }
@@ -7422,7 +7640,7 @@
                     for (let i = 0; i < packData.length; i++) {
                         let bag_item = packData[i];
                         if (bag_item == null) { continue; }
-                        if (bag_item.id == data.id) {     // 道具存于背包时, 先判断数量  若数量为0 删除背包数据,若不为0 修改背包数据 
+                        if (bag_item.id == data.id) {     // 道具存于背包时, 先判断数量  若数量为0 删除背包数据,若不为0 修改背包数据
                             scan_store = false;
                             let over_num = bag_item.count - data.store;
                             if (over_num == 0) {
@@ -7496,7 +7714,6 @@
 
                 } else if (data.dialog == 'pack' && data.jldesc != undefined) {
                     let jl = data.jldesc.match(/<(.*)>(.*)<\/.*><br\/>精炼<(hig|hic|hiy|hiz|hio|ord)>＋(.*)\s</i);
-                    //console.log(jl)
                     if (jl) {
                         let l = jl[1];
                         let n = `<${l}>` + jl[2] + `</${l}>`;
@@ -7505,14 +7722,12 @@
                         //let cmd = `jinglian ${data.id} ok[${c}]`
                         let cmd = [];
                         for (let i = 0; i < c; i++) {
-                            cmd.push(`jinglian ${data.id} ok;`);
+                            cmd.push(`jinglian ${data.id} ok`);
                         }
-                        var htmlj = `<div class="item-commands"><span class="jinglian">精炼6星 => ${n}</span></div>`;
-                        messageAppend(htmlj);
-                        $(".jinglian").off("click");
-                        $(".jinglian").on('click', () => {
-                            WG.SendCmd(cmd);
-                        });
+                        $(".content-message pre").append(
+                            $(`<div class="item-commands"><span class="jinglian">精炼6星 => ${n}</span></div>`).click(() => WG.SendCmd(cmd)),
+                        );
+                        AutoScroll(".content-message pre");
                     }
                 }
                 if (data.dialog == 'score') {
@@ -7774,8 +7989,13 @@
                         let x = message.msg.match(/获得了(.*)点经验，(.*)点潜能/);
                         G.jy += parseInt(x[1]);
                         G.qn += parseInt(x[2]);
-                        let mss = `共计获得了${G.jy}点经验和${G.qn}点潜能。`;
-                        messageAppend(mss, 0, 1);
+                        let mss = `<span class="remove_jy">共计获得了${G.jy}点经验和${G.qn}点潜能。\n</span>`;
+                        function refresh_jy(mss){
+                            $(".remove_jy").remove();
+                            $(".content-message pre").append(mss);
+                            AutoScroll(".content-message");
+                        }
+                        setTimeout(() => refresh_jy(mss),200);
                     }
                 }
             });
@@ -7990,6 +8210,14 @@
                     var pushJosn = { "msg_type": "text", "content": { "text": text } };
                     $.ajaxSetup({ contentType: "application/json; charset=utf-8" });
                     $.post(`https://open.feishu.cn/open-apis/bot/v2/hook/${pushToken}`, JSON.stringify(pushJosn));
+                    break;
+                //Qmsg私聊
+                case "4":
+                    $.post(`https://qmsg.zendee.cn/send/${pushToken}?msg=${text}`);
+                    break;
+                //Qmsg群聊
+                case "5":
+                    $.post(`https://qmsg.zendee.cn/group/${pushToken}?msg=${text}`);
                     break;
             }
         }
