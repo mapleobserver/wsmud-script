@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        wsmud_funny
 // @namespace   suqing.fun
-// @version     0.3.36
+// @version     0.3.37
 // @author      SuQing, 白三三
 // @match       http://*.wsmud.com/*
 // @exclude     http://*.wsmud.com/news/*
@@ -200,7 +200,7 @@ unsafeWindow.say = say;
     return true;
   });//roles/login
   addListener(function (event, message) {
-    if (message.type === "room") {
+    if (message.type === "room" && !unsafeWindow.WG) {
       room.str = message.name.replace("(副本区域)", "");
       let x = room.str.match(/(.*)-(.*)/);
       room.name1 = x[1];
@@ -598,7 +598,7 @@ unsafeWindow.say = say;
     return true;
   });
   addListener(function (event, message) {//type=tasks
-    if (message.type === "tasks" && message.items) {
+    if (message.type === "tasks" && message.items && !unsafeWindow.WG) {
       let fb, qa, wd, wd1, wd2, wd3, xy, mpb, boss, wdtz, sm1, sm2, ym1, ym2, yb1, yb2;
       message.items.forEach(task => {
         if (task.state === 2) SendCommand(`taskover ${task.id}`);//自动完成
@@ -766,7 +766,7 @@ unsafeWindow.say = say;
           )
         );
         AutoScroll(".content-pickup");
-        autoUse(message);
+        if (!unsafeWindow.WG) autoUse(message);
       }
       if (message.items) {
         pack.items = [];
@@ -782,7 +782,7 @@ unsafeWindow.say = say;
         message.items.forEach(item => {
           if (item !== 0) pack.items.push(item);
         });
-        pack.items.forEach(item => autoUse(item));
+        if (!unsafeWindow.WG) pack.items.forEach(item => autoUse(item));
         message.items = pack.items;
         message.type = "dialog";
         let event0 = DeepCopy(event);
