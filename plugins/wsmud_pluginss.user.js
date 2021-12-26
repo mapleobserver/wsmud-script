@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.204
+// @version      0.0.32.205
 // @date         01/07/2018
 // @modified     26/12/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
@@ -5866,7 +5866,7 @@
             if (data.type == 'dialog' && data.dialog == 'pack') {
                 //生成快速使用按钮 -- fork from Suqing funny
                 function autoUse(item) {
-                    if (/金创药|养精丹|朱果|潜灵果|背包扩充石|小箱子|师门补给包|随从礼包|技能重置包/.test(item.name)) {
+                    if (/养精丹|朱果|潜灵果|背包扩充石|小箱子|师门补给包|随从礼包|技能重置包/.test(item.name)) {
                         let cmd = ["stopstate"];
                         let count = item.count;
                         let zl = "use";
