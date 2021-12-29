@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.209
+// @version      0.0.32.210
 // @date         01/07/2018
 // @modified     29/12/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
@@ -5816,7 +5816,7 @@
                         }
                         //武道塔主
                         const h = task.desc.match(/尚未挑战武道塔塔主/);
-                        (g) ? wdtz = `<hig>0</hig>/1` : wdtz = `已打或未解锁`;
+                        (h) ? wdtz = `<hig>0</hig>/1` : wdtz = `已打或未解锁`;
                     } else if (task.id === 'sm') {
                         //师门任务
                         let a = task.desc.match(/目前完成(.*)\/20个，共连续完成(.*)个。/);
