@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.205
+// @version      0.0.32.208
 // @date         01/07/2018
-// @modified     26/12/2021
+// @modified     28/12/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -70,21 +70,24 @@
         return fmt;
     }
 
-    //滚动 -- fork from Suqing funny
+    //滚动 -- fork from Suqing funny ---------------fixed
     function AutoScroll(name) {
         if (name) {
-            let scrollTop = $(name)[0].scrollTop;
-            let scrollHeight = $(name)[0].scrollHeight;
-            let height = Math.ceil($(name).height());
-            if (scrollTop < scrollHeight - height) {
-                let add = (scrollHeight - height < 120) ? 1 : Math.ceil((scrollHeight - height) / 120);
-                $(name)[0].scrollTop = scrollTop + add;
-                setTimeout(function () {
-                    AutoScroll(name);
-                }, 1000 / 120);
+            if($(name).length!=0){
+                let scrollTop = $(name)[0].scrollTop;
+                let scrollHeight = $(name)[0].scrollHeight;
+                let height = Math.ceil($(name).height());
+                if (scrollTop < scrollHeight - height) {
+                    let add = (scrollHeight - height < 120) ? 1 : Math.ceil((scrollHeight - height) / 120);
+                    $(name)[0].scrollTop = scrollTop + add;
+                    setTimeout(function () {
+                        AutoScroll(name);
+                    }, 1000 / 120);
+                }
             }
         }
     }
+
 
     /**
      * 为数字加上单位：万或亿
@@ -5910,13 +5913,13 @@
                     return;
                 }
             }
-            if (data.type == 'room') {
+            if (data.type == 'room' && !(/桃花岛|慈航静斋/).test(data.name)) {
                 //精简房间描述、生成功能按钮 -- fork from Suqing funny
                 let room_desc = data.desc;
-                if (room_desc.length > 20) {
+                if (room_desc.length > 30) {
                     let desc0 = room_desc.replace(/<([^<]+)>/g, "");
-                    let desc1 = desc0.substr(0, 20);
-                    let desc2 = desc0.substr(20);
+                    let desc1 = desc0.substr(0, 30);
+                    let desc2 = desc0.substr(30);
                     data.desc = `${desc1}<span id="show"> <hic>»»»</hic></span><span id="more" style="display:none">${desc2}</span><span id="hide" style="display:none"> <hiy>«««</hiy></span>`;
                 }
                 if (room_desc.includes("cmd")) {
@@ -7465,7 +7468,8 @@
                             hp: data.hp,
                             mp: data.mp,
                             p: data.p,
-                            damage: 0
+                            damage: 0,
+                            status: data.status
                         });
                     }
                 } else if (data.type == "itemremove") {
@@ -7556,7 +7560,7 @@
                             }
                         }
                     }
-                    let item = G.items.get(data.id)
+                    let item = G.items.get(data.id);
                     if (item == null) {
                          return;
                     }
