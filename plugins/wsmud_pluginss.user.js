@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.208
+// @version      0.0.32.209
 // @date         01/07/2018
-// @modified     28/12/2021
+// @modified     29/12/2021
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -5888,30 +5888,30 @@
                     autoUse(data);
                 }
                 //按指定顺序排序 -- fork from Suqing funny
-                if (data.items) {
-                    let pack_items = [];
-                    ITEMS.forEach(name => {
-                        for (let i =0; i < data.items.length; i++) {
-                            let item = data.items[i];
-                            if (item !==0 && item.name.includes(name)) {
-                                pack_items.push(data.items[i]);
-                                data.items[i] = 0;
-                            }
-                        }
-                    });
-                    data.items.forEach(item => {
-                        if (item !== 0) pack_items.push(item);
-                    });
-                    pack_items.forEach(item => autoUse(item));
-                    data.type = "dialog";
-                    //data.dialog = "pack";
-                    data.items = pack_items;
-                    let p = deepCopy(msg);
-                    p.data = JSON.stringify(data);
-                    WG.run_hook(data.type, data);
-                    ws_on_message.apply(this, [p]);
-                    return;
-                }
+                // if (data.items) {
+                //     let pack_items = [];
+                //     ITEMS.forEach(name => {
+                //         for (let i =0; i < data.items.length; i++) {
+                //             let item = data.items[i];
+                //             if (item !==0 && item.name.includes(name)) {
+                //                 pack_items.push(data.items[i]);
+                //                 data.items[i] = 0;
+                //             }
+                //         }
+                //     });
+                //     data.items.forEach(item => {
+                //         if (item !== 0) pack_items.push(item);
+                //     });
+                //     pack_items.forEach(item => autoUse(item));
+                //     data.type = "dialog";
+                //     //data.dialog = "pack";
+                //     data.items = pack_items;
+                //     let p = deepCopy(msg);
+                //     p.data = JSON.stringify(data);
+                //     WG.run_hook(data.type, data);
+                //     ws_on_message.apply(this, [p]);
+                //     return;
+                // }
             }
             if (data.type == 'room' && !(/桃花岛|慈航静斋/).test(data.name)) {
                 //精简房间描述、生成功能按钮 -- fork from Suqing funny
