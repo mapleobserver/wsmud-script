@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.52
+// @version         2.4.53
 // @date            23/12/2018
-// @modified        17/12/2021
+// @modified        1/1/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -171,12 +171,12 @@
 
             var result = PrecompileRuleCenter.shared().handle(cmds);
 
-            console.log("<<<============================");
-            console.log("预编译最终代码:");
-            for (let k = 0; k < result.length; k++) {
-                console.log(k + " " + result[k]);
-            }
-            console.log("============================>>>");
+            // console.log("<<<============================");
+            // console.log("预编译最终代码:");
+            // for (let k = 0; k < result.length; k++) {
+            //     console.log(k + " " + result[k]);
+            // }
+            // console.log("============================>>>");
             return result;
         }
     }
@@ -215,12 +215,12 @@
             var result = this._handleBlock(blockCmds, 0).cmds;
             result.push("%exit");
 
-            console.log("<<<============================");
-            console.log("编译最终代码:");
-            for (let k = 0; k < result.length; k++) {
-                console.log(k + " " + result[k]);
-            }
-            console.log("============================>>>");
+            // console.log("<<<============================");
+            // console.log("编译最终代码:");
+            // for (let k = 0; k < result.length; k++) {
+            //     console.log(k + " " + result[k]);
+            // }
+            // console.log("============================>>>");
             return result;
         }
 
@@ -1083,7 +1083,7 @@
             if (this._doing) return;
 
             var cmd = this._cmds[this._pc];
-            console.log(`>>> ${this._name}, ${this._pc}, ${this._cc}, ${cmd}`);
+            // console.log(`>>> ${this._name}, ${this._pc}, ${this._cc}, ${cmd}`);
             this._pc += 1;
 
             try {
@@ -1345,7 +1345,7 @@
             return new Promise(resolve => {
                 var wa = createWorker("setTimeout(() =>  postMessage('0'), "+param+")")
                 wa.onmessage = function (event) {
-                    console.log(new Date,event.data);
+                    // console.log(new Date,event.data);
                     wa.terminate();
                     resolve();
                 };
@@ -1362,7 +1362,7 @@
             }
             var message = `&nbsp;&nbsp;[debug]: <hiz>${text}</hiz>`;
             Message.append(message);
-            console.log(message);
+            // console.log(message);
         });
         CmdExecuteCenter.addExecutor(executor);
     })();
@@ -2450,7 +2450,7 @@
         _monitorSystemTips: function () {
             var theSelf = this;
             WG.add_hook("msg", function (data) {
-                console.log(data)
+                // console.log(data)
                 var tip = new MsgTip(data.content, data.ch, data.name, data.uid);
                 theSelf._push(tip);
             });
@@ -3249,12 +3249,12 @@
                 let delay = 0;
                 const fromReject = timestamp - SystemTips.rejectTimestamp;
                 if (fromReject < 1500) {
-                    console.log(fromReject);
+                    // console.log(fromReject);
                     delay = fromReject;
                 }
                 var wa = createWorker("setTimeout(() =>  postMessage('0'), " + delay + ")")
                 wa.onmessage = function (event) {
-                    console.log(new Date, event.data);
+                    // console.log(new Date, event.data);
                     wa.terminate();
                     if (performer.log()) Message.cmdLog("执行系统命令", validCmd);
                     performer.timeSeries(timestamp);
@@ -4379,7 +4379,7 @@ look men;open men
                 let data = JSON.parse(value);
                 FlowStore.corver(data.flows);
                 WorkflowConfig._rootList(data.map);
-                console.log(data);
+                // console.log(data);
                 alert("拷贝角色流程成功！");
             }, _ => {
                 alert("错误的角色流程获取码！");
@@ -4402,7 +4402,7 @@ look men;open men
             Server._sync("downloadTriggers", { pass: pass }, value => {
                 let data = JSON.parse(value);
                 unsafeWindow.TriggerCenter.corver(data);
-                console.log(data);
+                // console.log(data);
                 alert("拷贝角色触发器成功！");
             }, _ => {
                 alert("错误的角色触发器获取码！");
@@ -4460,7 +4460,7 @@ look men;open men
                 type: type,
                 value: JSON.stringify(value)
             };
-            console.log(params);
+            // console.log(params);
             Server._sync("uploadSingle", params, token => {
                 GM_setClipboard(token);
                 alert(`${type}分享成功，该${type}会在服务器保存 30 天\n每次下载会延长保存 始于下载时刻的 30 天\n分享码：${token}\n已复制到系统剪切板。`);
@@ -4800,7 +4800,7 @@ look men;open men
             result = result.replace(/(\n)/g, `$1${header}`);
             result = result.replace(/\n\s*\n/g, "\n");
             result = result.replace(/^\s*\n/, "");
-            console.log(result);
+            // console.log(result);
             return result;
         }
     };
@@ -5107,6 +5107,7 @@ look men;open men
             <span class = "zdy-item about-bug" style="width:120px"> 🐞 <wht>Bug 提交</wht> </span>
             <!--<br><br>-->
             <!--<hr style="background-color: gray; height: 1px; width: calc(100% - 4em); border: none;"><br>-->
+            <span class = "zdy-item wudaoTool" style="width:120px"> 💊 药方清单 </span>
             <span class = "zdy-item suqingHome" style="width:120px"> 🍿 <hig>苏</hig><hio>轻</hio><hiy>工</hiy><wht>具</wht><hic>包</hic> </span>`;
             // UI._appendHtml("🍱 <hiy>江湖客栈</hiy>", content);
             UI._appendHtml("🐟 <hiy>一键咸鱼</hiy>", content);
@@ -5137,8 +5138,11 @@ look men;open men
             $(".about-bug").on('click', function () {
                 window.open("https://www.yuque.com/wsmud/doc/gr9gyy", '_blank').location;
             });
+            $(".about-yaofang").on('click', function () {
+                window.open("https://emeisuqing.github.io/wsmud.old/yaofang/", '_blank').location;
+            });
             $(".suqingHome").on('click', function () {
-                window.open("https://wsmud-tool.netlify.app/", '_blank').location;
+                window.open("https://emeisuqing.github.io/wsmud/", '_blank').location;
             });
         },
         shortcut: function () {
