@@ -1,11 +1,12 @@
 //~silent
 //白三三
+@print <hiy>⌛️ 即将启动自动寻找红Boss功能……</hiy>
 [if] (arg0) != null
   ($bossName) = (arg0)
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2021122001
+($localVer) = 2022010301
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -68,7 +69,6 @@
   [if] {b青龙堂令牌}? == null || {b白虎堂令牌}? == null || {b风雷堂令牌}? == null
     @print <hiy>⚠️ 黑木崖所需物品不足，请先扫荡获取才进去。</hiy>
     [exit]
-
 ($BossInfo)=notime
 @cmdDelay 500
 ($fbArrayPath) = "树林":"'cr yz/lw/shangu 0 0','go west','go west','go west'","财主家":"'cr yz/cuifu/caizhu 1 0','go north','go north','look men;open men;go east','go west;go west'","流氓巷":"'cr yz/lmw/xiangzi1 0 0','go east','go north','go south;go east','go east'","丽春院":"'cr yz/lcy/dating 0 0','go up','go east','go west;go west','look tai;tui tai;go enter'","神龙教":"'cr bj/shenlong/haitan 0 0','go north','look bush;kan bush;go north','go north','go north','go south;go east','go east','go north','go north','go north'","温府":"'cr cd/wen/damen 0 0','look tree;climb tree','go north','go northeast','go east','go west;go north','go east','go west;go northwest','go southwest','go west','go east;go south','go west','go east;go north;go northeast;go north','look zhuang;tiao zhuang;tiao zhuang','go north'","五毒教":"'cr cd/wudu/damen 0 0','go east','go south','go west','go east;go east','go west;go south','go north;go north','go east','go east','go east','go north','go west'","恒山":"'cr wuyue/hengshan/daziling 0 0','go northup','go northwest','go northup','go southdown;go northwest','go northup','go northup','go north','go north','go south;go west','go north','go south;go east;go east','go north'","青城山":"'cr wuyue/qingcheng/shanlu 0 0','go westup','go north','go northup','go eastup','go northup','go north','go north','go north','go north','go south;go east','go north'","衡山":"'cr wuyue/henshan/hengyang 0 0','go west','go west','go west','go east;go east;go north','go north','go north','go west','go east;go east','go west;go south;go south;go south;go east','go east','go southeast','go south','go east','go south','go south'","泰山":"'cr wuyue/taishan/daizong 0 0','go northup','go northup','go northup','go northup','go northup','go northup','go northup','go northup','go northup'","嵩山":"'cr wuyue/songshan/taishi 0 0','go north','go north','go northup','go northeast','go northup','go northup','go westup','go westup','go eastdown;go eastdown','go northup','go north','go north','go north','go north','go south;go west','go east;go east'","云梦沼泽":"'cr cd/yunmeng/senlin 0 0','go east','go north','go east','go north','look wei;jump wei','go west;go south;go west;go north','look lu;kan lu;go north','go north','go north','go north'","白驼山":"'cr baituo/damen 0 0','go north','go north','go north','go north','go south;go south;go south;go west','go south','go north;go west','go west','go north','go north','go north'","星宿海":"'cr xingxiu/xxh6 0 0','go northeast','go north','go northwest','go southwest','go south','go north;go northeast','go north'","冰火岛":"'cr mj/bhd/haibian 1 0','go west','go west','go west','go west','go east;go east;go east;go east;go north','go north','go north','go north','go out;go west','look dong;zuan dong'","移花宫":"'cr huashan/yihua/shandao 1 0','go south','go south','go south','go south','go southeast','go northwest;go southwest','go southeast','go down','fire;go west','go west','go west','go north','go north'","燕子坞":"'cr murong/anbian 1 0','go east','go east','go east','go east','go east','go east','go west;go north','go east','go west','look pai;bai pai;bai pai;bai pai;go north','go south;go south;go west;go west;go south','go east','go south','go south','go east'","黑木崖":"'cr heimuya/shangu 0 0','go north','go north','go north','go south;go south;go south;go south','go south','go south','go north;go north;go north;go east','go north','go north','go north','go south;go south;go south;go south','go north;go east','push xiazi;go enter','go up','push xiazi;go enter','go up','push xiazi;go enter','go up','go east','go east','circle wan;go down','fire;push;go south','go east'","缥缈峰":"'cr lingjiu/shanjiao 1 0','go northup','go northup','go northup','zou tiesuo','go northup','go north','go north','go north','go west','go east;go east','go west;go north','go west','go east;go east','go west;go north','go north'","光明顶":"'cr mj/shanmen 0 0','go north','go west','go northwest','go north','go east','go east','go east','go west;go west;go west;go north','go north','go north','go east','go east','go west;go north','go east','go east;go west','go west','go south','go east;go north','go north','go north','go west','go north','go north','go south;go west'","天龙寺":"'cr tianlong/damen 1 0','go south','go south','go south','go north;go southwest','go south','go east','go south','go north;go east','go north'","血刀门":"'cr xuedao/shankou 0 0','go south','go east','go west;go south','go eastup','go enter'","古墓派":"'cr gumu/gumukou 1 0','go enter','go east','go north','go south;go east'","华山论剑":"'cr huashan/lunjian/leitaixia 0 0','go up','jump bi','go down','go north','go south;go south','go north;go west','go east;go east'"
@@ -76,6 +76,11 @@
 @js ($len) = [(fbPath)].length
 stopstate
 team out
+[if] (:hp) < 30000
+  $to 扬州城-武庙
+  liaoshang
+  @until (:hp) >= 30000
+  stopstate
 [if] (BossBefore) != null
   (BossBefore)
   @await 4000
