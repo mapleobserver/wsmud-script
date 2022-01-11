@@ -6,7 +6,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2022010301
+($localVer) = 2022011101
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -292,9 +292,12 @@ team out
   [if] (:combating) == true || (:living) == false
     @print 检测到叫杀Boss，重新计时。
     ($waittime) = 0
+    ($logWait) = null
     @until (:combating) == false || (:living) == false
-    @print 检测到叫杀Boss，重新计时。
-    ($waittime) = 0
+    [if] (:living) == false
+      @print 检测到叫杀Boss，重新计时。
+      ($waittime) = 0
+      ($logWait) = null
   ($waittime) = (waittime) + 1
   [if] (BossInfo) != wait
     [continue]
