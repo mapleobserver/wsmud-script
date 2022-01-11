@@ -6,7 +6,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2022011101
+($localVer) = 2022011201
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -32,9 +32,10 @@
     [if] (flowFinder) == null
       ($flowFinder) = 根文件夹
     @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    @print 检测到新版本，自动更新中，更新完成后将自动重启流程……
     ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
     @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
-    @wait 2000
+    @await 2000
   [else]
     ($UPnum) = null
   [if] (UPnum) != null
