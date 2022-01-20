@@ -1,0 +1,88 @@
+@media screen and (max-width: 340px){
+    #raidToolbar {
+        font-size: 0.7rem;
+    }
+    .WG_button > .zdy-item {
+        font-size: 0.7rem;
+        margin-left: 0.1em;
+        padding-left: 0.1em;
+        padding-right: 0.1em;
+    }
+}
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .item-status-bar > .status-item {
+        zoom: 1
+    }
+}
+.login-dialog-rows {
+    max-height: 640px;
+}
+pre {
+    font-size: 12px;
+}
+.container,
+.login-content,
+.left,
+.right {
+    color: rgb(0, 178, 0);
+    background-color: #000000;
+}
+.room-item > .item-name {
+    margin-left: 1em;
+}
+.room_items {
+    max-height: 120px;
+}
+.item-status-bar > .status-item {
+    font-size: 0.8em;
+    font-weight: lighter;
+}
+.state-bar {
+    overflow-x: auto;
+}
+.hp > .progress-bar {
+    background-color: #c0392b;
+}
+.mp > .progress-bar {
+    background-color: #2980b9;
+}
+HIG {
+    color: #2ecc71;
+}
+HIC {
+    color: #2980b9;
+}
+HIY {
+    color: #f1c40f;
+}
+HIZ {
+    color: #8e44ad;
+}
+HIO {
+    color: #e67e22;
+}
+HIR {
+    color: #c0392b;
+}
+HIM {
+    color: #e84393;
+}
+
+/* funny */
+.left,
+.right {
+    width: 350px;
+}
+.left,
+.left-content,
+.right > .msg {
+    font-size: 12px;
+}
+.span-btn {
+    font-size: 12px;
+}
+/* raid */
+.layui-layer-page > .layui-layer-content {
+    font-size: 12px;
+    color: rgb(0, 128, 0);
+}
