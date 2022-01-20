@@ -6,7 +6,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2022011201
+($localVer) = 2022012001
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -57,6 +57,8 @@
   #input ($BossSkill) = 杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)
   [(BossWarning) == null]($BossWarning) = 语音播报
   #select ($BossWarning) = 遭遇问题时发出警报(找到或找不到Boss、被打死2次等),不提示|弹窗提醒|提示音|语音播报|远程通知,(BossWarning)
+  [(BossAutoKill) == null]($BossAutoKill) = 关闭
+  #select ($BossAutoKill) = <ord>以下选项开启后将自动进副本寻找Boss叫杀，同时将强制开启远程通知，请自行设置远程通知功能。</ord><br/>&nbsp*&nbspBoss刷新后直接自动执行,开启|关闭,(BossAutoKill)
   #config
 
 [if] (bossName) == null || (bossPlace) == null
@@ -71,6 +73,7 @@
     @print <hiy>⚠️ 黑木崖所需物品不足，请先扫荡获取才进去。</hiy>
     [exit]
 ($BossInfo)=notime
+@print 🦁️ 本次目标：<hiy>(bossPlace) - (bossName)</hiy>
 @cmdDelay 500
 ($fbArrayPath) = "树林":"'cr yz/lw/shangu 0 0','go west','go west','go west'","财主家":"'cr yz/cuifu/caizhu 1 0','go north','go north','look men;open men;go east','go west;go west'","流氓巷":"'cr yz/lmw/xiangzi1 0 0','go east','go north','go south;go east','go east'","丽春院":"'cr yz/lcy/dating 0 0','go up','go east','go west;go west','look tai;tui tai;go enter'","神龙教":"'cr bj/shenlong/haitan 0 0','go north','look bush;kan bush;go north','go north','go north','go south;go east','go east','go north','go north','go north'","温府":"'cr cd/wen/damen 0 0','look tree;climb tree','go north','go northeast','go east','go west;go north','go east','go west;go northwest','go southwest','go west','go east;go south','go west','go east;go north;go northeast;go north','look zhuang;tiao zhuang;tiao zhuang','go north'","五毒教":"'cr cd/wudu/damen 0 0','go east','go south','go west','go east;go east','go west;go south','go north;go north','go east','go east','go east','go north','go west'","恒山":"'cr wuyue/hengshan/daziling 0 0','go northup','go northwest','go northup','go southdown;go northwest','go northup','go northup','go north','go north','go south;go west','go north','go south;go east;go east','go north'","青城山":"'cr wuyue/qingcheng/shanlu 0 0','go westup','go north','go northup','go eastup','go northup','go north','go north','go north','go north','go south;go east','go north'","衡山":"'cr wuyue/henshan/hengyang 0 0','go west','go west','go west','go east;go east;go north','go north','go north','go west','go east;go east','go west;go south;go south;go south;go east','go east','go southeast','go south','go east','go south','go south'","泰山":"'cr wuyue/taishan/daizong 0 0','go northup','go northup','go northup','go northup','go northup','go northup','go northup','go northup','go northup'","嵩山":"'cr wuyue/songshan/taishi 0 0','go north','go north','go northup','go northeast','go northup','go northup','go westup','go westup','go eastdown;go eastdown','go northup','go north','go north','go north','go north','go south;go west','go east;go east'","云梦沼泽":"'cr cd/yunmeng/senlin 0 0','go east','go north','go east','go north','look wei;jump wei','go west;go south;go west;go north','look lu;kan lu;go north','go north','go north','go north'","白驼山":"'cr baituo/damen 0 0','go north','go north','go north','go north','go south;go south;go south;go west','go south','go north;go west','go west','go north','go north','go north'","星宿海":"'cr xingxiu/xxh6 0 0','go northeast','go north','go northwest','go southwest','go south','go north;go northeast','go north'","冰火岛":"'cr mj/bhd/haibian 1 0','go west','go west','go west','go west','go east;go east;go east;go east;go north','go north','go north','go north','go out;go west','look dong;zuan dong'","移花宫":"'cr huashan/yihua/shandao 1 0','go south','go south','go south','go south','go southeast','go northwest;go southwest','go southeast','go down','fire;go west','go west','go west','go north','go north'","燕子坞":"'cr murong/anbian 1 0','go east','go east','go east','go east','go east','go east','go west;go north','go east','go west','look pai;bai pai;bai pai;bai pai;go north','go south;go south;go west;go west;go south','go east','go south','go south','go east'","黑木崖":"'cr heimuya/shangu 0 0','go north','go north','go north','go south;go south;go south;go south','go south','go south','go north;go north;go north;go east','go north','go north','go north','go south;go south;go south;go south','go north;go east','push xiazi;go enter','go up','push xiazi;go enter','go up','push xiazi;go enter','go up','go east','go east','circle wan;go down','fire;push;go south','go east'","缥缈峰":"'cr lingjiu/shanjiao 1 0','go northup','go northup','go northup','zou tiesuo','go northup','go north','go north','go north','go west','go east;go east','go west;go north','go west','go east;go east','go west;go north','go north'","光明顶":"'cr mj/shanmen 0 0','go north','go west','go northwest','go north','go east','go east','go east','go west;go west;go west;go north','go north','go north','go east','go east','go west;go north','go east','go east;go west','go west','go south','go east;go north','go north','go north','go west','go north','go north','go south;go west'","天龙寺":"'cr tianlong/damen 1 0','go south','go south','go south','go north;go southwest','go south','go east','go south','go north;go east','go north'","血刀门":"'cr xuedao/shankou 0 0','go south','go east','go west;go south','go eastup','go enter'","古墓派":"'cr gumu/gumukou 1 0','go enter','go east','go north','go south;go east'","华山论剑":"'cr huashan/lunjian/leitaixia 0 0','go up','jump bi','go down','go north','go south;go south','go north;go west','go east;go east'"
 @js ($fbPath) = var fba={(fbArrayPath)};fba.(bossPlace)
@@ -179,7 +182,7 @@ team out
     @await 5000
   @print 技能冷却中，稍等片刻后会主动击杀……
   @cd
-  [if] (bossPlace) == 血刀门 && {r血刀老祖}? != null
+  [if] (bossPlace) == 血刀门 && "{r血刀老祖}?" != "null" && "{r血刀老祖的尸体}?" == "null"
     ($result) = xuedao
     ($logResult) = 【Boss寻踪】(:name)：遇到血刀老祖，请手动处理。
     [break]
@@ -304,11 +307,11 @@ team out
     [continue]
   [if] (waittime) == 30
     @print (:hour):(:minute):(:second) 已等待5分钟，再次通知玩家。
-    ($logWait) = 【Boss等待】(:name)，已等待5分钟，超过10分钟未处理，将自动退出副本。
+    ($logWait) = ⚠️【Boss等待】(:name)，已等待5分钟，超过10分钟未处理，将自动退出副本。
   [if] (waittime) > 60 || (timeout) == true || (killover) == true
     [if] (waittime) > 60 || (timeout) == true
       @print (:hour):(:minute):(:second) 超过10分钟未处理，退出副本。
-      ($logWait) = 【Boss等待】(:name)，已超过10分钟未处理，自动退出副本。
+      ($logWait) = ⚠️【Boss等待】(:name)，已超过10分钟未处理，自动退出副本。
     [else if] (killover) == true
       @print (:hour):(:minute):(:second) 已手动打死Boss，退出副本。
     [while] (:living) == false
