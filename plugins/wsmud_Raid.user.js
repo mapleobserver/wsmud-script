@@ -2717,7 +2717,10 @@
             ":findName ": function (id) {
                 if (id == null) return null;
                 const item = Room.getItem(id);
-                if (item != null) return item.name.match(/.*\s([\u4e00-\u9fa5]+)/)[1];
+                //if (item != null) return item.name.match(/.*\s([\u4e00-\u9fa5]+)/)[1];
+                if (item != null) return item.name.replace(/<.+?>|&lt.*/g, '').split(' ').pop();
+                //if (item != null) return item.name.replace(/<.+?>|&lt.*/g, '').match(/(\p{Script=Han}\s)*(\p{Script=Han}*)/u)[2]
+                //if (item != null) return item.name.match(/(\p{Script=Han}\s)*(\p{Script=Han}*)/u)[2];
                 return null;
             }
         };
