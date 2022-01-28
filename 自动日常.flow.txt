@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022010301
+($localVer) = 2022012901
 ($changeLog) = 🆕 收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -55,8 +55,13 @@
   @js WG.SendCmd("tm (log)")
   @print <ord>(log)</ord>
 
-// 10月8日自动恢复正常模式
-//[if] (:date)>=8 && (:hour)>=5
+@js ($month) = var date=new Date();date.getMonth()+1
+// 2022春节免费扫荡
+//[if] (month) == 2 && (:date)==1 && (:hour)>=5
+//  ($RCMode) = 春节模式
+//[if] (month) == 2 && (:date)>=2
+//  ($RCMode) = 春节模式
+//[if] (month) == 2 && (:date)>=8 && (:hour)>=5
 //  ($RCMode) = 正常模式
 
 //检测状态
@@ -108,7 +113,7 @@
 [if] (ZBcdskill) == null
   ($ZBcdskill) = null
 [if] (ZBBefore) == null
-  ($ZBBefore) = $eq 1
+  ($ZBBefore) = $eqskill 1;$wait 1000;$eq 1
 [if] (DieToReset) == null
   ($DieToReset) = 已关闭
 [if] (ZBrenew) == null
@@ -138,7 +143,7 @@
 [if] (WudaoWaitCDExp) == null
   ($WudaoWaitCDExp) = ^none
 [if] (WudaoBefore) == null
-  ($WudaoBefore) = $eq 1
+  ($WudaoBefore) = $eqskill 1;$wait 1000;$eq 1
 #select ($WudaoMode)=武道塔模式<ord>(快速模式建议至少已有血刀九阴)</ord>,正常模式|快速模式|只打塔主,(WudaoMode)
 #select ($WudaoRenew)=<hiz>快速模式</hiz>恢复内力方式,武庙恢复|天地诀|逆天道|大道无极,(WudaoRenew)
 #input ($WudaoBefore)=打塔前执行命令(用英文;隔开),(WudaoBefore)
@@ -148,7 +153,7 @@
 
 // 副本自定义参数
 [if] (FBBefore) == null
-  ($FBBefore) = $eq 1
+  ($FBBefore) = $eqskill 1;$wait 1000;$eq 1
 [if] (FBnum) == null
   ($FBnum) = 20
 [if] (DungeonHpThreshold) == null
@@ -903,7 +908,7 @@ score
 
 // 日常结束后
 (RCAfter_action)
-@print <hiy>自动日常结束！</hiy>
+@print <hic>(month)月(:date)日 (:hour):(:minute)</hic> <hiy>自动日常结束！</hiy>
 ($bobao) = (:name)，自动日常结束！
 ($report) = 日常报告
 [if] (alert_sm) != null
