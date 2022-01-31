@@ -1,7 +1,7 @@
 //~silent
 // 常用流程
 // 四区白三三
-($localVer) = 2021121701
+($localVer) = 2022013101
 ($changeLog) = 🆕 新增整理秘籍、自动运镖、古代宗门流程。🌟 新增书架香炉流程；新增古宗门躺尸流程；新增自创推演流程。
 ($flowName) = 三三懒人包
 ($flowCode) = lrb
@@ -75,6 +75,7 @@
 #select ($flowSJXL)=🍑 <hiz>以下是特殊流程(慈航战神殿流程在捷径中)</hiz><br/>&nbsp*&nbsp[♻️<hiz>书架香炉</hiz>]自动搜索书架香炉,导入|跳过,跳过
 #select ($flowYYWD)=[♻️<hiz>圆月弯刀</hiz>]可选择剧情或者直接砍小楼，建议熟悉攻略后再使用,导入|跳过,跳过
 #select ($flowGDZM)=[♻️<hiz>古代宗门</hiz>]持续补充功能中，建议熟悉攻略后再使用,导入|跳过,跳过
+#select ($flowWSD)=[♻️<hiz>武神殿</hiz>]持续补充功能中，建议熟悉攻略后再使用,导入|跳过,跳过
 #select ($flowGZM)=[<hiz>古宗门躺尸</hiz>],导入|跳过,跳过
 
 #config
@@ -99,6 +100,7 @@
 ($f_sjxl)={"name":"书架香炉","source":"(repourl)/杂务/书架香炉.flow.txt","finder":"根文件夹"}
 ($f_yywd)={"name":"圆月弯刀","source":"(repourl)/副本/圆月弯刀.flow.txt","finder":"根文件夹"}
 ($f_gdzm)={"name":"古代宗门","source":"(repourl)/副本/古代宗门.flow.txt","finder":"根文件夹"}
+($f_wsd)={"name":"武神殿","source":"(repourl)/副本/武神殿.flow.txt","finder":"根文件夹"}
 ($f_gzm)={"name":"古宗门躺尸","source":"(repourl)/副本/古宗门躺尸版.flow.txt","finder":"根文件夹"}
 
 
@@ -152,6 +154,8 @@
   ($f_list)=(f_list),(f_yywd)
 [if] (flowGDZM)==导入
   ($f_list)=(f_list),(f_gdzm)
+[if] (flowWSD)==导入
+  ($f_list)=(f_list),(f_wsd)
 [if] (flowGZM)==导入
   ($f_list)=(f_list),(f_gzm)
 [if] (flowCHQCM)==导入

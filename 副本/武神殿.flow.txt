@@ -1,0 +1,160 @@
+//~silent
+// 白三三
+// 版本检测
+// 2022-01-31 09:59
+($localVer) = 2022013101
+($changeLog) = 🚌。目前路线有：10页修罗刀。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
+($flowName) = 武神殿
+($flowCode) = wsd
+($flowPath) = 副本
+($flowFinder) = 根文件夹
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
+@js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
+[if] (version) != null
+  @js ($remoteVer) = var v = (version);v.(flowCode)
+[if] (localVer) < (remoteVer) && (remoteVer) != null
+  [if] (UPnum) == null
+    ($UPnum) = 0
+  [if] (UPnum) < 2
+    [if] (UPnum) == 1
+      @print 未获取到最新版本，使用备用地址再次尝试...
+      ($repourl) = http://wsmud-cdn.if404.com
+    ($UPnum) = (UPnum) + 1
+    [if] (flowPath) != 根文件夹 && (flowPath) != null
+      ($flowSource) = (repourl)/(flowPath)/(flowName).flow.txt
+    [else]
+      ($flowSource) = (repourl)/(flowName).flow.txt
+    [if] (flowFinder) == null
+      ($flowFinder) = 根文件夹
+    @js WG.SendCmd("tm 当前(flowName)版本【(localVer)】，将开始自动更新至最新【(remoteVer)】。")
+    ($f_ss)={"name":"(flowName)","source":"(flowSource)","finder":"(flowFinder)"}
+    @js var time = Date.parse( new Date());var f=(f_ss);var n=f["name"];var s=f["source"];var fd=f["finder"];WorkflowConfig.removeWorkflow({"name":n,"type":"flow","finder":fd});$.get(s,{stamp:time},function(data,status){WorkflowConfig.createWorkflow(n,data,fd);});
+    @wait 1500
+    ($log) = ✅(flowName)已更新至最新版【(remoteVer)】，即将自动运行。
+  [else]
+    ($log) = ⭕(flowName)暂时无法正常更新至【(remoteVer)】，直接运行当前版本【(localVer)】。
+    ($UPnum) = null
+  @js WG.SendCmd("tm (log)")
+  @print <ord>(log)</ord>
+  [if] (UPnum) != null
+    @js var f=(f_ss);ManagedPerformerCenter.start(f["name"], FlowStore.get(f["name"]));
+    [exit]
+[else]
+  ($UPnum) = null
+  [if] (remoteVer) == null
+    ($log) = ⚠️获取远程版本失败，维持当前版本不变。
+  [else]
+    ($log) = 🚀开始运行(flowName)，当前版本【(remoteVer)】。更新内容：(changeLog)
+  //@js WG.SendCmd("tm (log)")
+  //@print <ord>(log)</ord>
+// 预处理
+@cmdDelay 500
+
+// 菜单
+#select ($type) = <ord>当前只有10页修罗刀路线，一次性，一轮活动中重复进行不会再给。其它路线等待大佬补充。</ord><br/>&nbsp*&nbsp🚌 选择路线,10页修罗刀,(type)
+#config
+
+// 检查掌门扳指
+[if] (type) == 10页修罗刀b
+  stopstate
+  [if] {b掌门扳指o}? == null
+    ($eqjz) = (:eq5)
+    stopstate;uneq (:eq5)
+  [if] {b掌门扳指o}? == null
+    eq (eqjz)
+    ($ready) = false
+    @print <ord>没有<hio>掌门扳指</hio>，流程终止，请先通过【古代宗门】活动副本获取掌门扳指。</ord>
+  [else]
+    stopstate;eq {b掌门扳指o}?
+
+// 未准备完善则终止。
+  [if] (ready) == false
+    $zdwk
+    [exit]
+
+
+tm 本次副本路线：(type)
+@print 🚌 本次副本路线：<hio>(type)</hio>
+stopstate
+team out
+
+// 前往古大陆
+jh fam 9 start
+go enter
+go up
+@tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
+[if] (pass) != null
+  @print <ord>不符合前往古大陆要求，流程终止。</ord>
+  $zdwk
+  [exit]
+ggdl {r疯癫的老头}
+go north[3]
+go north[3]
+look shi
+tiao1 shi;tiao3 shi
+tiao1 shi;tiao3 shi
+tiao2 shi
+go north
+//进入漩涡
+look xuanwo
+tiao xuanwo
+//往东前往武神殿副本
+go east
+
+//进入副本
+cr gzc/damen
+go north
+go north
+@tip 奉掌门令入殿|为什么不开放
+answer {r神殿守卫}? 1
+@tip 神殿守卫让开通路
+go north
+
+//主线
+[if] (type) == 10页修罗刀
+  //转雕像
+  ($go1) = 'north','south','west','east'
+  ($go2) = 'south','north','east','west'
+  ($dir) = '南','北','东','西'
+  ($num) = 0
+  [while] (num) < 4
+    @js ($eswn1) = [(go1)][(num)]
+    @js ($eswn2) = [(go2)][(num)]
+    @js ($dir1) = [(dir)][(num)]
+    go (eswn1)
+    [while] true
+      zhuan xiang
+      @tip 你将雕塑转动，面向了($dir2)方
+      [if] (dir2) == (dir1)
+        go (eswn2)
+        [break]
+    ($num) = (num) + 1
+  go northwest
+  go east
+  go down;go south
+  @print ***************************************
+  @print (:hour):(:minute):(:second) 此处需等待约2分钟，<hiy>请不要换房间</hiy>。
+  @print ***************************************
+  @tip 就算那只火鸟自己跑来
+  go north;go up;go west
+  @print ***************************************
+  @print (:hour):(:minute):(:second) 此处需等待约2分钟，<hiy>请不要换房间</hiy>。
+  @print ***************************************
+  @tip 妖神打来了快跑吧
+  go southeast
+  @tip 盗取妖神气运神魂
+  @tip 帮朱雀
+  [if] (type) == 10页修罗刀
+    go northwest
+    go east
+    go down;go south
+    look men;dk men
+    go south
+    look fu;an fu
+    @tip 可否帮我前去查探
+    answer {r守墓老人}? 1
+    @print <hiy><hio>(type)路线</hio>已完成，流程即将结束。</hiy>
+// 结束副本
+cr;cr over
+$zdwk
