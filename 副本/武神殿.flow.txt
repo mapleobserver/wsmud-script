@@ -1,9 +1,9 @@
 //~silent
 // 白三三
 // 版本检测
-// 2022-01-31 09:59
-($localVer) = 2022013101
-($changeLog) = 🚌。目前路线有：10页修罗刀。\n🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
+// 2022-02-01 08:26
+($localVer) = 2022020101
+($changeLog) = 🚌。目前路线有：10页修罗刀。\n🆕 增加武帝以下境界自动走移花宫功能。🙏 如果有新攻略或者遇到bug，请到仙界群反馈。
 ($flowName) = 武神殿
 ($flowCode) = wsd
 ($flowPath) = 副本
@@ -80,25 +80,81 @@ stopstate
 team out
 
 // 前往古大陆
-jh fam 9 start
-go enter
-go up
-@tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
-[if] (pass) != null
-  @print <ord>不符合前往古大陆要求，流程终止。</ord>
-  $zdwk
-  [exit]
-ggdl {r疯癫的老头}
-go north[3]
-go north[3]
-look shi
-tiao1 shi;tiao3 shi
-tiao1 shi;tiao3 shi
-tiao2 shi
-go north
-//进入漩涡
-look xuanwo
-tiao xuanwo
+[if] (:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀皇 || (:grade) == 兵主 || (:grade) == 战神
+  jh fam 9 start
+  go enter
+  go up
+  @tip 打败我，你就($pass)上去|聚魂成功|踏过长生门|你已堪破生死|古老的大陆寻找真相|你连($pass)都没聚合|你想($pass)为神吗
+  [if] (pass) != null
+    @print <ord>不符合前往古大陆要求，流程终止。</ord>
+    $zdwk
+    [exit]
+  ggdl {r疯癫的老头}
+  go north[3]
+  go north[3]
+  look shi
+  tiao1 shi;tiao3 shi
+  tiao1 shi;tiao3 shi
+  tiao2 shi
+  go north
+  look xuanwo;tiao xuanwo
+[else]
+  @cmdDelay 1500
+  jh fb 22 start2;cr huashan/yihua/shandao 1 0
+  [while] (xuanwo) != true
+    <---
+    [if] {r神秘的尸体}? != null
+      ($xuanwo) = true
+      @cmdDelay 500
+      [break]
+    --->
+    go south[5]
+    go south[5]
+    go south[5]
+    $killall
+    @until (:combating) == false
+    @await 3000
+    go south
+    go south
+    $killall
+    @until (:combating) == false
+    @await 3000
+    go south
+    $killall
+    @until (:combating) == false
+    @await 3000
+    go southeast
+    $killall
+    @until (:combating) == false
+    @await 3000
+    go northwest;go southwest
+    $killall
+    @until (:combating) == false
+    @await 3000
+    look hua
+    @tip 你数了下大概有($number)朵花
+    go southeast
+    look bed;pushstart bed;pushleft bed[(number)]
+    @await 2000
+    pushright bed[8]
+    @await 2000
+    go down
+    fire;go west
+    $killall
+    @until (:combating) == false
+    @await 3000
+    go west
+    go west
+    go north
+    go north
+    go north
+    go north
+    @print <ord>未找到尸体，请重试。</ord>
+    cr;cr over
+    $zdwk
+    [exit]
+  look xuanwo;tiao xuanwo ok
+
 //往东前往武神殿副本
 go east
 
@@ -137,6 +193,8 @@ go north
   @print (:hour):(:minute):(:second) 此处需等待约2分钟，<hiy>请不要换房间</hiy>。
   @print ***************************************
   @tip 就算那只火鸟自己跑来
+  //@tip 定然不负所托
+  //@tip 你感觉到神殿外一阵强大的威压降临
   go north;go up;go west
   @print ***************************************
   @print (:hour):(:minute):(:second) 此处需等待约2分钟，<hiy>请不要换房间</hiy>。
