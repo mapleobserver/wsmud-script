@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 优化每天5点时段新旧数据的判断；增加自动寻路打Boss功能。
-($localVer) = 2022012001
+($localVer) = 2022020701
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -88,7 +88,7 @@
         @js messageAppend(`<div class="item-commands"><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
         [if] (action) != null && (:state) != 闭关 && (:state) != 练习
           (action)
-        [exit]
+        //[exit]
   [else]
     [exit]
 // 谣言获取Boss
