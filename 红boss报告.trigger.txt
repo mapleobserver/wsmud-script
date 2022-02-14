@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 优化每天5点时段新旧数据的判断；增加自动寻路打Boss功能。
-($localVer) = 2022020701
+($localVer) = 2022021401
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -154,13 +154,12 @@
       ($jump) = true
   [else]
     @js messageAppend("<ord>💎 (BossInfo)\n⚙️ 当前设置：(bossSet)\n(remain)</ord>",1,(magPost))
-    [if] (BossAutoKill) == 开启 && (:state) == 闭关
-      @print (:hour):(:minute):(:second) <ord>根据设置，自动执行【自动红boss】流程……</ord>
-      @js messageAppend(`<div class="item-commands"><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
-      ($BossWarning) = 远程通知
-      //@push 【Boss刷新】(:name)：(bossName)出现在(bossPlace)，即将自动执行【自动红boss】流程……
-      //@call 自动红boss (bossName),(bossPlace)
-      @js ToRaid.perform(`//~silent\n@call 自动红boss (bossName),(bossPlace)`);
+    [if] (BossAutoKill) == 开启
+      [if] (:state) == 闭关 || (mycall) == true
+        @print (:hour):(:minute):(:second) <ord>根据设置，自动执行【自动红boss】流程……</ord>
+        @js messageAppend(`<div class="item-commands"><span class="redboss boss-setting">⚙️ 设置参数</span></div>`,1,(magPost));$('.(comClass)')[0].scrollTop = 99999;
+        ($BossWarning) = 远程通知
+        @js ToRaid.perform(`//~silent\n@call 自动红boss (bossName),(bossPlace)`);
     [else]
       [if] (team) == true
         @js ($fbcr2) = var f="(fbcr)";f=f.substr(0,f.length-1)+"2"
