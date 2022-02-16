@@ -1,0 +1,71 @@
+// 自动打红流程
+// 四区-黑白郎君
+// 2021-05-24 21:00:00
+// 0.3、修改了红暴毙不关闭触发的bug
+
+@cmdDelay 500
+[if] (SectBossEquip) == null
+  ($SectBossEquip) = 1
+[if] (SectBossSkill) == null
+  ($SectBossSkill) = 1
+#input ($SectBossEquip) = 使用的装备套装名称,(SectBossEquip)
+#input ($SectBossSkill) = 使用的技能套装名称,(SectBossSkill)
+#select ($sectBossTrigger1) = 是否导入自爆触发,是|否,否
+#select ($sectBossTrigger2) = 是否导入关自爆触发,是|否,否
+#config
+
+[if] (sectBossTrigger1) == 是
+  @js TriggerCenter.remove("自爆")
+  @js TriggerCenter.remove("华山红")
+  @js Server.importTrigger("清和·自爆·触发@be53ea8b0093c6700571315b9eb7440d")
+[if] (sectBossTrigger2) == 是
+  @js TriggerCenter.remove("关自爆")
+  @js TriggerCenter.remove("关触发")
+  @js Server.importTrigger("清和·关自爆·触发@da27058706c62889d78d1702351df7a1")
+
+stopstate
+
+// 获取内置出招并保存
+@toolbar score
+@toolbar setting
+@js $(`span[for=custom]`).click()
+@js ($pfm) = document.getElementById("auto_pfm").value
+
+// 删内置出招
+setting auto_pfm 0;
+
+// 开打红触发、关自动出招
+@on 自爆
+@on 关自爆
+$stoppfm
+
+// 更换套装
+$eqskill (SectBossSkill)
+enable force jiuyinshengong
+@await 5000
+$eq 0
+@await 5000
+$eq (SectBossEquip)
+eq {b软猬甲}?
+@await 5000
+
+[while] (:room) != 华山派-客厅
+  $to 华山派-客厅
+  @await 200
+@await 2000
+
+[if] {r独孤败天}? != null
+  kill {r独孤败天}
+
+@until {r独孤败天的尸体}? != null
+
+setting auto_pfm (pfm);
+
+[while] (:room) != 扬州城-武庙
+  $to 扬州城-武庙
+  @await 200
+@off 自爆
+@off 关自爆
+@renew
+@await 3000
+$zdwk

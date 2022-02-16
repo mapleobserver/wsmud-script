@@ -1,0 +1,12 @@
+// raid.flow
+($lb) = 大还丹·大力丸·凝神丹·归心散·石龟丹·风行散·风雷丹·赤火丹·赤血丹·玄武丹·破军丹·风神丹·生机丸·玄冰丹·玄灵丹·归元散·风行丹·造化丹·无常丹·清心丹·冰心丹·蕴象丹
+($n) = 0
+$to 扬州城-打铁铺
+@js ($yao_l) = '(lb)'.split("·").length
+[while](n) < (yao_l)
+    @js ($yao) = '(lb)'.split("·")[(n)]
+    @print (yao)
+    [while]{b(yao)}? != null
+        sell {b(yao)#} {b(yao)} to {r铁匠}
+    @await 400
+    ($n) = (n) + 1
