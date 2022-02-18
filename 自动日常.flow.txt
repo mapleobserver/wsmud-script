@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022012901
-($changeLog) = 🆕 收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
+($localVer) = 2022021801
+($changeLog) = 🆕 优化精力和元宝检测；收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -872,13 +872,13 @@ stopstate
 taskover signin;taskover zz1;taskover zz2
 
 // 检查精力
-[(:grade) == 百姓]($jlUp) = 1000
-[(:grade) == 武士]($jlUp) = 2000
-[(:grade) == 武师]($jlUp) = 3000
-[(:grade) == 宗师]($jlUp) = 5000
-[(:grade) == 武圣]($jlUp) = 7000
-[(:grade) == 武帝]($jlUp) = 10000
-[(:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀神 ||(:grade) == 兵主 || (:grade) == 战神]($jlUp) = 15000
+[(:grade) == 百姓]($j) = 1000
+[(:grade) == 武士]($jjMax) = 2000
+[(:grade) == 武师]($jjMax) = 3000
+[(:grade) == 宗师]($jjMax) = 5000
+[(:grade) == 武圣]($jjMax) = 7000
+[(:grade) == 武帝]($jjMax) = 10000
+[(:grade) == 武神 || (:grade) == 剑神 || (:grade) == 刀神 ||(:grade) == 兵主 || (:grade) == 战神]($jjMax) = 15000
 [if] (:grade) == 百姓 || (:grade) == 武士 || (:grade) == 武师
   ($jlOver) = 300
 [else if] (:grade) == 宗师 || (:grade) == 武圣
@@ -891,11 +891,19 @@ taskover signin;taskover zz1;taskover zz2
 @await 1000
 score
 @await 500
-[if] (jlUp) != null && (jlOver) != null && (jlUp) >= (:energy)
-  ($jlDif) = (jlUp) - (:energy)
+[if] (jjMax) != null && (jlOver) != null && (jjMax) >= (:energy)
+  ($jlDif) = (jjMax) - (:energy)
 [if] (jlDif) <= (jlOver) && (jlDif) != null
-  ($alert_jl) = ⚡️ 当前精力 (:energy)/(jlUp)，即将溢出不再增加，请及时使用。
+  ($alert_jl) = ⚡️ 当前精力 (:energy)/(jjMax)，即将溢出不再增加，请及时使用。
 @toolbar jh
+// 检查元宝
+transmoney
+@tip 账号转入：($cashCharge)
+@tip 每日签到：($cashSign)/
+[if] (cashSign) != null && (jjMax) != null
+  ($cashOver) = (jjMax) - (cashSign)
+[if] (cashOver) <= 100
+  ($alert_cash) = 💰 当前签到元宝(cashSign)/(jjMax)，即将溢出不再增加
 
 // 结束收益统计
 [if] (RecordG) == 正常统计
@@ -908,7 +916,9 @@ score
 
 // 日常结束后
 (RCAfter_action)
-@print <hic>(month)月(:date)日 (:hour):(:minute)</hic> <hiy>自动日常结束！</hiy>
+@print <hiy>(month)月(:date)日 (:hour):(:minute)</hiy> <hic>自动日常结束！</hic>
+@print 当前精力：<hic>(:energy)</hic>，签到元宝：<hiy>(cashSign)/(jjMax)</hiy>，充值元宝：<hiy>(cashCharge)</hiy>
+@print ----------
 ($bobao) = (:name)，自动日常结束！
 ($report) = 日常报告
 [if] (alert_sm) != null
@@ -932,8 +942,11 @@ score
   @js $(`.state-bar`).before($(`<div id=report_prog><ord>(report)</ord></div>`).click(() => $('#report_prog').remove()))
 [if] (TTSover) == 播报
   $tts (bobao)
+@js $('#report_jl').remove()
 [if] (alert_jl) != null
-  @js $('#report_jl').remove()
   @js $(`.state-bar`).before($(`<div id=report_jl><ord>(alert_jl)</ord></div>`).click(() => $('#report_jl').remove()))
-  //@await 1000
-  //@js alert("(alert_jl)")
+  @push (:name)：(alert_jl)
+@js $('#report_cash').remove()
+[if] (alert_cash) != null
+  @js $(`.state-bar`).before($(`<div id=report_cash><ord>(alert_cash)</ord></div>`).click(() => $('#report_cash').remove()))
+  @push (:name)：(alert_cash)
