@@ -6,7 +6,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2022012001
+($localVer) = 2022022101
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -280,7 +280,8 @@ team out
   @js $(".boss-quit").on("click", function(){ToRaid.perform(`//~silent\n@print 即将关闭智能等待……\n($BossInfo) = notime`);})
 [while] (:room 副本区域) == true && "(bossID)" != "null" && (result) != miss
   [if] (BossInfo) != wait
-    @print <hiy>已关闭智能等待，请玩家手动操作。</hiy>
+    @print (:hour):(:minute):(:second) <hiy>已关闭智能等待，请玩家手动操作。</hiy>
+    tm (:hour):(:minute):(:second) 已关闭智能等待，请玩家手动操作。
     [exit]
   @await 10000
   tm (:hour):(:minute):(:second) 等待玩家处理
@@ -291,17 +292,20 @@ team out
     [if] {r(bossName)}? != (bossID) && {r(bossName)}? != null
       ($killover) = true
     [else]
-      @print (:hour):(:minute):(:second) Boss已失踪。
       ($timeout) = true
+      @print (:hour):(:minute):(:second) Boss已失踪。
+      tm (:hour):(:minute):(:second) Boss已失踪。
   [if] (:combating) == true || (:living) == false
-    @print 检测到叫杀Boss，重新计时。
     ($waittime) = 0
     ($logWait) = null
+    @print 检测到叫杀Boss，重新计时。
+    tm (:hour):(:minute):(:second) 检测到叫杀Boss，重新计时。
     @until (:combating) == false || (:living) == false
     [if] (:living) == false
-      @print 检测到叫杀Boss，重新计时。
       ($waittime) = 0
       ($logWait) = null
+      @print 检测到叫杀Boss，重新计时。
+      tm (:hour):(:minute):(:second) 检测到叫杀Boss，重新计时。
   ($waittime) = (waittime) + 1
   [if] (BossInfo) != wait
     [continue]
@@ -311,9 +315,11 @@ team out
   [if] (waittime) > 60 || (timeout) == true || (killover) == true
     [if] (waittime) > 60 || (timeout) == true
       @print (:hour):(:minute):(:second) 超过10分钟未处理，退出副本。
+      tm (:hour):(:minute):(:second) 超过10分钟未处理，退出副本。
       ($logWait) = ⚠️【Boss等待】(:name)，已超过10分钟未处理，自动退出副本。
     [else if] (killover) == true
       @print (:hour):(:minute):(:second) 已手动打死Boss，退出副本。
+      tm (:hour):(:minute):(:second) 已手动打死Boss，退出副本。
     [while] (:living) == false
       relive
     cr;cr over

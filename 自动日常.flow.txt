@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022021801
-($changeLog) = 🆕 优化精力和元宝检测；收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
+($localVer) = 2022022101
+($changeLog) = 🆕 优化任务数据获取方式，减少后台运行时卡住的情况；优化精力和元宝检测；收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -85,8 +85,9 @@
 #select ($RecordG) = 是否统计收益,正常统计|无弹窗统计|静默统计|否,(RecordG)
 
 // 师门任务
-@toolbar jh
-@toolbar tasks
+//@toolbar jh
+//@toolbar tasks
+score;tasks
 @task 师门委托目前完成($smnum)/20个，共连续完成($smComboN)个|师门委托你去寻找($smtype)，共连续完成($smComboN)个
 [if] (SMtasks) == null
   ($SMtasks) = 正常进行
@@ -256,7 +257,8 @@ stopstate
 ($currentN) = null
 [while] (currentN) == null
   @await 500
-  @toolbar tasks
+  //@toolbar tasks
+  score;tasks
   @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
 ($zbtemp) = (ZByes)
 [if] (RCMode) == 节日免费模式 && (zbtemp) == 正常模式
@@ -354,8 +356,9 @@ stopstate
         ($zbing) = null
         [if] (dir1) == null || (dir2) == null || (escapee) == null
           @await 1000
-          @toolbar jh
-          @toolbar tasks
+          //@toolbar jh
+          //@toolbar tasks
+          score;tasks
           @await 500
           @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
       @print <hiy>追捕目标：(escapee) 目标地点：(dir1)-(dir2)</hiy>
@@ -541,8 +544,9 @@ stopstate
 ($currentN) = null
 [if] (WudaoMode) != 只打塔主
 //[if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式  || (RCMode) == 节日免费模式
-  @toolbar jh
-  @toolbar tasks
+  //@toolbar jh
+  //@toolbar tasks
+  score;tasks
   @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，|今日副本($noWudao)次数
   [if] (reset) == 已 && (currentN) != null && (currentN) == (finalN) && (finalN) != 0
     @print <hiy>当日武道塔已完成。</hiy>
@@ -562,8 +566,9 @@ stopstate
     [if] (WudaoMode) == 快速模式
       @cmdDelay 500
     jh fam 9 start
-    @toolbar jh
-    @toolbar tasks
+    //@toolbar jh
+    //@toolbar tasks
+    score;tasks
     @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
     @print 当前武道塔进度：(currentN)/(finalN)
     @await 2000
@@ -689,8 +694,9 @@ stopstate
   ($alert_fb) = 跳过副本部分，请自己手动完成想要的副本。
 [else]
   stopstate
-  @toolbar jh
-  @toolbar tasks
+  //@toolbar jh
+  //@toolbar tasks
+  score;tasks
   //@task 精力消耗：($tag2)>($jl_com)/200
   @task 今日副本完成次数：($fb_com)。
   [if] (FBnum) == null || (FBnum) < 1
