@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022022101
+($localVer) = 2022022201
 ($changeLog) = 🆕 优化任务数据获取方式，减少后台运行时卡住的情况；优化精力和元宝检测；收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -85,8 +85,6 @@
 #select ($RecordG) = 是否统计收益,正常统计|无弹窗统计|静默统计|否,(RecordG)
 
 // 师门任务
-//@toolbar jh
-//@toolbar tasks
 score;tasks
 @task 师门委托目前完成($smnum)/20个，共连续完成($smComboN)个|师门委托你去寻找($smtype)，共连续完成($smComboN)个
 [if] (SMtasks) == null
@@ -253,11 +251,10 @@ stopstate
   <-recordGains
 
 // 追捕
-@toolbar jh
+jh fb lock
 ($currentN) = null
 [while] (currentN) == null
   @await 500
-  //@toolbar tasks
   score;tasks
   @task 追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个|追杀逃犯：($empty)目前完成($currentN)/20个，共连续完成($comboN)个
 ($zbtemp) = (ZByes)
@@ -356,8 +353,6 @@ stopstate
         ($zbing) = null
         [if] (dir1) == null || (dir2) == null || (escapee) == null
           @await 1000
-          //@toolbar jh
-          //@toolbar tasks
           score;tasks
           @await 500
           @task 追杀逃犯：($escapee)，据说最近在($dir1)-($dir2)出现过，你还有($time)去寻找他，目前完成($currentN)/20个，共连续完成($comboN)个。|追杀逃犯：目前完成($currentN)/20个，共连续完成($comboN)个
@@ -379,15 +374,17 @@ stopstate
             @await 1000
           kill {r(escapee)}?
           @until {(escapee)的尸体}? != null || {r(escapee)}? ==  null || (:combating) == false || (:living) == false
-          @tip 你的追捕任务($done)了，目前完成($currentN)/20个，已连续完成($comboN)个。|你($type1)死了($type2)|你要攻击谁|追捕任务失败了|你又($hunmi)了知觉|不要急，($needwait)来
+          @tip 你的追捕任务($done)了，目前完成($currentN)/20个，已连续完成($comboN)个。|你($type1)死了($type2)|你要攻击谁|追捕任务失败了|你又($hunmi)了知觉|不要急，($needwait)来|你现在是($linghun)状态，不能那么做
           [if] (done) != null
             ($done) = null
             @js $('#zb_prog').html(`<hiy>当前追捕任务已完成，进度 (currentN)/20</hiy>`)
           //[if] (hunmi) != null
             //($hunmi) = null
-          [while] (:living)==false
+          [while] (:living)==false || (linghun) == 灵魂
+            @await 1500
             relive
             @await 500
+            ($linghun) = null
           [if] (type1) != null && (DieToReset) == 已开启
             [while] (:room) != 扬州城-衙门正厅
               $to 扬州城-衙门正厅
@@ -544,8 +541,6 @@ stopstate
 ($currentN) = null
 [if] (WudaoMode) != 只打塔主
 //[if] (WudaoMode) == 正常模式 || (WudaoMode) == 快速模式  || (RCMode) == 节日免费模式
-  //@toolbar jh
-  //@toolbar tasks
   score;tasks
   @task 武道塔($reset)重置，进度($currentN)/($finalN)，|武道塔($reset)重置，进度($currentN)/($finalN)，|今日副本($noWudao)次数
   [if] (reset) == 已 && (currentN) != null && (currentN) == (finalN) && (finalN) != 0
@@ -566,8 +561,6 @@ stopstate
     [if] (WudaoMode) == 快速模式
       @cmdDelay 500
     jh fam 9 start
-    //@toolbar jh
-    //@toolbar tasks
     score;tasks
     @task 武道塔可以重置，进度($currentN)/($finalN)，|武道塔已重置，进度($currentN)/($finalN)，
     @print 当前武道塔进度：(currentN)/(finalN)
@@ -694,8 +687,6 @@ stopstate
   ($alert_fb) = 跳过副本部分，请自己手动完成想要的副本。
 [else]
   stopstate
-  //@toolbar jh
-  //@toolbar tasks
   score;tasks
   //@task 精力消耗：($tag2)>($jl_com)/200
   @task 今日副本完成次数：($fb_com)。
@@ -892,18 +883,15 @@ taskover signin;taskover zz1;taskover zz2
 [else]
   ($jlOver) = 1000
 
-@toolbar jh
-@toolbar score
 @await 1000
-score
+jh fb lock;score
 @await 500
 [if] (jjMax) != null && (jlOver) != null && (jjMax) >= (:energy)
   ($jlDif) = (jjMax) - (:energy)
 [if] (jlDif) <= (jlOver) && (jlDif) != null
   ($alert_jl) = ⚡️ 当前精力 (:energy)/(jjMax)，即将溢出不再增加，请及时使用。
-@toolbar jh
 // 检查元宝
-transmoney
+score;transmoney
 @tip 账号转入：($cashCharge)
 @tip 每日签到：($cashSign)/
 [if] (cashSign) != null && (jjMax) != null
@@ -923,7 +911,7 @@ transmoney
 // 日常结束后
 (RCAfter_action)
 @print <hiy>(month)月(:date)日 (:hour):(:minute)</hiy> <hic>自动日常结束！</hic>
-@print 当前精力：<hic>(:energy)</hic>，签到元宝：<hiy>(cashSign)/(jjMax)</hiy>，充值元宝：<hiy>(cashCharge)</hiy>
+@print 当前精力：<hic>(:energy)/(jjMax)</hic>，签到元宝：<hiy>(cashSign)/(jjMax)</hiy>，充值元宝：<hiy>(cashCharge)</hiy>
 @print ----------
 ($bobao) = (:name)，自动日常结束！
 ($report) = 日常报告
