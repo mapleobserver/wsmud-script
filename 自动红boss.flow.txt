@@ -6,7 +6,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2022022101
+($localVer) = 2022022801
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -66,12 +66,15 @@
   [exit]
 [if] (bossPlace) == 移花宫 || (bossPlace) == 黑木崖
   [if] {b火折子}? == null
-    @print <hiy>⚠️ (bossPlace)所需火折子不足，请先获取再进入。</hiy>
-    [exit]
+    ($logNeed) = (bossPlace)所需火折子不足，请先获取再进入。
+    @print <hiy>(logNeed)}</hiy>
 [if] (bossPlace) == 黑木崖
   [if] {b青龙堂令牌}? == null || {b白虎堂令牌}? == null || {b风雷堂令牌}? == null
-    @print <hiy>⚠️ 黑木崖所需物品不足，请先扫荡获取才进去。</hiy>
-    [exit]
+    ($logNeed) = 黑木崖所需物品不足，请先扫荡获取才进去。 
+    @print <hiy>(logNeed)</hiy>
+[if] (logNeed) != null
+  @push ⚠️【Boss必需品缺失】(:name)，(logNeed)
+  [exit]
 ($BossInfo)=notime
 @print 🦁️ 本次目标：<hiy>(bossPlace) - (bossName)</hiy>
 @cmdDelay 500
