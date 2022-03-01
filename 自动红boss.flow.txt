@@ -6,7 +6,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2022030101
+($localVer) = 2022030102
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -178,7 +178,7 @@ team out
     ($BossWarning) = 提示音
 
 // 叫杀
-[if] (BossRepeat) == null
+[if] (BossRepeat) == null || (BossRepeat) <= 0
   ($BossRepeat) = 2
 [if] (BossRepeat) > 5
   ($BossRepeat) = 5
@@ -261,7 +261,7 @@ team out
       @await 4000
     $zdwk
     [exit]
-[if] (numKill) >= 2
+[if] (numKill) >= (BossRepeat)
   ($result) = fail
   ($logResult) = 【Boss警报】(:name)，无法正常击杀(bossName)。
 [if] (logResult) != null
