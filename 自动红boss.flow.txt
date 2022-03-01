@@ -6,7 +6,7 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2022022801
+($localVer) = 2022030101
 ($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
@@ -55,8 +55,9 @@
   #input ($BossBefore) = 进副本前后正常装备技能触发,(BossBefore)
   [(BossSkill) == null]($BossSkill) = enable force none;$usezml 血剑
   #input ($BossSkill) = 杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)
+  #input ($BossRepeat) = 被连续打死几次后通知玩家处理(最多不超过5次),(BossRepeat)
   [(BossWarning) == null]($BossWarning) = 语音播报
-  #select ($BossWarning) = 遭遇问题时发出警报(找到或找不到Boss、被打死2次等),不提示|弹窗提醒|提示音|语音播报|远程通知,(BossWarning)
+  #select ($BossWarning) = 遭遇问题时发出警报(找到或找不到Boss、被连续打死多次等),不提示|弹窗提醒|提示音|语音播报|远程通知,(BossWarning)
   [(BossAutoKill) == null]($BossAutoKill) = 关闭
   #select ($BossAutoKill) = <ord>以下选项开启后将自动进副本寻找Boss叫杀，同时将强制开启远程通知，请自行设置远程通知功能。</ord><br/>&nbsp*&nbspBoss刷新后直接自动执行,开启|关闭,(BossAutoKill)
   #config
@@ -177,8 +178,12 @@ team out
     ($BossWarning) = 提示音
 
 // 叫杀
+[if] (BossRepeat) == null
+  ($BossRepeat) = 2
+[if] (BossRepeat) > 5
+  ($BossRepeat) = 5
 ($numKill) = 0
-[while] (numKill) < 2 && (BossTanlong) != 原地等待通知玩家 && (result) == get
+[while] (numKill) < (BossRepeat) && (BossTanlong) != 原地等待通知玩家 && (result) == get
   // 换装备技能触发
   [if] (BossSkill) != null
     (BossSkill)
