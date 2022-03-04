@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022022201
+($localVer) = 2022030401
 ($changeLog) = 🆕 优化任务数据获取方式，减少后台运行时卡住的情况；优化精力和元宝检测；收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -221,6 +221,8 @@ score;tasks
 stopstate
 @tidyBag
 @await 2000
+jh fam lack;pack
+($money1) =  (:money)
 
 // 师门
 [if] (SMtasks) == 正常进行 || (SMtasks) == 无视环数
@@ -898,6 +900,11 @@ score;transmoney
   ($cashOver) = (jjMax) - (cashSign)
 [if] (cashOver) <= 100
   ($alert_cash) = 💰 当前签到元宝(cashSign)/(jjMax)，即将溢出不再增加
+// 黄金收益统计
+jh fam lack;pack
+($money2) =  (:money)
+[if] (money1) != null && (money2) != null
+  @js ($gainMoney) = ((money2) - (money1))/10000
 
 // 结束收益统计
 [if] (RecordG) == 正常统计
@@ -910,6 +917,7 @@ score;transmoney
 
 // 日常结束后
 (RCAfter_action)
+@print &nbsp;&nbsp;* <hiy>黄金 (gainMoney)</hiy>
 @print <hiy>(month)月(:date)日 (:hour):(:minute)</hiy> <hic>自动日常结束！</hic>
 @print 当前精力：<hic>(:energy)/(jjMax)</hic>，签到元宝：<hiy>(cashSign)/(jjMax)</hiy>，充值元宝：<hiy>(cashCharge)</hiy>
 @print ----------
