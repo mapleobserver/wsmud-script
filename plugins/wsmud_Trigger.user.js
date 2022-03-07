@@ -24,6 +24,29 @@
     function CopyObject(obj) {
         return JSON.parse(JSON.stringify(obj));
     }
+    function is_match(src, input) {
+        if (src.length == 0 && input.length == 0) {
+            return true;
+        }
+        if (src[0] == "*" && src.length == 1) {
+            return true;
+        }
+        if (src.length == 0 || input.length == 0) {
+            return false;
+        }
+        if (src[0] == "?") {
+            return is_match(src.substring(1), input.substring(1));
+        } else
+            if (src[0] == "*") {
+                return is_match(src.substring(1), input) || is_match(src.substring(1), input.substring(1)) || is_match(src, input.substring(1));
+            } else
+                if (src[0] == input[0]) {
+                    return is_match(src.substring(1), input.substring(1));
+                } else {
+                    return false;
+                }
+
+    }
 
     /***********************************************************************************\
         Notification Center
@@ -44,19 +67,19 @@
     }
 
     const NotificationCenter = {
-        observe: function(notificationName, action) {
+        observe: function (notificationName, action) {
             const index = this._getOberverIndex();
             const observer = new NotificationObserver(notificationName, action);
             this._observers[index] = observer;
             return index;
         },
-        removeOberver: function(index) {
+        removeOberver: function (index) {
             delete this._observers[index];
         },
         /**
          * @param {Notification} notification
          */
-        post: function(notification) {
+        post: function (notification) {
             for (const key in this._observers) {
                 if (!this._observers.hasOwnProperty(key)) continue;
                 const observer = this._observers[key];
@@ -67,7 +90,7 @@
 
         _observerCounter: 0,
         _observers: {},
-        _getOberverIndex: function() {
+        _getOberverIndex: function () {
             const index = this._observerCounter;
             this._observerCounter += 1;
             return index;
@@ -85,10 +108,10 @@
     }
 
     const MonitorCenter = {
-        addMonitor: function(monitor) {
+        addMonitor: function (monitor) {
             this._monitors.push(monitor);
         },
-        run: function() {
+        run: function () {
             for (const monitor of this._monitors) {
                 monitor.run();
             }
@@ -105,23 +128,23 @@
     //  Trigger Template
     //---------------------------------------------------------------------------
 
-    const EqualAssert = function(lh, rh) {
+    const EqualAssert = function (lh, rh) {
         return lh == rh;
     };
 
-    const ContainAssert = function(lh, rh) {
+    const ContainAssert = function (lh, rh) {
         if (/^\s*\*?\s*$/.test(lh)) return true;
         const list = lh.split("|");
         return list.indexOf(rh) != -1;
     };
     const ContainReverseAssert = function (lh, rh) {
-        console.log(lh,rh);
+        console.log(lh, rh);
         if (/^\s*\*?\s*$/.test(lh)) return true;
         const list = lh.split("|");
         return list.indexOf(rh) == -1;
     };
 
-    const KeyAssert = function(lh, rh) {
+    const KeyAssert = function (lh, rh) {
         if (/^\s*\*?\s*$/.test(lh)) return true;
         const list = lh.split("|");
         for (const key of list) {
@@ -186,13 +209,13 @@
     }
 
     const TriggerTemplateCenter = {
-        add: function(template) {
+        add: function (template) {
             this._templates[template.event] = template;
         },
-        getAll: function() {
+        getAll: function () {
             return Object.values(this._templates);
         },
-        get: function(event) {
+        get: function (event) {
             return this._templates[event];
         },
 
@@ -209,7 +232,7 @@
             this.template = template;
             this.conditions = conditions;
             this.source = source;
-            this._action = function(params) {
+            this._action = function (params) {
                 let realParams = CopyObject(params);
                 for (const key in conditions) {
                     if (!conditions.hasOwnProperty(key)) continue;
@@ -236,6 +259,7 @@
 
         _activate() {
             if (this._observerIndex != null) return;
+            if (this.template == null) return;
             this._observerIndex = NotificationCenter.observe(this.template.event, this._action);
         }
         _deactivate() {
@@ -256,13 +280,13 @@
     }
 
     const TriggerCenter = {
-        run: function() {
+        run: function () {
             const allData = GM_getValue(this._saveKey(), {});
             for (const name in allData) {
                 this._loadTrigger(name);
             }
         },
-        reload: function() {
+        reload: function () {
             for (const name in this._triggers) {
                 if (!this._triggers.hasOwnProperty(name)) continue;
                 const trigger = this._triggers[name];
@@ -273,10 +297,10 @@
         },
 
         // for upload and download
-        getAllData: function() {
+        getAllData: function () {
             return GM_getValue(this._saveKey(), {});
         },
-        corver: function(triggerDatas) {
+        corver: function (triggerDatas) {
             for (const old of this.getAll()) {
                 this.remove(old.name);
             }
@@ -286,10 +310,10 @@
             }
         },
 
-        getAll: function() {
+        getAll: function () {
             return Object.values(this._triggers);
         },
-        create: function(name, event, conditions, source, active) {
+        create: function (name, event, conditions, source, active) {
             const checkResult = this._checkName(name);
             if (checkResult != true) return checkResult;
 
@@ -300,7 +324,7 @@
             this._loadTrigger(name);
             return true;
         },
-        modify: function(originalName, name, conditions, source) {
+        modify: function (originalName, name, conditions, source) {
             const trigger = this._triggers[originalName];
             if (trigger == null) return "修改不存在的触发器？";
 
@@ -319,7 +343,7 @@
             }
             return result;
         },
-        remove: function(name) {
+        remove: function (name) {
             const trigger = this._triggers[name];
             if (trigger == null) return;
 
@@ -330,43 +354,55 @@
             GM_setValue(this._saveKey(), allData);
         },
 
-        activate: function(name) {
-            const trigger = this._triggers[name];
-            if (trigger == null) return;
-            if (trigger.active()) return;
-            trigger._activate();
-            let data = this._getData(name);
-            data.active = true;
-            this._updateData(data);
-        },
-        deactivate: function(name) {
-            const trigger = this._triggers[name];
-            if (trigger == null) return;
-            if (!trigger.active()) return;
-            trigger._deactivate();
-            let data = this._getData(name);
-            data.active = false;
-            this._updateData(data);
-        },
+        activate: function (name) {
 
+            for (let x in this._triggers) {
+                if (is_match(name, x)) {
+                    const trigger = this._triggers[x];
+                    if (trigger == null) continue;
+                    if (trigger.active()) continue;
+                    trigger._activate();
+                    let data = this._getData(x);
+                    data.active = true;
+                    this._updateData(data);
+                }
+
+            }
+
+        },
+        deactivate: function (name) {
+            for (let x in this._triggers) {
+                if (is_match(name, x)) {
+                    const trigger = this._triggers[x];
+                    if (trigger == null) continue;
+                    if (!trigger.active()) continue;
+                    trigger._deactivate();
+                    let data = this._getData(x);
+                    data.active = false;
+                    this._updateData(data);
+                }
+
+            }
+
+        },
         _triggers: {},
 
-        _saveKey: function() {
+        _saveKey: function () {
             return `${Role.id}@triggers`;
         },
-        _reloadTrigger: function(name) {
+        _reloadTrigger: function (name) {
             const oldTrigger = this._triggers[name];
             if (oldTrigger != null) {
                 oldTrigger._deactivate();
             }
             this._loadTrigger(name);
         },
-        _loadTrigger: function(name) {
+        _loadTrigger: function (name) {
             const data = this._getData(name);
             if (data == null) return;
             // patch new trigger
-            if (data['event'] === '新聊天信息' &&  data['conditions']['忽略发言人']===undefined){
-                data['conditions']['忽略发言人']=''
+            if (data['event'] === '新聊天信息' && data['conditions']['忽略发言人'] === undefined) {
+                data['conditions']['忽略发言人'] = ''
             }
             const trigger = this._toTrigger(data);
             this._triggers[name] = trigger;
@@ -374,22 +410,22 @@
                 trigger._activate();
             }
         },
-        _getData: function(name) {
+        _getData: function (name) {
             let allData = GM_getValue(this._saveKey(), {});
             const data = allData[name];
             return data;
         },
-        _updateData: function(data) {
+        _updateData: function (data) {
             let allData = GM_getValue(this._saveKey(), {});
             allData[data.name] = data;
             GM_setValue(this._saveKey(), allData);
         },
-        _toTrigger: function(data) {
+        _toTrigger: function (data) {
             const template = TriggerTemplateCenter.get(data.event);
             const trigger = new Trigger(data.name, template, data.conditions, data.source);
             return trigger;
         },
-        _checkName: function(name) {
+        _checkName: function (name) {
             if (this._triggers[name] != null) return "无法修改名称，已经存在同名触发器！";
             if (!/\S+/.test(name)) return "触发器的名称不能为空。";
             if (!/^[_a-zA-Z0-9\u4e00-\u9fa5]+$/.test(name)) return "触发器的名称只能使用中文、英文和数字字符。";
@@ -411,7 +447,7 @@
     //  status
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const type = new SelectFilter("改变类型", ["新增", "移除", "层数刷新"], 0);
         const value = new InputFilter("BuffId", InputFilterFormat.text, "weapon", ContainAssert);
         const target = new SelectFilter("触发对象", ["自己", "他人"], 0);
@@ -423,8 +459,8 @@
         const t = new TriggerTemplate("Buff状态改变", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
-            const post = function(data, sid, type) {
+        const run = function () {
+            const post = function (data, sid, type) {
                 let params = {
                     "改变类型": type,
                     "BuffId": sid,
@@ -463,12 +499,12 @@
     //  msg
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const channel = new SelectFilter(
             "频道",
             ["全部", "世界", "队伍", "门派", "全区", "帮派", "谣言", "系统"],
             0,
-            function(fromUser, fromGame) {
+            function (fromUser, fromGame) {
                 if (fromUser == "全部") return true;
                 return fromUser == fromGame;
             }
@@ -485,7 +521,7 @@
         const t = new TriggerTemplate("新聊天信息", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
+        const run = function () {
             WG.add_hook("msg", data => {
                 if (data.ch == null || data.content == null) return;
                 const types = {
@@ -501,7 +537,7 @@
                 if (channel == null) return;
                 const name = data.name == null ? "无" : data.name;
                 const id = data.uid == null ? null : data.uid;
-                const datacontent  = data.content.replace(/\n/g,"")
+                const datacontent = data.content.replace(/\n/g, "")
                 let params = {
                     "频道": channel,
                     "发言人": name,
@@ -524,7 +560,7 @@
     //  item add
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const name = new InputFilter("人物名称", InputFilterFormat.text, "", KeyAssert);
         name.description("人名关键字");
         let filters = [name];
@@ -534,7 +570,7 @@
         const t = new TriggerTemplate("人物刷新", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
+        const run = function () {
             WG.add_hook("itemadd", data => {
                 if (data.name == null || data.id == null) return;
                 let params = {
@@ -554,7 +590,7 @@
     //  dialog pack
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const name = new InputFilter("名称关键字", InputFilterFormat.text, "", KeyAssert);
         let filters = [name];
         const intro = `// 物品拾取触发器
@@ -565,8 +601,8 @@
         const t = new TriggerTemplate("物品拾取", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
-            WG.add_hook("dialog", function(data) {
+        const run = function () {
+            WG.add_hook("dialog", function (data) {
                 if (data.dialog != "pack" || data.id == null || data.name == null || data.count == null || data.remove != null) return;
                 let params = {
                     "名称关键字": data.name,
@@ -599,7 +635,7 @@
     //  text
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const name = new InputFilter("关键字", InputFilterFormat.text, "", KeyAssert);
         let filters = [name];
         const intro = `// 新提示信息触发器
@@ -607,7 +643,7 @@
         const t = new TriggerTemplate("新提示信息", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
+        const run = function () {
             WG.add_hook("text", data => {
                 if (data.msg == null) return;
                 let params = {
@@ -626,14 +662,14 @@
     //  combat
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const type = new SelectFilter("类型", ["进入战斗", "脱离战斗"], 0);
         let filters = [type];
         const intro = "// 战斗状态切换触发器";
         const t = new TriggerTemplate("战斗状态切换", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
+        const run = function () {
             WG.add_hook("combat", data => {
                 let params = null;
                 if (data.start != null && data.start == 1) {
@@ -644,7 +680,7 @@
                 const n = new Notification("战斗状态切换", params);
                 NotificationCenter.post(n);
             });
-            WG.add_hook("text", function(data) {
+            WG.add_hook("text", function (data) {
                 if (data.msg == null) return;
                 if (data.msg.indexOf('只能在战斗中使用') != -1 || data.msg.indexOf('这里不允许战斗') != -1 || data.msg.indexOf('没时间这么做') != -1) {
                     const params = { "类型": "脱离战斗" };
@@ -661,14 +697,14 @@
     //  combat
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const type = new SelectFilter("类型", ["已经死亡", "已经复活"], 0);
         let filters = [type];
         const intro = "// 死亡状态改变触发器";
         const t = new TriggerTemplate("死亡状态改变", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
+        const run = function () {
             WG.add_hook("die", data => {
                 const value = data.relive == null ? "已经死亡" : "已经复活";
                 let params = {
@@ -686,7 +722,7 @@
     //  time
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const hours = [
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
             10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
@@ -708,7 +744,7 @@
         const t = new TriggerTemplate("时辰已到", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
+        const run = function () {
             setInterval(_ => {
                 const date = new Date();
                 const params = {
@@ -728,7 +764,7 @@
     //  dispfm
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const sid = new InputFilter("技能id", InputFilterFormat.text, "", ContainAssert);
         let filters = [sid];
         const intro = `// 技能释放触发器
@@ -745,7 +781,7 @@
         const t1 = new TriggerTemplate("技能冷却结束", filters1, intro1);
         TriggerTemplateCenter.add(t1);
 
-        const run = function() {
+        const run = function () {
             WG.add_hook("dispfm", data => {
                 if (data.id == null || data.distime == null || data.rtime == null) return;
                 let params = {
@@ -777,12 +813,12 @@
 
     var RoomItems = {};
 
-    (function() {
+    (function () {
         const name = new InputFilter("人名关键字", InputFilterFormat.text, "", KeyAssert);
         const type = new SelectFilter("类型", ["气血", "内力"], 0, EqualAssert);
         const compare = new SelectFilter("当", ["低于", "高于"], 0, EqualAssert);
         const valueType = new SelectFilter("值类型", ["百分比", "数值"], 0, EqualAssert);
-        const value = new InputFilter("值", InputFilterFormat.number, 0, function(fromUser, fromGame) {
+        const value = new InputFilter("值", InputFilterFormat.number, 0, function (fromUser, fromGame) {
             const parts = fromGame.split(";");
             const oldvalue = parseFloat(parts[0]);
             const newvalue = parseFloat(parts[1]);
@@ -800,7 +836,7 @@
         const t = new TriggerTemplate("气血内力改变", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
+        const run = function () {
             WG.add_hook("items", data => {
                 if (data.items == null) return;
                 RoomItems = {};
@@ -811,7 +847,7 @@
             WG.add_hook("itemadd", data => {
                 RoomItems[data.id] = CopyObject(data);
             });
-            const decorate = function(params, item) {
+            const decorate = function (params, item) {
                 params["id"] = item.id;
                 params["hp"] = item.hp;
                 params["maxHp"] = item.max_hp;
@@ -826,12 +862,12 @@
                     let compare = "低于";
                     if (data.hp > item.hp) compare = "高于";
                     const oldValue = item.hp;
-                    const oldPer = (item.hp/item.max_hp*100).toFixed(2);
+                    const oldPer = (item.hp / item.max_hp * 100).toFixed(2);
                     item.hp = data.hp;
                     if (item.max_hp < item.hp) item.max_hp = item.hp;
                     if (data.max_hp != null) item.max_hp = data.max_hp;
                     const newValue = item.hp;
-                    const newPer = (item.hp/item.max_hp*100).toFixed(2);
+                    const newPer = (item.hp / item.max_hp * 100).toFixed(2);
                     let params1 = {
                         "人名关键字": item.name,
                         "类型": "气血",
@@ -857,12 +893,12 @@
                     let compare = "低于";
                     if (data.mp > item.mp) compare = "高于";
                     const oldValue = item.mp;
-                    const oldPer = (item.mp/item.max_mp*100).toFixed(2);
+                    const oldPer = (item.mp / item.max_mp * 100).toFixed(2);
                     item.mp = data.mp;
                     if (item.max_mp < item.mp) item.max_mp = item.mp;
                     if (data.max_mp != null) item.max_mp = data.max_mp;
                     const newValue = item.mp;
-                    const newPer = (item.mp/item.max_mp*100).toFixed(2);
+                    const newPer = (item.mp / item.max_mp * 100).toFixed(2);
                     let params1 = {
                         "人名关键字": item.name,
                         "类型": "内力",
@@ -894,7 +930,7 @@
     //  damage
     //---------------------------------------------------------------------------
 
-    (function() {
+    (function () {
         const name = new InputFilter("人名关键字", InputFilterFormat.text, "", KeyAssert);
         const valueType = new SelectFilter("值类型", ["百分比", "数值"], 0, EqualAssert);
         const value = new InputFilter("值", InputFilterFormat.number, 0, (fromUser, fromGame) => {
@@ -914,8 +950,8 @@
         const t = new TriggerTemplate("伤害已满", filters, intro);
         TriggerTemplateCenter.add(t);
 
-        const run = function() {
-            const decorate = function(params, item, value, percent) {
+        const run = function () {
+            const decorate = function (params, item, value, percent) {
                 params["id"] = item.id;
                 params["name"] = item.name;
                 params["value"] = value;
@@ -929,7 +965,7 @@
                 const oldValue = item._damage == null ? 0 : item._damage;
                 const oldPer = item._damagePer == null ? 0 : item._damagePer;
                 const value = data.damage;
-                const percent = (data.damage/item.max_hp*100).toFixed(2);
+                const percent = (data.damage / item.max_hp * 100).toFixed(2);
                 // 保存伤害和伤害百分比
                 item._damage = value;
                 item._damagePer = percent;
@@ -960,16 +996,16 @@
     \***********************************************************************************/
 
     const Message = {
-        append: function(msg) {
+        append: function (msg) {
             messageAppend(msg);
         },
-        clean: function() {
+        clean: function () {
             messageClear();
         },
     };
 
     const UI = {
-        triggerHome: function() {
+        triggerHome: function () {
             const content = `
             <style>.breakText {word-break:keep-all;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}</style>
             <span class="zdy-item" style="width:120px" v-for="t in triggers" :style="activeStyle(t)">
@@ -985,7 +1021,7 @@
                     triggers: TriggerCenter.getAll()
                 },
                 methods: {
-                    switchStatus: function(t) {
+                    switchStatus: function (t) {
                         if (t.active()) {
                             TriggerCenter.deactivate(t.name);
                         } else {
@@ -994,7 +1030,7 @@
                         UI.triggerHome();
                     },
                     editTrigger: UI.editTrigger,
-                    activeStyle: function(t) {
+                    activeStyle: function (t) {
                         if (t.active()) {
                             return {
                                 "background-color": "#a0e6e0",
@@ -1002,14 +1038,14 @@
                                 "color": "#001bff"
                             };
                         } else {
-                            return { "background-color": "none" };
+                            return { };
                         }
                     },
                     createTrigger: UI.selectTriggerTemplate
                 }
             });
         },
-        selectTriggerTemplate: function() {
+        selectTriggerTemplate: function () {
             const content = `
             <span class="zdy-item" style="width:120px" v-for="t in templates" v-on:click="select(t)">{{ t.event }}</span>
             `;
@@ -1026,13 +1062,13 @@
                 }
             });
         },
-        createTrigger: function(template) {
+        createTrigger: function (template) {
             UI._updateTrigger(template);
         },
-        editTrigger: function(trigger) {
+        editTrigger: function (trigger) {
             UI._updateTrigger(trigger.template, trigger);
         },
-        _updateTrigger: function(template, trigger) {
+        _updateTrigger: function (template, trigger) {
             const content = `
             <div style="margin:0 2em 0 2em">
                 <div style="float:left;width:120px">
@@ -1080,7 +1116,7 @@
                     canShared: trigger != null
                 },
                 methods: {
-                    save: function() {
+                    save: function () {
                         const result = TriggerCenter.create(this.name, template.event, this.conditions, this.source);
                         if (result == true) {
                             UI.triggerHome();
@@ -1088,17 +1124,17 @@
                             alert(result);
                         }
                     },
-                    remove: function() {
+                    remove: function () {
                         const verify = confirm("确认删除此触发器吗？");
                         if (verify) {
                             TriggerCenter.remove(trigger.name);
                             UI.triggerHome();
                         }
                     },
-                    back: function() {
+                    back: function () {
                         UI.selectTriggerTemplate();
                     },
-                    saveback: function() {
+                    saveback: function () {
                         const result = TriggerCenter.modify(trigger.name, this.name, this.conditions, this.source);
                         if (result == true) {
                             UI.triggerHome();
@@ -1107,14 +1143,14 @@
                         }
                     },
 
-                    share: function() {
+                    share: function () {
                         ToRaid.shareTrigger(TriggerCenter._getData(trigger.name));
                     }
                 }
             })
         },
 
-        _appendHtml: function(title, content, rightText, leftText) {
+        _appendHtml: function (title, content, rightText, leftText) {
             var realLeftText = leftText == null ? "" : leftText;
             var realRightText = rightText == null ? "" : rightText;
             var html = `
@@ -1137,7 +1173,7 @@
     \***********************************************************************************/
 
     const TriggerConfig = {
-        get: function() {
+        get: function () {
             let all = {};
             let keys = GM_listValues();
             keys.forEach(key => {
@@ -1145,7 +1181,7 @@
             });
             return all;
         },
-        set: function(config) {
+        set: function (config) {
             for (const key in config) {
                 GM_setValue(key, config[key]);
             }
@@ -1166,7 +1202,7 @@
         }
     });
 
-    function __init__(){
+    function __init__() {
         WG = unsafeWindow.WG;
 
         messageAppend = unsafeWindow.messageAppend;
@@ -1174,7 +1210,7 @@
         ToRaid = unsafeWindow.ToRaid;
 
         if (WG == undefined || WG == null || ToRaid == undefined || ToRaid == null) {
-            setTimeout(()=>{__init__()}, 300);
+            setTimeout(() => { __init__() }, 300);
             return;
         }
         Role = unsafeWindow.Role;
