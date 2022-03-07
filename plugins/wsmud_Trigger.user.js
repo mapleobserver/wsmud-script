@@ -443,6 +443,7 @@
     var ToRaid = null;
     var Role = null;
 
+
     //---------------------------------------------------------------------------
     //  status
     //---------------------------------------------------------------------------
@@ -455,7 +456,8 @@
         const intro = `// Buff状态改变触发器
 // 触发对象id：(id)
 // buff的sid：(sid)
-// buff层数：(count)`;
+// buff层数：(count)
+// duration持续时间：(duration)`;
         const t = new TriggerTemplate("Buff状态改变", filters, intro);
         TriggerTemplateCenter.add(t);
 
@@ -469,7 +471,9 @@
                 params["id"] = data.id;
                 params["sid"] = sid;
                 params["count"] = 0;
+                params["duration"] = 0;
                 if (data.count != null) params["count"] = data.count;
+                if (data.duration != null) params["duration"] = data.duration;
                 const n = new Notification("Buff状态改变", params);
                 NotificationCenter.post(n);
             };
