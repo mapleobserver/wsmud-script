@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            wsmud_Trigger
 // @namespace       cqv3
-// @version         0.0.42
+// @version         0.0.43
 // @date            03/03/2019
 // @modified        07/03/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
