@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.54
+// @version         2.4.55
 // @date            23/12/2018
-// @modified        25/1/2022
+// @modified        11/3/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -5110,7 +5110,7 @@ look men;open men
             <span class = "zdy-item about-bug" style="width:120px"> 🐞 <wht>Bug 提交</wht> </span>
             <!--<br><br>-->
             <!--<hr style="background-color: gray; height: 1px; width: calc(100% - 4em); border: none;"><br>-->
-            <span class = "zdy-item wudaoTool" style="width:120px"> 💊 药方清单 </span>
+            <span class = "zdy-item about-yaofang" style="width:120px"> 💊 药方清单 </span>
             <span class = "zdy-item suqingHome" style="width:120px"> 🍿 <hig>苏</hig><hio>轻</hio><hiy>工</hiy><wht>具</wht><hic>包</hic> </span>`;
             // UI._appendHtml("🍱 <hiy>江湖客栈</hiy>", content);
             UI._appendHtml("🐟 <hiy>一键咸鱼</hiy>", content);
