@@ -2812,7 +2812,29 @@
     (function () {
         const handle = function (cmds) {
             var result = [];
+            var tempcmds = "";
+            var inString = false;
             for (const cmd of cmds) {
+                if (cmd.indexOf("`")==0 || inString){
+                    var ccmd = cmd
+                    if (cmd.indexOf("`")==0){
+                        ccmd=cmd.substr(1);
+                    }
+                    if (cmd[cmd.length-1]=="`"){
+                        ccmd=cmd.substr(0,cmd.length-1);
+                    }
+                    tempcmds = tempcmds +" "+ccmd
+                    inString= true;
+                }
+                if(cmd[cmd.length-1]=="`"){
+                    result[result.length-1] = result[result.length-1] +tempcmds
+                    tempcmds = "";
+                    inString = false;
+                    continue;
+                }
+                if(inString){
+                    continue;
+                }
                 const header = /^\s*/.exec(cmd)[0];
                 let patt = /(\{[^\}]+\})([^\?]|$)/g;
                 let r = patt.exec(cmd);
