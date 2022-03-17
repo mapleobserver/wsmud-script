@@ -1,7 +1,7 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
 @js messageClear();
-($localVer) = 2021113001
+($localVer) = 2022031701
 ($changeLog) = 🆕 增加远程通知功能（需更新插件版本）；修复战神词条错误；优化自创秘籍id获取方式。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.停止推演、词条属性功能按钮。7.语音提醒、远程通知。
 ($flowName) = 自创推演
 ($flowCode) = zcty
@@ -79,7 +79,7 @@
 [if] (AlertTel) == 开启
   ($ZCAlertPush)=开启
 
-#select ($zcEntrySet)=当前词条设置：<br/>&nbsp*&nbsp<hiz>如果要重新设定词条，先选择推演部位，<ord>然后直接点运行进入词条设置界面</ord>👇）</hiz>,正常推演|重设词条|清空重推,正常推演
+#select ($zcEntrySet)=⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️<br/>&nbsp*&nbsp<span class="rainbow-text">手动覆盖词条导致后续推演出问题的，建议重推。</span><br/>&nbsp*&nbsp⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️ ⚠️<br/>&nbsp*&nbsp当前词条设置：<br/>&nbsp*&nbsp<hiz>如果要重新设定词条，先选择推演部位，<ord>然后直接点运行进入词条设置界面</ord>👇）</hiz>,正常推演|重设词条|清空重推,正常推演
 #select ($ZCSkill)=要推演的技能部位,内功|鞭法|棍法|剑法|刀法|杖法|招架|拳脚|暗器|轻功,(ZCSkill)
 #select ($TYPriorNum)=推演方式提供两种选择：<br/>&nbsp*&nbsp1️⃣ 平均提升所有词条等级；<br/>&nbsp*&nbsp2️⃣ 指定优先推演指定词条（从上到下6个词条选1个）<br/>&nbsp*&nbsp请选择推演方式,平均|1|2|3|4|5|6,(TYPriorNum)
 #input ($ZCEntryLv)=词条限定等级（所有或指定词条推到该等级后停止，填0为不限制）,(ZCEntryLv)
@@ -361,6 +361,7 @@ stopstate
   @js $(`.ct_button`).off('click');$(`.ct_button`).on('click', function(){ToRaid.perform(`//~silent\n@print <hig>当前(ZCSkill)推演设定：<br>🍬 推演词条：(ZCProp)|(ZCSpc)<br>🍼 词条优先推演方式：(TYPriorNum) 🍤 推演词条等级：(ZCEntryLv) 🍔 预设总消耗潜能：(max_p)<br>🍟 已消耗潜能：(real_cost_p)</hig><br>(entrysData)`);})
   
   // 判断是否存在被覆盖潜能
+  // ⚠️ 当前判断方式，当覆盖后的词条等级较高时，判断会逐渐出错导致不准确。所以能不覆盖就别覆盖。
   @js ($entry_last)=var last=[(entrys)].length-1;[(entrys)][last]*100000
   [if] (rest_qn) > (entry_last)
     @js ($next_qn)=[(entrys)]['(entry_num)'-1]*100000
