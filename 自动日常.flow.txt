@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022030401
+($localVer) = 2022032401
 ($changeLog) = 🆕 优化任务数据获取方式，减少后台运行时卡住的情况；优化精力和元宝检测；收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -275,7 +275,7 @@ jh fb lock
     [if] {b扫荡符#}? < 20 || {b扫荡符}? == null
       [if] (RCMode) == 正常模式
         shop 0 20
-    ask3 {程药发}
+    ask3 {r程药发}
     @tip 无法($speed)完成|目前完成20/20个|已经完成|你的($sdfnum)符不够
     [if] (speed) != null || (sdfnum) != null
       [if] (ZBsx) == 转为正常模式
@@ -291,8 +291,8 @@ jh fb lock
           ($sdfnum) = null
         [else]
           ($alert_zb) = 追捕到达上限，无法快速扫荡，自动放弃再扫荡！
-          ask1 {程药发}
-          ask2 {程药发}
+          ask1 {r程药发}
+          ask2 {r程药发}
           ($speed) = null
           @await 1000
           [continue]
@@ -337,7 +337,7 @@ jh fb lock
     ($escapee) = null
     [while] (escapee) == null
       ($zbing) = null
-      ask1 {程药发}
+      ask1 {r程药发}
       @tip 说道：($escapee)作恶多端($info)最近在($dir1)-($dir2)出现|你不是在($zbing)吗|没有在逃的逃犯|你的($party)正在进攻|不要急，($needwait)来|最近没有($zbEnd)的逃犯了，你先休息下吧
       [if] (zbEnd) != null
         ($currentN) = 20
@@ -391,7 +391,7 @@ jh fb lock
             [while] (:room) != 扬州城-衙门正厅
               $to 扬州城-衙门正厅
               @await 500
-            ask2 {程药发}
+            ask2 {r程药发}
           [break]
         [if] (DieToReset) == 已关闭
           [if] (:hour) == 0 && (start_h) != 0
@@ -904,7 +904,7 @@ score;transmoney
 jh fam lack;pack
 ($money2) =  (:money)
 [if] (money1) != null && (money2) != null
-  @js ($gainMoney) = ((money2) - (money1))/10000
+  @js ($gainMoney) = Math.floor(((money2) - (money1))/10000)
 
 // 结束收益统计
 [if] (RecordG) == 正常统计
