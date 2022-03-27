@@ -3,7 +3,7 @@
 // 武馆需要先交学费，其他门派自动拜师
 // 基于@andyfos的版本修改
 // 四区白三三
-($localVer) = 2021042301
+($localVer) = 2022032701
 ($changeLog) = 🆕 优化版本检查过程。🌟 1.优化师门信息获取。2.修复个别bug。
 ($flowName) = 一键学习
 ($flowCode) = yjxx
@@ -843,7 +843,6 @@ $to 住房-练功房
 dazuo
 @recoverSSAuto
 [if] (ts) != null
-    @js alert('学习已完成\n(ts)')
-[else]
-    @js alert('学习已完成')
+    @print (ts)
+@print 学习已完成
 [exit]
