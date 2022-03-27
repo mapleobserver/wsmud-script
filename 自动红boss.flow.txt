@@ -6,8 +6,8 @@
 [if] (arg1) != null
   ($bossPlace) = (arg1)
 
-($localVer) = 2022030102
-($changeLog) = 🆕 等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
+($localVer) = 2022032701
+($changeLog) = 🆕 优化血刀门的判断；等待模式下，智能等待最多10分钟。⭐️ 自动寻路打Boss，可设置通知方式。
 ($flowName) = 自动红boss
 ($flowCode) = zdhboss
 ($flowPath) = 根文件夹
@@ -207,7 +207,10 @@ team out
     (BossCustomKill)
   $killall
   @await 1000
-  @until (:combating) == false || (:living) == false
+  [if] (bossPlace) == 血刀门 && "{r血刀老祖}?" != "null" && "{r血刀老祖的尸体}?" == "null"
+    @until "{r(bossName)}?" == "null" || (:living) == false
+  [else]
+    @until (:combating) == false || (:living) == false
   [if] (:living) == false
     [while] (:living) == false
       [{b天师符y}?==null]shop 1 1
