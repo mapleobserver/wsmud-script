@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022033001
+($localVer) = 2022033002
 ($changeLog) = 🆕 优化任务数据获取方式，减少后台运行时卡住的情况；优化精力和元宝检测；收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -720,8 +720,8 @@ jh fb lock
         [if] (FBName) == 古宗门遗址
           jh fam 9 start;go enter
           go up
-          @tip 打败我，你就可以上去|你想要去古老的大陆寻找($tading)吗
-          [if] (tading) != null
+          @tip 打败($tading)就可以上去|你想要去古老的大陆寻找|你可以上去
+          [if] (tading) == null
             ggdl {r疯癫的老头}
             go north[2]
             go north[2]
@@ -827,8 +827,8 @@ jh fb lock
   stopstate
   jh fam 9 start;go enter
   go up
-  @tip 打败我，你就可以上去|你想要去古老的大陆寻找($tading)吗
-  [if] (tading) != null
+  @tip 打败($tading)就可以上去|你想要去古老的大陆寻找|你可以上去
+  [if] (tading) == null
     ggdl {r疯癫的老头}
     go north[2]
     go north[2]
