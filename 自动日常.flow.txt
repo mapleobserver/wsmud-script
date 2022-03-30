@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022032401
+($localVer) = 2022033001
 ($changeLog) = 🆕 优化任务数据获取方式，减少后台运行时卡住的情况；优化精力和元宝检测；收益统计新增 无弹窗统计 和 静默统计（只能通过预置参数gains调用） 两种方式，需更新 Raid 版本至 2.4.49。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -720,24 +720,31 @@ jh fb lock
         [if] (FBName) == 古宗门遗址
           jh fam 9 start;go enter
           go up
-          ggdl {r疯癫的老头}
-          go north[2]
-          go north[2]
-          go north[2]
+          @tip 打败我，你就可以上去|你想要去古老的大陆寻找($tading)吗
+          [if] (tading) != null
+            ggdl {r疯癫的老头}
+            go north[2]
+            go north[2]
+            go north[2]
+            @await 2000
+            look shi
+            tiao1 shi;tiao1 shi;tiao2 shi
+            jumpdown
+            @await 2000
+          [else]
+            ($logGDL) = 无法进入古大陆！
+            @print <ord>(logGDL)</ord>
+            @push ⚠️【自动日常】(:name)，(logGDL)
+        [if] (logGDL) == null
+          (fbcr) (fb_num)
+          [if] (fb_num) > 1
+            @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
+          [if] (lack) != null
+            ($alert_fb) = 扫荡符不足，无法完成对【(FBName)】副本的(FBnum)次扫荡！
+          [else if] (jingli) == 精力
+            ($alert_fb) = 精力不足，无法完成对【(FBName)】副本的(FBnum)次扫荡！
+          @tidyBag
           @await 2000
-          look shi
-          tiao1 shi;tiao1 shi;tiao2 shi
-          jumpdown
-          @await 2000
-        (fbcr) (fb_num)
-        [if] (fb_num) > 1
-          @tip 扫荡完成|扫荡符($lack)继续扫荡|你的($jingli)不够
-        [if] (lack) != null
-          ($alert_fb) = 扫荡符不足，无法完成对【(FBName)】副本的(FBnum)次扫荡！
-        [else if] (jingli) == 精力
-          ($alert_fb) = 精力不足，无法完成对【(FBName)】副本的(FBnum)次扫荡！
-        @tidyBag
-        @await 2000
     [else if] (FBWay) == 自动
       //脚本自动模式
       stopstate
@@ -820,26 +827,28 @@ jh fb lock
   stopstate
   jh fam 9 start;go enter
   go up
-  ggdl {r疯癫的老头}
-  go north[2]
-  go north[2]
-  go north[2]
-  @await 2000
-  look shi
-  tiao1 shi;tiao1 shi;tiao2 shi
-  jumpdown
-  [if] (GmpSDnum) == null || (GmpSDnum) == 0
-    ($GmpSDnum) = 5
-  [if] {b扫荡符#}? < (GmpSDnum) || {b扫荡符}? == null
-    [if] (RCMode) == 正常模式
-      shop 0 (GmpSDnum)
-  cr gmp/shanmen 0 (GmpSDnum)
-  [if] (GmpSDnum) > 1
-    @tip 古宗门遗址扫荡完成|扫荡符($gmplack)继续扫荡|你的($gmpjingli)不够
-  [if] (gmplack) != null
-    ($alert_gmp) = 扫荡符不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
-  [else if] (gmpjingli) == 精力
-    ($alert_gmp) = 精力不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
+  @tip 打败我，你就可以上去|你想要去古老的大陆寻找($tading)吗
+  [if] (tading) != null
+    ggdl {r疯癫的老头}
+    go north[2]
+    go north[2]
+    go north[2]
+    @await 2000
+    look shi
+    tiao1 shi;tiao1 shi;tiao2 shi
+    jumpdown
+    [if] (GmpSDnum) == null || (GmpSDnum) == 0
+      ($GmpSDnum) = 5
+    [if] {b扫荡符#}? < (GmpSDnum) || {b扫荡符}? == null
+      [if] (RCMode) == 正常模式
+        shop 0 (GmpSDnum)
+    cr gmp/shanmen 0 (GmpSDnum)
+    [if] (GmpSDnum) > 1
+      @tip 古宗门遗址扫荡完成|扫荡符($gmplack)继续扫荡|你的($gmpjingli)不够
+    [if] (gmplack) != null
+      ($alert_gmp) = 扫荡符不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
+    [else if] (gmpjingli) == 精力
+      ($alert_gmp) = 精力不足，无法完成对【古宗门遗址】副本的(GmpSDnum)次扫荡！
 
 // 使用玉简
 @await 1000
