@@ -5,7 +5,7 @@
 // 默认在帮派频道发出召唤佛光信息，如果坦克和自己不在一个帮派，可选择公共或者队伍频道。
 // 2020.12.09 - 修复晚上八点首席弟子换人时引起的bug；恢复红蓝可使用长生诀；优化多项判断；增强提示信息。
 
-($localVer) = 2022020101
+($localVer) = 2022040601
 ($changeLog) = 🆕 超时失败后直接闭关结束运镖；优化不要急慢慢来的处理方式；加速有长生时复活后的恢复过程。🌟 多种方案选择；可配合佛光坦克触发；可远程通知。
 ($flowName) = 自动运镖
 ($flowCode) = zdyb
@@ -208,7 +208,7 @@ stopstate
             cha none;enable sword tangshijianfa;eq (EscortWeaponID)
             @wait 3000
             @cd sword.wu
-        [if] (EscortShenzhao) == 是 && (quanjiao) != null && (jiuyang) == null && (quanjiao) != shenzhaojing
+        [if] (EscortShenzhao) == 是 && (quanjiao) != null && (jiuyang) == null && (quanjiao) != shenzhaojing && (:kf_quan) == shenzhaojing
             enable unarmed (quanjiao)
             @await 1000
         [if] (EscortWaitCDExp) != null && (EscortSkipCD) != 打开
@@ -257,7 +257,7 @@ stopstate
             [if] (:living) == true && (linghun) != 灵魂
                 ($jiuyang) = null
                 ($dead) = null
-                [if] (EscortShenzhao) == 是 && (quanjiao) != null && (quanjiao) != shenzhaojing
+                [if] (EscortShenzhao) == 是 && (quanjiao) != null && (quanjiao) != shenzhaojing && (:kf_quan) == shenzhaojing
                     enable unarmed (quanjiao)
                 [if] (EscortXuantie) == 是
                     [if] (:kf_jian) != (jianfa)
