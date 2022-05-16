@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.55
+// @version         2.4.56
 // @date            23/12/2018
-// @modified        11/3/2022
+// @modified        16/5/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -2603,6 +2603,7 @@
 
     VariableStore.register(_ => {
         return {
+            ":online": WG.online,
             ":id": Role.id,
             ":name": Role.name,
             ":grade": Role.grade,

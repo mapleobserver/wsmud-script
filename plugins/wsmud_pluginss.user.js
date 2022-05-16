@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.253
+// @version      0.0.32.263
 // @date         01/07/2018
-// @modified     11/03/2022
+// @modified     16/05/2022
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
@@ -231,6 +231,7 @@
             },
             set onclose(fn) {
                 ws.onclose = (e) => {
+                    WG.online = false;
                     auto_relogin = GM_getValue(roleid + "_auto_relogin", auto_relogin);
                     fn(e);
                     if (auto_relogin == "开") {
@@ -784,6 +785,8 @@
     var unauto_pfm = '';
     //自动施法开关
     var auto_pfmswitch = "开";
+    // 自动施法模式 开：智能施法，关：顺序施法
+    var auto_pfm_mode = "开";
     //自动转发路径
     var auto_rewardgoto = "关";
     //显示昏迷信息
@@ -1392,6 +1395,7 @@
         },
     };
     var WG = {
+        online: false,
         sm_state: -1,
         sm_item: null,
         sm_store: null,
@@ -2739,7 +2743,7 @@
             $('#store_drop_info').val(zdy_item_drop);
         },
 
-        zdwk: function (v, x = true) {
+        zdwk: async function (v, x = true) {
             if (x) {
                 if (G.level) {
                     if (G.isGod()) {
@@ -2760,13 +2764,14 @@
                 if (G.wk_listener) return;
                 let tiejiang_id;
                 let wk_busy = false;
-                G.wk_listener = WG.add_hook(["dialog", "text"], function (data) {
+                G.wk_listener = WG.add_hook(["dialog", "text"], async function (data) {
                     if (data.type == "dialog" && data.dialog == "pack") {
                         //检查是否装备铁镐
                         let tiegao_id;
                         if (data.name) {
                             if (data.name == "<wht>铁镐</wht>") {
                                 WG.Send("eq " + data.id);
+                                await WG.sleep(2000);
                                 WG.go("扬州城-矿山");
                                 WG.Send("wa");
                                 WG.zdwk("remove", false);
@@ -2774,7 +2779,10 @@
                             }
                         } else if (data.items) {
                             if (data.eqs[0] && data.eqs[0].name.indexOf("铁镐") > -1) {
+
+                                await WG.sleep(1000);
                                 WG.go("扬州城-矿山");
+                                await WG.sleep(1000);
                                 WG.Send("wa");
                                 WG.zdwk("remove", false);
                                 return;
@@ -2788,6 +2796,7 @@
                                 }
                                 if (tiegao_id) {
                                     WG.Send("eq " + tiegao_id);
+                                    await WG.sleep(2000);
                                     WG.go("扬州城-矿山");
                                     WG.Send("wa");
                                     WG.zdwk("remove", false);
@@ -2815,7 +2824,8 @@
                             messageAppend('卡顿,五秒后再次尝试操作', 0, 1);
                             setTimeout(() => {
                                 wk_busy = false;
-                                WG.Send("stopstate;pack");
+                                WG.zdwk("remove", false);
+                                WG.zdwk();
                             }, 5000);
                         }
                     }
@@ -2830,6 +2840,8 @@
                         }
                         if (item_id) {
                             WG.Send('buy 1 ' + item_id + ' from ' + tiejiang_id);
+                            
+                                await WG.sleep(2000);
                         } else {
                             messageAppend("<hio>自动挖矿</hio>无法购买<wht>铁镐</wht>");
                             WG.zdwk("remove", false);
@@ -3387,6 +3399,7 @@
             }
         },
         forcebufskil: '',
+        bufskill: {},
         xubuf: null,
         pfmskill: null,
         is_free: function () {
@@ -3408,6 +3421,8 @@
                     clearInterval(G.preform_timer);
                     G.preform_timer = undefined;
                     $(".auto_perform").css("background", "");
+                    WG.forcebufskil = ''
+                    WG.bufskill = {}
                 }
                 return;
             }
@@ -3428,99 +3443,130 @@
             if (!WG.hasStr("force.tuoli", blackpfm)) {
                 blackpfm.push('force.tuoli');
             }
-
-            let force_buff_skill = ['force.cui', 'force.power', 'force.xi',
-                'force.xin', 'force.chu', 'force.ztd', 'force.zhen', 'force.busi', 'force.wang'];
-            let buff_skill_dict = {
-                "weapon": ['sword.wu', 'blade.shi', 'sword.yu', 'sword.yi'],
-                "ztd": ["force.ztd"],
-                "mingyu": ["force.wang"],
-                "force": ["*"]
-            }
-            WG.xubuf = null;
-            WG.pfmskill = null
-            G.preform_timer = setInterval(() => {
-                if (G.in_fight == false) { WG.auto_preform("stop"); return; }
-                var alreay_pfm = [];
-                if (WG.xubuf == null) {
-                    WG.xubuf = setTimeout(async () => {
-                        for (var skill of G.skills) {
-                            if (WG.hasStr(skill.id, blackpfm)) {
-                                continue;
-                            }
-                            for (let buf in buff_skill_dict) {
-                                for (let ski of buff_skill_dict[buf]) {
-                                    if (ski == skill.id) {
-                                        if (!G.gcd && !G.cds.get(skill.id) && !WG.hasStr(buf, G.selfStatus)) {
-                                            WG.Send("perform " + skill.id);
-                                            // break;
-                                            await WG.sleep(200);
-                                            while (!G.cds.get(skill.id)) {
-                                                if (G.in_fight == false) { WG.auto_preform("stop"); return; }
-                                                if (!WG.is_free()) break;
+            // 如果 auto_pfm_mode 等于 true 则使用智能施法
+            if (G.auto_pfm_mode) {
+                let force_buff_skill = ['force.cui', 'force.power', 'force.xi',
+                    'force.xin', 'force.chu', 'force.ztd', 'force.zhen', 'force.busi', 'force.wang'];
+                let buff_skill_dict = {
+                    "weapon": ['sword.wu', 'blade.shi', 'sword.yu'],
+                    "ztd": ["force.ztd"],
+                    "mingyu": ["force.wang"],
+                    "force": ["*"],
+                    "dodge":["dodge.power","dodge.fo","dodge.gui","dodge.lingbo","dodge.zhui"]
+                }
+                WG.xubuf = null;
+                WG.pfmskill = null
+                G.preform_timer = setInterval(() => {
+                    if (G.in_fight == false) { WG.auto_preform("stop"); return; }
+                    var alreay_pfm = [];
+                    if (WG.xubuf == null) {
+                        WG.xubuf = setTimeout(async () => {
+                            for (var skill of G.skills) {
+                                if (WG.hasStr(skill.id, blackpfm)) {
+                                    continue;
+                                }
+                                for (let buf in buff_skill_dict) {
+                                    for (let ski of buff_skill_dict[buf]) {
+                                        if (ski == skill.id) {
+                                            if (!G.gcd && !G.cds.get(skill.id) && !WG.hasStr(buf, G.selfStatus)) {
                                                 WG.Send("perform " + skill.id);
+                                                // break;
                                                 await WG.sleep(200);
+                                                while (!G.cds.get(skill.id)) {
+                                                    if (G.in_fight == false) { WG.auto_preform("stop"); return; }
+                                                    if (!WG.is_free()) break;
+                                                    WG.Send("perform " + skill.id);
+                                                    await WG.sleep(200);
+                                                }
+                                                if (WG.hasStr(buf, G.selfStatus)) {
+                                                    console.log('buf技能' + skill.id)
+                                                    WG.bufskill[buf] = skill.id;
+                                                }
+                                                // alreay_pfm.push(skill.id)
                                             }
                                             // alreay_pfm.push(skill.id)
+                                            break;
                                         }
-                                        // alreay_pfm.push(skill.id)
-                                        break;
                                     }
                                 }
-                            }
-                            if (WG.hasStr(skill.id, force_buff_skill)) {
-                                if (!G.gcd && !G.cds.get(skill.id) && !WG.hasStr("force", G.selfStatus)) {
-                                    WG.Send("perform " + skill.id);
-                                    // break;
-                                    await WG.sleep(200);
-                                    while (!G.cds.get(skill.id) && !WG.hasStr("force", G.selfStatus)) {
-                                        if (G.in_fight == false) { WG.auto_preform("stop"); return; }
-                                        if (!WG.is_free()) break;
+                                if (WG.hasStr(skill.id, force_buff_skill)) {
+                                    if (!G.gcd && !G.cds.get(skill.id) && !WG.hasStr("force", G.selfStatus)) {
                                         WG.Send("perform " + skill.id);
+                                        // break;
                                         await WG.sleep(200);
+                                        while (!G.cds.get(skill.id) && !WG.hasStr("force", G.selfStatus)) {
+                                            if (G.in_fight == false) { WG.auto_preform("stop"); return; }
+                                            if (!WG.is_free()) break;
+                                            WG.Send("perform " + skill.id);
+                                            await WG.sleep(200);
 
+                                        }
+                                        if (WG.hasStr("force", G.selfStatus)) {
+                                            console.log('内功buf技能' + skill.id)
+                                            WG.forcebufskil = skill.id;
+                                        }
+                                        alreay_pfm.push(skill.id)
                                     }
-                                    if (WG.hasStr("force", G.selfStatus)) {
-                                        console.log('内功buf技能' + skill.id)
-                                        WG.forcebufskil = skill.id;
-                                    }
-                                    alreay_pfm.push(skill.id)
+                                    // alreay_pfm.push(skill.id)
                                 }
-                                // alreay_pfm.push(skill.id)
                             }
-                        }
-                        WG.xubuf = null;
-                    }, 10);
-                }
-                if (WG.pfmskill == null) {
-                    WG.pfmskill = setTimeout(async () => {
-                        for (var skill of G.skills) {
-                            if (WG.hasStr(skill.id, blackpfm)) {
-                                continue;
-                            }
-                            if (G.gcd) break;
-                            // console.log(skill);
-                            if (!G.gcd && !G.cds.get(skill.id) && !(WG.hasStr(skill.id, force_buff_skill) || WG.hasStr(skill.id, buff_skill_dict))) {
-                                WG.Send("perform " + skill.id);
-                                if (WG.is_zero_releasetime()) break; // 非0出招者只放一个技能
-                                await WG.sleep(20);
-                                if (!WG.is_free()) break;
-
-                            }
-                            if (WG.forcebufskil != '') {
-                                if (!G.gcd && !G.cds.get(skill.id) && WG.hasStr(skill.id, force_buff_skill) && skill.id != WG.forcebufskil &&
-                                    !WG.hasStr(skill.id, buff_skill_dict['mingyu']) && !WG.hasStr(skill.id, buff_skill_dict['ztd'])) {
-                                    console.log('使用无buf的内功技能' + skill.id)
+                            WG.xubuf = null;
+                        }, 10);
+                    }
+                    if (WG.pfmskill == null) {
+                        WG.pfmskill = setTimeout(async () => {
+                            for (var skill of G.skills) {
+                                if (WG.hasStr(skill.id, blackpfm)) {
+                                    continue;
+                                }
+                                if (G.gcd) break;
+                                // console.log(skill);
+                                if (!G.gcd && !G.cds.get(skill.id) && !(WG.hasStr(skill.id, force_buff_skill)|| WG.hasStr(skill.id, buff_skill_dict))) {
                                     WG.Send("perform " + skill.id);
+                                    if (WG.is_zero_releasetime()) break; // 非0出招者只放一个技能
+                                    await WG.sleep(20);
                                     if (!WG.is_free()) break;
-                                }
-                            }
-                        }
 
-                        WG.pfmskill = null
-                    }, 10);
-                }
-            }, 300);
+                                }
+                                if (WG.forcebufskil != '') {
+                                    if (!G.gcd && !G.cds.get(skill.id) && WG.hasStr(skill.id, force_buff_skill) && skill.id != WG.forcebufskil &&
+                                        !WG.hasStr(skill.id, buff_skill_dict['mingyu']) && !WG.hasStr(skill.id, buff_skill_dict['ztd'])) {
+                                        console.log('使用无buf的内功技能' + skill.id)
+                                        WG.Send("perform " + skill.id);
+                                        if (!WG.is_free()) break;
+                                    }
+                                }
+                                // if (WG.bufskill.hasOwnProperty('weapon') && WG.bufskill['weapon'] != '') {
+                                //     if (!G.gcd && !G.cds.get(skill.id) && WG.hasStr(skill.id, buff_skill_dict) && skill.id != WG.bufskill['weapon'] &&
+                                //         !WG.hasStr(skill.id, buff_skill_dict['mingyu']) && !WG.hasStr(skill.id, buff_skill_dict['ztd'])) {
+                                //         console.log('使用无buf的武器技能' + skill.id)
+                                //         WG.Send("perform " + skill.id);
+                                //         if (!WG.is_free()) break;
+                                //     }
+                                // }
+                            }
+
+                            WG.pfmskill = null
+                        }, 10);
+                    }
+                }, 300);
+            }
+            else{
+                G.preform_timer = setInterval(() => {
+
+                    if (G.in_fight == false) WG.auto_preform("stop");
+                    for (var skill of G.skills) {
+                   
+                        if (WG.inArray(skill.id, blackpfm)) {
+                            continue;
+                        }
+                        if (!G.gcd && !G.cds.get(skill.id)) {
+                            WG.Send("perform " + skill.id);
+                            break;
+                        }
+                    }
+                }, 350);
+            }
         },
 
         formatCurrencyTenThou: function (num) {
@@ -3744,7 +3790,7 @@
         },
         eqx: null,
         eqxp: null,
-        eqhelper(type, enaskill = 0) {
+        eqhelper(type, enaskill = 0,realy = false) {
             var deepCopy = function (source) {
                 var result = {};
                 for (var key in source) {
@@ -3800,6 +3846,31 @@
                 }
                 eqlist = GM_getValue(roleid + "_eqlist", eqlist);
                 skilllist = GM_getValue(roleid + "_skilllist", skilllist);
+                if (realy) {
+                    var eqdata = ""
+                    if(enaskill == 0){
+                        //从eqlist第一项开始遍历
+                        for (let i = 1; i < 11; i++) {
+                            if (eqlist[type][i] != null && eqlist[type][i] != "") {
+                                eqdata += "eq " + eqlist[type][i].id + ";";
+                            }
+                        }
+                        // 将eqlist第一项的id添加到eqdata
+                        eqdata += "eq " + eqlist[type][0].id + ";";
+
+                    }else{
+                        //使用for in遍历skilllist 获取其中的id
+                        for (let i in skilllist[type]) {
+                            if (skilllist[type][i] != null && skilllist[type][i] != "") {
+                                eqdata += "enable " +i+" " +skilllist[type][i] + ";";
+                            }
+                        }
+                    }
+                    copyToClipboard(eqdata);
+                    messageAppend( type + "已复制到剪贴板!", 1);
+                    return
+                } 
+
                 var p_cmds = "";
                 //  console.log(G.enable_skills)
                 let mySkills = [];
@@ -3833,6 +3904,7 @@
                     tsMsg = "技能"
                     $("span[command=skills]").click();
                 }
+             
 
                 p_cmds = p_cmds + '$wait 40;cha;look3 1';
 
@@ -3850,6 +3922,7 @@
                 });
 
                 WG.SendCmd(p_cmds);
+                
             }
         },
         eqhelperdel: function (type) {
@@ -3908,6 +3981,7 @@
                     role: role,
                     roleid: roleid,
                     eqlist: {},
+                    cpeqlist:{},
                     eqlistdel: {},
                     eqskills_id: "none"
                 },
@@ -3923,6 +3997,12 @@
                     },
                     eqs: function (name) {
                         WG.eqhelper(name, 1)
+                    },
+                    copyeq: function (name) {
+                        WG.eqhelper(name, 0,true)
+                    },
+                    copyeqs: function (name) {
+                        WG.eqhelper(name, 1,true)
                     },
                     save: function (name) {
                         WG.eqhelper(name)
@@ -3955,6 +4035,11 @@
                             case "save":
                                 this.saveUI();
                                 break;
+                            case "copyeq":
+                                this.eqlist = {};
+                                this.cpeqlist = GM_getValue(this.roleid + "_eqlist", {});
+                                this.role = "<< 返回";
+                                break
                             case "delete":
                                 this.eqlist = {};
                                 this.eqlistdel = GM_getValue(this.roleid + "_eqlist", {});
@@ -5274,6 +5359,15 @@
                     G.auto_preform = false;
                 }
             });
+            $('#autopfmmode').click(function () {
+                auto_pfm_mode = WG.switchReversal($(this));
+                GM_setValue(roleid + "_auto_pfm_mode", auto_pfm_mode);
+                if (auto_pfm_mode == "开") {
+                    G.auto_pfm_mode = true;
+                } else {
+                    G.auto_pfm_mode = false;
+                }
+            });
             $('#autorewardgoto').click(function () {
                 auto_rewardgoto = WG.switchReversal($(this));
                 GM_setValue(roleid + "_auto_rewardgoto", auto_rewardgoto);
@@ -5534,6 +5628,7 @@
             $('#ks_Boss').val(autoKsBoss);
             $('#auto_eq').val(autoeq);
             $('#autopfmswitch').val(auto_pfmswitch);
+            $('#autopfmmode').val(auto_pfm_mode);
             $('#autorewardgoto').val(auto_rewardgoto);
             $('#busyinfo').val(busy_info);
             $('#saveAddr').val(saveAddr);
@@ -7036,6 +7131,7 @@
                 + `<h3>自动施法配置</h3>`
                 + UI.html_input("unauto_pfm", "自动施法黑名单(填技能代码，使用半角逗号分隔)：")
                 + UI.html_switch('autopfmswitch', '自动施法开关：', 'auto_pfmswitch')
+                + UI.html_switch('autopfmmode', 'AI施法模式：', 'auto_pfm_mode')
 
 
                 + `<h3>仓库存储配置</h3>`
@@ -7079,6 +7175,7 @@
                     <select style="width:80px" id="eqskills-opts" @change="eqskills_opts_change(eqskills_id)" v-model="eqskills_id">
                         <option value="none">选择操作</option>
                         <option value="save">新建套装</option>
+                        <option value="copyeq">复制命令</option>
                         <option value="delete">删除套装</option>
                         <option value="uneqall">脱光装备</option>
                     </select></div>
@@ -7102,6 +7199,20 @@
                     <span class="zdy-item"  v-for="(item, index) in eqlist" @click='eqs(index)'
                         style="width: 120px;">
                         <div class="eqsname" style="width: 100%;">装备技能:{{index}}</div>
+                </span>
+				</div>
+                <div class="item-commands">
+                <span class="zdy-item"  v-for="(item, index) in cpeqlist" @click='copyeq(index)'
+                        style="width: 120px;">
+                        <div class="eqsname" style="width:100%;">复制装备套装:{{index}}</div>
+                </span>
+
+				</div>
+                <br>
+				<div class="item-commands">
+                    <span class="zdy-item"  v-for="(item, index) in cpeqlist" @click='copyeqs(index)'
+                        style="width: 120px;">
+                        <div class="eqsname" style="width: 100%;">复制装备技能:{{index}}</div>
                 </span>
 				</div>
                  <br>
@@ -7433,6 +7544,7 @@
         cds: new Map(),
         in_fight: false,
         auto_preform: false,
+        auto_pfm_mode: false,
         can_auto: false,
         level: undefined,
         getitemShow: undefined,
@@ -7574,6 +7686,7 @@
                 switch (data.type) {
                     case "login":
                         G.id = data.id;
+                        WG.online = true;
                         break;
                     case "exits":
                         G.exits = new Map();
@@ -8379,6 +8492,7 @@
             sm_getstore = GM_getValue(roleid + "_sm_getstore", sm_getstore);
             unauto_pfm = GM_getValue(roleid + "_unauto_pfm", unauto_pfm);
             auto_pfmswitch = GM_getValue(roleid + "_auto_pfmswitch", auto_pfmswitch);
+            auto_pfm_mode = GM_getValue(roleid + "_auto_pfm_mode", auto_pfm_mode);
             auto_rewardgoto = GM_getValue(roleid + "_auto_rewardgoto", auto_rewardgoto);
             busy_info = GM_getValue(roleid + "_busy_info", busy_info);
             saveAddr = GM_getValue(roleid + "_saveAddr", saveAddr);
@@ -8419,6 +8533,10 @@
             if (auto_pfmswitch == "开") {
                 G.auto_preform = true
             }
+            if (auto_pfm_mode == "开") {
+                G.auto_pfm_mode = true
+            }
+            
             auto_command = GM_getValue(roleid + "_auto_command", auto_command);
             var unpfm = unauto_pfm.split(',');
             for (var pfmname of unpfm) {
