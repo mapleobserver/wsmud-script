@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.56
+// @version         2.4.57
 // @date            23/12/2018
-// @modified        16/5/2022
+// @modified        24/5/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -5125,6 +5125,7 @@ look men;open men
             <span class="zdy-item xianyu-xybm" style="width:120px"> 🐘 襄阳报名</span>
             <span class="zdy-item xianyu-ltbm" style="width:120px"> 🏆 擂台报名</span>
             <span class="zdy-item xianyu-cbt" style="width:120px"> 💎 藏宝图</span>
+            <span class = "zdy-item xianyu-setting" style="width:120px"> 🔧 参数设置 </span>
             <br><br>
             <hr style="background-color: gray; height: 1px; width: calc(100% - 4em); border: none;"><br>
             <span class = "zdy-item about-script" style="width:120px"> 🦶 <wht>脚本教程</wht> </span>
@@ -5158,6 +5159,9 @@ look men;open men
             $(".xianyu-ltbm").on("click", function () {
                 DungeonsShortcuts.xianyu_ltbm();
             });
+            $(".xianyu-setting").on("click", function () {
+                DungeonsShortcuts.xianyu_setting();
+            });
             $(".about-script").on('click', function () {
                 window.open("https://www.yuque.com/wsmud/doc", '_blank').location;
             });
@@ -5165,7 +5169,7 @@ look men;open men
                 window.open("https://www.yuque.com/wsmud/doc/gr9gyy", '_blank').location;
             });
             $(".about-yaofang").on('click', function () {
-                window.open("https://emeisuqing.github.io/wsmud.old/yaofang/", '_blank').location;
+                window.open("https://emeisuqing.github.io/wsmud.old/", '_blank').location;
             });
             $(".suqingHome").on('click', function () {
                 window.open("https://emeisuqing.github.io/wsmud/", '_blank').location;
@@ -6162,11 +6166,13 @@ $zdwk
   @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>
   [exit]
 @print 🐟 一键咸鱼 => <hic>扫荡妖塔</hic>
-@print <hic>如果想自己静默式调用扫荡妖塔功能，请先设定变量 <hiy>SDYTnum</hiy> 的值。</hic>
+@print <hic>如果想自己静默式调用扫荡妖塔功能，请先设定变量扫荡次数 <hiy>SDYTnum</hiy> 和 单次消耗精力上限 <hiy>SDYTjlsx</hiy> 的值。</hic>
+[if] (SDYTjlsx) == 0 || (SDYTjlsx) == null || (SDYTjlsx) == undefined
+  @js ($SDYTjlsx) = prompt("请输入单次消耗精力上限，超过后将自动停止：", "85");
 [if] (SDYTnum) == 0 || (SDYTnum) == null || (SDYTnum) == undefined
-  @js ($SDYTnum) = prompt("请输入次数，注意：单次消耗精力达到70时将自动停止。","5")
+  @js ($SDYTnum) = prompt("请输入本轮扫荡次数，注意：单次消耗精力达到上限后将自动停止。","5")
 ($sdyt_num) = (SDYTnum)
-($SDYTnum) = null
+//($SDYTnum) = null
 [if] (sdyt_num) == 0 || (sdyt_num) == null || (sdyt_num) == undefined
   @print <ord>扫荡次数为0，取消扫荡。</ord>
   [exit]
@@ -6189,8 +6195,8 @@ stopstate
   [if] (ytJS) != null
     @print <hiy>妖塔未解锁，无法扫荡。</hiy>
     [break]
-  [if] (jl_yt) >= 70
-    @print <ord>单次扫荡精力达到或超过70，自动停止。</ord>
+  [if] (jl_yt) > (SDYTjlsx)
+    @print <ord>单次扫荡精力超过(SDYTjlsx)，自动停止。</ord>
     [break]
   [else]
     saodang muyuan
@@ -6251,7 +6257,7 @@ stopstate
     @print 元晶已售空，无法购买。
   [else]
     @print 已购买一个<hio>元晶</hio>。
-  $zdwk
+$zdwk
             `
             const p = new Performer("门贡换元晶", source);
             p.log(false);
@@ -6274,6 +6280,20 @@ askbiwu {r擂台比武报名}?
 $zdwk
             `
             const p = new Performer("擂台报名", source);
+            p.log(false);
+            p.start();
+        },
+        xianyu_setting: function () {
+            let source = `
+[(SDYTjlsx)==null]($SDYTjlsx)=85
+[(SDYTnum)==null]($SDYTnum)=5
+@print 🐟 一键咸鱼 => <hic>参数设置</hic>
+#input ($SDYTjlsx)=<hiz>一键设置各种常用流程（陆续更新添加）参数</hiz><br/>&nbsp*&nbsp<ord>🐉 扫荡妖塔</ord> 参数<br/>&nbsp*&nbsp妖塔单次消耗精力上限,(SDYTjlsx)
+#input ($SDYTnum)=每轮妖塔扫荡次数,(SDYTnum)
+#config
+@print 已完成参数设置
+            `
+            const p = new Performer("参数设置", source);
             p.log(false);
             p.start();
         },
