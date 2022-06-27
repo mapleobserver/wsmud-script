@@ -1,13 +1,14 @@
 //~silent
 // 生成练习代码，自动填入系统设置中，代码长度最多400。
 // 四区白三三
-($localVer) = 2021100301
+($localVer) = 2022062701
 ($changeLog) = 🆕 新增批量指定等级选项；优化逻辑判断。🌟 修改代码字符最大值为400；保存练习房间的选择；修正技能数量最大值为62
 ($flowName) = 练习代码生成器
 ($flowCode) = lxdm
 ($flowPath) = 提升
 ($flowFinder) = 提升
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)

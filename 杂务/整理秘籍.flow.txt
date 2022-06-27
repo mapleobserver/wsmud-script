@@ -2,13 +2,14 @@
 // 四区白三三
 // 自动合成秘籍残页存入书架，优先存门派进阶和高品质秘籍。
 // 版本检查
-($localVer) = 2022021001
+($localVer) = 2022062701
 ($changeLog) = 自动合成秘籍残页存入书架，优先存门派进阶和高品质秘籍。
 ($flowName) = 整理秘籍
 ($flowCode) = zlmj
 ($flowPath) = 杂务
 ($flowFinder) = 杂务
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)

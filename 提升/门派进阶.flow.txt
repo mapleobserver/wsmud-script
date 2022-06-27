@@ -1,13 +1,14 @@
 //~silent
 // 自动领悟门派进阶书籍
 // 四区白三三
-($localVer) = 2021071101
+($localVer) = 2022062701
 ($changeLog) = 技能不足1000级时跳过。
 ($flowName) = 门派进阶
 ($flowCode) = mpjj
 ($flowPath) = 提升
 ($flowFinder) = 提升
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)
