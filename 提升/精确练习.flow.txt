@@ -1,13 +1,14 @@
 //~silent
 // 挂机自动练习
 // 四区白三三
-($localVer) = 2021070901
-($changeLog) = 🆕 新增批量指定等级选项。🌟 可自定义练习结束后执行命令；新增手动填写技能的功能，按从上到下顺序练习；可自定义练习技能；可批量关闭触发并在练习结束后重新开启；原地防掉线功能。
+($localVer) = 2022062701
+($changeLog) = 🆕 新增练习结束后远程通知功能。
 ($flowName) = 精确练习
 ($flowCode) = jqlx
 ($flowPath) = 提升
 ($flowFinder) = 提升
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)
@@ -62,13 +63,14 @@
 [if] (:room 副本区域) == true
   ($LXMap) = 原地不动
   ($LXEnd) = 原地防掉线
-  ($LXtts) = 打开
+  //($LXtts) = 打开
 [(OffLxTriggers) == null]($OffLxTriggers) = 续冰心,续飞翼,续药飞翼,鼓舞续药飞翼,续药飞翼徽章,补冰心,补飞翼
 [(Chiyao) == null]($Chiyao) = 是
 [(Feiyi) == null]($Feiyi) = 是
 [(LXEnd) == null]($LXEnd) = 闭关或挖矿
 [LXAfter] == null]($LXAfter) = $zdwk
 [(LXtts) == null]($LXtts) = 关闭
+[(LXtts) == 打开]($LXtts) = 远程通知
 [(Type) == null]($Type) = 练至上限
 
 //选择练习方式、其它选项
@@ -80,7 +82,7 @@
 #select ($Feiyi) = 是否补飞翼(请事先装备飞翼剑),是|否,(Feiyi)
 #select ($LXEnd) = 练习结束后操作,原地防掉线|闭关或挖矿|打坐|自定义命令,(LXEnd)
 #input ($LXAfter) = 练习结束后执行命令(自定义命令模式，多个命令用英文;隔开，默认请填$zdwk),(LXAfter)
-#select ($LXtts) = 练习结束后语音提醒,打开|关闭,(LXtts)
+#select ($LXtts) = 练习结束后通知玩家,远程通知|语音播报|提示音|关闭,(LXtts)
 #config
 
 //获取技能列表、根据练习方式显示不同选项
@@ -331,9 +333,14 @@ stopstate
     @js ToRaid.perform(`@on (t)`);
     ($num)=(num)+1
 //练习结束
+[if] (LXtts) == 远程通知
+  @push 【练习结束】(:name)精确练习已结束，请及时上线处理。
+[else if] (LXtts) == 语音播报
+  $tts 练习结束，请及时处理。;$wait 5000;$music
+[else if] (LXtts) == 提示音
+  @beep
+
 [if] (LXEnd) == 原地防掉线
-  [if] (LXtts) == 打开
-    $tts 练习结束，请手动进行后续操作;$wait 5000;$music
   [while] true
     tm (:hour):(:minute):(:second) 原地防掉线功能已开启
     lianxi (skill_id) (target_level)
