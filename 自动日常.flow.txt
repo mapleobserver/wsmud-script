@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022062602
+($localVer) = 2022070301
 ($changeLog) = 🆕 新增【周一快速运镖代替扫荡副本】；新增【妖塔】【妖族禁地】副本扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -685,6 +685,7 @@ jh fb lock
     @await 2000
     stopstate
     @tidyBag
+    @await 2000
     //@liaoshang
 [else if] (WudaoMode) == 只打塔主
   @print <hiy>已设置只打塔主，跳过武道塔。</hiy>
@@ -703,6 +704,8 @@ jh fb lock
 [else]
   [if] (FBName) == 妖族禁地 || (FBName) == 妖塔
     ($fb_spe) == true
+    @print 等待2秒后继续...
+    @await 2000
     stopstate;team out
     jh fam 9 start;go enter
     go up

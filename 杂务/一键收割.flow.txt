@@ -2,13 +2,14 @@
 //整合了之前的几个相关流程，一键收割、安排随从工作
 //收割过程中包满了会自动清包再继续，不过有概率卡住。
 //四区白三三
-($localVer) = 2021072802
+($localVer) = 2022060801
 ($changeLog) = 🆕 新增只存鱼饵选项，优化取物和包满处理。
 ($flowName) = 一键收割
 ($flowCode) = yjsg
 ($flowPath) = 杂务
 ($flowFinder) = 杂务
-($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+//($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
+($repourl) = http://wsmud-cdn.if404.com
 @js ($version) = $.ajax({type: "GET", url: "(repourl)/version.txt", async: false, cache: false}).responseText;
 [if] (version) != null
   @js ($remoteVer) = var v = (version);v.(flowCode)
