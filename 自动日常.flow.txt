@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022070301
-($changeLog) = 🆕 新增【周一快速运镖代替扫荡副本】；新增【妖塔】【妖族禁地】副本扫荡。
+($localVer) = 2022070401
+($changeLog) = 🆕 新增妖塔单次精力上限设定；新增【周一快速运镖代替扫荡副本】；新增【妖塔】【妖族禁地】副本扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -165,9 +165,12 @@ score;tasks
   ($FBYabiao) = 否
 [if] (FBYzjdOver) == null
   ($FBYzjdOver) = 战神殿(困难)
+[if] (SDYTjlsx) == 0 || (SDYTjlsx) == null || (SDYTjlsx) == undefined
+  ($SDYTjlsx) = 85
 #input ($FBBefore)=副本前执行命令(用英文;隔开),(FBBefore)
 #select ($FBYabiao)=<hiz>周一快速运镖(代替当天的副本)</hiz>,是|否,(FBYabiao)
-#select ($FBYzjdOver) = <ord>妖族禁地达到每周上限后自动转扫其它副本</ord>,妖塔|战神殿(简单)|战神殿(困难)|古宗门遗址,(FBYzjdOver)
+#select ($FBYzjdOver) = <ord>妖塔或妖族禁地达到设定上限后，自动转扫其它副本</ord>,妖塔|战神殿(简单)|战神殿(困难)|古宗门遗址,(FBYzjdOver)
+#select ($SDYTjlsx) = <ord>扫荡妖塔的单次精力上限(超过后转扫其它副本)</ord>,(SDYTjlsx)
 #select ($FBName) = <ord>⚠️ 妖族禁地每日最多2次，妖塔自动计算次数，无视下面的次数设置。</ord><br/>&nbsp*&nbsp副本(上次所选:<ord>(FBName)</ord>),财主家(简单)|财主家(困难)|丽春院|流氓巷|流氓巷(组队)|兵营|庄府|鳌拜府|天地会|神龙教|神龙教(组队)|关外|温府|五毒教|五毒教(组队)|恒山|青城山|衡山|泰山|嵩山|云梦沼泽|云梦沼泽(组队)|桃花岛(简单)|桃花岛(困难)|白驼山|白驼山(组队)|星宿海|冰火岛(简单)|冰火岛(困难)|冰火岛(偷渡)|移花宫(简单)|移花宫(困难)|移花宫(偷渡)|燕子坞(简单)|燕子坞(困难)|燕子坞(偷书)|黑木崖(简单)|黑木崖(困难)|缥缈峰(困难)|缥缈峰(偷渡)|光明顶|光明顶(组队)|光明顶(偷渡)|天龙寺(困难)|天龙寺(偷渡)|血刀门|古墓派(简单)|古墓派(困难)|古墓派(困难偷渡)|华山论剑|侠客岛|净念禅宗(简单)|净念禅宗(困难)|净念禅宗(困难偷渡)|慈航静斋(简单)|慈航静斋(困难)|慈航静斋(简单偷渡)|慈航静斋(困难偷渡)|阴阳谷|阴阳谷(偷渡)|战神殿(简单)|战神殿(困难)|战神殿(简单偷渡)|战神殿(困难偷渡)|古宗门遗址|妖塔|妖族禁地,(FBName)
 #input ($FBnum) = <ord>需要完成的次数</ord>,(FBnum)
 #select ($FBWay) = 刷本方式（选自动前先确定插件支持）,自动|扫荡|跳过副本,(FBWay)
@@ -704,8 +707,8 @@ jh fb lock
 [else]
   [if] (FBName) == 妖族禁地 || (FBName) == 妖塔
     ($fb_spe) == true
-    @print 等待2秒后继续...
-    @await 2000
+    @print 等待5秒后继续...
+    @await 5000
     stopstate;team out
     jh fam 9 start;go enter
     go up
@@ -769,11 +772,18 @@ jh fb lock
               shop 0 10
             @await 500
             ss muyuan
-            @tip 你即将消耗一个扫荡符|你尚未($yt_lock)弑妖塔，不能快速完成。
+            @tip 你即将消耗一个扫荡符，($ytjl_one)精力快速完成一次弑妖塔|你尚未($yt_lock)弑妖塔，不能快速完成。
             [if] (yt_lock) != null
               @print <hiy>妖塔扫荡未解锁，默认改为正常副本战神殿(困难)。</hiy>
               ($fb_spe) == false
               ($FBName) = 战神殿(困难)
+              [break]
+            [else if] (ytjl_one) > (SDYTjlsx) && (ytjl_one) != null
+              [if] (FBYzjdOver) == 妖塔
+                ($FBYzjdOver) = 战神殿(困难)
+              @print <hiy>单次扫荡精力超过(SDYTjlsx)，转扫正常副本(FBYzjdOver)。</hiy>
+              ($fb_spe) == false
+              ($yzjd_turn) = 正常副本
               [break]
             [else]
               saodang muyuan
@@ -866,6 +876,7 @@ jh fb lock
               [while] (fb_auto_num) < (fb_num)
                 stopstate
                 [while] (:room) != 扬州城-武庙
+                  stopstate
                   $to 扬州城-武庙
                   @await 1000
                 @js ManagedPerformerCenter.start(`自动副本-(FBName)`, GetDungeonSource("(FBName)").replace(/#.*\n/g,'($_DungeonHpThreshold)=(DungeonHpThreshold)\n($_DungeonWaitSkillCD)=(DungeonWaitSkillCD)\n($_DungeonBagCleanWay)=(DungeonBagCleanWay)\n($_DungeonRecordGains)=否\n($_repeat)=(fb_num)\n'))
