@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         wsmud_pluginss
 // @namespace    cqv1
-// @version      0.0.32.263
+// @version      0.0.32.264
 // @date         01/07/2018
 // @modified     16/05/2022
 // @homepage     https://greasyfork.org/zh-CN/scripts/371372
 // @description  武神传说 MUD 武神脚本 武神传说 脚本 qq群367657589
 // @author       fjcqv(源程序) & zhzhwcn(提供websocket监听)& knva(做了一些微小的贡献) &Bob.cn(raid.js作者)
 // @match        http://*.wsmud.com/*
+// @match        http://*.wamud.com/*
 // @run-at       document-start
 // @require      https://cdn.staticfile.org/vue/2.2.2/vue.min.js
 // @require      https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js
@@ -176,10 +177,10 @@
             ws, ws_on_message;
         unsafeWindow.WebSocket = function (uri) {
             ws = new _ws(uri);
-            document.getElementsByClassName("signinfo")[0].innerHTML = "<HIR>武神传说SS插件正常运行！ QQ群 367657589</HIR>"
-            $('.signinfo').on('click', function () {
-                ProConsole.init();
-            });
+            //document.getElementsByClassName("signinfo")[0].innerHTML = "<HIR>武神传说SS插件正常运行！ QQ群 367657589</HIR>"
+            //$('.signinfo').on('click', function () {
+            //    ProConsole.init();
+            //});
         };
         unsafeWindow.WebSocket.prototype = {
             CONNECTING: _ws.CONNECTING,
@@ -371,7 +372,7 @@
 
     } else {
         console.log("插件不可运行,请打开'https://greasyfork.org/zh-CN/forum/discussion/41547/x'");
-        document.getElementsByClassName("signinfo")[0].innerHTML = "<HIR>武神传说SS插件没有正常运行！请使用CTRL+F5刷新 QQ群 367657589</HIR>"
+        //document.getElementsByClassName("signinfo")[0].innerHTML = "<HIR>武神传说SS插件没有正常运行！请使用CTRL+F5刷新 QQ群 367657589</HIR>"
 
     }
     var L = {
