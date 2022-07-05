@@ -3,11 +3,12 @@
 // @namespace       cqv3
 // @version         0.0.43
 // @date            03/03/2019
-// @modified        07/03/2022
+// @modified        05/07/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
 // @match           http://*.wsmud.com/*
+// @match           http://*.wamud.com/*
 // @run-at          document-end
 // @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
 // @grant           unsafeWindow

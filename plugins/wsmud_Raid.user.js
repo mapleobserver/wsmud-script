@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.57
+// @version         2.4.58
 // @date            23/12/2018
-// @modified        24/5/2022
+// @modified        5/7/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
 // @match           http://*.wsmud.com/*
+// @match           http://*.wamud.com/*
 // @run-at          document-end
 // @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
 // @grant           unsafeWindow
