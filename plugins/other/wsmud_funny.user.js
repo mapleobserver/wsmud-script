@@ -1,11 +1,14 @@
 // ==UserScript==
 // @name        wsmud_funny
 // @namespace   suqing.fun
-// @version     0.3.37
+// @version     0.3.38
 // @author      SuQing, 白三三
 // @match       http://*.wsmud.com/*
+// @match       http://*.wamud.com/*
 // @exclude     http://*.wsmud.com/news/*
 // @exclude     http://*.wsmud.com/pay.html
+// @exclude     http://*.wamud.com/news/*
+// @exclude     http://*.wamud.com/pay.html
 // @homepage    https://greasyfork.org/zh-CN/scripts/380709
 // @description A script for Mud WuShen
 // @run-at      document-start
