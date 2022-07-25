@@ -750,7 +750,7 @@
         TriggerTemplateCenter.add(t);
 
         const run = function () {
-            setInterval(_ => {
+            function timer() {
                 const date = new Date();
                 const params = {
                     "时": date.getHours(),
@@ -759,7 +759,15 @@
                 };
                 const n = new Notification("时辰已到", params);
                 NotificationCenter.post(n);
-            }, 1000);
+
+                const nowTime = Date.now();
+                const nextTime = parseInt((nowTime + 1e3) / 1e3) * 1e3 + 1;
+
+                setTimeout(() => {
+                    timer();
+                }, nextTime - nowTime);
+            }
+            timer();
         };
         const monitor = new Monitor(run);
         MonitorCenter.addMonitor(monitor);
