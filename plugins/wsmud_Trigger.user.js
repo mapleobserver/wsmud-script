@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Trigger
 // @namespace       cqv3
-// @version         0.0.44
+// @version         0.0.45
 // @date            03/03/2019
-// @modified        05/07/2022
+// @modified        25/07/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
