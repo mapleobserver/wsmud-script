@@ -1,8 +1,9 @@
-//raid.flow
+//~silent
 //四区：白三三
 [(MHskill)==null]($MHskill)=enable force jiuyinshengong
-[(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴
-#input ($MHweapon)=摸红武器id,(MHweapon)
+[(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴,九阴天魔,天地冷却
+[if] (:weapon sword) == false && {b东方不败的绣花针}? == null && {b君子剑o}? == null
+  #input ($MHweapon)=未检测到剑类武器，请设置摸红武器id,(MHweapon)
 #input ($MHskill)=摸红换技能命令(多条命令用英文;隔开),(MHskill)
 #input ($MHtriggers)=关闭触发(多个触发名字用英文逗号隔开),(MHTriggers)
 #config
@@ -20,6 +21,7 @@ stopstate
 @js var i=$(`div[for=off_plist]`).find(`.switch-text`).text();if(i=='关'){$(`div[for=off_plist]`).find(`.switch-button`).click()};
 @await 200
 // 关闭自动出招
+setting auto_pfm 0;
 @js $(`span[for=custom]`).click();
 @js var i=$(`div[for=auto_pfm]`).find(`.switch-text`).text();if(i=='开'){$(`div[for=auto_pfm]`).find(`.switch-button`).click()};
 $stoppfm
@@ -42,8 +44,14 @@ uneq (:eq2);uneq (:eq3);uneq (:eq4);uneq (:eq6);uneq (:eq7);uneq (:eq8);uneq (:e
   eq {b逆鳞手环}?
 [if] {b彼岸花}? != null
   eq {b彼岸花}?
-//换打红武器
-eq (MHweapon)
+//换打红武器，优先自动换绣花针、橙君子剑
+[if] (:weapon sword) != true
+  [if] {b东方不败的绣花针}? != null
+    eq {b东方不败的绣花针}?
+  [else if] {b君子剑o}? != null
+    eq {b君子剑o}?
+  [else]
+    eq (MHweapon)
 @on 自爆
 @on 红满伤
 [if] (MHTriggers) != null
@@ -52,6 +60,12 @@ eq (MHweapon)
   ($num)=0
   [while] (num)<(tl)
     @js ($t)=[(tgs)][(num)]
-    @js ToRaid.perform(`@off (t)`);
+    @js ToRaid.perform(`//~silent\n@off (t)`);
     ($num)=(num)+1
-//@await 3000
+@await 3000
+[while] (:room) != 华山派-客厅
+  $to 华山派-客厅
+  @await 500
+[if] {r独孤败天}? != null
+  @await 1000
+  kill {r独孤败天}?
