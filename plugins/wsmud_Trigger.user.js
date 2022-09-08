@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Trigger
 // @namespace       cqv3
-// @version         0.0.45
+// @version         0.0.46
 // @date            03/03/2019
-// @modified        25/07/2022
+// @modified        08/09/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/378984
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1190,7 +1190,9 @@
             let all = {};
             let keys = GM_listValues();
             keys.forEach(key => {
-                all[key] = GM_getValue(key);
+                if (key != "roles") {
+                    all[key] = GM_getValue(key);
+                }
             });
             return all;
         },
