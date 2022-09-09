@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022070402
-($changeLog) = 🆕 新增妖塔单次精力上限设定；新增【周一快速运镖代替扫荡副本】；新增【妖塔】【妖族禁地】副本扫荡。
+($localVer) = 2022090901
+($changeLog) = 🆕 检测随从工作状态
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -228,6 +228,25 @@ score;tasks
 // 停止，清包
 @stopSSAuto
 stopstate
+
+// 检查随从工作状态
+@cmdDelay 500
+stopstate;team out
+[if] (:room)==住房-练功房
+  go east
+[else]
+  jh fam 0 start
+  $to 住房
+@await 1000
+@js G.items.forEach((v,k)=>{console.log(k),WG.SendCmd("team with "+k)})
+go northeast
+@js G.items.forEach((v,k)=>{console.log(k),WG.SendCmd("dc "+k+" diao")})
+@await 1000
+@js G.items.forEach((v,k)=>{console.log(k),WG.SendCmd("dc "+k+" cai")})
+@await 1000
+team out
+
+// 清包
 @tidyBag
 @await 2000
 jh fam lack;pack
