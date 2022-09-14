@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022091001
-($changeLog) = 🆕 检测随从工作状态；妖族禁地取消精力次数判断，每天固定扫2次。
+($localVer) = 2022091401
+($changeLog) = 🆕 检测随从工作状态；优化妖族禁地扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -712,7 +712,8 @@ jh fb lock
 [else if] (WudaoMode) == 只打塔主
   @print <hiy>已设置只打塔主，跳过武道塔。</hiy>
   tm 已设置只打塔主，跳过武道塔。
-
+@tidyBag
+@await 2000
 // 周一快速运镖
 [if] (FBYabiao) == 是 && (:day) == 1 && (:hour) >= 5
   @print <hiy>今天是周一，执行快速运镖。</hiy>
@@ -745,8 +746,12 @@ jh fb lock
         @print <hiy>今日精力已消耗(jl_com)，日常不再扫荡副本。</hiy>
       [else]
         [if] (FBName) == 妖族禁地
-          //@js ($fb_com) = parseInt((jl_com)/100)
-          //($fb_num) = 2 - (fb_com)
+          @js ($fb_com) = parseInt((jl_com)/100)
+          ($fb_num) = 2 - (fb_com)
+          [while] (:room) != 武道塔-塔顶
+            jh fam 9 start;go enter
+            go up
+            @await 500
           ggdl {r疯癫的老头}
           go south
           go south
@@ -764,12 +769,13 @@ jh fb lock
               @print <hiy>本周妖族禁地已达上限，转扫正常副本(FBYzjdOver)。</hiy>
               ($yzjd_turn) = 正常副本
           [else]
-            [if] {b扫荡符#}? < 2 || {b扫荡符}? == null
-              shop 0 2
-            cr yzjd/pingyuan 0 2
+            [if] {b扫荡符#}? < (fb_com) || {b扫荡符}? == null
+              shop 0 (fb_com)
+            cr yzjd/pingyuan 0 (fb_com)
+            @await 3000
         [if] (FBName) == 妖塔 || (yzjd_turn) == 妖塔
           ($jl_re) = 200 - (jl_com)
-          @await 3000
+          @await 5000
           jh fam 9 start;go enter
           go up
           ggdl {r疯癫的老头}
