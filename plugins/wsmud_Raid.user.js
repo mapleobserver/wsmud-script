@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.58
+// @version         2.4.59
 // @date            23/12/2018
-// @modified        5/7/2022
+// @modified        13/9/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -1431,6 +1431,27 @@
             const name = result[1];
             exp = exp.substring(result[0].length);
             UpdateVariable(performer, name, eval(exp));
+        };
+        const executor = new CmdExecutor(appropriate, execute);
+        CmdExecuteCenter.addExecutor(executor);
+    })();
+    
+     (function () {
+        const appropriate = function (cmd) {
+            return cmd.indexOf("@stop ") == 0;
+        };
+        const execute = function (performer, cmd) {
+            const validCmd = CmdPrehandleCenter.shared().handle(performer, cmd);
+            let exp = validCmd.substring(6);
+            if (performer.log()) Message.cmdLog("停止流程", exp);
+            const result = /^\(\$([A-Za-z_][a-zA-Z0-9_]*?)\)\s*=\s*/.exec(exp);
+            if (result == null) {
+                ManagedPerformerCenter.getAll().filter(x => x.name() == exp).forEach(x => x.stop())
+                return;
+            }
+            const name = result[1];
+            exp = exp.substring(result[0].length);
+            UpdateVariable(performer, name, ManagedPerformerCenter.getAll().filter(x => x.name() == exp).forEach(x => x.stop()));
         };
         const executor = new CmdExecutor(appropriate, execute);
         CmdExecuteCenter.addExecutor(executor);
