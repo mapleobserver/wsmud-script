@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022091401
+($localVer) = 2022091901
 ($changeLog) = 🆕 检测随从工作状态；优化妖族禁地扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -769,10 +769,10 @@ jh fb lock
               @print <hiy>本周妖族禁地已达上限，转扫正常副本(FBYzjdOver)。</hiy>
               ($yzjd_turn) = 正常副本
           [else]
-            [if] {b扫荡符#}? < (fb_com) || {b扫荡符}? == null
-              shop 0 (fb_com)
-            cr yzjd/pingyuan 0 (fb_com)
-            @await 3000
+            [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
+              shop 0 (fb_num)
+            cr yzjd/pingyuan 0 (fb_num)
+            @await 5000
         [if] (FBName) == 妖塔 || (yzjd_turn) == 妖塔
           ($jl_re) = 200 - (jl_com)
           @await 5000
