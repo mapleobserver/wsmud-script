@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 优化每天5点时段新旧数据的判断；增加自动寻路打Boss功能。
-($localVer) = 2022030101
+($localVer) = 2022100201
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -36,7 +36,7 @@
     @toolbar jh
     @toolbar tasks
     @await 350
-    @task 挑战武神BOSS($num)次|今日可领取
+    @task 挑战($num)次武神BOSS|今日可领取
     ($remain)=⚔️ 本周还可挑战(num)次
     // 本周已打完Boss
     [if] (num)==null
@@ -47,6 +47,8 @@
       //按钮命令
       ($finish) = true
     [else]
+      @js ($num) = var str='(num)';str.charAt(str.length-1)
+      ($remain)=⚔️ 本周还可挑战(num)次
       // 获取已存在的Boss数据
       [if] (BossInfo) != null
         @js ($info)=("\""+"(BossInfo)"+"\"").replace(/\|/g,"\"|\"").split("|")
@@ -98,7 +100,8 @@
   @toolbar jh
   @toolbar tasks
   @await 350
-  @task 挑战武神BOSS($num)次|今日可领取
+  @task 挑战($num)次武神BOSS|今日可领取
+  @js ($num) = var str='(num)';str.charAt(str.length-1)
   ($remain)=⚔️ 本周还可挑战(num)次
 // 处理参数
 [if] (bossName) == 战神蚩尤
