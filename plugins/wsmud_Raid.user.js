@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.59
+// @version         2.4.60
 // @date            23/12/2018
-// @modified        13/9/2022
+// @modified        28/10/2022
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -4387,6 +4387,7 @@ look men;open men
             }, _ => {
                 alert("wsmud_Raid 配置上传失败！");
             });
+           
         },
         downloadConfig: function (pass) {
             Server._sync("downloadConfig", { pass: pass }, data => {
@@ -4434,6 +4435,7 @@ look men;open men
             });
         },
         uploadTriggers: function () {
+          
             const triggers = unsafeWindow.TriggerCenter.getAllData();
             const value = JSON.stringify(triggers);
             Server._sync("uploadTriggers", { id: Role.id, value: value }, pass => {
@@ -4441,10 +4443,12 @@ look men;open men
                 alert(`角色触发器上传成功，该角色触发会在服务器保存 24 小时。\n角色触发器获取码：${pass}，已复制到系统剪切板。`);
                 Message.append(`<hiy>角色触发获取码：${pass}</hiy>`);
                 Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${pass}');" >
-                                 我无法复制 </span></div>`);
+                                    我无法复制 </span></div>`);
             }, _ => {
                 alert("角色触发器上传失败！");
             });
+            
+         
         },
         downloadTriggers: function (pass) {
             Server._sync("downloadTriggers", { pass: pass }, value => {
@@ -4459,7 +4463,7 @@ look men;open men
         getNotice: function () {
             const noticeDataKey = "NoticeDataKey";
             const oldData = GM_getValue(noticeDataKey, { version: "0.0.0", type: "0", value: "欢迎使用 wsmud_Raid" });
-            Server._async("notice", { version: oldData.version }, data => {
+            Server._async("notice", { version: oldData.version,id:Role.id }, data => {
                 let validData = oldData;
                 if (data.version > oldData.version) {
                     GM_setValue(noticeDataKey, data);
@@ -4499,25 +4503,36 @@ look men;open men
         },
 
         shareFlowTrigger: function (username, password, type, data) {
-            let value = data;
-            value["author"] = username;
-            const params = {
-                username: username,
-                password: password,
-                name: data.name,
-                type: type,
-                value: JSON.stringify(value)
-            };
-            // console.log(params);
-            Server._sync("uploadSingle", params, token => {
-                GM_setClipboard(token);
-                alert(`${type}分享成功，该${type}会在服务器保存 30 天\n每次下载会延长保存 始于下载时刻的 30 天\n分享码：${token}\n已复制到系统剪切板。`);
-                Message.append(`<hiy>${type}分享码：${token}</hiy>`);
-                Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${token}');" >
-                                 我无法复制 </span></div>`);
-            }, error => {
-                alert(error);
-            });
+
+            Server._getPhone((phoneNum) => {
+                if (phoneNum == '') {
+                    alert("请先绑定手机号！");
+                    return;
+                }else{
+                    let value = data;
+                    value["author"] = username;
+                    const params = {
+                        username: username,
+                        password: password,
+                        name: data.name,
+                        phone: phoneNum,
+                        type: type,
+                        value: JSON.stringify(value)
+                    };
+                    // console.log(params);
+                    Server._sync("uploadSingle", params, token => {
+                        GM_setClipboard(token);
+                        alert(`${type}分享成功，该${type}会在服务器保存 30 天\n每次下载会延长保存 始于下载时刻的 30 天\n分享码：${token}\n已复制到系统剪切板。`);
+                        Message.append(`<hiy>${type}分享码：${token}</hiy>`);
+                        Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${token}');" >
+                                         我无法复制 </span></div>`);
+                    }, error => {
+                        alert(error);
+                    });
+        }},()=>{
+            alert("请先绑定手机号！");
+        });
+          
         },
         importFlow: function (token, target) {
             if (token.indexOf("·流程") == -1) {
@@ -4581,6 +4596,25 @@ look men;open men
                     }
                 },
                 dataType: "json"
+            });
+        },
+        _getPhone(success,fail){
+            $.ajax({
+                type: "post",
+                url: `/UserAPI/GetPhone`,
+                async: true,
+                xhrFields: {
+                    withCredentials: true
+                },
+                success :function(data){
+                    if(data){
+                        //去掉*
+                        data = data.replace(/\"/g,"");
+                        if(success != null) success(data);
+                    }else{
+                        fail(data);
+                    }
+                }
             });
         }
     };
