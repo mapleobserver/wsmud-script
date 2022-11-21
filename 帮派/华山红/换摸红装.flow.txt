@@ -1,11 +1,11 @@
 //~silent
 //四区：白三三
 [(MHskill)==null]($MHskill)=enable force jiuyinshengong
-[(MHTriggers)==null]($MHTriggers)=血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴,九阴天魔,天地冷却
+[(MHTriggers)==null]($MHTriggers)=起手,血刀九阴,倚天九阴,血剑起手,混沌剑心,混沌九阴,九阴天魔,天地冷却
 [if] (:weapon sword) == false && {b东方不败的绣花针}? == null && {b君子剑o}? == null
   #input ($MHweapon)=未检测到剑类武器，请设置摸红武器id,(MHweapon)
 #input ($MHskill)=摸红换技能命令(多条命令用英文;隔开),(MHskill)
-#input ($MHtriggers)=关闭触发(多个触发名字用英文逗号隔开),(MHTriggers)
+#input ($MHTriggers)=关闭触发(多个触发名字用英文逗号隔开),(MHTriggers)
 #config
 
 @cmdDelay 500
