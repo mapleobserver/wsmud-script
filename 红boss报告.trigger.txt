@@ -3,7 +3,7 @@
 // 谣言更新或任意频道（房间除外）发送 b 即可出现相关信息
 // 点击 参数设置 按钮可设置Boss类型
 ($changeLog) = 优化每天5点时段新旧数据的判断；增加自动寻路打Boss功能。
-($localVer) = 2022100201
+($localVer) = 2022112101
 [if] (BossModel) == null
   ($BossModel) = 自动跳过天僧
 ($bossSet) = (BossModel)
@@ -129,6 +129,8 @@
       ($model) = true
     [else if] (bossName) != 浪翻云 && (bossName) != 烛九阴 && (BossModel) == 只打浪翻云烛九阴
       ($model) = true
+    [else if] (bossName) != 烛九阴 && (bossName) != 蚩尤 && (BossModel) == 只打烛九阴蚩尤
+      ($model) = true
     [else if] (bossName) != 浪翻云 && (bossName) != 烛九阴 && (bossName) != 蚩尤 && (BossModel) == 跳过天僧庞斑
       ($model) = true
     [else if] (bossName) == 天僧 && (BossModel) == 自动跳过天僧
@@ -188,7 +190,7 @@
   @js $(".boss-team").on("click", function(){ToRaid.perform(`//~silent\nstopstate;(fbcr2) 0\n($BossInfo)=notime\n@js messageAppend("🚌 进入组队副本 <hic>(bossPlace)</hic> => <ord>(bossName)</ord>",2,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-skip").on("click", function(){ToRaid.perform(`//~silent\nteam out;stopstate;(fbcr) 0;cr over;$wait 1000;(action)\n($BossInfo)=notime\n@js messageAppend("🥚 已跳过<ord>(bossName)</ord>！",1,(magPost));$('.(comClass)')[0].scrollTop = 99999;`);})
   @js $(".boss-refresh").on("click", function(){ToRaid.perform(`($BossInfo)=null\ntm b`);})
-  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|跳过蚩尤|跳过天僧庞斑|只打浪翻云烛九阴|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#input ($BossDay)=每周哪几天激活自动跳过Boss功能（默认1234567）<br/>&nbsp*&nbsp<hiz>周一为1，以此类推周日为7</hiz>,(BossDay)\n#select ($BossAlert)=Boss刷新时提醒（远程通知需在plugins设置中先开启）,关闭|提示音|语音播报|远程通知,(BossAlert)\n#select ($BossTanlong)=找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|自定义命令|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)\n#input ($BossBefore)=进副本前后正常装备技能触发,(BossBefore)\n#input ($BossSkill)=杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)\n#select ($BossWarning)=遭遇问题时发出警报(找不到Boss、被连续打死多次等),不提示|弹窗提醒|提示音|语音播报|远程通知,(BossWarning)\n#select ($BossAutoKill)=<ord>以下选项开启后将自动进副本寻找Boss叫杀，同时将强制开启远程通知，请自行设置远程通知功能。</ord><br/>&nbsp*&nbspBoss刷新后直接自动执行,开启|关闭,(BossAutoKill)\n#input ($BossRepeat)=被连续打死几次后通知玩家处理(最多不超过5次),(BossRepeat)\n#config\ntm b`);})
+  @js $(".boss-setting").on("click", function(){ToRaid.perform(`//~silent\n#select ($BossModel)=Boss类型,我全都要|自动跳过天僧|跳过蚩尤|跳过天僧庞斑|只打浪翻云烛九阴|只打烛九阴蚩尤|只打浪翻云|只打烛九阴|只打蚩尤|只打庞斑,(BossModel)\n#select ($BossTeam)=只打组队本,关闭|开启,(BossTeam)\n#select ($BossPost)=Boss信息显示位置,游戏信息区|插件信息区,(BossPost)\n#input ($BossDay)=每周哪几天激活自动跳过Boss功能（默认1234567）<br/>&nbsp*&nbsp<hiz>周一为1，以此类推周日为7</hiz>,(BossDay)\n#select ($BossAlert)=Boss刷新时提醒（远程通知需在plugins设置中先开启）,关闭|提示音|语音播报|远程通知,(BossAlert)\n#select ($BossTanlong)=找到Boss后是否使用探龙叫杀,原地等待通知玩家|直接叫杀|自定义命令|剑心+融合探龙|剑心+正常探龙|融合探龙|正常探龙,(BossTanlong)\n#input ($BossBefore)=进副本前后正常装备技能触发,(BossBefore)\n#input ($BossSkill)=杀Boss前换装备技能触发(建议用自命令调用),(BossSkill)\n#select ($BossWarning)=遭遇问题时发出警报(找不到Boss、被连续打死多次等),不提示|弹窗提醒|提示音|语音播报|远程通知,(BossWarning)\n#select ($BossAutoKill)=<ord>以下选项开启后将自动进副本寻找Boss叫杀，同时将强制开启远程通知，请自行设置远程通知功能。</ord><br/>&nbsp*&nbspBoss刷新后直接自动执行,开启|关闭,(BossAutoKill)\n#input ($BossRepeat)=被连续打死几次后通知玩家处理(最多不超过5次),(BossRepeat)\n#config\ntm b`);})
   //检查版本
   //($repourl) = https://cdn.jsdelivr.net/gh/mapleobserver/wsmud-script
   ($repourl) = http://wsmud-cdn.if404.com
