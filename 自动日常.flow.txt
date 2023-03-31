@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2022100901
+($localVer) = 2023033101
 ($changeLog) = 🆕 检测随从工作状态；优化妖族禁地扫荡。
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -851,7 +851,9 @@ jh fb lock
           [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
             [if] (RCMode) == 正常模式
               shop 0 (fb_num)
-          [if] (FBName) == 古宗门遗址
+          [if] (FBName) == 古宗门遗址 || (FBYzjdOver) == 古宗门遗址
+            @print 本次扫荡副本古宗门遗址，等待3秒后前往…
+            @await 3000
             jh fam 9 start;go enter
             go up
             @tip 打败($tading)就可以上去|你想要去古老的大陆寻找|你可以上去
