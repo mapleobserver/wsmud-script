@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2023033101
-($changeLog) = 🆕 检测随从工作状态；优化妖族禁地扫荡。
+($localVer) = 2023061701
+($changeLog) = 🆕 优化副本扫妖塔和自动切换副本的判断
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -704,7 +704,7 @@ jh fb lock
       ask2 {r守门人};ask3 {r守门人}
       @tip 你的扫荡符不够|挑战完成|用不着快速挑战了|不用快速挑战
     @cmdDelay
-    @await 2000
+    @await 5000
     stopstate
     @tidyBag
     @await 2000
@@ -746,7 +746,7 @@ jh fb lock
         @print <hiy>今日精力已消耗(jl_com)，日常不再扫荡副本。</hiy>
       [else]
         [if] (FBName) == 妖族禁地
-          @js ($fb_com) = parseInt((jl_com)/100)
+          @js ($fb_com) = Math.floor((jl_com)/100)
           ($fb_num) = 2 - (fb_com)
           [while] (:room) != 武道塔-塔顶
             jh fam 9 start;go enter
@@ -794,7 +794,7 @@ jh fb lock
           ($ytjl_one) = 15
           [while] (ytjl_cum) < (jl_re)
             [if] {b扫荡符}? == null
-              shop 0 10
+              shop 0 20
             @await 500
             ss muyuan
             @tip 你即将消耗一个扫荡符，($ytjl_one)精力快速完成一次弑妖塔|你尚未($yt_lock)弑妖塔，不能快速完成。
@@ -804,9 +804,11 @@ jh fb lock
               ($FBName) = 战神殿(困难)
               [break]
             [else if] (ytjl_one) > (SDYTjlsx) && (ytjl_one) != null
-              [if] (FBYzjdOver) == 妖塔
+              [if] (FBYzjdOver) == 妖塔 && (yzjd_turn) != 妖塔
                 ($FBYzjdOver) = 战神殿(困难)
-              @print <hiy>单次扫荡精力超过(SDYTjlsx)，转扫正常副本(FBYzjdOver)。</hiy>
+                @print <hiy>单次扫荡妖塔精力超过(SDYTjlsx)，转扫正常副本(FBYzjdOver)。</hiy>
+              [else]
+                @print <hiy>单次扫荡妖塔精力超过(SDYTjlsx)，转扫战神殿(困难)。</hiy>
               ($fb_spe) == false
               ($yzjd_turn) = 正常副本
               [break]
@@ -827,7 +829,7 @@ jh fb lock
     [if] (jl_com) >= 200 && (jl_com) != null
       @print <hiy>今日精力已消耗(jl_com)，日常不再扫荡副本
     [else]
-      @js ($fb_com) = parseInt((jl_com)/10)
+      @js ($fb_com) = Math.floor((jl_com)/10)
       [if] (FBnum) <= (fb_com)
         ($fb_num) = (FBnum)
       [else]
