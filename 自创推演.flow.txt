@@ -1,7 +1,7 @@
 //~silent
 //基于多个版本整合修改，为此掉头发的人：白三三、大🐔、呆发天天、黑白郎君、冷手硬打、清和，以及几位不知名或忘记名字的大佬。
 @js messageClear();
-($localVer) = 2023062301
+($localVer) = 2023062501
 ($changeLog) = 🆕 可查看本次推演中已放弃的词条记录。🌟 1.获取词条等级。2.推演潜能获取和计算。3.可平均或优先推演指定序号的词条。4.设定词条指定等级。5.推演时可开启自动重连。6.停止推演、词条属性功能按钮。7.语音提醒、远程通知。
 ($flowName) = 自创推演
 ($flowCode) = zcty
@@ -343,7 +343,7 @@ stopstate
   //@print (entrysInfo)'
   @js ($entrysInfoLen) = [(entrysInfo)].length
   ($num) = 0
-  ($entrysData) = 自创(ZCSkill)当前属性：
+  ($entrysData) = <ord>【自创(ZCSkill)当前属性】</ord>
   [while] (num) < (entrysInfoLen)
     @js ($entrysP) = [(entrysInfo)][(num)]
     ($entrysData) = (entrysData)<br>(entrysP)
@@ -358,7 +358,7 @@ stopstate
     @js ($max_p) = (max)/100000000 + '亿'
   [else if] (max) >=10000
     @js ($max_p) = (max)/10000 + '万'
-  @js $(`.ct_button`).off('click');$(`.ct_button`).on('click', function(){ToRaid.perform(`//~silent\n@print <hig>当前(ZCSkill)推演设定：<br>🍬 推演词条：(ZCProp)|(ZCSpc)<br>🍼 词条优先推演方式：(TYPriorNum) 🍤 推演词条等级：(ZCEntryLv) 🍔 预设总消耗潜能：(max_p)<br>🍟 已消耗潜能：(real_cost_p)</hig><br>(entrysData)<br>========<br>❌ 已放弃词条：(zcBan)`);})
+  @js $(`.ct_button`).off('click');$(`.ct_button`).on('click', function(){ToRaid.perform(`//~silent\n@print ========<br>🍋 已放弃词条：(zcBan)<br>========<br><hig>当前(ZCSkill)推演设定：<br>🍬 推演词条：(ZCProp)|(ZCSpc)<br>🍼 词条优先推演方式：(TYPriorNum)｜🍤 推演词条等级：(ZCEntryLv)<br>🍔 预设总消耗潜能：(max_p)｜🍟 已消耗潜能：(real_cost_p)</hig><br>========<br>🍎 (entrysData)`);})
   
   // 判断是否存在被覆盖潜能
   // ⚠️ 当前判断方式，当覆盖后的词条等级较高时，判断会逐渐出错导致不准确。所以能不覆盖就别覆盖。
@@ -551,6 +551,7 @@ stopstate
 [if] (ZCXlu)!=无
   get {r(xluNow)}?
 xiulian
+@print <hic>【本次推演记录】</hic><br>🍋 已放弃词条：(zcBan)<br>========<br><hig>当前(ZCSkill)推演设定：<br>🍬 推演词条：(ZCProp)|(ZCSpc)<br>🍼 词条优先推演方式：(TYPriorNum)｜🍤 推演词条等级：(ZCEntryLv)<br>🍔 预设总消耗潜能：(max_p)｜🍟 已消耗潜能：(real_cost_p)</hig><br>========<br>🍎 (entrysData)
 [if] (ZCAlertType) != 关闭
   [if] (ZCAlertWay)==语音播报
     $tts (:name)，推演已结束
