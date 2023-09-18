@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2023061701
+($localVer) = 2023091801
 ($changeLog) = 🆕 优化副本扫妖塔和自动切换副本的判断
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -212,6 +212,9 @@ score;tasks
 #input ($callmode) = 流程运行模式(无需改动),正常
 
 #config
+
+// 记录日常开始时间
+($time_start) = (month)月(:date)日 (:hour):(:minute)
 
 // 判断运行模式和副本方式
 [if] (callmode) == null
@@ -1068,6 +1071,7 @@ jh fam lack;pack
 (RCAfter_action)
 @print &nbsp;&nbsp;* <hiy>黄金 (gainMoney)</hiy>
 @print <hiy>(month)月(:date)日 (:hour):(:minute)</hiy> <hic>自动日常结束！</hic>
+@print 本次日常开始时间：(time_start)
 @print 当前精力：<hic>(:energy)/(jjMax)</hic>，签到元宝：<hiy>(cashSign)/(jjMax)</hiy>，充值元宝：<hiy>(cashCharge)</hiy>
 @print ----------
 ($bobao) = (:name)，自动日常结束！
