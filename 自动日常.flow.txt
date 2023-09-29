@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2023091801
-($changeLog) = 🆕 优化副本扫妖塔和自动切换副本的判断
+($localVer) = 2023092901
+($changeLog) = 🆕 优化节日判断；优化副本扫妖塔和自动切换副本判断
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -56,13 +56,13 @@
   @print <ord>(log)</ord>
 
 @js ($month) = var date=new Date();date.getMonth()+1
-// 2022国庆免费扫荡
-//[if] (month) == 10 && (:date)==1 && (:hour)>=5
-//  ($RCMode) = 节日免费模式
-//[if] (month) == 10 && (:date)>=2
-//  ($RCMode) = 节日免费模式
-//[if] (month) == 10 && (:date)>=8 && (:hour)>=5
-//  ($RCMode) = 正常模式
+// 2023中秋国庆，9月29日-10月6日免费扫荡
+@js ($holiday) = var today=new Date();var startDate=new Date(today.getFullYear(),8,29);var endDate=new Date(today.getFullYear(),9,6);if (today>=startDate && today<=endDate){true}else{false}
+[if] (holiday) == true
+  @print 启动节日免费模式
+  ($RCMode) = 节日免费模式
+[else]
+  ($RCMode) = 正常模式
 
 //检测状态
 ($fbYes) = (:room 副本区域,忧愁谷)
@@ -800,7 +800,7 @@ jh fb lock
               shop 0 20
             @await 500
             ss muyuan
-            @tip 你即将消耗一个扫荡符，($ytjl_one)精力快速完成一次弑妖塔|你尚未($yt_lock)弑妖塔，不能快速完成。
+            @tip 你即将消耗($ytjl_one)精力快速完成一次弑妖塔|你尚未($yt_lock)弑妖塔，不能快速完成。
             [if] (yt_lock) != null
               @print <hiy>妖塔扫荡未解锁，默认改为正常副本战神殿(困难)。</hiy>
               ($fb_spe) == false
