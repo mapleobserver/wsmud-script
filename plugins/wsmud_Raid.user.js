@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.62
+// @version         2.4.64
 // @date            23/12/2018
-// @modified        22/1/2023
+// @modified        1/10/2023
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -3726,9 +3726,9 @@ go west
 go west
 @kill 炎龙王
 @liaoshang
-go west;search
-@tip 你找到了
-go east[4];go north
+//go west;search
+//@tip 你找到了
+go east[3];go north
 @kill 白熊
 go north
 @kill 白熊
@@ -3756,6 +3756,25 @@ go south
     @cd
 go north;go northeast;go north
 @kill 丁春秋`
+        },
+        {
+            name: "白驼山",
+            source: `
+jh fb 19 start1;cr baituo/damen
+[if] (_DungeonWaitSkillCD) == 打开
+    @cd
+go north[4]
+@kill 欧阳锋
+[if] (_DungeonWaitSkillCD) == 打开
+    @cd
+go south
+@kill 欧阳克,白衣少女
+go south[2];go west[3]
+@kill 毒蛇
+go north
+@kill 毒蛇
+go north;go north
+@kill 蟒蛇`
         },
         {
             name: "白驼山(组队)",
@@ -3895,6 +3914,18 @@ go north
     @cd
 go north
 @kill 左冷禅`
+        },
+        {
+            name: "泰山",
+            source: `
+jh fb 15 start1;cr wuyue/taishan/daizong
+go northup[2]
+@kill 玉磬子
+go northup[2]
+@kill 玉音子
+go northup[2]
+go northup[2]
+@kill 玉玑子`
         },
         {
             name: "衡山",
@@ -6245,18 +6276,25 @@ stopstate
   shop 0 (sdyt_num)
 ($num) = 0
 @cmdDelay 500
+($ytWeek) = null
 [while] (num) < (sdyt_num)
   ss muyuan
-  @tip 你即将消耗一个扫荡符，($jl_yt)精力快速完成一次弑妖塔|你尚未($ytJS)弑妖塔
+  @tip 你即将消耗一个扫荡符，($jl_yt)精力快速完成一次弑妖塔|你即将消耗($jl_yt)精力快速完成一次弑妖塔|你尚未($ytJS)弑妖塔|你已达到($ytWeek)上限
   [if] (ytJS) != null
     @print <hiy>妖塔未解锁，无法扫荡。</hiy>
     [break]
-  [if] (jl_yt) > (SDYTjlsx)
+  [if] (ytWeek) != null
+    @print <hiy>妖塔扫荡已达到本周上限。</hiy>
+    [break]
+  [if] (jl_yt) > (SDYTjlsx) && (jl_yt) != null
     @print <ord>单次扫荡精力超过(SDYTjlsx)，自动停止。</ord>
     [break]
   [else]
     saodang muyuan
-    @tip 你消耗一个扫荡符|你的($lack)不够
+    @tip 你消耗一个扫荡符|精力快速完成弑妖塔|你的($lack)不够|你已达到($ytWeek)上限
+    [if] (ytWeek) != null
+      @print <hiy>妖塔扫荡已达到本周上限。</hiy>
+      [break]
     [if] (lack) != null
       @print <ord>(lack)不足，自动停止扫荡妖塔。</ord>
       [break]

@@ -4,7 +4,7 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2023093001
+($localVer) = 2023100101
 ($changeLog) = 🆕 优化节日判断；优化副本扫妖塔和自动切换副本判断
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -795,16 +795,22 @@ jh fb lock
           @await 3000
           ($ytjl_cum) = 0
           ($ytjl_one) = 15
+          ($ytjl_week) = null
           [while] (ytjl_cum) < (jl_re)
             [if] {b扫荡符}? == null
               shop 0 20
             @await 500
             ss muyuan
-            @tip 你即将消耗($ytjl_one)精力快速完成一次弑妖塔|你尚未($yt_lock)弑妖塔，不能快速完成。
+            @tip 你即将消耗($ytjl_one)精力快速完成一次弑妖塔|你尚未($yt_lock)弑妖塔，不能快速完成。|你已达到($ytjl_week)上限
             [if] (yt_lock) != null
               @print <hiy>妖塔扫荡未解锁，默认改为正常副本战神殿(困难)。</hiy>
               ($fb_spe) == false
               ($FBName) = 战神殿(困难)
+              [break]
+            [else if] (ytjl_week) != null
+              @print <hiy>妖塔扫荡已达到本周上限，转扫正常副本战神殿(困难)。</hiy>
+              ($fb_spe) == false
+              ($yzjd_turn) = 正常副本
               [break]
             [else if] (ytjl_one) > (SDYTjlsx) && (ytjl_one) != null
               [if] (FBYzjdOver) == 妖塔 && (yzjd_turn) != 妖塔
@@ -817,8 +823,14 @@ jh fb lock
               [break]
             [else]
               saodang muyuan
-              @tip 你消耗($ytjl_one)精力快速完成弑妖塔，共获得了
-              ($ytjl_cum) = (ytjl_cum) + (ytjl_one)
+              @tip 你消耗($ytjl_one)精力快速完成弑妖塔，共获得了|你已达到($ytjl_week)上限
+              [if] (ytjl_week) != null
+                @print <hiy>妖塔扫荡已达到本周上限，转扫正常副本战神殿(困难)。</hiy>
+                ($fb_spe) == false
+                ($yzjd_turn) = 正常副本
+                [break]
+              [else]
+                ($ytjl_cum) = (ytjl_cum) + (ytjl_one)
           @print <hic>本日扫荡妖塔已消耗(ytjl_cum)精力。</hic>
   [if] (yzjd_turn) == 正常副本 || (fb_spe) != true
     stopstate
