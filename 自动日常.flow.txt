@@ -4,8 +4,8 @@
 //1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2023101401
-($changeLog) = 🆕 优化节日判断；优化副本扫妖塔和自动切换副本判断
+($localVer) = 2023121401
+($changeLog) = 🆕 增加扫荡禁地后的清包和等待时间
 ($flowName) = 自动日常
 ($flowCode) = zdrc
 ($flowPath) = 根文件夹
@@ -775,7 +775,9 @@ jh fb lock
             [if] {b扫荡符#}? < (fb_num) || {b扫荡符}? == null
               shop 0 (fb_num)
             cr yzjd/pingyuan 0 (fb_num)
-            @await 5000
+            @await 6000
+            @tidyBag
+            @await 3000
         [if] (FBName) == 妖塔 || (yzjd_turn) == 妖塔
           ($jl_re) = 200 - (jl_com)
           @await 5000
@@ -831,6 +833,9 @@ jh fb lock
                 [break]
               ($ytjl_cum) = (ytjl_cum) + (ytjl_one)
           @print <hic>本日扫荡妖塔已消耗(ytjl_cum)精力。</hic>
+          @await 1000
+          @tidyBag
+          @await 3000
   [if] (yzjd_turn) == 正常副本 || (fb_spe) != true
     stopstate
     score;tasks
@@ -896,7 +901,7 @@ jh fb lock
             [else if] (jingli) == 精力
               ($alert_fb) = 精力不足，无法完成对【(FBName)】副本的(FBnum)次扫荡！
             @tidyBag
-            @await 2000
+            @await 3000
       [else if] (FBWay) == 自动
         //脚本自动模式
         stopstate
