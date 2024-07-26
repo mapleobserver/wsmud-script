@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.64
+// @version         2.4.65
 // @date            23/12/2018
-// @modified        1/10/2023
+// @modified        26/7/2024
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
 // @match           http://*.wsmud.com/*
 // @match           http://*.wamud.com/*
 // @run-at          document-end
-// @require         https://cdn.staticfile.org/vue/2.2.2/vue.min.js
+// @require         https://s4.zstatic.net/ajax/libs/vue/2.2.2/vue.min.js
 // @grant           unsafeWindow
 // @grant           GM_getValue
 // @grant           GM_setValue
@@ -4604,7 +4604,7 @@ look men;open men
             });
         },
 
-        _address: "mush.fun/api",
+        _address: "wsmud.ii74.com/S",
         _async(uri, params, success, fail) {
             this._get(true, uri, params, success, fail);
         },
