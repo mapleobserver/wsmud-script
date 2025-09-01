@@ -4,7 +4,7 @@
 //四区白三三
 @cmdDelay 100
 //如果有起手触发就先关掉
-//@off 起手紫霞破气
+@off 起手
 @cd
 //****换神行等技能***
 enable force mingyugong
@@ -29,6 +29,6 @@ $startpfm
 enable dodge tagexing
 //****换正常技能***
 //如果有起手触发就先打开
-//@on 起手紫霞破气
+@on 起手
 @until {r天山童姥} != null
 kill {r李秋水};kill {r李秋水}

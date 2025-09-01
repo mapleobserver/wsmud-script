@@ -33,6 +33,7 @@
         // },
     };
     unsafeWindow.funny = funny;
+    WG = unsafeWindow.WG;
     let fn = {
         send: function(message) {
             if (typeof message === "string") {
@@ -409,6 +410,10 @@
         }
     });
     listener.addListener("room", function(message, data) {
+        if (WG == undefined || WG == null) {
+            console.log(WG);
+            return;
+        }
         room.str = data.name.replace("(副本区域)", "");
         let x = room.str.match(/(.*)-(.*)/);
         room.name1 = x[1];

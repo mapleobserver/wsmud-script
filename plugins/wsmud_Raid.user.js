@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name            wsmud_Raid
 // @namespace       cqv
-// @version         2.4.65
+// @version         2.4.66
 // @date            23/12/2018
-// @modified        26/7/2024
+// @modified        1/9/2025
 // @homepage        https://greasyfork.org/zh-CN/scripts/375851
 // @description     武神传说 MUD
 // @author          Bob.cn, 初心, 白三三
@@ -18,6 +18,8 @@
 // @grant           GM_listValues
 // @grant           GM_setClipboard
 
+// @downloadURL https://update.greasyfork.org/scripts/375851/wsmud_Raid.user.js
+// @updateURL https://update.greasyfork.org/scripts/375851/wsmud_Raid.meta.js
 // ==/UserScript==
 
 (function () {
@@ -1344,7 +1346,7 @@
                 return worker;
             }
             return new Promise(resolve => {
-                var wa = createWorker("setTimeout(() =>  postMessage('0'), "+param+")")
+                var wa = createWorker("setTimeout(() =>  postMessage('0'), " + param + ")")
                 wa.onmessage = function (event) {
                     // console.log(new Date,event.data);
                     wa.terminate();
@@ -1435,8 +1437,8 @@
         const executor = new CmdExecutor(appropriate, execute);
         CmdExecuteCenter.addExecutor(executor);
     })();
-    
-     (function () {
+
+    (function () {
         const appropriate = function (cmd) {
             return cmd.indexOf("@stop ") == 0;
         };
@@ -1745,8 +1747,8 @@
         items: {}, // {id: object}
         stores: {}, // {id: object}
         _weaponType: '',
-        skills:{},
-        profitInfo : null,
+        skills: {},
+        profitInfo: null,
         kongfu: {
             quan: null,
             nei: null,
@@ -2156,7 +2158,7 @@
             var action = function (id, value, s_name) {
                 switch (id) {
                     case "unarmed":
-                        Role.kongfu.quan = value;Role.kongfu.quan_c = s_name; break;
+                        Role.kongfu.quan = value; Role.kongfu.quan_c = s_name; break;
                     case "force":
                         Role.kongfu.nei = value; Role.kongfu.nei_c = s_name; break;
                     case "parry":
@@ -2838,24 +2840,24 @@
             var tempcmds = "";
             var inString = false;
             for (const cmd of cmds) {
-                if (cmd.indexOf("`")==0 || inString){
+                if (cmd.indexOf("`") == 0 || inString) {
                     var ccmd = cmd
-                    if (cmd.indexOf("`")==0){
-                        ccmd=cmd.substr(1);
+                    if (cmd.indexOf("`") == 0) {
+                        ccmd = cmd.substr(1);
                     }
-                    if (cmd[cmd.length-1]=="`"){
-                        ccmd=cmd.substr(0,cmd.length-1);
+                    if (cmd[cmd.length - 1] == "`") {
+                        ccmd = cmd.substr(0, cmd.length - 1);
                     }
-                    tempcmds = tempcmds +" "+ccmd
-                    inString= true;
+                    tempcmds = tempcmds + " " + ccmd
+                    inString = true;
                 }
-                if(cmd[cmd.length-1]=="`"){
-                    result[result.length-1] = result[result.length-1] +tempcmds
+                if (cmd[cmd.length - 1] == "`") {
+                    result[result.length - 1] = result[result.length - 1] + tempcmds
                     tempcmds = "";
                     inString = false;
                     continue;
                 }
-                if(inString){
+                if (inString) {
                     continue;
                 }
                 const header = /^\s*/.exec(cmd)[0];
@@ -3249,7 +3251,7 @@
             this._skillStack = {};
         },
         _skillStack: {},
-        _performNum : 0
+        _performNum: 0
     }
 
     //---------------------------------------------------------------------------
@@ -4418,7 +4420,7 @@ look men;open men
             }, _ => {
                 alert("wsmud_Raid 配置上传失败！");
             });
-           
+
         },
         downloadConfig: function (pass) {
             Server._sync("downloadConfig", { pass: pass }, data => {
@@ -4466,7 +4468,7 @@ look men;open men
             });
         },
         uploadTriggers: function () {
-          
+
             const triggers = unsafeWindow.TriggerCenter.getAllData();
             const value = JSON.stringify(triggers);
             Server._sync("uploadTriggers", { id: Role.id, value: value }, pass => {
@@ -4478,8 +4480,8 @@ look men;open men
             }, _ => {
                 alert("角色触发器上传失败！");
             });
-            
-         
+
+
         },
         downloadTriggers: function (pass) {
             Server._sync("downloadTriggers", { pass: pass }, value => {
@@ -4494,7 +4496,7 @@ look men;open men
         getNotice: function () {
             const noticeDataKey = "NoticeDataKey";
             const oldData = GM_getValue(noticeDataKey, { version: "0.0.0", type: "0", value: "欢迎使用 wsmud_Raid" });
-            Server._async("notice", { version: oldData.version,id:Role.id }, data => {
+            Server._async("notice", { version: oldData.version, id: Role.id }, data => {
                 let validData = oldData;
                 if (data.version > oldData.version) {
                     GM_setValue(noticeDataKey, data);
@@ -4535,35 +4537,27 @@ look men;open men
 
         shareFlowTrigger: function (username, password, type, data) {
 
-            Server._getPhone((phoneNum) => {
-                if (phoneNum == '') {
-                    alert("请先绑定手机号！");
-                    return;
-                }else{
-                    let value = data;
-                    value["author"] = username;
-                    const params = {
-                        username: username,
-                        password: password,
-                        name: data.name,
-                        phone: phoneNum,
-                        type: type,
-                        value: JSON.stringify(value)
-                    };
-                    // console.log(params);
-                    Server._sync("uploadSingle", params, token => {
-                        GM_setClipboard(token);
-                        alert(`${type}分享成功，该${type}会在服务器保存 30 天\n每次下载会延长保存 始于下载时刻的 30 天\n分享码：${token}\n已复制到系统剪切板。`);
-                        Message.append(`<hiy>${type}分享码：${token}</hiy>`);
-                        Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${token}');" >
+            let value = data;
+            value["author"] = username;
+            const params = {
+                username: username,
+                password: password,
+                name: data.name,
+                phone: "",
+                type: type,
+                value: JSON.stringify(value)
+            };
+            // console.log(params);
+            Server._sync("uploadSingle", params, token => {
+                GM_setClipboard(token);
+                alert(`${type}分享成功，该${type}会在服务器保存 30 天\n每次下载会延长保存 始于下载时刻的 30 天\n分享码：${token}\n已复制到系统剪切板。`);
+                Message.append(`<hiy>${type}分享码：${token}</hiy>`);
+                Message.append(`<div class="item-commands"><span cmd = "@js prompt('请手动复制下面的数据','${token}');" >
                                          我无法复制 </span></div>`);
-                    }, error => {
-                        alert(error);
-                    });
-        }},()=>{
-            alert("请先绑定手机号！");
-        });
-          
+            }, error => {
+                alert(error);
+            });
+
         },
         importFlow: function (token, target) {
             if (token.indexOf("·流程") == -1) {
@@ -4614,7 +4608,7 @@ look men;open men
         _get(async, uri, params, success, fail) {
             $.ajax({
                 type: "post",
-                url: `http://${Server._address}/${uri}`,
+                url: `https://${Server._address}/${uri}`,
                 data: params,
                 async: async,
                 success: function (data) {
@@ -4629,7 +4623,7 @@ look men;open men
                 dataType: "json"
             });
         },
-        _getPhone(success,fail){
+        _getPhone(success, fail) {
             $.ajax({
                 type: "post",
                 url: `/UserAPI/GetPhone`,
@@ -4637,12 +4631,12 @@ look men;open men
                 xhrFields: {
                     withCredentials: true
                 },
-                success :function(data){
-                    if(data){
+                success: function (data) {
+                    if (data) {
                         //去掉*
-                        data = data.replace(/\"/g,"");
-                        if(success != null) success(data);
-                    }else{
+                        data = data.replace(/\"/g, "");
+                        if (success != null) success(data);
+                    } else {
                         fail(data);
                     }
                 }
@@ -6174,7 +6168,7 @@ look men;open men
     })();
 
     const DungeonsShortcuts = {
-        xianyu_xyjq: function() {
+        xianyu_xyjq: function () {
             let source = `
 [if] (:room 副本区域,忧愁谷)==true || (:state)==推演 || (:state)==领悟
   @print <ord>当前状态无法进行一键咸鱼，自动停止！</ord>

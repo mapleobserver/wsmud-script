@@ -145,9 +145,7 @@
   @js DungeonsShortcuts.cangbaotu()
 [else]
   @print <hiy>🐟 一键咸鱼，目前提供以下功能：</hiy>
-  @js $('.WG_log pre').append($(`<div class="item-commands"></div>`).append($(`<span class="quick_cmd qc_xyjq">🤌 襄阳捐钱</span>`),$(`<span class="quick_cmd qc_ksyb">🦆 快速运镖</span>`),$(`<span class="quick_cmd qc_sdyt">🐉 扫荡妖塔</span>`),$(`<span class="quick_cmd qc_mghyj">🍟 门贡换元晶</span>`),$(`<span class="quick_cmd qc_cbt">💎 藏宝图</span>`)))
-
-  @js $('.WG_log pre').append($(`<div class="item-commands"></div>`).append($(`<span class="quick_cmd qc_xybm">🐘 襄阳报名</span>`),$(`<span class="quick_cmd qc_ltbm">🏆 擂台报名</span>`)))
+  @js Message.append(`<div class="item-commands"><span class="quick_cmd qc_xyjq">🤌 襄阳捐钱</span><span class="quick_cmd qc_ksyb">🦆 快速运镖</span><span class="quick_cmd qc_sdyt">🐉 扫荡妖塔</span><span class="quick_cmd qc_mghyj">🍟 门贡换元晶</span><span class="quick_cmd qc_cbt">💎 藏宝图</span><br><br><span class="quick_cmd qc_xybm">🐘 襄阳报名</span><span class="quick_cmd qc_ltbm">🏆 擂台报名</span></div>`)
 
   @js $(".quick_cmd").off("click")
   
