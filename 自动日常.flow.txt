@@ -1,10 +1,10 @@
 //~silent
 //自动日常合并版
 //四区白三三
-//1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.新增春节免费扫荡模式。
+//1.自动师门。2.自动调用自动追捕和自动武道两个流程，可选择副本自动脚本、扫荡或跳过。3.当铺购买、请安。4.日常开始结束语音播报提醒。5.国庆快乐。
 //使用call方式调用，如果想在版本更新后继续静默运行，请在 call 自动日常 后面加上参数：callmode
 
-($localVer) = 2023121401
+($localVer) = 2026100101
 ($changeLog) = 🆕 增加扫荡禁地后的清包和等待时间
 ($flowName) = 自动日常
 ($flowCode) = zdrc
@@ -57,7 +57,7 @@
 
 @js ($month) = var date=new Date();date.getMonth()+1
 // 2023中秋国庆，9月29日-10月6日免费扫荡
-@js ($holiday) = var today=new Date();var startDate=new Date(today.getFullYear(),8,29);var endDate=new Date(today.getFullYear(),9,6);if (today>=startDate && today<=endDate){true}else{false}
+// @js ($holiday) = var today=new Date();var startDate=new Date(today.getFullYear(),8,29);var endDate=new Date(today.getFullYear(),9,6);if (today>=startDate && today<=endDate){true}else{false}
 [if] (holiday) == true
   @print 启动节日免费模式
   ($RCMode) = 节日免费模式
